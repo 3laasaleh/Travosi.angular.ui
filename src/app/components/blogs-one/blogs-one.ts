@@ -1,0 +1,17 @@
+import { AfterViewInit, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import feather from 'feather-icons';
+import { blogData } from '../../data/data';
+
+@Component({
+  selector: 'app-blogs-one',
+  imports: [RouterLink],
+  templateUrl: './blogs-one.html',
+})
+export class BlogsOne implements AfterViewInit {
+  blogData = blogData.slice(0, 3);
+
+  ngAfterViewInit(): void {
+    feather.replace();
+  }
+}

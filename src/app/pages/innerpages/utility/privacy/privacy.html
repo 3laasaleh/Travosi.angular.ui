@@ -1,0 +1,33 @@
+<div>
+    <app-navbar-one />
+    <!-- Start Hero -->
+    <section class="relative table w-full py-32 lg:py-40 bg-gray-50 dark:bg-slate-800">
+        <div class="container relative">
+            <div class="grid grid-cols-1 text-center mt-10">
+                <h3 class="text-3xl leading-normal font-semibold">Privacy Policy</h3>
+            </div><!--end grid-->
+        </div><!--end container-->
+
+        <div class="absolute text-center z-10 bottom-5 start-0 end-0 mx-3">
+            <ul class="tracking-[0.5px] mb-0 inline-block">
+                <li class="inline-block uppercase text-[13px] font-bold duration-500 ease-in-out hover:text-primary">
+                    <a routerLink="/">TRAVOSY </a>
+                </li>
+                <li class="inline-block text-base text-slate-950 dark:text-white mx-0.5 ltr:rotate-0 rtl:rotate-180">
+                    <i class="mdi mdi-chevron-right"></i>
+                </li>
+                <li class="inline-block uppercase text-[13px] font-bold duration-500 ease-in-out hover:text-primary">
+                    <a href="javascript:void(0)">Utility</a>
+                </li>
+                <li class="inline-block text-base text-slate-950 dark:text-white mx-0.5 ltr:rotate-0 rtl:rotate-180">
+                    <i class="mdi mdi-chevron-right"></i>
+                </li>
+                <li class="inline-block uppercase text-[13px] font-bold text-primary" aria-current="page">Privacy</li>
+            </ul>
+        </div>
+    </section><!--end section-->
+    <!-- End Hero -->
+    <app-privacy-one />
+</div>
+<app-footer-one />
+<app-switcher-one [switcherBack]="true" />

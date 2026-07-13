@@ -1,0 +1,28 @@
+<app-tagline-one />
+
+<app-navbar-one menuLight="nav-light" tagLine="tagline-height" [navLight]="true" searchMenu="text-white" />
+
+<section class="relative md:pt-48 md:pb-36 py-36 table w-full items-center bg-center" id="home" [style.background-image]="'url(' + randomImage + ')'">
+    <div class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="container relative">
+        <div class="grid grid-cols-1">
+            <div class="text-center">
+                <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">Let the journey begin...</h1>
+                <p class="text-white/70 text-xl max-w-xl mx-auto">Planning for a trip? We will organize your trip with the best places and within best budget!</p>
+
+                <div class="mt-6">
+                    <app-selected-date />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="relative md:py-24 py-16 overflow-hidden">
+    <app-destinations-two />
+    <app-agency-one />
+    <app-tour-packages-12item />
+    <app-users-one />
+</section>
+<app-insta-post />
+<app-footer-one />
+<app-switcher-one [switcherBack]="true" />

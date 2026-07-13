@@ -1,0 +1,81 @@
+<app-navbar-one />
+<section class="relative md:pb-24 pb-16 mt-20">
+    <div class="container-fluid relative">
+        <div class="md:flex mt-4">
+            <div class="lg:w-1/2 md:w-1/2 p-1">
+                <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+                    <img [src]="images[0]" alt="">
+                    <div class="absolute inset-0 group-hover:bg-slate-900/70 duration-500 ease-in-out"></div>
+                    <div class="absolute top-1/2 -translate-y-1/2 start-0 end-0 text-center opacity-0 group-hover:opacity-100 duration-500">
+                        <a (click)="showMultiple(0)" class="inline-flex cursor-pointer justify-center items-center size-9 bg-primary text-white rounded-full lightbox"><i data-feather="camera" class="size-4 align-middle"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 md:w-1/2">
+                <div class="flex">
+                    <div class="w-1/2 p-1">
+                        <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+                            <img [src]="images[1]" alt="">
+                            <div class="absolute inset-0 group-hover:bg-slate-900/70 duration-500 ease-in-out"></div>
+                            <div class="absolute top-1/2 -translate-y-1/2 start-0 end-0 text-center opacity-0 group-hover:opacity-100 duration-500">
+                                <a (click)="showMultiple(1)" class="inline-flex cursor-pointer justify-center items-center size-9 bg-primary text-white rounded-full lightbox"><i data-feather="camera" class="size-4 align-middle"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-1/2 p-1">
+                        <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+                            <img [src]="images[2]" alt="">
+                            <div class="absolute inset-0 group-hover:bg-slate-900/70 duration-500 ease-in-out"></div>
+                            <div class="absolute top-1/2 -translate-y-1/2 start-0 end-0 text-center opacity-0 group-hover:opacity-100 duration-500">
+                                <a (click)="showMultiple(2)" class="inline-flex cursor-pointer justify-center items-center size-9 bg-primary text-white rounded-full lightbox"><i data-feather="camera" class="size-4 align-middle"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="w-1/2 p-1">
+                        <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+                            <img [src]="images[3]" alt="">
+                            <div class="absolute inset-0 group-hover:bg-slate-900/70 duration-500 ease-in-out"></div>
+                            <div class="absolute top-1/2 -translate-y-1/2 start-0 end-0 text-center opacity-0 group-hover:opacity-100 duration-500">
+                                <a (click)="showMultiple(3)" class="inline-flex cursor-pointer justify-center items-center size-9 bg-primary text-white rounded-full lightbox"><i data-feather="camera" class="size-4 align-middle"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-1/2 p-1">
+                        <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+                            <img [src]="images[4]" alt="">
+                            <div class="absolute inset-0 group-hover:bg-slate-900/70 duration-500 ease-in-out"></div>
+                            <div class="absolute top-1/2 -translate-y-1/2 start-0 end-0 text-center opacity-0 group-hover:opacity-100 duration-500">
+                                <a (click)="showMultiple(4)" class="inline-flex cursor-pointer justify-center items-center size-9 bg-primary text-white rounded-full lightbox"><i data-feather="camera" class="size-4 align-middle"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container relative md:mt-24 mt-16">
+        <div class="grid md:grid-cols-12 grid-cols-1 gap-6">
+            <div class="lg:col-span-8 md:col-span-7">
+                <app-tour-detail />
+            </div>
+            <app-tour-sidebar class="contents" />
+        </div>
+    </div>
+</section>
+@if (visible) {
+    <div class="fixed inset-0 z-999 bg-slate-900/90 flex items-center justify-center" (click)="onHide()">
+        <button class="text-slate-400 absolute top-[20px] right-[20px] text-2xl" (click)="onHide()"><i class="mdi mdi-close"></i></button>
+        <button class="text-white absolute start-5 top-1/2 -translate-y-1/2 text-3xl" (click)="prev($event)"><i class="mdi mdi-chevron-left"></i></button>
+        <img [src]="images[index]" class="max-h-[90vh] max-w-[90vw] object-contain" alt="" (click)="$event.stopPropagation()">
+        <button class="text-white absolute end-5 top-1/2 -translate-y-1/2 text-3xl" (click)="next($event)"><i class="mdi mdi-chevron-right"></i></button>
+    </div>
+}
+<app-footer-one />
+<app-switcher-one [switcherBack]="true" />

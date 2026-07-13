@@ -1,0 +1,20 @@
+import { AfterViewInit, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import feather from 'feather-icons';
+import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
+import { FooterOne } from '../../../../components/footer-one/footer-one';
+import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
+
+@Component({
+  selector: 'app-user-invoice',
+  imports: [RouterLink, NavbarOne, FooterOne, SwitcherOne],
+  templateUrl: './user-invoice.html',
+})
+export class UserInvoice implements AfterViewInit {
+  logoDark = 'assets/images/logo-dark.png';
+  logoLight = 'assets/images/logo-light.png';
+
+  ngAfterViewInit(): void {
+    feather.replace();
+  }
+}

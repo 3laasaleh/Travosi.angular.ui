@@ -1,0 +1,64 @@
+<div>
+    <section class="relative md:py-24 py-16">
+        <div class="container relative">
+            <div class="grid grid-cols-1 pb-8 text-center">
+                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Find The Help You Need</h3>
+                <p class="text-slate-400 max-w-xl mx-auto">Upgrade your style with our curated sets. Choose confidence, embrace your unique look.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 mt-6 gap-6">
+                @for (item of helps; track $index) {
+                    <div class="text-center px-6 mt-6">
+                        <div class="w-20 h-20 bg-primary/5 text-primary rounded-xl text-3xl flex align-middle justify-center items-center shadow-sm dark:shadow-gray-800 mx-auto">
+                            <i [attr.data-feather]="item.icon" class="size-[30px]"></i>
+                        </div>
+
+                        <div class="content mt-7">
+                            <a routerLink="/helpcenter-faqs" class="title h5 text-lg font-medium hover:text-primary">{{ item.name }}</a>
+                            <p class="text-slate-400 mt-3">{{ item.desc }}</p>
+                            <div class="mt-5">
+                                <a [routerLink]="item.to" class="text-primary">{{ item.button }} <i class="mdi mdi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="container relative md:mt-24 mt-16">
+            <div class="grid grid-cols-1 pb-8 text-center">
+                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Get Started</h3>
+
+                <p class="text-slate-400 max-w-xl mx-auto">Upgrade your style with our curated sets. Choose confidence, embrace your unique look.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 grid-cols-1 mt-8 gap-6">
+                @for (item of starts; track $index) {
+                    <div class="flex">
+                        <i [attr.data-feather]="item.icon" class="fea icon-ex-md text-primary me-3"></i>
+                        <div class="flex-1">
+                            @if (item.name2) {
+                                <h5 class="mb-2 text-xl font-semibold">{{ item.name }} <span class="text-primary">Travosy</span> {{ item.name3 }}</h5>
+                            } @else {
+                                <h5 class="mb-2 text-xl font-semibold"> {{ item.name }}</h5>
+                            }
+                            <p class="text-slate-400">{{ item.desc }}</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="container relative md:mt-24 mt-16">
+            <div class="grid grid-cols-1 text-center">
+                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Have Question ? Get in touch!</h3>
+
+                <p class="text-slate-400 max-w-xl mx-auto">Upgrade your style with our curated sets. Choose confidence, embrace your unique look.</p>
+
+                <div class="mt-6">
+                    <a routerLink="/helpcenter-support" class="py-2 px-5 inline-flex items-center font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md me-2 mt-2"><i data-feather="phone" class="size-4 me-1"></i> Contact us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,23 @@
+<app-navbar-one [navLight]="false" />
+<section class="relative table w-full pt-44 pb-56 bg-bottom bg-cover" [style.background-image]="'url(' + bg + ')'" id="home">
+    <div class="container relative">
+        <div class="grid grid-cols-1 items-center mt-10 gap-[30px]">
+            <div>
+                <h5 class="text-3xl !font-dancing">Beauty of Discover</h5>
+                <h4 class="font-bold lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">Enjoy Your Dream <br/> Vacation</h4>
+                <p class="text-xl max-w-xl">Planning for a trip? We will organize your trip with the best places and within best budget!</p>
+                <app-selected-date class="mt-8 block" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="relative md:py-24 py-16 overflow-hidden">
+    <app-destinations-slider [Destinations]="true" />
+    <app-agency-one />
+    <app-tour-packages />
+    <app-users-one />
+    <app-blogs-one />
+</section>
+<app-footer-one />
+<app-switcher-one [switcherBack]="true" />

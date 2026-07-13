@@ -1,0 +1,26 @@
+<div class="container-fluid relative">
+  <div class="grid grid-cols-1 relative">
+    <div class="tiny-twelve-item">
+      @for (item of instraImg; track $index) {
+        <div class="tiny-slide p-0">
+          <a (click)="showLightbox($index)" class="lightbox cursor-pointer d-inline-block" title="">
+            <img [src]="item" class="sm:size-40 object-cover" alt="">
+          </a>
+        </div>
+      }
+    </div>
+
+    <div class="absolute top-2/4 -translate-y-2/4 start-2/4 ltr:-translate-x-2/4 rtl:translate-x-2/4 text-center">
+      <a href="https://www.instagram.com/shreethemes/" target="_blank" class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md border border-primary bg-primary text-white"><i data-feather="instagram" class="size-4"></i></a>
+    </div>
+  </div>
+</div>
+
+@if (visible) {
+  <div class="fixed inset-0 z-999 bg-slate-900/90 flex items-center justify-center" (click)="onHide()">
+    <button class="text-slate-400 absolute top-[20px] right-[20px] text-2xl" (click)="onHide()"><i class="mdi mdi-close"></i></button>
+    <button class="text-white absolute start-5 top-1/2 -translate-y-1/2 text-3xl" (click)="prev($event)"><i class="mdi mdi-chevron-left"></i></button>
+    <img [src]="instraImg[index]" class="max-h-[90vh] max-w-[90vw] object-contain" alt="" (click)="$event.stopPropagation()">
+    <button class="text-white absolute end-5 top-1/2 -translate-y-1/2 text-3xl" (click)="next($event)"><i class="mdi mdi-chevron-right"></i></button>
+  </div>
+}
