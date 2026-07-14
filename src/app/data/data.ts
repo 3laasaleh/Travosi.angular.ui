@@ -15,7 +15,7 @@ export const destinations = [
 
 const faqItems = [
     { id: 1, title: 'How does it work ?', desc: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.' },
-    { id: 2, title: 'Do I need a designer to use Travosy  ?', desc: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.' },
+    { id: 2, title: 'Do I need a designer to use See World  ?', desc: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.' },
     { id: 3, title: 'What do I need to do to start selling ?', desc: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.' },
     { id: 4, title: 'What happens when I receive an order ?', desc: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.' },
 ];
@@ -28,9 +28,9 @@ export const datas4 = [...faqItems];
 export const guidesData = [
     { title: 'Getting started', features: ['Deciding to purchase', 'List your space', 'Landing an experience or adventure', 'Top uses questions'] },
     { title: 'Your calendar', features: ['Pricing & availability', 'Booking settings', 'Responding to enquiries & requests', 'Snoozing or deactivating your listing'] },
-    { title: 'Your listings', features: ['Updating your listing', 'Neighbourhoods', 'Listing photos & photography', 'Travosy Plus', 'API-connected software'] },
+    { title: 'Your listings', features: ['Updating your listing', 'Neighbourhoods', 'Listing photos & photography', 'See World Plus', 'API-connected software'] },
     { title: 'How payouts work', features: ['Getting paid', 'Adding payout info', 'Your payout status', 'Donations', 'Taxes'] },
-    { title: 'Your reservations', features: ['Travosy safely', 'Travosy Experiences and Adventures', 'Changing a reservation', 'Cancelling a reservation', 'Long-term reservations'] },
+    { title: 'Your reservations', features: ['See World safely', 'See World Experiences and Adventures', 'Changing a reservation', 'Cancelling a reservation', 'Long-term reservations'] },
     { title: 'Reservation help', features: ['Help with a reservation or guest', 'Guest cancellations'] },
     { title: 'Your account', features: ['Your profile', 'Account security', 'Identification & verifications', 'Reviews', 'Superhost status'] },
 ];
@@ -42,10 +42,10 @@ export const helps = [
 ];
 
 export const starts = [
-    { icon: 'help-circle', name: 'How our', name2: 'Travosy', name3: 'work ?', desc: 'Due to its widespread use as filler text for layouts, non-readability is of great importance: human perception is tuned to recognize certain patterns and repetitions in texts.' },
+    { icon: 'help-circle', name: 'How our', name2: 'See World', name3: 'work ?', desc: 'Due to its widespread use as filler text for layouts, non-readability is of great importance: human perception is tuned to recognize certain patterns and repetitions in texts.' },
     { icon: 'help-circle', name: ' What is the main process open account ?', desc: "If the distribution of letters and 'words' is random, the reader will not be distracted from making a neutral judgement on the visual impact." },
     { icon: 'help-circle', name: ' How to make unlimited data entry ?', desc: 'Furthermore, it is advantageous when the dummy text is relatively realistic so that the layout impression of the final publication is not compromised.' },
-    { icon: 'help-circle', name: ' Is', name2: 'Travosy', name3: 'safer to use with my account ?', desc: "The most well-known dummy text is the 'Lorem Ipsum', which is said to have originated in the 16th century. Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin." },
+    { icon: 'help-circle', name: ' Is', name2: 'See World', name3: 'safer to use with my account ?', desc: "The most well-known dummy text is the 'Lorem Ipsum', which is said to have originated in the 16th century. Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin." },
 ];
 
 export const packageData = [
@@ -64,9 +64,9 @@ export const packageData = [
 ];
 
 export const blogData = [
-    { image: blog(1), title: 'This Spanish city is a feast for the eyes: Travosy', status: 'Travel', desc: 'This is required when, for example, the final text is not yet available.' },
+    { image: blog(1), title: 'This Spanish city is a feast for the eyes: See World', status: 'Travel', desc: 'This is required when, for example, the final text is not yet available.' },
     { image: blog(2), title: 'New Zealand’s South Island brims with majestic', status: 'Tour', desc: 'This is required when, for example, the final text is not yet available.' },
-    { image: blog(3), title: 'When you visit the Eternal Rome City: Travosy', status: 'Tourist', desc: 'This is required when, for example, the final text is not yet available.' },
+    { image: blog(3), title: 'When you visit the Eternal Rome City: See World', status: 'Tourist', desc: 'This is required when, for example, the final text is not yet available.' },
     { image: blog(4), title: 'My Story When I Backpacked Around The World', status: 'Flight', desc: 'This is required when, for example, the final text is not yet available.' },
     { image: blog(5), title: 'Organization of accounting at the enterprise', status: 'Arab', desc: 'This is required when, for example, the final text is not yet available.' },
     { image: blog(6), title: 'Three of the Best Day Trips to Make from Francisco', status: 'Dubai', desc: 'This is required when, for example, the final text is not yet available.' },

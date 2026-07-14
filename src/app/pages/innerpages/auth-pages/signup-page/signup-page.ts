@@ -10,7 +10,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 })
 export class SignupPage implements AfterViewInit {
   bg = 'assets/images/bg/6.jpg';
-  logo = 'assets/images/logo-icon.png';
+  logo = 'assets/images/main-logo.png';
 
   ngAfterViewInit(): void {
     feather.replace();

@@ -15,7 +15,7 @@ export class NavbarOne implements OnInit, AfterViewInit {
 
   logoDark = 'assets/images/logo-dark.png';
   logoLight = 'assets/images/logo-light.png';
-  logoWhite = 'assets/images/logo-white.png';
+  logoWhite = 'assets/images/logo-light.png';
   user = 'assets/images/client/16.jpg';
 
   toggle = false;

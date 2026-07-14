@@ -3,16 +3,16 @@
     @if (navLight) {
       <a routerLink="/" class="logo">
         <span class="inline-block dark:hidden">
-          <img [src]="logoDark" class="h-7 l-dark" alt="">
-          <img [src]="logoLight" class="h-7 l-light" alt="">
+          <img [src]="logoDark" class="logo-height l-dark" alt="">
+          <img [src]="logoLight" class="logo-height l-light" alt="">
         </span>
         <img [src]="logoWhite" class="hidden dark:inline-block" alt="">
       </a>
     } @else {
       <a routerLink="/" class="logo">
         <div>
-          <img [src]="logoDark" class="h-7 inline-block dark:hidden" alt="">
-          <img [src]="logoWhite" class="h-7 hidden dark:inline-block" alt="">
+          <img [src]="logoDark" class="logo-height inline-block dark:hidden" alt="">
+          <img [src]="logoWhite" class="logo-height hidden dark:inline-block" alt="">
         </div>
       </a>
     }

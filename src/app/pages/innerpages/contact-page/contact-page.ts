@@ -14,9 +14,9 @@ export class ContactPage implements AfterViewInit {
   isActive = false;
 
   contacts = [
-    { icon: 'phone', name: 'Phone', desc: 'The phrasal sequence of the is now so that many campaign and benefit', status: '+152 534-468-854' },
-    { icon: 'mail', name: 'Email', desc: 'The phrasal sequence of the is now so that many campaign and benefit', status: 'contact@example.com' },
-    { icon: 'map-pin', name: 'Location', desc: 'C/54 Northwest Freeway, Suite 558, Houston, USA 485', status: 'View on Google map' },
+    { icon: 'phone', name: 'Phone', desc: 'The phrasal sequence of the is now so that many campaign and benefit', status: '+201155011300' },
+    { icon: 'mail', name: 'Email', desc: 'The phrasal sequence of the is now so that many campaign and benefit', status: 'Info@seaworldholidays.com' },
+    { icon: 'map-pin', name: 'Location', desc: 'C/54 Northwest Freeway, Suite 558, 7 Mariouteya, Haram, Al Rehab Tower,', status: 'View on Google map' },
   ];
 
   ngAfterViewInit(): void {
