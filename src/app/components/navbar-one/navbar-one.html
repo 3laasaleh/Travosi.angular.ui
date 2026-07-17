@@ -6,7 +6,7 @@
           <img [src]="logoDark" class="logo-height l-dark" alt="">
           <img [src]="logoLight" class="logo-height l-light" alt="">
         </span>
-        <img [src]="logoWhite" class="hidden dark:inline-block" alt="">
+        <img [src]="logoWhite" class=" logo-height hidden dark:inline-block" alt="">
       </a>
     } @else {
       <a routerLink="/" class="logo">
@@ -72,10 +72,10 @@
     <div id="navigation" [class.hidden]="!toggle" [class.block]="toggle">
       <ul class="navigation-menu !justify-end" [class]="'navigation-menu !justify-end ' + menuLight">
         <li class="has-submenu parent-menu-item" [class.active]="isActive(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-item')">Hero <span class="menu-arrow"></span></a>
+          <a href="javascript:void(0)" (click)="submenu('/index-item')">Home <span class="menu-arrow"></span></a>
           <ul class="submenu" [class.open]="isOpen(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-            <li [class.active]="activeMenu === '/'"><a routerLink="/" class="sub-menu-item">Tour One</a></li>
-            <li [class.active]="activeMenu === '/index-two'"><a routerLink="/index-two" class="sub-menu-item">Tour Two</a></li>
+            <li [class.active]="activeMenu === '/'"><a routerLink="/" class="sub-menu-item">Top Destinations</a></li>
+            <li [class.active]="activeMenu === '/index-two'"><a routerLink="/index-two" class="sub-menu-item">Tours Packages</a></li>
             <li [class.active]="activeMenu === '/index-three'"><a routerLink="/index-three" class="sub-menu-item">Tour Three</a></li>
             <li [class.active]="activeMenu === '/index-four'"><a routerLink="/index-four" class="sub-menu-item">Tour Four</a></li>
             <li [class.active]="activeMenu === '/index-five'"><a routerLink="/index-five" class="sub-menu-item">Tour Five</a></li>

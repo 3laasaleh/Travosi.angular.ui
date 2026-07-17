@@ -1,7 +1,12 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', loadComponent: () => import('./pages/index/index-one/index-one').then(m => m.IndexOne) },
+  { path: '', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
+  { path: 'destinations', loadComponent: () => import('./pages/destinations-list/destinations-list').then(m => m.DestinationsList) },
+
+
+
+
   { path: 'index-two', loadComponent: () => import('./pages/index/index-two/index-two').then(m => m.IndexTwo) },
   { path: 'index-three', loadComponent: () => import('./pages/index/index-three/index-three').then(m => m.IndexThree) },
   { path: 'index-four', loadComponent: () => import('./pages/index/index-four/index-four').then(m => m.IndexFour) },
