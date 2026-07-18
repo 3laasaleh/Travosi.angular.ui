@@ -1,0 +1,126 @@
+<section class="min-h-screen bg-slate-50 px-4 py-10 text-slate-800">
+  <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Admin</p>
+        <h1 class="mt-2 text-3xl font-semibold">Destinations</h1>
+        <p class="mt-2 text-sm text-slate-500">Display destinations in a list or grid view and manage them quickly.</p>
+      </div>
+      <div class="flex gap-3">
+        <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">Back to dashboard</a>
+        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'">Switch to {{ viewMode === 'table' ? 'grid' : 'table' }}</button>
+      </div>
+    </div>
+
+    @if (errorMessage) {
+      <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage }}</div>
+    }
+
+    @if (successMessage) {
+      <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage }}</div>
+    }
+
+    <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+        <h2 class="mb-4 text-xl font-semibold">{{ selectedDestination ? 'Edit destination' : 'Add destination' }}</h2>
+        <form class="space-y-4" (ngSubmit)="saveDestination()">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm font-medium">Name</label>
+              <input [(ngModel)]="destinationForm.name" name="name" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">Country</label>
+              <input [(ngModel)]="destinationForm.country" name="country" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">City</label>
+              <input [(ngModel)]="destinationForm.city" name="city" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">Image URL</label>
+              <input [(ngModel)]="destinationForm.imageUrl" name="imageUrl" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium">Description</label>
+            <textarea [(ngModel)]="destinationForm.description" name="description" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+          </div>
+          <label class="flex items-center gap-2 text-sm font-medium">
+            <input [(ngModel)]="destinationForm.isActive" name="isActive" type="checkbox" />
+            Active destination
+          </label>
+          <div class="flex gap-3">
+            <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ selectedDestination ? 'Update' : 'Add' }}</button>
+            @if (selectedDestination) {
+              <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">Cancel</button>
+            }
+          </div>
+        </form>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-5">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Destination records</h2>
+          <div class="flex items-center gap-2">
+            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">Previous</button>
+            <span class="text-sm text-slate-500">{{ page }} / {{ totalPages }}</span>
+            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">Next</button>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <div class="py-6 text-sm text-slate-500">Loading destinations...</div>
+        } @else if (viewMode === 'table') {
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-600">
+                <tr>
+                  <th class="px-4 py-3 font-semibold">Name</th>
+                  <th class="px-4 py-3 font-semibold">Country</th>
+                  <th class="px-4 py-3 font-semibold">City</th>
+                  <th class="px-4 py-3 font-semibold">Status</th>
+                  <th class="px-4 py-3 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of pagedDestinations; track item.id) {
+                  <tr class="border-t border-slate-200">
+                    <td class="px-4 py-3 font-medium">{{ item.name }}</td>
+                    <td class="px-4 py-3">{{ item.country }}</td>
+                    <td class="px-4 py-3">{{ item.city }}</td>
+                    <td class="px-4 py-3">
+                      <span class="rounded-full px-2.5 py-1 text-xs font-semibold" [class.bg-emerald-100]="item.isActive !== false" [class.text-emerald-700]="item.isActive !== false" [class.bg-rose-100]="item.isActive === false" [class.text-rose-700]="item.isActive === false">
+                        {{ item.isActive === false ? 'Inactive' : 'Active' }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex gap-2">
+                        <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold" (click)="startEdit(item)">Edit</button>
+                        <button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600" (click)="deactivateDestination(item)">Deactivate</button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="grid gap-4 md:grid-cols-2">
+            @for (item of pagedDestinations; track item.id) {
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <h3 class="font-semibold">{{ item.name }}</h3>
+                <p class="mt-1 text-sm text-slate-500">{{ item.city }}, {{ item.country }}</p>
+                <p class="mt-3 text-sm text-slate-600">{{ item.description }}</p>
+                <div class="mt-4 flex gap-2">
+                  <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold" (click)="startEdit(item)">Edit</button>
+                  <button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600" (click)="deactivateDestination(item)">Deactivate</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
