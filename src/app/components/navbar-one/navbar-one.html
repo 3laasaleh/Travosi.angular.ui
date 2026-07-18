@@ -1,21 +1,10 @@
 <nav id="topnav" class="defaultscroll is-sticky" [class]="'defaultscroll is-sticky ' + tagLine">
   <div class="container relative">
-    @if (navLight) {
-      <a routerLink="/" class="logo">
-        <span class="inline-block dark:hidden">
-          <img [src]="logoDark" class="logo-height l-dark" alt="">
-          <img [src]="logoLight" class="logo-height l-light" alt="">
-        </span>
-        <img [src]="logoWhite" class=" logo-height hidden dark:inline-block" alt="">
-      </a>
-    } @else {
       <a routerLink="/" class="logo">
         <div>
-          <img [src]="logoDark" class="logo-height inline-block dark:hidden" alt="">
-          <img [src]="logoWhite" class="logo-height hidden dark:inline-block" alt="">
+          <img [src]="logoWhite" class="logo-height" alt="">
         </div>
       </a>
-    }
 
     <div class="menu-extras" (click)="handler()">
       <div class="menu-item">
@@ -30,7 +19,7 @@
     </div>
 
     <ul class="buy-button list-none mb-0">
-      <li class="dropdown inline-block relative pe-1">
+      <!-- <li class="dropdown inline-block relative pe-1">
         <button data-dropdown-toggle="dropdown" class="dropdown-toggle align-middle inline-flex search-dropdown" type="button" (click)="toggleParagraph()">
           <i data-feather="search" class="size-5 dark-icon"></i>
           <i data-feather="search" class="size-5 white-icon" [class]="'size-5 white-icon ' + searchMenu"></i>
@@ -41,12 +30,12 @@
             <input type="text" class="h-9 px-3 pe-10 w-full border-0 focus:ring-0 outline-none dark:bg-slate-900" name="s" id="searchItem" placeholder="Search...">
           </div>
         </div>
-      </li>
+      </li> -->
 
       <li class="dropdown inline-block relative ps-0.5">
         <button data-dropdown-toggle="dropdown" class="dropdown-toggle items-center" type="button" (click)="toggleParagraph3()">
-          <span class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md border border-primary bg-primary text-white">
-            <img [src]="user" class="rounded-md" alt=""/>
+          <span class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md border border-primary  ">
+              <i data-feather="user" class="size-4 text-primary"></i>
           </span>
         </button>
         <div class="dropdown-menu absolute end-0 m-0 mt-4 z-10 w-48 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow dark:shadow-gray-800" [class.hidden]="!account">
@@ -62,7 +51,8 @@
             </li>
             <li class="border-t border-gray-100 dark:border-gray-800 my-2"></li>
             <li class="ms-0">
-              <a routerLink="/login" class="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-primary dark:hover:text-white"><i data-feather="log-out" class="size-4 me-2"></i>Logout</a>
+              <a routerLink="/login" class="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-primary dark:hover:text-white">
+                <i data-feather="log-in" class="size-4 me-2"></i>Login</a>
             </li>
           </ul>
         </div>
@@ -170,14 +160,14 @@
           </ul>
         </li>
 
-        <li class="has-submenu parent-menu-item" [class.active]="isActive(['/blogs', '/blog-standard', '/blog-detail', '/index-blogs'])">
+        <!-- <li class="has-submenu parent-menu-item" [class.active]="isActive(['/blogs', '/blog-standard', '/blog-detail', '/index-blogs'])">
           <a href="javascript:void(0)" (click)="submenu('/index-blogs')">Blog<span class="menu-arrow"></span></a>
           <ul class="submenu" [class.open]="isOpen(['/blogs', '/blog-standard', '/blog-detail', '/index-blogs'])">
             <li [class.active]="activeMenu === '/blogs'"><a routerLink="/blogs" class="sub-menu-item">Blogs</a></li>
             <li [class.active]="activeMenu === '/blog-standard'"><a routerLink="/blog-standard" class="sub-menu-item"> Blog Standard</a></li>
             <li [class.active]="activeMenu === '/blog-detail'"><a routerLink="/blog-detail" class="sub-menu-item"> Blog Detail</a></li>
           </ul>
-        </li>
+        </li> -->
 
         <li [class.active]="activeMenu === '/contact'"><a routerLink="/contact" class="sub-menu-item">Contact Us</a></li>
       </ul>

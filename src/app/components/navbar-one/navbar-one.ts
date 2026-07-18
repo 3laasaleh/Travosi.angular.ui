@@ -33,6 +33,7 @@ export class NavbarOne implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     feather.replace();
+    
   }
 
   handler(): void {

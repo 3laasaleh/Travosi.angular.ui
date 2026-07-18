@@ -1,0 +1,30 @@
+<section class="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+  <div class="absolute inset-0 image-wrap z-1 bg-no-repeat bg-center bg-cover" [style.background-image]="'url(' + bg + ')'">
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black z-2"></div>
+  <div class="container relative z-3">
+    <div class="flex justify-center">
+      <div class="max-w-[600px] h-[60vh] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+        <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
+        <h5 class="my-4 text-xl font-semibold">Activate Your Account</h5>
+
+        @if (isLoading) {
+          <div class="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">Activating your account, please wait...</div>
+        }
+
+        @if (errorMessage && !isLoading) {
+          <div class="mt-4 rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+          <div class="mt-4 text-center">
+            <a routerLink="/signup" class="text-primary font-semibold">Return to signup</a>
+          </div>
+        }
+
+        @if (!isLoading && !errorMessage) {
+          <div class="mt-4 rounded border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+            Your account is activated. Redirecting...
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

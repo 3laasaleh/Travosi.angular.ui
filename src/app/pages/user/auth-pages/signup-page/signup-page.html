@@ -1,0 +1,143 @@
+<section class="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+    <div class="absolute inset-0 image-wrap z-1 bg-no-repeat bg-center bg-cover"
+        [style.background-image]="'url(' + bg + ')'"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black z-2" id="particles-snow"></div>
+    <div class="container relative z-3">
+        <div class="flex justify-center">
+            <div
+                class="max-w-[800px] h-[98vh] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+                <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
+                <h5 class="my-2 text-xl font-semibold">{{ 'Sign Up' | translate }}</h5>
+
+                @if (errorMessage) {
+                    <div class="mb-1 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{{ errorMessage }}</div>
+                }
+
+                @if (successMessage) {
+                    <div class="mb-1 rounded border border-green-200 bg-green-50 p-3 text-sm text-green-700">{{ successMessage }}</div>
+                }
+
+                <form class="text-start" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                    <div class="grid  lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1  gap-2">
+                        <div class="mb-1">
+                            <label class="font-semibold" for="firstName">{{ 'firstName' | translate }}</label>
+                            <input id="firstName" type="text" formControlName="firstName"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('firstName')?.touched && signupForm.get('firstName')?.invalid"
+                                placeholder="Harry">
+                            @if (signupForm.get('firstName')?.touched && signupForm.get('firstName')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'firstNameRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('firstName')?.touched && signupForm.get('firstName')?.hasError('minlength')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'firstNameMin' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="lastName">{{ 'lastName' | translate }}</label>
+                            <input id="lastName" type="text" formControlName="lastName"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('lastName')?.touched && signupForm.get('lastName')?.invalid"
+                                placeholder="Harry">
+                            @if (signupForm.get('lastName')?.touched && signupForm.get('lastName')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'lastNameRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('lastName')?.touched && signupForm.get('lastName')?.hasError('minlength')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'lastNameMin' | translate }}</p>
+                            }
+                        </div>
+                  
+
+               
+                        <div class="mb-1">
+                            <label class="font-semibold" for="mobile">{{ 'mobile' | translate }}</label>
+                            <input id="mobile" type="tel" formControlName="mobile"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('mobile')?.touched && signupForm.get('mobile')?.invalid"
+                                placeholder="+20101060737">
+                            @if (signupForm.get('mobile')?.touched && signupForm.get('mobile')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'mobileRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('mobile')?.touched && signupForm.get('mobile')?.hasError('pattern')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'mobileInvalid' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="email">{{ 'email' | translate }}</label>
+                            <input id="email" type="email" formControlName="email"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('email')?.touched && signupForm.get('email')?.invalid"
+                                placeholder="name@example.com">
+                            @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'emailRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('email')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'emailInvalid' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="password">{{ 'password' | translate }}</label>
+                            <input id="password" type="password" formControlName="password"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
+                                placeholder="Password:">
+                            @if (signupForm.get('password')?.touched && signupForm.get('password')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'passwordRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('password')?.touched && signupForm.get('password')?.hasError('minlength')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'passwordMin' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="confirmPassword">{{ 'confirmPassword' | translate }}</label>
+                            <input id="confirmPassword" type="password" formControlName="confirmPassword"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                [class.border-red-500]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid"
+                                placeholder="Password:">
+                            @if (signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'confirmRequired' | translate }}</p>
+                            }
+                            @if (signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.hasError('mismatch')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'confirmMismatch' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <div class="flex items-center w-full mb-0">
+                                <input formControlName="acceptTerms"
+                                    class="form-checkbox size-4 appearance-none rounded border border-gray-200 dark:border-gray-800 accent-red-600 checked:appearance-auto dark:accent-red-600 focus:border-red-300 focus:ring-0 focus:ring-offset-0 focus:ring-red-200 focus:ring-opacity-50 me-2"
+                                    type="checkbox" id="AcceptTC">
+                                <label class="form-check-label text-slate-400" for="AcceptTC">{{ 'acceptTerms' | translate }} <a
+                                    href="javascript:void(0)" class="text-primary">{{ 'terms' | translate }}</a></label>
+                            </div>
+                            @if (signupForm.get('acceptTerms')?.touched && signupForm.get('acceptTerms')?.hasError('required')) {
+                                <p class="mt-1 text-sm text-red-600">{{ 'acceptTerms' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <button type="submit"
+                                class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md w-full disabled:cursor-not-allowed disabled:opacity-70"
+                                [disabled]="isSubmitting">
+                                @if (isSubmitting) {
+                                    {{ 'submitting' | translate }}
+                                } @else {
+                                    {{ 'submit' | translate }}
+                                }
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <span class="text-slate-400 me-2">{{ 'alreadyHave' | translate }}</span> <a routerLink="/login"
+                                class="text-black dark:text-white font-bold inline-block">{{ 'signin' | translate }}</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- <app-switcher-one [switcherBack]="false" /> -->

@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
   { path: 'destinations', loadComponent: () => import('./pages/destinations-list/destinations-list').then(m => m.DestinationsList) },
 
+  { path: 'activate', loadComponent: () => import('./pages/user/auth-pages/activate-page/activate-page').then(m => m.ActivatePage) },
+  { path: 'login', loadComponent: () => import('./pages/user/auth-pages/login-page/login-page').then(m => m.LoginPage) },
+  { path: 'signup', loadComponent: () => import('./pages/user/auth-pages/signup-page/signup-page').then(m => m.SignupPage) },
+  { path: 'signup-success', loadComponent: () => import('./pages/user/auth-pages/signup-success/signup-success').then(m => m.SignupSuccess) },
+  { path: 'forgot-password', loadComponent: () => import('./pages/user/auth-pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
+  { path: 'home', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
 
 
 
@@ -27,15 +32,12 @@ export const routes: Routes = [
   { path: 'user-social', loadComponent: () => import('./pages/innerpages/my-account/user-social/user-social').then(m => m.UserSocial) },
   { path: 'user-notification', loadComponent: () => import('./pages/innerpages/my-account/user-notification/user-notification').then(m => m.UserNotification) },
   { path: 'user-setting', loadComponent: () => import('./pages/innerpages/my-account/user-setting/user-setting').then(m => m.UserSetting) },
-  { path: 'lock-screen', loadComponent: () => import('./pages/innerpages/auth-pages/lock-screen/lock-screen').then(m => m.LockScreen) },
+  { path: 'lock-screen', loadComponent: () => import('./pages/user/auth-pages/lock-screen/lock-screen').then(m => m.LockScreen) },
   { path: 'helpcenter', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-page/helpcenter-page').then(m => m.HelpcenterPage) },
   { path: 'helpcenter-faqs', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-faqs/helpcenter-faqs').then(m => m.HelpcenterFaqs) },
   { path: 'helpcenter-guides', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-guides/helpcenter-guides').then(m => m.HelpcenterGuides) },
   { path: 'helpcenter-support', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-support/helpcenter-support').then(m => m.HelpcenterSupport) },
-  { path: 'login', loadComponent: () => import('./pages/innerpages/auth-pages/login-page/login-page').then(m => m.LoginPage) },
-  { path: 'signup', loadComponent: () => import('./pages/innerpages/auth-pages/signup-page/signup-page').then(m => m.SignupPage) },
-  { path: 'signup-success', loadComponent: () => import('./pages/innerpages/auth-pages/signup-success/signup-success').then(m => m.SignupSuccess) },
-  { path: 'forgot-password', loadComponent: () => import('./pages/innerpages/auth-pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
+ 
   { path: 'terms', loadComponent: () => import('./pages/innerpages/utility/terms/terms').then(m => m.Terms) },
   { path: 'privacy', loadComponent: () => import('./pages/innerpages/utility/privacy/privacy').then(m => m.Privacy) },
   { path: 'contact', loadComponent: () => import('./pages/innerpages/contact-page/contact-page').then(m => m.ContactPage) },
@@ -44,5 +46,7 @@ export const routes: Routes = [
   { path: 'blogs', loadComponent: () => import('./pages/innerpages/blog/blog-page/blog-page').then(m => m.BlogPage) },
   { path: 'blog-standard', loadComponent: () => import('./pages/innerpages/blog/blog-standard/blog-standard').then(m => m.BlogStandard) },
   { path: 'blog-detail', loadComponent: () => import('./pages/innerpages/blog/blog-detail/blog-detail').then(m => m.BlogDetail) },
+ 
   { path: '**', loadComponent: () => import('./pages/innerpages/special-pages/error-page/error-page').then(m => m.ErrorPage) },
+
 ];

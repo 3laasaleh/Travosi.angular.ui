@@ -9,16 +9,16 @@
                     </div>
 
                     <div class="px-6 py-12 text-center">
-                        <p class="text-black font-semibold text-xl dark:text-white">Congratulations! 🎉</p>
-                        <p class="text-slate-400 mt-4">Your account has been successfully created. <br> Enjoy your journey. Thank you</p>
+                        <p class="text-black font-semibold text-xl dark:text-white">{{ title }}</p>
+                        <p class="text-slate-400 mt-4">{{ message }}</p>
 
                         <div class="mt-6">
-                            <a routerLink="/" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">Continue</a>
+                            <a [routerLink]="redirectLink" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ buttonText }}</a>
                         </div>
                     </div>
 
                     <div class="text-center p-6 border-t border-gray-100 dark:border-gray-700">
-                        <p class="mb-0 text-slate-400">© {{ year }} See World. Developed by <i class="mdi mdi-heart text-primary-600"></i> by <a href="https://shreethemes.in/" target="_blank" class="text-reset">Alaa Saleh</a>.</p>
+                        <p class="mb-0 text-slate-400">© {{ year }} See World. Developed by <i class="mdi mdi-heart text-primary-600"></i> by <a href="https://shreethemes.in/" target="_blank" class="text-reset">All</a>.</p>
                     </div>
                 </div>
             </div>
