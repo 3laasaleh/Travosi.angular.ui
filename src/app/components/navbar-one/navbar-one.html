@@ -62,18 +62,18 @@
     <div id="navigation" [class.hidden]="!toggle" [class.block]="toggle">
       <ul class="navigation-menu !justify-end" [class]="'navigation-menu !justify-end ' + menuLight">
         <li class="has-submenu parent-menu-item" [class.active]="isActive(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-item')">Home <span class="menu-arrow"></span></a>
+          <a href="javascript:void(0)" (click)="submenu('/index-item')">Destinations <span class="menu-arrow"></span></a>
           <ul class="submenu" [class.open]="isOpen(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-            <li [class.active]="activeMenu === '/'"><a routerLink="/" class="sub-menu-item">Top Destinations</a></li>
-            <li [class.active]="activeMenu === '/index-two'"><a routerLink="/index-two" class="sub-menu-item">Tours Packages</a></li>
-            <li [class.active]="activeMenu === '/index-three'"><a routerLink="/index-three" class="sub-menu-item">Tour Three</a></li>
-            <li [class.active]="activeMenu === '/index-four'"><a routerLink="/index-four" class="sub-menu-item">Tour Four</a></li>
-            <li [class.active]="activeMenu === '/index-five'"><a routerLink="/index-five" class="sub-menu-item">Tour Five</a></li>
+            <li [class.active]="activeMenu === '/'"><a routerLink="/" class="sub-menu-item"> Cairo</a></li>
+            <li [class.active]="activeMenu === '/index-two'"><a routerLink="/index-two" class="sub-menu-item">Hurghada</a></li>
+            <li [class.active]="activeMenu === '/index-three'"><a routerLink="/index-three" class="sub-menu-item">Sharm El Sheikh</a></li>
+            <li [class.active]="activeMenu === '/index-four'"><a routerLink="/index-four" class="sub-menu-item">Luxor</a></li>
+            <li [class.active]="activeMenu === '/index-five'"><a routerLink="/index-five" class="sub-menu-item">Aswan</a></li>
           </ul>
         </li>
 
         <li class="has-submenu parent-parent-menu-item" [class.active]="isActive(['/grid', '/grid-left-sidebar', '/grid-right-sidebar', '/index-listing', '/index-grid', '/list', '/list-left-sidebar', '/list-right-sidebar', '/index-list', '/tour-detail-one', '/tour-detail-two', '/index-detail'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-listing')"> Listing <span class="menu-arrow"></span></a>
+          <a href="javascript:void(0)" (click)="submenu('/index-listing')"> Tours <span class="menu-arrow"></span></a>
           <ul class="submenu" [class.open]="isOpen(['/index-listing', '/index-grid', '/index-list', '/index-detail'])">
             <li class="has-submenu parent-menu-item" [class.active]="isActive(['/grid', '/grid-left-sidebar', '/grid-right-sidebar', '/index-listing'])">
               <a href="javascript:void(0)" (click)="submenu('/index-grid')">Tour Grid <span class="submenu-arrow"></span></a>
@@ -103,7 +103,7 @@
           </ul>
         </li>
 
-        <li class="has-submenu parent-parent-menu-item" [class.active]="isActive(['/aboutus', '/index-pages', '/user-profile', '/user-billing', '/user-payment', '/user-invoice', '/user-social', '/user-notification', '/user-setting', '/index-account', '/helpcenter', '/helpcenter-faqs', '/helpcenter-guides', '/helpcenter-support', '/index-helpcenter', '/login', '/signup', '/forgot-password', '/lock-screen', '/index-auth', '/terms', '/privacy', '/index-terms', '/comingsoon', '/maintenance', '/404', '/index-special'])">
+        <!-- <li class="has-submenu parent-parent-menu-item" [class.active]="isActive(['/aboutus', '/index-pages', '/user-profile', '/user-billing', '/user-payment', '/user-invoice', '/user-social', '/user-notification', '/user-setting', '/index-account', '/helpcenter', '/helpcenter-faqs', '/helpcenter-guides', '/helpcenter-support', '/index-helpcenter', '/login', '/signup', '/forgot-password', '/lock-screen', '/index-auth', '/terms', '/privacy', '/index-terms', '/comingsoon', '/maintenance', '/404', '/index-special'])">
           <a href="javascript:void(0)" (click)="submenu('/index-pages')">Pages <span class="menu-arrow"></span></a>
           <ul class="submenu" [class.open]="isOpen(['/index-pages', '/aboutus', '/index-account', '/index-helpcenter', '/index-auth', '/index-terms', '/index-special'])">
             <li [class.active]="activeMenu === '/aboutus'"><a routerLink="/aboutus" class="sub-menu-item">About Us</a></li>
@@ -158,7 +158,7 @@
               </ul>
             </li>
           </ul>
-        </li>
+        </li> -->
 
         <!-- <li class="has-submenu parent-menu-item" [class.active]="isActive(['/blogs', '/blog-standard', '/blog-detail', '/index-blogs'])">
           <a href="javascript:void(0)" (click)="submenu('/index-blogs')">Blog<span class="menu-arrow"></span></a>

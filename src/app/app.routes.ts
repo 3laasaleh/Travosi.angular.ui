@@ -1,28 +1,8 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './pages/admin/admin.guard';
 
 export const routes: Routes = [
   { path: 'destinations', loadComponent: () => import('./pages/destinations-list/destinations-list').then(m => m.DestinationsList) },
-  {
-    path: 'admin',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/admin/admin-page').then(m => m.AdminPage),
-  },
-  {
-    path: 'admin/destinations',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/admin/destinations/destinations-page').then(m => m.Destinations),
-  },
-  {
-    path: 'admin/tours',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/admin/tours/tours-page').then(m => m.Tours),
-  },
-  {
-    path: 'admin/packages',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/admin/packages/packages-page').then(m => m.Packages),
-  },
+ 
 
   { path: 'activate', loadComponent: () => import('./pages/user/auth-pages/activate-page/activate-page').then(m => m.ActivatePage) },
   { path: 'login', loadComponent: () => import('./pages/user/auth-pages/login-page/login-page').then(m => m.LoginPage) },
