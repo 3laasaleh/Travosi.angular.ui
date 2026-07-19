@@ -15,7 +15,7 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
 
 @Component({
   selector: 'app-home',
-  imports: [TaglineOne, NavbarOne, SelectedDate, AgencyOne, UsersOne, FooterOne, SwitcherOne,
+  imports: [ NavbarOne, SelectedDate, AgencyOne, UsersOne, FooterOne, SwitcherOne,
     DestinationsTwo, TourPackages12item, 
   ],
   templateUrl: './home.html',

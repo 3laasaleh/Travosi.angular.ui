@@ -13,7 +13,7 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-two',
-  imports: [TaglineOne, NavbarOne, SelectedDate, AgencyOne, TourPackages, UsersOne, BlogsOne, FooterOne, SwitcherOne],
+  imports: [ NavbarOne, SelectedDate, AgencyOne, TourPackages, UsersOne, BlogsOne, FooterOne, SwitcherOne],
   templateUrl: './index-two.html',
 })
 export class IndexTwo implements AfterViewInit {

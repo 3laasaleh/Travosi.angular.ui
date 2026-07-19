@@ -23,6 +23,7 @@ export class NavbarOne implements OnInit, AfterViewInit {
   menuOpen = '';
   searchmenu = false;
   account = false;
+  showLangMneu: boolean=false;
 
   constructor(private router: Router) {}
 
@@ -47,6 +48,10 @@ export class NavbarOne implements OnInit, AfterViewInit {
   toggleParagraph3(): void {
     this.account = !this.account;
   }
+  toggleLang(): void {
+    this.showLangMneu = !this.showLangMneu;
+  }
+  
 
   submenu(item: string): void {
     this.menuOpen = this.menuOpen === item ? '' : item;

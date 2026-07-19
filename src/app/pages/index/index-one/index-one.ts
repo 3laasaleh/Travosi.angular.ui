@@ -12,7 +12,7 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-one',
-  imports: [TaglineOne, NavbarOne, SelectedDate, DestinationsSlider, TourPackagesSlider, AgencyOne, UsersOne, BlogsOne, FooterOne, SwitcherOne],
+  imports: [ NavbarOne, SelectedDate, DestinationsSlider, TourPackagesSlider, AgencyOne, UsersOne, BlogsOne, FooterOne, SwitcherOne],
   templateUrl: './index-one.html',
 })
 export class IndexOne {

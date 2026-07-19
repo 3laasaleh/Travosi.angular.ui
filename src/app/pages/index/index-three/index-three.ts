@@ -12,7 +12,7 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-three',
-  imports: [TaglineOne, NavbarOne, SelectedDate, DestinationsTwo, AgencyOne, TourPackages12item, UsersOne, InstaPost, FooterOne, SwitcherOne],
+  imports: [ NavbarOne, SelectedDate, DestinationsTwo, AgencyOne, TourPackages12item, UsersOne, InstaPost, FooterOne, SwitcherOne],
   templateUrl: './index-three.html',
 })
 export class IndexThree implements OnInit, OnDestroy {
