@@ -21,6 +21,7 @@
     "@ngx-translate/core": "^18.0.0",
     "@ngx-translate/http-loader": "^18.0.0",
     "@tailwindcss/postcss": "^4.3.2",
+    "bootstrap": "^5.3.8",
     "countup.js": "^2.10.1",
     "feather-icons": "^4.29.2",
     "ngx-cookie-service": "^21.3.1",
