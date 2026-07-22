@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { tns } from 'tiny-slider';
 import { destinations } from '../../../data/data';
 
 @Component({
   selector: 'app-destinations-slider',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './destinations-slider.html',
 })
 export class DestinationsSlider implements AfterViewInit {
@@ -22,7 +23,10 @@ export class DestinationsSlider implements AfterViewInit {
       autoplayButtonOutput: false,
       autoplayTimeout: 3000,
       navPosition: 'bottom',
-      controlsText: ['<i class="mdi mdi-chevron-left "></i>', '<i class="mdi mdi-chevron-right"></i>'],
+      controlsText: [
+        '<i class="mdi mdi-chevron-left "></i>',
+        '<i class="mdi mdi-chevron-right"></i>',
+      ],
       nav: false,
       speed: 400,
       gutter: 0,

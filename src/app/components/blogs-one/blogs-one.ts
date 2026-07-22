@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { blogData } from '../../data/data';
@@ -6,6 +6,7 @@ import { blogData } from '../../data/data';
 @Component({
   selector: 'app-blogs-one',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './blogs-one.html',
 })
 export class BlogsOne implements AfterViewInit {

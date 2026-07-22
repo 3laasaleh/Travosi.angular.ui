@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { TaglineOne } from '../../components/tagline-one/tagline-one';
 import { NavbarOne } from '../../components/navbar-one/navbar-one';
 import { SelectedDate } from '../../components/selected-date/selected-date';
@@ -15,10 +15,19 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
 
 @Component({
   selector: 'app-home',
-  imports: [TaglineOne, NavbarOne, SelectedDate, AgencyOne, UsersOne, FooterOne, SwitcherOne,
-    DestinationsTwo, TourPackages12item, 
+  imports: [
+    TaglineOne,
+    NavbarOne,
+    SelectedDate,
+    AgencyOne,
+    UsersOne,
+    FooterOne,
+    SwitcherOne,
+    DestinationsTwo,
+    TourPackages12item,
   ],
   templateUrl: './home.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home.scss',
 })
 export class Home implements AfterViewInit {

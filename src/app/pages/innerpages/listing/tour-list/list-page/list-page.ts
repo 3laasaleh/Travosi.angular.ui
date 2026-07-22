@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { NavbarOne } from '../../../../../components/navbar-one/navbar-one';
@@ -10,6 +10,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-list-page',
   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './list-page.html',
 })
 export class ListPage implements AfterViewInit {

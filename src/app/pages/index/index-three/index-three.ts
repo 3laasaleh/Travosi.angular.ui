@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
 import { NavbarOne } from '../../../components/navbar-one/navbar-one';
 import { SelectedDate } from '../../../components/selected-date/selected-date';
@@ -12,7 +12,19 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-three',
-  imports: [TaglineOne, NavbarOne, SelectedDate, DestinationsTwo, AgencyOne, TourPackages12item, UsersOne, InstaPost, FooterOne, SwitcherOne],
+  imports: [
+    TaglineOne,
+    NavbarOne,
+    SelectedDate,
+    DestinationsTwo,
+    AgencyOne,
+    TourPackages12item,
+    UsersOne,
+    InstaPost,
+    FooterOne,
+    SwitcherOne,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './index-three.html',
 })
 export class IndexThree implements OnInit, OnDestroy {

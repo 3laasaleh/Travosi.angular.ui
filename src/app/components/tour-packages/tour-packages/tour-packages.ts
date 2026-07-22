@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { packageData } from '../../../data/data';
@@ -6,6 +6,7 @@ import { packageData } from '../../../data/data';
 @Component({
   selector: 'app-tour-packages',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './tour-packages.html',
 })
 export class TourPackages implements AfterViewInit {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FooterOne } from '../../components/footer-one/footer-one';
 import { PaginationOne } from '../../components/listing/tour-grid/pagination-one/pagination-one';
@@ -8,14 +8,14 @@ import feather from 'feather-icons';
 import { destinations } from '../../data/data';
 @Component({
   selector: 'app-destinations-list',
-   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
+  imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
   templateUrl: './destinations-list.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './destinations-list.scss',
 })
 export class DestinationsList implements AfterViewInit {
   bg = 'assets/images/bg/cta.jpg';
-     destinations = destinations;
-  
+  destinations = destinations;
 
   ngAfterViewInit(): void {
     feather.replace();

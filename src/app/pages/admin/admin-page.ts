@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../user/auth-pages/_services/auth.service';
 
@@ -8,6 +8,7 @@ import { AuthService } from '../user/auth-pages/_services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './admin-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './admin-page.scss',
 })
 export class AdminPage implements OnInit {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
 import { NavbarOne } from '../../../components/navbar-one/navbar-one';
 import { SelectedDate } from '../../../components/selected-date/selected-date';
@@ -12,7 +12,19 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-one',
-  imports: [TaglineOne, NavbarOne, SelectedDate, DestinationsSlider, TourPackagesSlider, AgencyOne, UsersOne, BlogsOne, FooterOne, SwitcherOne],
+  imports: [
+    TaglineOne,
+    NavbarOne,
+    SelectedDate,
+    DestinationsSlider,
+    TourPackagesSlider,
+    AgencyOne,
+    UsersOne,
+    BlogsOne,
+    FooterOne,
+    SwitcherOne,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './index-one.html',
 })
 export class IndexOne {

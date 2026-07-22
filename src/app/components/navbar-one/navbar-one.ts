@@ -1,10 +1,18 @@
-import { AfterViewInit, Component, HostListener, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-navbar-one',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './navbar-one.html',
 })
 export class NavbarOne implements OnInit, AfterViewInit {
@@ -33,7 +41,6 @@ export class NavbarOne implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     feather.replace();
-    
   }
 
   handler(): void {

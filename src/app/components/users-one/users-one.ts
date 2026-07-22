@@ -1,9 +1,10 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { tns } from 'tiny-slider';
 import { clientData } from '../../data/data';
 
 @Component({
   selector: 'app-users-one',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './users-one.html',
 })
 export class UsersOne implements AfterViewInit {

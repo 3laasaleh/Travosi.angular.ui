@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
@@ -8,7 +8,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login-page',
-  imports: [RouterLink, SwitcherOne, ReactiveFormsModule,TranslatePipe],
+  imports: [RouterLink, SwitcherOne, ReactiveFormsModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './login-page.html',
 })
 export class LoginPage implements AfterViewInit {

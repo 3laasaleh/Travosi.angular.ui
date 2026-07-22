@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarOne } from '../../../components/navbar-one/navbar-one';
 import { AgencyOne } from '../../../components/agency-one/agency-one';
@@ -11,7 +11,18 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-about-us',
-  imports: [RouterLink, NavbarOne, AgencyOne, TeamOne, UsersOne, BlogsOne, InstaPost, FooterOne, SwitcherOne],
+  imports: [
+    RouterLink,
+    NavbarOne,
+    AgencyOne,
+    TeamOne,
+    UsersOne,
+    BlogsOne,
+    InstaPost,
+    FooterOne,
+    SwitcherOne,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './about-us.html',
 })
 export class AboutUs {

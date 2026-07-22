@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import Swiper from 'swiper';
 import { Navigation, Autoplay, Pagination } from 'swiper/modules';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
@@ -13,7 +13,18 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-two',
-  imports: [TaglineOne, NavbarOne, SelectedDate, AgencyOne, TourPackages, UsersOne, BlogsOne, FooterOne, SwitcherOne],
+  imports: [
+    TaglineOne,
+    NavbarOne,
+    SelectedDate,
+    AgencyOne,
+    TourPackages,
+    UsersOne,
+    BlogsOne,
+    FooterOne,
+    SwitcherOne,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './index-two.html',
 })
 export class IndexTwo implements AfterViewInit {

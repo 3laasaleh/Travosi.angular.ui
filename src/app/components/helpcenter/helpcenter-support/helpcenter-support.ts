@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { helps } from '../../../data/data';
@@ -6,6 +6,7 @@ import { helps } from '../../../data/data';
 @Component({
   selector: 'app-helpcenter-support-comp',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './helpcenter-support.html',
 })
 export class HelpcenterSupportComp implements AfterViewInit {

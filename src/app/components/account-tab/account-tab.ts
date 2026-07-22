@@ -1,10 +1,11 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-account-tab',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './account-tab.html',
 })
 export class AccountTab implements AfterViewInit {

@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-signup-success',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './signup-success.html',
 })
 export class SignupSuccess implements OnInit {
@@ -25,7 +26,8 @@ export class SignupSuccess implements OnInit {
       this.redirectLink = '/login';
     } else if (status === 'registered') {
       this.title = 'Success';
-      this.message = 'Your account has been created. Please check your email to activate your account.';
+      this.message =
+        'Your account has been created. Please check your email to activate your account.';
       this.buttonText = 'Continue';
       this.redirectLink = '/';
     }

@@ -1,10 +1,11 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
 import { tns } from 'tiny-slider';
 import { instraImg } from '../../data/data';
 
 @Component({
   selector: 'app-insta-post',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './insta-post.html',
 })
 export class InstaPost implements AfterViewInit {
@@ -24,7 +25,10 @@ export class InstaPost implements AfterViewInit {
       autoplayButtonOutput: false,
       autoplayTimeout: 3000,
       navPosition: 'bottom',
-      controlsText: ['<i class="mdi mdi-chevron-left "></i>', '<i class="mdi mdi-chevron-right"></i>'],
+      controlsText: [
+        '<i class="mdi mdi-chevron-left "></i>',
+        '<i class="mdi mdi-chevron-right"></i>',
+      ],
       nav: false,
       speed: 400,
       gutter: 0,

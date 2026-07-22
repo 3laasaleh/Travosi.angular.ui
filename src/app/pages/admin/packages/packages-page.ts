@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './packages-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './packages-page.scss',
 })
 export class Packages implements OnInit {
@@ -49,7 +50,9 @@ export class Packages implements OnInit {
     }
 
     this.packages.unshift({ ...this.packageForm, id: Date.now() });
-    this.successMessage = this.selectedPackage ? 'Package updated.' : 'Package created successfully.';
+    this.successMessage = this.selectedPackage
+      ? 'Package updated.'
+      : 'Package created successfully.';
     this.resetForm();
   }
 
@@ -98,8 +101,26 @@ export class Packages implements OnInit {
 
   private getFallbackPackages(): any[] {
     return [
-      { id: 1, title: 'Golden Hour Escape', destinationId: 1, price: '$920', duration: '5 Days', description: 'Beachfront relax and cultural dinner.', imageUrl: '', isActive: true },
-      { id: 2, title: 'Desert Nights', destinationId: 2, price: '$1180', duration: '6 Days', description: 'Desert camp and local excursions.', imageUrl: '', isActive: true },
+      {
+        id: 1,
+        title: 'Golden Hour Escape',
+        destinationId: 1,
+        price: '$920',
+        duration: '5 Days',
+        description: 'Beachfront relax and cultural dinner.',
+        imageUrl: '',
+        isActive: true,
+      },
+      {
+        id: 2,
+        title: 'Desert Nights',
+        destinationId: 2,
+        price: '$1180',
+        duration: '6 Days',
+        description: 'Desert camp and local excursions.',
+        imageUrl: '',
+        isActive: true,
+      },
     ];
   }
 }

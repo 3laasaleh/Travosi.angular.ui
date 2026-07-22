@@ -1,10 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-activate-page',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './activate-page.html',
 })
 export class ActivatePage implements OnInit {
@@ -38,18 +39,22 @@ export class ActivatePage implements OnInit {
   private activateAccount(): void {
     this.errorMessage = '';
     this.isLoading = true;
-    this.http.post(this.apiUrl, { email: this.email, token: this.token },
-      { headers:new HttpHeaders({'Authorization':`Bearer ${this.token}`})}
-      ).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.router.navigateByUrl('/signup-success?status=activated');
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage =
-          error?.error?.message || error?.message || 'Activation failed. Please try again.';
-      },
-    });
+    this.http
+      .post(
+        this.apiUrl,
+        { email: this.email, token: this.token },
+        { headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }) },
+      )
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigateByUrl('/signup-success?status=activated');
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorMessage =
+            error?.error?.message || error?.message || 'Activation failed. Please try again.';
+        },
+      });
   }
 }

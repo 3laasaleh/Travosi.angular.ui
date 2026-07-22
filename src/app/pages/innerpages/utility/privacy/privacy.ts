@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
 import { PrivacyOne } from '../../../../components/utility/privacy-one/privacy-one';
@@ -8,6 +8,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-privacy',
   imports: [RouterLink, NavbarOne, PrivacyOne, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './privacy.html',
 })
 export class Privacy {}

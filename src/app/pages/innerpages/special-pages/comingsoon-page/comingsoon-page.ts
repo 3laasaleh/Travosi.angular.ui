@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
@@ -6,6 +12,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-comingsoon-page',
   imports: [RouterLink, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './comingsoon-page.html',
 })
 export class ComingsoonPage implements OnInit, AfterViewInit, OnDestroy {

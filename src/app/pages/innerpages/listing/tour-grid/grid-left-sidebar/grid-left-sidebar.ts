@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { NavbarOne } from '../../../../../components/navbar-one/navbar-one';
@@ -11,6 +11,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-grid-left-sidebar',
   imports: [RouterLink, NavbarOne, PriceFilter, PaginationOne, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './grid-left-sidebar.html',
 })
 export class GridLeftSidebar implements AfterViewInit {

@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-maintenance-page',
   imports: [SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './maintenance-page.html',
 })
 export class MaintenancePage implements AfterViewInit, OnDestroy {

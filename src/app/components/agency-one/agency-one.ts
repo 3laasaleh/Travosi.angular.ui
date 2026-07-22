@@ -1,9 +1,16 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CountUp } from 'countup.js';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-agency-one',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './agency-one.html',
 })
 export class AgencyOne implements AfterViewInit {

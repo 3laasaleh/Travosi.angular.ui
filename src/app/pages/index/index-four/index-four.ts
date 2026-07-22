@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import feather from 'feather-icons';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
@@ -12,7 +12,18 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
   selector: 'app-index-four',
-  imports: [FormsModule, TaglineOne, NavbarOne, DestinationsSlider, TourPackages8item, UsersOne, AskedQuestions, FooterOne, SwitcherOne],
+  imports: [
+    FormsModule,
+    TaglineOne,
+    NavbarOne,
+    DestinationsSlider,
+    TourPackages8item,
+    UsersOne,
+    AskedQuestions,
+    FooterOne,
+    SwitcherOne,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './index-four.html',
 })
 export class IndexFour implements AfterViewInit {

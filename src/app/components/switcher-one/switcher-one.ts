@@ -1,10 +1,18 @@
-import { AfterViewInit, Component, HostListener, Input, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  HostListener,
+  Input,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-switcher-one',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './switcher-one.html',
 })
 export class SwitcherOne implements AfterViewInit, OnDestroy {

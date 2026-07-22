@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
 import { NavbarOne } from '../../../../../components/navbar-one/navbar-one';
 import { TourDetail } from '../../../../../components/tour-detail/tour-detail/tour-detail';
@@ -9,6 +9,7 @@ import { SwitcherOne } from '../../../../../components/switcher-one/switcher-one
 @Component({
   selector: 'app-tour-detail-two',
   imports: [NavbarOne, TourDetail, TourSidebar, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './tour-detail-two.html',
 })
 export class TourDetailTwo implements AfterViewInit {

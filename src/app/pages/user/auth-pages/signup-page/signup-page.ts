@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { AuthService } from '../_services/auth.service';
-import {  TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface RegistrationPayload {
   firstName: string;
@@ -16,7 +16,8 @@ interface RegistrationPayload {
 
 @Component({
   selector: 'app-signup-page',
-  imports: [ReactiveFormsModule, RouterLink,TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './signup-page.html',
 })
 export class SignupPage implements AfterViewInit {
@@ -43,7 +44,7 @@ export class SignupPage implements AfterViewInit {
     },
     {
       validators: this.passwordMatchValidator,
-    }
+    },
   );
 
   ngAfterViewInit(): void {
@@ -71,9 +72,9 @@ export class SignupPage implements AfterViewInit {
     this.isSubmitting = true;
 
     this._authService.registeration(payload).subscribe({
-      next: (res:any) => {
+      next: (res: any) => {
         this.isSubmitting = false;
-        
+
         this.successMessage = 'Sign up compeleted successfully.';
         this.router.navigateByUrl('/signup-success?status=registered');
       },

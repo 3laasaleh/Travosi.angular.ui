@@ -1,9 +1,10 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
 import { datas } from '../../../data/data';
 
 @Component({
   selector: 'app-tour-detail',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './tour-detail.html',
 })
 export class TourDetail implements AfterViewInit {

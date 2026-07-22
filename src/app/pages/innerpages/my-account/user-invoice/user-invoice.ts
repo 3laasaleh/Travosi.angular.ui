@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
@@ -8,6 +8,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-user-invoice',
   imports: [RouterLink, NavbarOne, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './user-invoice.html',
 })
 export class UserInvoice implements AfterViewInit {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
 import { HelpcenterOne } from '../../../../components/helpcenter/helpcenter-one/helpcenter-one';
@@ -8,6 +8,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-helpcenter-page',
   imports: [RouterLink, NavbarOne, HelpcenterOne, FooterOne, SwitcherOne],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './helpcenter-page.html',
 })
 export class HelpcenterPage {

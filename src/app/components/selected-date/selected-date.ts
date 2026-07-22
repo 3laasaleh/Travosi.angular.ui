@@ -1,10 +1,11 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-selected-date',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './selected-date.html',
 })
 export class SelectedDate implements AfterViewInit {
