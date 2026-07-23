@@ -13,7 +13,7 @@ import { AuthService } from "../../pages/user/auth-pages/_services/auth.service"
 @Injectable({
   providedIn: 'root',
 })
-export class PublicService {
+export class ApiService {
   token: string='';
   constructor(private http: HttpClient, private _authService: AuthService) {
 

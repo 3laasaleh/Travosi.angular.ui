@@ -39,6 +39,12 @@
    --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.1);
    --shadow-testi: 2px 2px 2px -1px rgb(0 0 0 / 0.1);
 
+  --color-secondary: #0f172a;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+  --color-info: #0284c7;
+  
     --color-primary: #fb2c36;
    --color-primary-50: #fef2f2;
    --color-primary-100: #ffe2e2;
