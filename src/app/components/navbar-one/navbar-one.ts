@@ -1,3 +1,4 @@
+import { AuthService } from './../../pages/user/auth-pages/_services/auth.service';
 import {
   AfterViewInit,
   Component,
@@ -5,6 +6,7 @@ import {
   Input,
   OnInit,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
@@ -31,6 +33,8 @@ export class NavbarOne implements OnInit, AfterViewInit {
   menuOpen = '';
   searchmenu = false;
   account = false;
+  _authService =inject(AuthService);
+ 
 
   constructor(private router: Router) {}
 
@@ -76,5 +80,9 @@ export class NavbarOne implements OnInit, AfterViewInit {
     } else {
       navbar.classList.remove('nav-sticky');
     }
+  }
+
+  isUserLoggined(){
+    return this._authService.isLoggedIn();
   }
 }

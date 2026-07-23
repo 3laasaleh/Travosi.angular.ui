@@ -4,7 +4,7 @@ import feather from 'feather-icons';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login-page',

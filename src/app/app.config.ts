@@ -1,7 +1,7 @@
 import { HttpClient, provideHttpClient, withXhr } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateHttpLoader, TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
@@ -15,18 +15,13 @@ export const appConfig: ApplicationConfig = {
     JwtHelperService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     provideTranslateService({
-      loader: {
-        provide: TranslateLoader,
-        useClass: TranslateHttpLoader,
-        deps: [HttpClient],
-      },
-    }),
-    {
-      provide: TRANSLATE_HTTP_LOADER_CONFIG,
-      useValue: {
+      lang:'en',
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({
         prefix: './assets/lang/',
-        suffix: '.json',
-      },
-    },
+        suffix: '.json'
+      })
+    }),
+   
   ],
 };

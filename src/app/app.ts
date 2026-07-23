@@ -15,7 +15,11 @@ export class App {
 
   constructor() {
     this.translate.addLangs(['en', 'ar']);
-    this.translate.setFallbackLang('en');
     this.translate.use('en');
+    this.translate.setFallbackLang('en');
+
+    let ss =this.translate.instant('emailAddress')
+    debugger
+
   }
 }
