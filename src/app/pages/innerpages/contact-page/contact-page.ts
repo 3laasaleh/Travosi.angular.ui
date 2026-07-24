@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
-import { NavbarOne } from '../../../components/navbar-one/navbar-one';
-import { FooterOne } from '../../../components/footer-one/footer-one';
+import { NavbarOne } from '../../../layout/navbar-one/navbar-one';
+import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({

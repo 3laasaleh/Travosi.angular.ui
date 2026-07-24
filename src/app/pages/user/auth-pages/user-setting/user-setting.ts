@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import feather from 'feather-icons';
-import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
-import { AccountTab } from '../../../../components/account-tab/account-tab';
-import { FooterOne } from '../../../../components/footer-one/footer-one';
+import { NavbarOne } from '../../../../layout/navbar-one/navbar-one';
+import { AccountTab } from '../../account-tab/account-tab';
+import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { AuthService } from '../_services/auth.service';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -31,9 +31,9 @@ export class UserSetting implements AfterViewInit {
   passwordError = '';
 
   personalForm = this.fb.nonNullable.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    email: [{value:'',disbaled:true}],
+    firstName: [''],
+    lastName: [''],
+    email: [{ value: '', disabled: true }, ],
     phone: [''],
   });
 
@@ -51,12 +51,11 @@ export class UserSetting implements AfterViewInit {
     }
 
     this.currentUser = user;
-    debugger;
     this.personalForm.patchValue({
       firstName: user?.firstName??'' ,
       lastName: user?.lastName ?? '',
       phone: user?.mobile ?? '',
-      email: {value:user?.mobile ,disbaled:true},
+      email:user?.email??"",
     });
   }
 

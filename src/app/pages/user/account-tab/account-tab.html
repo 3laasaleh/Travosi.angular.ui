@@ -17,10 +17,10 @@
 
         <div class="border-t border-gray-100 dark:border-gray-700">
             <ul class="list-none sidebar-nav mb-0 pb-0" id="navmenu-nav">
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-profile'">
-                    <a routerLink="/user-profile" class="navbar-link text-slate-400 flex items-center py-2 rounded">
+                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-booking'">
+                    <a routerLink="/user-booking" class="navbar-link text-slate-400 flex items-center py-2 rounded">
                         <span class="me-2 mb-0"><i data-feather="airplay" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Profile</h6>
+                        <h6 class="mb-0 font-medium">My Booking</h6>
                     </a>
                 </li>
                 <!-- <li class="navbar-item account-menu" [class.active]="currentUrl == '/user-billing'">
@@ -66,7 +66,7 @@
                 </li>
 
                 <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-screen'">
-                    <a routerLink="/lock-screen" class="navbar-link text-slate-400 flex items-center py-2 rounded">
+                    <a (click)="onLogoutClicked()" class="navbar-link text-slate-400 flex items-center py-2 rounded">
                         <span class="me-2 mb-0"><i data-feather="log-out" class="size-4"></i></span>
                         <h6 class="mb-0 font-medium">Sign Out</h6>
                     </a>

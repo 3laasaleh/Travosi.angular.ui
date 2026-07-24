@@ -1,0 +1,88 @@
+<app-navbar-one />
+<section class="relative lg:pb-24 pb-16 md:mt-[84px] mt-[70px]">
+    <div class="container relative">
+        <div class="relative overflow-hidden md:rounded-md shadow dark:shadow-gray-800 h-52 bg-center bg-no-repeat bg-cover" style="background-image: url('assets/images/bg/cta.jpg')"></div>
+    </div>
+
+    <div class="container relative md:mt-24 mt-16">
+        <div class="md:flex">
+            <div class="lg:w-1/4 md:w-1/3 md:px-3">
+                <app-account-tab />
+            </div>
+
+            <div class="lg:w-3/4 md:w-2/3 md:px-3 mt-6 md:mt-0">
+                <div class="rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-900 shadow dark:shadow-gray-800 p-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h5 class="text-xl font-semibold text-slate-900 dark:text-white">My Bookings</h5>
+                            <p class="text-slate-400 mt-1">Review your current reservations and booking history.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                            <label for="pageSize" class="font-medium">Rows:</label>
+                            <select id="pageSize" class="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2" (change)="onPageSizeChange($event)">
+                                @for (size of pageSizes; track size) {
+                                    <option [value]="size" [selected]="size === pageSize">{{ size }}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700">
+                        @if (isLoading) {
+                            <div class="p-8 text-center text-slate-500 dark:text-slate-400">Loading your bookings...</div>
+                        } @else if (errorMessage) {
+                            <div class="p-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</div>
+                        } @else if (bookings.length === 0) {
+                            <div class="p-8 text-center text-slate-500 dark:text-slate-400">No bookings found.</div>
+                        } @else {
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                                    <thead class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-3 font-medium">Booking ID</th>
+                                            <th class="px-4 py-3 font-medium">Tour</th>
+                                            <th class="px-4 py-3 font-medium">Destination</th>
+                                            <th class="px-4 py-3 font-medium">Booked</th>
+                                            <th class="px-4 py-3 font-medium">Travel Dates</th>
+                                            <th class="px-4 py-3 font-medium">Guests</th>
+                                            <th class="px-4 py-3 font-medium">Amount</th>
+                                            <th class="px-4 py-3 font-medium">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (booking of pagedBookings; track $index) {
+                                            <tr class="border-t border-gray-100 dark:border-gray-800 hover:bg-slate-50 dark:hover:bg-slate-950">
+                                                <td class="px-4 py-4 font-medium text-slate-800 dark:text-white">{{ booking.bookingId }}</td>
+                                                <td class="px-4 py-4">{{ booking.tourName }}</td>
+                                                <td class="px-4 py-4">{{ booking.destination }}</td>
+                                                <td class="px-4 py-4">{{ booking.bookingDate }}</td>
+                                                <td class="px-4 py-4">{{ booking.checkInDate }} - {{ booking.checkOutDate }}</td>
+                                                <td class="px-4 py-4">{{ booking.guests }}</td>
+                                                <td class="px-4 py-4">{{ booking.totalAmount }}</td>
+                                                <td class="px-4 py-4">
+                                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" [class]="booking.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : booking.status === 'Pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'">{{ booking.status }}</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Showing {{ pagedBookings.length }} of {{ bookings.length }} bookings</p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200" [disabled]="page === 1" (click)="prevPage()">Previous</button>
+                                    <span class="text-sm text-slate-500 dark:text-slate-400">Page {{ page }} / {{ totalPages }}</span>
+                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200" [disabled]="page >= totalPages" (click)="nextPage()">Next</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<app-footer-one />
+<app-switcher-one [switcherBack]="true" />

@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NavbarOne } from '../../../../components/navbar-one/navbar-one';
+import { NavbarOne } from '../../../../layout/navbar-one/navbar-one';
 import { HelpcenterFaqsComp } from '../../../../components/helpcenter/helpcenter-faqs/helpcenter-faqs';
-import { FooterOne } from '../../../../components/footer-one/footer-one';
+import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 
 @Component({

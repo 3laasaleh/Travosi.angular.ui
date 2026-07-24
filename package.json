@@ -28,6 +28,7 @@
     "postcss": "^8.5.19",
     "rxjs": "~7.8.0",
     "sonner": "^2.0.7",
+    "sweetalert2": "^11.26.25",
     "swiper": "^14.0.5",
     "tailwindcss": "^4.3.2",
     "tiny-slider": "^2.9.4",

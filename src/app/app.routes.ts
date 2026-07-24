@@ -34,6 +34,8 @@ export const routes: Routes = [
   { path: 'forgot-password', loadComponent: () => import('./pages/user/auth-pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
   { path: 'reset-password', loadComponent: () => import('./pages/user/auth-pages/reset-password/reset-password').then(m => m.ResetPassword) },
   { path: 'home', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
+  { path: 'user-profile', canActivate: [authGuard], loadComponent: () => import('./pages/user/user-account/user-account').then(m => m.UserAccount) },
+  { path: 'user-booking', canActivate: [authGuard], loadComponent: () => import('./pages/user/user-booking/user-booking').then(m => m.UserBooking) },
 
 
 
@@ -50,7 +52,6 @@ export const routes: Routes = [
   { path: 'tour-detail-one', loadComponent: () => import('./pages/innerpages/listing/tour-detail/tour-detail-one/tour-detail-one').then(m => m.TourDetailOne) },
   { path: 'tour-detail-two', loadComponent: () => import('./pages/innerpages/listing/tour-detail/tour-detail-two/tour-detail-two').then(m => m.TourDetailTwo) },
   { path: 'aboutus', loadComponent: () => import('./pages/innerpages/about-us/about-us').then(m => m.AboutUs) },
-  { path: 'user-profile', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-account/user-account').then(m => m.UserAccount) },
   { path: 'user-billing', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-billing/user-billing').then(m => m.UserBilling) },
   { path: 'user-payment', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-payment/user-payment').then(m => m.UserPayment) },
   { path: 'user-invoice', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-invoice/user-invoice').then(m => m.UserInvoice) },

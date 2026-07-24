@@ -1,4 +1,4 @@
-import { AuthService } from './../../pages/user/auth-pages/_services/auth.service';
+import { AuthService } from '../../pages/user/auth-pages/_services/auth.service';
 import {
   AfterViewInit,
   Component,

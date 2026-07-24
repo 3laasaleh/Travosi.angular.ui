@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
-import { AuthService } from '../../pages/user/auth-pages/_services/auth.service';
+import Swal from 'sweetalert2';
+import { AuthService } from '../auth-pages/_services/auth.service';
 
 @Component({
   selector: 'app-account-tab',
@@ -38,5 +39,22 @@ export class AccountTab implements AfterViewInit {
     if (input.files && input.files[0]) {
       this.imageSrc = URL.createObjectURL(input.files[0]);
     }
+  }
+
+  onLogoutClicked(): void {
+    Swal.fire({
+      title: 'Confirm Sign Out',
+      text: 'Are you sure you want to log out of your account?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sign Out',
+      confirmButtonColor:'#fb2c36',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout();
+      }
+    });
   }
 }

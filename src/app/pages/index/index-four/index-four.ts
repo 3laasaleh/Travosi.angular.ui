@@ -2,12 +2,12 @@ import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import feather from 'feather-icons';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
-import { NavbarOne } from '../../../components/navbar-one/navbar-one';
+import { NavbarOne } from '../../../layout/navbar-one/navbar-one';
 import { DestinationsSlider } from '../../../components/destinations/destinations-slider/destinations-slider';
 import { TourPackages8item } from '../../../components/tour-packages/tour-packages-8item/tour-packages-8item';
 import { UsersOne } from '../../../components/users-one/users-one';
 import { AskedQuestions } from '../../../components/asked-questions/asked-questions';
-import { FooterOne } from '../../../components/footer-one/footer-one';
+import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({

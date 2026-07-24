@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../user/auth-pages/_services/auth.service';
+import { SidebarMenu } from '../../layout/sidebar-menu/sidebar-menu';
 
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SidebarMenu],
   templateUrl: './admin-page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './admin-page.scss',

@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TaglineOne } from '../../../components/tagline-one/tagline-one';
-import { NavbarOne } from '../../../components/navbar-one/navbar-one';
+import { NavbarOne } from '../../../layout/navbar-one/navbar-one';
 import { SelectedDate } from '../../../components/selected-date/selected-date';
 import { DestinationsTwo } from '../../../components/destinations/destinations-two/destinations-two';
 import { AgencyOne } from '../../../components/agency-one/agency-one';
 import { TourPackages12item } from '../../../components/tour-packages/tour-packages-12item/tour-packages-12item';
 import { UsersOne } from '../../../components/users-one/users-one';
 import { InstaPost } from '../../../components/insta-post/insta-post';
-import { FooterOne } from '../../../components/footer-one/footer-one';
+import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 
 @Component({
