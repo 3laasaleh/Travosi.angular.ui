@@ -32,142 +32,15 @@
         </div>
       </li> -->
 
-      <li class="dropdown inline-block relative ps-0.5">
-        <button data-dropdown-toggle="dropdown" class="dropdown-toggle items-center" type="button" (click)="toggleParagraph3()">
-          <span class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md border border-primary  ">
-              <i data-feather="user" class="size-4 text-primary"></i>
-          </span>
-        </button>
-        <div class="dropdown-menu absolute end-0 m-0 mt-4 z-10 w-48 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow dark:shadow-gray-800" [class.hidden]="!account">
-          <ul class="py-2 text-start">
-            @if(isUserLoggined()){
-            <li>
-              <a routerLink="/user-profile" class="flex items-center font-medium  px-4 dark:text-white/70 hover:text-primary dark:hover:text-white"><i data-feather="user" class="size-4 me-2"></i>Profile</a>
-            </li>
-            <li class="ms-0">
-              <a routerLink="/helpcenter" class="flex items-center font-medium  px-4 dark:text-white/70 hover:text-primary dark:hover:text-white"><i data-feather="help-circle" class="size-4 me-2"></i>Helpcenter</a>
-            </li>
-            <li class="ms-0">
-              <a routerLink="/user-setting" class="flex items-center font-medium  px-4 dark:text-white/70 hover:text-primary dark:hover:text-white"><i data-feather="settings" class="size-4 me-2"></i>Settings</a>
-            </li>
-            <li class="border-t border-gray-100 dark:border-gray-800 my-2"></li>
-            <li class="ms-0">
-              <a routerLink="/login" class="flex items-center font-medium  px-4 dark:text-white/70 hover:text-primary dark:hover:text-white">
-                <i data-feather="log-out" class="size-4 me-2"></i>Logout</a>
-            </li>
-            }
-            @else{
-              <li class="ms-0">
-              <a routerLink="/login" class="flex items-center font-medium px-4 dark:text-white/70 hover:text-primary dark:hover:text-white">
-                <i data-feather="log-in" class="size-4 me-2"></i>Login</a>
-            </li>
-            }
 
-          </ul>
-        </div>
-      </li>
     </ul>
 
     <div id="navigation" [class.hidden]="!toggle" [class.block]="toggle">
       <ul class="navigation-menu !justify-end" [class]="'navigation-menu !justify-end ' + menuLight">
-        <li class="has-submenu parent-menu-item" [class.active]="isActive(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-item')">Home <span class="menu-arrow"></span></a>
-          <ul class="submenu" [class.open]="isOpen(['/', '/index-two', '/index-three', '/index-four', '/index-five', '/index-item'])">
-            <li [class.active]="activeMenu === '/'"><a routerLink="/" class="sub-menu-item">Top Destinations</a></li>
-            <li [class.active]="activeMenu === '/index-two'"><a routerLink="/index-two" class="sub-menu-item">Tours Packages</a></li>
-            <li [class.active]="activeMenu === '/index-three'"><a routerLink="/index-three" class="sub-menu-item">Tour Three</a></li>
-            <li [class.active]="activeMenu === '/index-four'"><a routerLink="/index-four" class="sub-menu-item">Tour Four</a></li>
-            <li [class.active]="activeMenu === '/index-five'"><a routerLink="/index-five" class="sub-menu-item">Tour Five</a></li>
-          </ul>
-        </li>
+        <li [class.active]="activeMenu === '/destinations'"><a routerLink="/destinations" class="sub-menu-item"> Destinations</a></li>
+        <li [class.active]="activeMenu === '/tours'"><a routerLink="/tours" class="sub-menu-item"> Tours</a></li>
 
-        <li class="has-submenu parent-parent-menu-item" [class.active]="isActive(['/grid', '/grid-left-sidebar', '/grid-right-sidebar', '/index-listing', '/index-grid', '/list', '/list-left-sidebar', '/list-right-sidebar', '/index-list', '/tour-detail-one', '/tour-detail-two', '/index-detail'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-listing')"> Listing <span class="menu-arrow"></span></a>
-          <ul class="submenu" [class.open]="isOpen(['/index-listing', '/index-grid', '/index-list', '/index-detail'])">
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/grid', '/grid-left-sidebar', '/grid-right-sidebar', '/index-listing'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-grid')">Tour Grid <span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/grid', '/grid-left-sidebar', '/grid-right-sidebar', '/index-grid'])">
-                <li [class.active]="activeMenu === '/grid'"><a routerLink="/grid" class="sub-menu-item">Grid</a></li>
-                <li [class.active]="activeMenu === '/grid-left-sidebar'"><a routerLink="/grid-left-sidebar" class="sub-menu-item">Grid Left Sidebar</a></li>
-                <li [class.active]="activeMenu === '/grid-right-sidebar'"><a routerLink="/grid-right-sidebar" class="sub-menu-item">Grid Right Sidebar</a></li>
-              </ul>
-            </li>
 
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/list', '/list-left-sidebar', '/list-right-sidebar', '/index-list'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-list')">Tour List <span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/list', '/list-left-sidebar', '/list-right-sidebar', '/index-list'])">
-                <li [class.active]="activeMenu === '/list'"><a routerLink="/list" class="sub-menu-item">List</a></li>
-                <li [class.active]="activeMenu === '/list-left-sidebar'"><a routerLink="/list-left-sidebar" class="sub-menu-item">List Left Sidebar</a></li>
-                <li [class.active]="activeMenu === '/list-right-sidebar'"><a routerLink="/list-right-sidebar" class="sub-menu-item">List Right Sidebar</a></li>
-              </ul>
-            </li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/tour-detail-one', '/tour-detail-two', '/index-detail'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-detail')"> Tour Detail <span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/tour-detail-one', '/tour-detail-two', '/index-detail'])">
-                <li [class.active]="activeMenu === '/tour-detail-one'"><a routerLink="/tour-detail-one" class="sub-menu-item">Tour Detail One</a></li>
-                <li [class.active]="activeMenu === '/tour-detail-two'"><a routerLink="/tour-detail-two" class="sub-menu-item">Tour Detail Two</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-
-        <li class="has-submenu parent-parent-menu-item" [class.active]="isActive(['/aboutus', '/index-pages', '/user-profile', '/user-billing', '/user-payment', '/user-invoice', '/user-social', '/user-notification', '/user-setting', '/index-account', '/helpcenter', '/helpcenter-faqs', '/helpcenter-guides', '/helpcenter-support', '/index-helpcenter', '/login', '/signup', '/forgot-password', '/lock-screen', '/index-auth', '/terms', '/privacy', '/index-terms', '/comingsoon', '/maintenance', '/404', '/index-special'])">
-          <a href="javascript:void(0)" (click)="submenu('/index-pages')">Pages <span class="menu-arrow"></span></a>
-          <ul class="submenu" [class.open]="isOpen(['/index-pages', '/aboutus', '/index-account', '/index-helpcenter', '/index-auth', '/index-terms', '/index-special'])">
-            <li [class.active]="activeMenu === '/aboutus'"><a routerLink="/aboutus" class="sub-menu-item">About Us</a></li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/user-profile', '/user-billing', '/user-payment', '/user-invoice', '/user-social', '/user-notification', '/user-setting', '/index-account'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-account')"> My Account<span class="submenu-arrow"></span><span class="bg-primary inline-block text-white text-[10px] font-bold px-2.5 py-0.5 rounded h-5 ms-1">New</span></a>
-              <ul class="submenu" [class.open]="isOpen(['/user-profile', '/user-billing', '/user-payment', '/user-invoice', '/user-social', '/user-notification', '/user-setting', '/index-account'])">
-                <li [class.active]="activeMenu === '/user-profile'"><a routerLink="/user-profile" class="sub-menu-item">User Account</a></li>
-                <li [class.active]="activeMenu === '/user-billing'"><a routerLink="/user-billing" class="sub-menu-item">Billing<span class="bg-primary inline-block text-white text-[10px] font-bold px-2.5 py-0.5 rounded h-5 ms-1">New</span></a></li>
-                <li [class.active]="activeMenu === '/user-payment'"><a routerLink="/user-payment" class="sub-menu-item">Payment</a></li>
-                <li [class.active]="activeMenu === '/user-invoice'"><a routerLink="/user-invoice" class="sub-menu-item">Invoice</a></li>
-                <li [class.active]="activeMenu === '/user-social'"><a routerLink="/user-social" class="sub-menu-item">Social</a></li>
-                <li [class.active]="activeMenu === '/user-notification'"><a routerLink="/user-notification" class="sub-menu-item">Notification</a></li>
-                <li [class.active]="activeMenu === '/user-setting'"><a routerLink="/user-setting" class="sub-menu-item">Setting</a></li>
-              </ul>
-            </li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/helpcenter', '/helpcenter-faqs', '/helpcenter-guides', '/helpcenter-support', '/index-helpcenter'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-helpcenter')"> Helpcenter<span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/helpcenter', '/helpcenter-faqs', '/helpcenter-guides', '/helpcenter-support', '/index-helpcenter'])">
-                <li [class.active]="activeMenu === '/helpcenter'"><a routerLink="/helpcenter" class="sub-menu-item">Overview</a></li>
-                <li [class.active]="activeMenu === '/helpcenter-faqs'"><a routerLink="/helpcenter-faqs" class="sub-menu-item">FAQs</a></li>
-                <li [class.active]="activeMenu === '/helpcenter-guides'"><a routerLink="/helpcenter-guides" class="sub-menu-item">Guides</a></li>
-                <li [class.active]="activeMenu === '/helpcenter-support'"><a routerLink="/helpcenter-support" class="sub-menu-item">Support</a></li>
-              </ul>
-            </li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/login', '/signup', '/forgot-password', '/lock-screen', '/index-auth'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-auth')"> Auth Pages<span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/login', '/signup', '/forgot-password', '/lock-screen', '/index-auth'])">
-                <li [class.active]="activeMenu === '/login'"><a routerLink="/login" class="sub-menu-item">Login</a></li>
-                <li [class.active]="activeMenu === '/signup'"><a routerLink="/signup" class="sub-menu-item">Signup</a></li>
-                <li [class.active]="activeMenu === '/forgot-password'"><a routerLink="/forgot-password" class="sub-menu-item"> Forgot Password</a></li>
-                <li [class.active]="activeMenu === '/lock-screen'"><a routerLink="/lock-screen" class="sub-menu-item"> Lock Screen</a></li>
-              </ul>
-            </li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/terms', '/privacy', '/index-terms'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-terms')"> Utility<span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/terms', '/privacy', '/index-terms'])">
-                <li [class.active]="activeMenu === '/terms'"><a routerLink="/terms" class="sub-menu-item">Terms of Services</a></li>
-                <li [class.active]="activeMenu === '/privacy'"><a routerLink="/privacy" class="sub-menu-item">Privacy Policy</a></li>
-              </ul>
-            </li>
-
-            <li class="has-submenu parent-menu-item" [class.active]="isActive(['/comingsoon', '/maintenance', '/404', '/index-special'])">
-              <a href="javascript:void(0)" (click)="submenu('/index-special')"> Special<span class="submenu-arrow"></span></a>
-              <ul class="submenu" [class.open]="isOpen(['/comingsoon', '/maintenance', '/404', '/index-special'])">
-                <li [class.active]="activeMenu === '/comingsoon'"><a routerLink="/comingsoon" class="sub-menu-item"> Coming Soon</a></li>
-                <li [class.active]="activeMenu === '/maintenance'"><a routerLink="/maintenance" class="sub-menu-item"> Maintenance</a></li>
-                <li [class.active]="activeMenu === '/404'"><a routerLink="/404" class="sub-menu-item"> 404!</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
 
         <!-- <li class="has-submenu parent-menu-item" [class.active]="isActive(['/blogs', '/blog-standard', '/blog-detail', '/index-blogs'])">
           <a href="javascript:void(0)" (click)="submenu('/index-blogs')">Blog<span class="menu-arrow"></span></a>
@@ -179,6 +52,30 @@
         </li> -->
 
         <li [class.active]="activeMenu === '/contact'"><a routerLink="/contact" class="sub-menu-item">Contact Us</a></li>
+
+            @if(isUserLoggined()){
+            <li>
+              <a routerLink="/user-profile" class="flex items-center font-medium  px-4 hover:text-primary"><i data-feather="user" class="size-4 me-2"></i>Profile</a>
+            </li>
+            <li class="ms-0">
+              <a routerLink="/helpcenter" class="flex items-center font-medium  px-4 hover:text-primary"><i data-feather="help-circle" class="size-4 me-2"></i>Helpcenter</a>
+            </li>
+            <li class="ms-0">
+              <a routerLink="/user-setting" class="flex items-center font-medium  px-4 hover:text-primary"><i data-feather="settings" class="size-4 me-2"></i>Settings</a>
+            </li>
+            <li class="border-t border-gray-100 dark:border-gray-800 my-2"></li>
+            <li class="ms-0">
+              <a routerLink="/login" class="flex items-center font-medium  px-4 hover:text-primary">
+                <i data-feather="log-out" class="size-4 me-2"></i>Logout</a>
+            </li>
+            }
+            @else{
+              <li class="ms-0">
+              <a routerLink="/login" class="flex  font-medium px-4 hover:text-primary">
+                <i data-feather="log-in" class="size-4 me-2"></i>Login</a>
+            </li>
+            }
+
       </ul>
     </div>
   </div>
