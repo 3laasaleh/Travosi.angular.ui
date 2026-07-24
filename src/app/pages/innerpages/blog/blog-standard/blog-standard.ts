@@ -6,10 +6,11 @@ import { PaginationOne } from '../../../../components/listing/tour-grid/paginati
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 import { blogData } from '../../../../data/data';
+import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-blog-standard',
-  imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar,PaginationOne, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './blog-standard.html',
 })

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import Swal from 'sweetalert2';
-import { AuthService } from '../auth-pages/_services/auth.service';
+import { AuthService } from '../_services/auth.service';
 
 @Component({
   selector: 'app-account-tab',

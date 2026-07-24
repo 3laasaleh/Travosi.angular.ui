@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { TaglineOne } from '../../components/tagline-one/tagline-one';
-import { NavbarOne } from '../../layout/navbar-one/navbar-one';
+import { HomeNavbar } from '../../layout/home-navbar/home-navbar';
 import { SelectedDate } from '../../components/selected-date/selected-date';
 import { AgencyOne } from '../../components/agency-one/agency-one';
 import { TourPackages } from '../../components/tour-packages/tour-packages/tour-packages';
@@ -16,7 +16,7 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
 @Component({
   selector: 'app-home',
   imports: [
-    NavbarOne,
+    HomeNavbar,
     SelectedDate,
     AgencyOne,
     UsersOne,

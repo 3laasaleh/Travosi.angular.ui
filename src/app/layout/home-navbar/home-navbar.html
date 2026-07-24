@@ -1,0 +1,126 @@
+<header
+  class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+  <div class="mx-auto flex h-20 max-w-[1600px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <a routerLink="/home" class="flex shrink-0 items-center gap-3" aria-label="See World Holidays home">
+      <a routerLink="/" class="logo">
+        <div>
+          <img src="./assets/images/main-logo.png" class="logo-height" alt="">
+        </div>
+      </a>
+      <span>
+        <span class="block text-lg font-bold leading-tight text-slate-900 dark:text-white">See World Holidays</span>
+        <span class="hidden text-xs font-medium uppercase tracking-[0.2em] text-primary sm:block">Travel agency</span>
+      </span>
+    </a>
+
+    <nav class="ml-auto hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+      <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
+        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
+        Destinations
+      </a>
+      <a routerLink="/tours" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
+        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
+        Tours
+      </a>
+
+
+      <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
+        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
+        Contact Us
+      </a>
+    </nav>
+
+    <div class="hidden h-8 w-px bg-slate-200 lg:block dark:bg-slate-800"></div>
+
+    <div class="flex items-center gap-2">
+      <div class="relative">
+        @if (isLoggedIn) {
+        <button type="button"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          aria-label="Open account menu" aria-haspopup="menu" [attr.aria-expanded]="accountMenuOpen"
+          (click)="toggleAccountMenu($event)">
+
+          <span
+            class="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">
+            {{ userInitials }}
+          </span>
+          <span class="hidden max-w-36 md:block">
+            <span class="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</span>
+          </span>
+          <i data-feather="chevron-down" class="hidden size-4 text-slate-400 md:block"></i>
+        </button>
+        }
+        @else {
+        <div class="p-2">
+          <a routerLink="/login" (click)="closeMenus()"
+            class="flex items-center gap-3 rounded-xl  px-3 py-2.5 text-sm font-semibold  transition hover:text-primary "
+            role="menuitem">
+            <i data-feather="log-in" class="size-4"></i>
+            Login
+          </a>
+        </div>
+        }
+
+        @if (accountMenuOpen) {
+        <div
+          class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          role="menu">
+          @if (isLoggedIn) {
+          <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+            <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ userName }}</p>
+            <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userEmail }}</p>
+          </div>
+           <div class="p-2">
+          @if(isAdmin){
+            <a routerLink="/admin" routerLinkActive="bg-primary-50 text-primary"   class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
+              role="menuitem">
+              <i data-feather="settings" class="size-4"></i>
+              {{'Configurations'|translate}}</a>
+        
+          }
+       
+            <a routerLink="/user-booking" (click)="closeMenus()"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
+              role="menuitem">
+              <i data-feather="user" class="size-4"></i>
+              Profile
+            </a>
+            <button type="button" (click)="logout()"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-primary-50 hover:text-primary dark:hover:bg-primary/10"
+              role="menuitem">
+              <i data-feather="log-out" class="size-4"></i>
+              Logout
+            </button>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <button type="button"
+        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 lg:hidden dark:border-slate-700"
+        aria-label="Toggle navigation" [attr.aria-expanded]="mobileMenuOpen" (click)="toggleMobileMenu()">
+        <i [attr.data-feather]="mobileMenuOpen ? 'x' : 'menu'" class="size-5"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (mobileMenuOpen) {
+  <nav class="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-800" aria-label="Mobile navigation">
+    <div class="mx-auto grid max-w-[1600px] gap-1 sm:grid-cols-3">
+      <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+        class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">Destinations</a>
+      <a routerLink="/tours-list" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+        class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">Tours</a>
+
+      @if(isAdmin){
+      <a routerLink="/admin" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+        class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">{{'Configurations'|translate}}</a>
+      }
+      <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+        class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">Contact
+        Us</a>
+    </div>
+  </nav>
+  }
+</header>

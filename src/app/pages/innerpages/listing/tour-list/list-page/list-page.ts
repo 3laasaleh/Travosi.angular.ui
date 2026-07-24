@@ -6,10 +6,11 @@ import { PaginationOne } from '../../../../../components/listing/tour-grid/pagin
 import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../../components/switcher-one/switcher-one';
 import { packageData } from '../../../../../data/data';
+import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-list-page',
-  imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar,PaginationOne, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './list-page.html',
 })

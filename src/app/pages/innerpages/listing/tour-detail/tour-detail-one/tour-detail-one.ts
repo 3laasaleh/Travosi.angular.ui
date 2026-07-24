@@ -6,10 +6,11 @@ import { TourDetail } from '../../../../../components/tour-detail/tour-detail/to
 import { TourSidebar } from '../../../../../components/tour-detail/tour-sidebar/tour-sidebar';
 import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-tour-detail-one',
-  imports: [RouterLink, NavbarOne, TourDetail, TourSidebar, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar,TourDetail, TourSidebar, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail-one.html',
 })

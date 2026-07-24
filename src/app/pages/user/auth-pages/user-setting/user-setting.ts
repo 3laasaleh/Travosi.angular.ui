@@ -1,17 +1,17 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import feather from 'feather-icons';
-import { NavbarOne } from '../../../../layout/navbar-one/navbar-one';
 import { AccountTab } from '../../account-tab/account-tab';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
-import { AuthService } from '../_services/auth.service';
+import { AuthService } from '../../_services/auth.service';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-user-setting',
-  imports: [NavbarOne, AccountTab, FooterOne, ReactiveFormsModule, TranslatePipe],
+  imports: [HomeNavbar, AccountTab, FooterOne, ReactiveFormsModule, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-setting.html',
 })

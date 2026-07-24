@@ -1,17 +1,16 @@
 import { UserProfileDTO } from './../models/userProfile.model';
-import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
-import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../_services/auth.service';
+import { AuthService } from '../../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 
 @Component({
   selector: 'app-login-page',
-  imports: [RouterLink, SwitcherOne, ReactiveFormsModule, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './login-page.html',
 })
 export class LoginPage implements AfterViewInit {
@@ -19,6 +18,7 @@ export class LoginPage implements AfterViewInit {
   logo = 'assets/images/main-logo.png';
   private readonly fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
+   cdr=inject(ChangeDetectorRef);
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -55,6 +55,7 @@ export class LoginPage implements AfterViewInit {
         if(!res.isSuccess&&res?.message)
         this.errorMessage = res?.message ??"" ;
         this.isSubmitting = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.errorMessage = error.message;

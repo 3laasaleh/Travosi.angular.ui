@@ -4,10 +4,11 @@ import { NavbarOne } from '../../../../layout/navbar-one/navbar-one';
 import { HelpcenterFaqsComp } from '../../../../components/helpcenter/helpcenter-faqs/helpcenter-faqs';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-helpcenter-faqs',
-  imports: [RouterLink, NavbarOne, HelpcenterFaqsComp, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar,HelpcenterFaqsComp, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './helpcenter-faqs.html',
 })

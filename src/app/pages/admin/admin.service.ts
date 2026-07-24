@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../user/auth-pages/_services/auth.service';
+import { AuthService } from '../user/_services/auth.service';
 
 @Injectable({
   providedIn: 'root',

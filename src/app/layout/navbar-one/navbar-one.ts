@@ -1,4 +1,4 @@
-import { AuthService } from '../../pages/user/auth-pages/_services/auth.service';
+import { AuthService } from '../../pages/user/_services/auth.service';
 import {
   AfterViewInit,
   Component,
@@ -82,6 +82,9 @@ export class NavbarOne implements OnInit, AfterViewInit {
     } else {
       navbar.classList.remove('nav-sticky');
     }
+  }
+  onLogout(){
+    this._authService.logout();
   }
 
 

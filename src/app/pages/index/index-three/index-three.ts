@@ -9,12 +9,13 @@ import { UsersOne } from '../../../components/users-one/users-one';
 import { InstaPost } from '../../../components/insta-post/insta-post';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-index-three',
   imports: [
     TaglineOne,
-    NavbarOne,
+    HomeNavbar,
     SelectedDate,
     DestinationsTwo,
     AgencyOne,

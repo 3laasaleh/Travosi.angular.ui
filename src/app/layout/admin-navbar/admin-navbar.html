@@ -1,0 +1,104 @@
+<header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+  <div class="mx-auto flex h-20 items-center gap-4 px-4 sm:px-6 lg:px-8">
+    <a routerLink="/home" class="flex shrink-0 items-center gap-3" aria-label="See World Holidays home">
+      <a routerLink="/" class="logo">
+        <div>
+          <img src="./assets/images/main-logo.png" class="logo-height" alt="">
+        </div>
+      </a>
+      <span>
+        <span class="block text-lg font-bold leading-tight text-slate-900 dark:text-white">See World Holidays</span>
+        <span class="hidden text-xs font-medium uppercase tracking-[0.2em] text-primary sm:block">Travel agency</span>
+      </span>
+    </a>
+
+    <div class="hidden h-8 w-px bg-slate-200 lg:block dark:bg-slate-800"></div>
+
+    <div class="hidden min-w-0 flex-1 lg:block">
+      <p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">Content management</p>
+      <p class="truncate text-xs text-slate-500 dark:text-slate-400">Manage travel content and bookings</p>
+    </div>
+
+    <div class="ml-auto flex items-center gap-2">
+      <a
+        routerLink="/home"
+        class="hidden items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary md:flex dark:border-slate-700 dark:text-slate-300"
+      >
+        <i data-feather="external-link" class="size-4"></i>
+        View website
+      </a>
+
+      <button
+        type="button"
+        class="relative flex size-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+        aria-label="Notifications"
+      >
+        <i data-feather="bell" class="size-5"></i>
+        <span class="absolute right-2 top-2 size-2 rounded-full border-2 border-white bg-primary dark:border-slate-950"></span>
+      </button>
+
+      <div class="relative">
+        <button
+          type="button"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          aria-label="Open account menu"
+          aria-haspopup="menu"
+          [attr.aria-expanded]="accountMenuOpen"
+          (click)="toggleAccountMenu($event)"
+        >
+          <span class="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">
+            {{ userInitials }}
+          </span>
+          <span class="hidden max-w-36 md:block">
+            <span class="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</span>
+            <span class="block truncate text-xs text-slate-500 dark:text-slate-400">Administrator</span>
+          </span>
+          <i data-feather="chevron-down" class="hidden size-4 text-slate-400 md:block"></i>
+        </button>
+
+        @if (accountMenuOpen) {
+          <div class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+            <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+              <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ userName }}</p>
+              @if (userEmail) {
+                <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userEmail }}</p>
+              }
+            </div>
+            <div class="p-2">
+              <a routerLink="/user-profile" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="menuitem">
+                <i data-feather="user" class="size-4"></i>
+                My profile
+              </a>
+              <button type="button" (click)="logout()" class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-primary-50 hover:text-primary dark:text-slate-300 dark:hover:bg-primary/10" role="menuitem">
+                <i data-feather="log-out" class="size-4"></i>
+                Sign out
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 lg:hidden dark:border-slate-700 dark:text-slate-300"
+        aria-label="Toggle admin navigation"
+        [attr.aria-expanded]="mobileMenuOpen"
+        (click)="toggleMobileMenu()"
+      >
+        <i [attr.data-feather]="mobileMenuOpen ? 'x' : 'menu'" class="size-5"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (mobileMenuOpen) {
+    <nav class="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-800" aria-label="Admin navigation">
+      <div class="grid gap-1 sm:grid-cols-2">
+        <a routerLink="/admin/destinations" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">Destinations</a>
+        <a routerLink="/admin/tours" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">Tours</a>
+        <a routerLink="/admin/packages" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">Packages</a>
+        <a routerLink="/user-booking" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">Bookings</a>
+        <a routerLink="/home" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary sm:hidden dark:text-slate-300 dark:hover:bg-slate-800">View website</a>
+      </div>
+    </nav>
+  }
+</header>

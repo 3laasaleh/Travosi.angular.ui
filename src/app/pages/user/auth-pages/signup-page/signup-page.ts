@@ -2,7 +2,7 @@ import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angu
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
-import { AuthService } from '../_services/auth.service';
+import { AuthService } from '../../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface RegistrationPayload {

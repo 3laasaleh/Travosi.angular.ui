@@ -1,13 +1,13 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NavbarOne } from '../../../../layout/navbar-one/navbar-one';
 import { TermsOne } from '../../../../components/utility/terms-one/terms-one';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-terms',
-  imports: [RouterLink, NavbarOne, TermsOne, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar, TermsOne, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './terms.html',
 })

@@ -9,12 +9,13 @@ import { UsersOne } from '../../../components/users-one/users-one';
 import { BlogsOne } from '../../../components/blogs-one/blogs-one';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-index-one',
   imports: [
     TaglineOne,
-    NavbarOne,
+    HomeNavbar,
     SelectedDate,
     DestinationsSlider,
     TourPackagesSlider,

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NavbarOne } from '../../../layout/navbar-one/navbar-one';
 import { AccountTab } from '../account-tab/account-tab';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { AuthService } from '../auth-pages/_services/auth.service';
+import { AuthService } from '../_services/auth.service';
+import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 
 interface UserBookingItem {
   bookingId: string;
@@ -23,7 +23,7 @@ interface UserBookingItem {
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule, NavbarOne, AccountTab, FooterOne, SwitcherOne],
+  imports: [CommonModule, HomeNavbar, AccountTab, FooterOne, SwitcherOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })

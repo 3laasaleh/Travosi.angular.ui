@@ -9,13 +9,14 @@ import { UsersOne } from '../../../components/users-one/users-one';
 import { AskedQuestions } from '../../../components/asked-questions/asked-questions';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
+import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 
 @Component({
   selector: 'app-index-four',
   imports: [
     FormsModule,
     TaglineOne,
-    NavbarOne,
+    HomeNavbar,
     DestinationsSlider,
     TourPackages8item,
     UsersOne,
