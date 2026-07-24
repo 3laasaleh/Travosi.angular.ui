@@ -1,4 +1,4 @@
-export interface IGenericResponseModel<T> {
+export interface IGenericResponse<T> {
     isSuccess: boolean;
     statusCode: number,
     message: string,

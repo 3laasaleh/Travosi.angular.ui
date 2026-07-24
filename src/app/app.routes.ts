@@ -1,7 +1,10 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './pages/admin/admin.guard';
+import { authGuard } from './pages/user/auth-pages/auth.guard';
 
 export const routes: Routes = [
+  { path: 'user-setting', canActivate: [authGuard], loadComponent: () => import('./pages/user/auth-pages/user-setting/user-setting').then(m => m.UserSetting) },
+
   { path: 'destinations', loadComponent: () => import('./pages/destinations-list/destinations-list').then(m => m.DestinationsList) },
   {
     path: 'admin',
@@ -29,6 +32,7 @@ export const routes: Routes = [
   { path: 'signup', loadComponent: () => import('./pages/user/auth-pages/signup-page/signup-page').then(m => m.SignupPage) },
   { path: 'signup-success', loadComponent: () => import('./pages/user/auth-pages/signup-success/signup-success').then(m => m.SignupSuccess) },
   { path: 'forgot-password', loadComponent: () => import('./pages/user/auth-pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
+  { path: 'reset-password', loadComponent: () => import('./pages/user/auth-pages/reset-password/reset-password').then(m => m.ResetPassword) },
   { path: 'home', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
 
 
@@ -46,13 +50,12 @@ export const routes: Routes = [
   { path: 'tour-detail-one', loadComponent: () => import('./pages/innerpages/listing/tour-detail/tour-detail-one/tour-detail-one').then(m => m.TourDetailOne) },
   { path: 'tour-detail-two', loadComponent: () => import('./pages/innerpages/listing/tour-detail/tour-detail-two/tour-detail-two').then(m => m.TourDetailTwo) },
   { path: 'aboutus', loadComponent: () => import('./pages/innerpages/about-us/about-us').then(m => m.AboutUs) },
-  { path: 'user-profile', loadComponent: () => import('./pages/innerpages/my-account/user-account/user-account').then(m => m.UserAccount) },
-  { path: 'user-billing', loadComponent: () => import('./pages/innerpages/my-account/user-billing/user-billing').then(m => m.UserBilling) },
-  { path: 'user-payment', loadComponent: () => import('./pages/innerpages/my-account/user-payment/user-payment').then(m => m.UserPayment) },
-  { path: 'user-invoice', loadComponent: () => import('./pages/innerpages/my-account/user-invoice/user-invoice').then(m => m.UserInvoice) },
-  { path: 'user-social', loadComponent: () => import('./pages/innerpages/my-account/user-social/user-social').then(m => m.UserSocial) },
-  { path: 'user-notification', loadComponent: () => import('./pages/innerpages/my-account/user-notification/user-notification').then(m => m.UserNotification) },
-  { path: 'user-setting', loadComponent: () => import('./pages/innerpages/my-account/user-setting/user-setting').then(m => m.UserSetting) },
+  { path: 'user-profile', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-account/user-account').then(m => m.UserAccount) },
+  { path: 'user-billing', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-billing/user-billing').then(m => m.UserBilling) },
+  { path: 'user-payment', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-payment/user-payment').then(m => m.UserPayment) },
+  { path: 'user-invoice', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-invoice/user-invoice').then(m => m.UserInvoice) },
+  { path: 'user-social', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-social/user-social').then(m => m.UserSocial) },
+  { path: 'user-notification', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-notification/user-notification').then(m => m.UserNotification) },
   { path: 'lock-screen', loadComponent: () => import('./pages/user/auth-pages/lock-screen/lock-screen').then(m => m.LockScreen) },
   { path: 'helpcenter', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-page/helpcenter-page').then(m => m.HelpcenterPage) },
   { path: 'helpcenter-faqs', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-faqs/helpcenter-faqs').then(m => m.HelpcenterFaqs) },
@@ -68,6 +71,6 @@ export const routes: Routes = [
   { path: 'blog-standard', loadComponent: () => import('./pages/innerpages/blog/blog-standard/blog-standard').then(m => m.BlogStandard) },
   { path: 'blog-detail', loadComponent: () => import('./pages/innerpages/blog/blog-detail/blog-detail').then(m => m.BlogDetail) },
  
-  { path: '**', loadComponent: () => import('./pages/innerpages/special-pages/error-page/error-page').then(m => m.ErrorPage) },
+  { path: '**', redirectTo:'home',pathMatch:"full" },
 
 ];

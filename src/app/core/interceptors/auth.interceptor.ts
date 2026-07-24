@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { MessageStatusEnum } from '../enums/messagestatus.enum';
 import { AuthService } from '../../pages/user/auth-pages/_services/auth.service';
-import { IGenericResponseModel } from '../models/genericReponse.model';
+import { IGenericResponse } from '../models/genericReponse.model';
 import { ToasterService } from '../services/toaster.service';
 import { LoaderService } from '../services/loader.service';
 @Injectable()
@@ -13,7 +13,7 @@ export class Global_Interceptor implements HttpInterceptor {
     private authService: AuthService,
     public loadingService: LoaderService) {
   }
-  isResponseModel<T>(obj: any):  IGenericResponseModel<T> {
+  isResponseModel<T>(obj: any):  IGenericResponse<T> {
     return obj && typeof obj.isSuccess === 'boolean' && 'data' in obj;
   }
   private totalRequests = 0;
@@ -54,7 +54,7 @@ export class Global_Interceptor implements HttpInterceptor {
           }
           if (!isResponseModel)
             return;
-          let response: IGenericResponseModel<any> = evt.body;
+          let response: IGenericResponse<any> = evt.body;
           if (!response?.isSuccess && response?.message != "" &&response.statusCode!=500)
             this.toaster.addToaster(MessageStatusEnum.Error,  response.message);
 

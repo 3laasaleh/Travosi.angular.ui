@@ -1,0 +1,111 @@
+<div>
+    <app-navbar-one />
+    <section class="relative lg:pb-24 pb-16 md:mt-[84px] mt-[70px]">
+        <div class="container relative">
+            <div class="relative overflow-hidden md:rounded-md shadow dark:shadow-gray-800 h-52 bg-center bg-no-repeat bg-cover" [style.background-image]="'url(' + bg + ')'"></div>
+        </div>
+
+        <div class="container relative md:mt-24 mt-16">
+            <div class="md:flex">
+                <div class="lg:w-1/4 md:w-1/3 md:px-3">
+                    <app-account-tab />
+                </div>
+
+                <div class="lg:w-3/4 md:w-2/3 md:px-3 mt-6 md:mt-0">
+                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
+                        <h5 class="text-lg font-semibold mb-4">{{ 'personalDetails' | translate }}</h5>
+                        <p class="text-slate-500 mb-5">{{ 'createChangeSaveData' | translate }}</p>
+                        <form [formGroup]="personalForm" (ngSubmit)="savePersonalDetails()">
+                            <div class="grid lg:grid-cols-2 grid-cols-1 gap-5">
+                                <div>
+                                    <label class="form-label font-medium" for="firstName">{{ 'firstName' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="user" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="firstName" formControlName="firstName" type="text" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'firstName' | translate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label font-medium" for="lastName">{{ 'lastName' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="user-check" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="lastName" formControlName="lastName" type="text" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'lastName' | translate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label font-medium" for="email">{{ 'email' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="mail" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="email" formControlName="email" type="email" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'email' | translate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label font-medium" for="phone">{{ 'phone' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="phone" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="phone" formControlName="phone" type="tel" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'phone' | translate">
+                                    </div>
+                                </div>
+                             
+                            </div>
+                            @if (personalMessage || personalError) {
+                                @if (personalMessage) {
+                                    <p class="text-sm text-emerald-600">{{ personalMessage | translate }}</p>
+                                }
+                                @if (personalError) {
+                                    <p class="text-sm text-red-600">{{ personalError | translate }}</p>
+                                }
+                            }
+                            <button type="submit" class="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md mt-5" [disabled]="personalForm.invalid || personalForm.pristine || isPersonalSubmitting">
+                                {{ 'saveChanges' | translate }}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 mt-6">
+                        <h5 class="text-lg font-semibold mb-4">{{ 'changePassword' | translate }}</h5>
+                        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+                            <div class="grid grid-cols-1 gap-5">
+                                <div>
+                                    <label class="form-label font-medium" for="oldPassword">{{ 'oldPassword' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="oldPassword" type="password" formControlName="oldPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'oldPassword' | translate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label font-medium" for="newPassword">{{ 'newPassword' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="newPassword" type="password" formControlName="newPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'newPassword' | translate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label font-medium" for="confirmPassword">{{ 'confirmNewPassword' | translate }}</label>
+                                    <div class="form-icon relative mt-2">
+                                        <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
+                                        <input id="confirmPassword" type="password" formControlName="confirmPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'confirmNewPassword' | translate">
+                                    </div>
+                                    @if ( passwordForm.touched) {
+                                        <p class="mt-1 text-sm text-red-600">{{ 'confirmMismatch' | translate }}</p>
+                                    }
+                                </div>
+                            </div>
+                            @if (passwordMessage || passwordError) {
+                                @if (passwordMessage) {
+                                    <p class="text-sm text-emerald-600">{{ passwordMessage | translate }}</p>
+                                }
+                                @if (passwordError) {
+                                    <p class="text-sm text-red-600">{{ passwordError | translate }}</p>
+                                }
+                            }
+                            <button type="submit" class="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md mt-5" [disabled]="passwordForm.invalid || isPasswordSubmitting">
+                                {{ 'savePassword' | translate }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<app-footer-one />

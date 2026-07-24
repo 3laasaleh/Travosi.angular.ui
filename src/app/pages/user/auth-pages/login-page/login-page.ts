@@ -1,3 +1,4 @@
+import { UserProfileDTO } from './../models/userProfile.model';
 import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
@@ -5,6 +6,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 
 @Component({
   selector: 'app-login-page',
@@ -48,15 +50,17 @@ export class LoginPage implements AfterViewInit {
     };
 
     // AuthService handles storing the login result and redirection
-    this._authService.login(payload);
-
-    // Listen for possible login error message from AuthService
-    const sub = this._authService.loginErrorStatusSubject.subscribe((msg) => {
-      if (msg) {
-        this.errorMessage = msg;
+    this._authService.login(payload).subscribe({
+      next: (res: IGenericResponse<UserProfileDTO>) => {
+        if(!res.isSuccess&&res?.message)
+        this.errorMessage = res?.message ??"" ;
         this.isSubmitting = false;
-        sub.unsubscribe();
-      }
+      },
+      error: (error) => {
+        this.errorMessage = error.message;
+        this.isSubmitting = false;
+      },
     });
+
   }
 }

@@ -24,7 +24,8 @@
 
                         <div class="mb-4">
                             <label class="font-semibold" for="LoginPassword">{{'password' |  translate}}</label>
-                            <input id="LoginPassword" type="password" formControlName="password" class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="password">
+                            <input id="LoginPassword" type="password" formControlName="password" class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                             [placeholder]="'password'|translate">
                             @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
                                 <p class="mt-1 text-sm text-red-600">{{ 'passwordRequired' | translate }}</p>
                             }
@@ -42,7 +43,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <button type="submit" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md w-full" [disabled]="isSubmitting">
+                            <button type="submit" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md w-full" 
+                            [disabled]="isSubmitting">
                                 @if (isSubmitting) {
                                     {{ 'submittingSignin' | translate }}
                                 } @else {

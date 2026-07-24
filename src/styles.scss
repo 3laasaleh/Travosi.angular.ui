@@ -1,12 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
-.logo-height{
-    height: 5rem ;
+.logo-height {
+  height: 5rem;
 }
-.custom-logo-h{
-    height: 12rem;
+.custom-logo-h {
+  height: 12rem;
 }
-#topnav.nav-sticky{
-    background-color: #fff !important;
-    border-bottom: solid 1px #0f172b;
+#topnav.nav-sticky {
+  background-color: #fff !important;
+  border-bottom: solid 1px #0f172b;
+}
+@media (min-width: 992px) {
+  #topnav .navigation-menu {
+    align-items: center;
+  }
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0px 20px;
 }

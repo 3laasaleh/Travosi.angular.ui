@@ -3,11 +3,11 @@ import { CookieService } from 'ngx-cookie-service';
 import { computed, Injectable, OnInit, signal, WritableSignal } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, map, Observable, Subject } from "rxjs";
 import { JwtHelperService } from '@auth0/angular-jwt'
-import { UserProfileModel } from "../models/userProfile.model";
-import { IGenericResponseModel } from '../../../../core/models/genericReponse.model';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { RoleEnum } from '../../../../core/enums/role.enum';
+import { UserProfileDTO } from '../models/userProfile.model';
 
 
 @Injectable({
@@ -15,11 +15,11 @@ import { RoleEnum } from '../../../../core/enums/role.enum';
 })
 export class AuthService {
   loginErrorStatusSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
-  userloginData = signal<UserProfileModel | null>(null);
+  userloginData = signal<UserProfileDTO | null>(null);
   isAdmin = signal<boolean|null>(null);
   // Derived values
   isLoggedIn = computed(() => !!this.userloginData());
-  fullName = computed(() => this.userloginData() ? this.userloginData()!.userName : '');
+  fullName = computed(() => this.userloginData() ?`${this.userloginData()!.firstName } ${this.userloginData()!.lastName}` : '');
 
   constructor(
     private jwtHelper: JwtHelperService,
@@ -27,13 +27,10 @@ export class AuthService {
     private http: HttpClient,
     private _coockiesService: CookieService,
   ) {
-    if (this.isTokenExpired()) 
-      this.logout();
-    else
-      this.getCurentUser();
+   
   }
 
-  getCurentUser(): UserProfileModel | null {
+  getCurentUser(): UserProfileDTO | null {
 
     if (this.userloginData()) {
       return this.userloginData();
@@ -62,31 +59,22 @@ default :
     }
   }
   login(user: any) {
-    this.http.post(environment.baseUrl +
+  return  this.http.post(environment.baseUrl +
       "Account/login",
       user
-    ).subscribe(
-      {
-        next: (res: IGenericResponseModel<UserProfileModel> | any) => {
-          if (res.isSuccess) {
+    ).pipe(map((res:any)=>{
+      if (res.isSuccess) {
            const { token, ...userData } = res.data;
             this.isAdmin.set(userData.role===RoleEnum.Admin)
             this._coockiesService.set('userSignedIn', JSON.stringify(userData), 1, '/');
             this._coockiesService.set('token', token, 1, '/');
             this.userloginData.set(userData);
-    
             this._router.navigate(['/home']);
-      
           }
-          else
-            this.loginErrorStatusSubject.next(res.message);
+        return res;
 
-
-        }, error: (error) => {
-          console.log(error);
-
-        }
-      }
+        })
+      
     );
   }
   registeration(user: any): Observable<any> {
