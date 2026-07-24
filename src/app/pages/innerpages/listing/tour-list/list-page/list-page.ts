@@ -10,7 +10,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-list-page',
   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './list-page.html',
 })
 export class ListPage implements AfterViewInit {

@@ -12,7 +12,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-switcher-one',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './switcher-one.html',
 })
 export class SwitcherOne implements AfterViewInit, OnDestroy {

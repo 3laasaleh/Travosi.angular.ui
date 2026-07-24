@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-privacy-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './privacy-one.html',
 })
 export class PrivacyOne {

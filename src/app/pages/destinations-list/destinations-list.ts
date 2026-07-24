@@ -10,7 +10,7 @@ import { destinations } from '../../data/data';
   selector: 'app-destinations-list',
   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
   templateUrl: './destinations-list.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './destinations-list.scss',
 })
 export class DestinationsList implements AfterViewInit {

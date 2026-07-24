@@ -3,7 +3,7 @@ import feather from 'feather-icons';
 
 @Component({
   selector: 'app-pagination-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './pagination-one.html',
 })
 export class PaginationOne implements AfterViewInit {

@@ -10,7 +10,7 @@ import { packageData } from '../../../data/data';
 @Component({
   selector: 'app-user-account',
   imports: [RouterLink, NavbarOne, AccountTab, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-account.html',
 })
 export class UserAccount implements AfterViewInit {

@@ -5,7 +5,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-maintenance-page',
   imports: [SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './maintenance-page.html',
 })
 export class MaintenancePage implements AfterViewInit, OnDestroy {

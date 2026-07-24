@@ -3,7 +3,7 @@ import feather from 'feather-icons';
 
 @Component({
   selector: 'app-tagline-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tagline-one.html',
 })
 export class TaglineOne implements AfterViewInit {

@@ -6,7 +6,7 @@ import { helps } from '../../../data/data';
 @Component({
   selector: 'app-helpcenter-support-comp',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './helpcenter-support.html',
 })
 export class HelpcenterSupportComp implements AfterViewInit {

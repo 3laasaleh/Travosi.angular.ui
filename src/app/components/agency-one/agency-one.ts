@@ -10,7 +10,7 @@ import feather from 'feather-icons';
 
 @Component({
   selector: 'app-agency-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './agency-one.html',
 })
 export class AgencyOne implements AfterViewInit {

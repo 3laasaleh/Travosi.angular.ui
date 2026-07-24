@@ -8,7 +8,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-user-social',
   imports: [NavbarOne, AccountTab, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-social.html',
 })
 export class UserSocial implements AfterViewInit {

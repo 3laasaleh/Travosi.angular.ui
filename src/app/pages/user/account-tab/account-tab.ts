@@ -7,7 +7,7 @@ import { AuthService } from '../auth-pages/_services/auth.service';
 @Component({
   selector: 'app-account-tab',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './account-tab.html',
 })
 export class AccountTab implements AfterViewInit {

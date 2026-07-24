@@ -11,7 +11,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-grid-left-sidebar',
   imports: [RouterLink, NavbarOne, PriceFilter, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './grid-left-sidebar.html',
 })
 export class GridLeftSidebar implements AfterViewInit {

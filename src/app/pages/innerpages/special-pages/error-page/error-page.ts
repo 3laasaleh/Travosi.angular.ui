@@ -5,7 +5,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-error-page',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './error-page.html',
 })
 export class ErrorPage implements AfterViewInit {

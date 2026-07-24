@@ -6,7 +6,7 @@ import { blogData } from '../../data/data';
 @Component({
   selector: 'app-blogs-one',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './blogs-one.html',
 })
 export class BlogsOne implements AfterViewInit {

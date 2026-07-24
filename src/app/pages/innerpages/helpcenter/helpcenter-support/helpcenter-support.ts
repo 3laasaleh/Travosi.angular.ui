@@ -8,7 +8,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-helpcenter-support',
   imports: [RouterLink, NavbarOne, HelpcenterSupportComp, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './helpcenter-support.html',
 })
 export class HelpcenterSupport {

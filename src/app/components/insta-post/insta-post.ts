@@ -5,7 +5,7 @@ import { instraImg } from '../../data/data';
 
 @Component({
   selector: 'app-insta-post',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './insta-post.html',
 })
 export class InstaPost implements AfterViewInit {

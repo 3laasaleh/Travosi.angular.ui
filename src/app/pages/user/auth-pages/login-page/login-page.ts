@@ -11,7 +11,7 @@ import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 @Component({
   selector: 'app-login-page',
   imports: [RouterLink, SwitcherOne, ReactiveFormsModule, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-page.html',
 })
 export class LoginPage implements AfterViewInit {
@@ -22,7 +22,7 @@ export class LoginPage implements AfterViewInit {
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required]],
     rememberMe: [false],
   });
 

@@ -4,7 +4,7 @@ import { destinations } from '../../../data/data';
 
 @Component({
   selector: 'app-destinations-slider',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './destinations-slider.html',
 })
 export class DestinationsSlider implements AfterViewInit {

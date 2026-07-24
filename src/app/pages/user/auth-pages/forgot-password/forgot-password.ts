@@ -9,7 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-forgot-password',
   imports: [RouterLink,TranslatePipe,ReactiveFormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './forgot-password.html',
 })
 export class ForgotPassword implements AfterViewInit {

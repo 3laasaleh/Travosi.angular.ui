@@ -22,7 +22,7 @@ import { SwitcherOne } from '../../../components/switcher-one/switcher-one';
     FooterOne,
     SwitcherOne,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './about-us.html',
 })
 export class AboutUs {

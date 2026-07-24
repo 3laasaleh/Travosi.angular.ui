@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './app.scss',
 })
 export class App {

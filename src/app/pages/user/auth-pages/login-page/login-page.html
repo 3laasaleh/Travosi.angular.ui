@@ -29,9 +29,7 @@
                             @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
                                 <p class="mt-1 text-sm text-red-600">{{ 'passwordRequired' | translate }}</p>
                             }
-                            @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')) {
-                                <p class="mt-1 text-sm text-red-600">{{ 'passwordMin' | translate }}</p>
-                            }
+                       
                         </div>
 
                         <div class="flex justify-between mb-4">
@@ -44,7 +42,7 @@
 
                         <div class="mb-4">
                             <button type="submit" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md w-full" 
-                            [disabled]="isSubmitting">
+                            >
                                 @if (isSubmitting) {
                                     {{ 'submittingSignin' | translate }}
                                 } @else {
@@ -66,4 +64,3 @@
     </div>
 </section>
 
-<app-switcher-one [switcherBack]="false" />

@@ -10,7 +10,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 @Component({
   selector: 'app-reset-password',
   imports: [ReactiveFormsModule, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './reset-password.html',
 })
 export class ResetPassword implements AfterViewInit {

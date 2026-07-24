@@ -12,7 +12,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 @Component({
   selector: 'app-user-setting',
   imports: [NavbarOne, AccountTab, FooterOne, ReactiveFormsModule, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-setting.html',
 })
 export class UserSetting implements AfterViewInit {

@@ -9,7 +9,7 @@ import { SwitcherOne } from '../../../../../components/switcher-one/switcher-one
 @Component({
   selector: 'app-tour-detail-two',
   imports: [NavbarOne, TourDetail, TourSidebar, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail-two.html',
 })
 export class TourDetailTwo implements AfterViewInit {

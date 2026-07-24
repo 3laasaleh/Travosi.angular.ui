@@ -10,7 +10,7 @@ import { AdminService } from '../admin.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './tours-page.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',
 })
 export class Tours implements OnInit {

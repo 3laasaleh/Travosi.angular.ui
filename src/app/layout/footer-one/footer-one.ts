@@ -5,7 +5,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-footer-one',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './footer-one.html',
 })
 export class FooterOne implements AfterViewInit {

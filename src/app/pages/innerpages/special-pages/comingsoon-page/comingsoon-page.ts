@@ -12,7 +12,7 @@ import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
 @Component({
   selector: 'app-comingsoon-page',
   imports: [RouterLink, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './comingsoon-page.html',
 })
 export class ComingsoonPage implements OnInit, AfterViewInit, OnDestroy {

@@ -3,7 +3,7 @@ import { destinations } from '../../../data/data';
 
 @Component({
   selector: 'app-destinations-two',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './destinations-two.html',
 })
 export class DestinationsTwo {

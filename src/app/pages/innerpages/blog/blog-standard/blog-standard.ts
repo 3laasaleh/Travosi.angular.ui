@@ -10,7 +10,7 @@ import { blogData } from '../../../../data/data';
 @Component({
   selector: 'app-blog-standard',
   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './blog-standard.html',
 })
 export class BlogStandard implements AfterViewInit {

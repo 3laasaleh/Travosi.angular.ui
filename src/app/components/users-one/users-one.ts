@@ -4,7 +4,7 @@ import { clientData } from '../../data/data';
 
 @Component({
   selector: 'app-users-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './users-one.html',
 })
 export class UsersOne implements AfterViewInit {

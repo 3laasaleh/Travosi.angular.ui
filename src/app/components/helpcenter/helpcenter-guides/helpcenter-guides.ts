@@ -6,7 +6,7 @@ import { guidesData } from '../../../data/data';
 @Component({
   selector: 'app-helpcenter-guides-comp',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './helpcenter-guides.html',
 })
 export class HelpcenterGuidesComp implements AfterViewInit {

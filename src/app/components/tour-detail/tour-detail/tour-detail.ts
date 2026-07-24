@@ -4,7 +4,7 @@ import { datas } from '../../../data/data';
 
 @Component({
   selector: 'app-tour-detail',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail.html',
 })
 export class TourDetail implements AfterViewInit {

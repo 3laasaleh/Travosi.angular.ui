@@ -10,7 +10,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-grid-page',
   imports: [RouterLink, NavbarOne, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './grid-page.html',
 })
 export class GridPage implements AfterViewInit {

@@ -17,7 +17,7 @@ interface RegistrationPayload {
 @Component({
   selector: 'app-signup-page',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './signup-page.html',
 })
 export class SignupPage implements AfterViewInit {

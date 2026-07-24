@@ -9,7 +9,7 @@ import { blogData } from '../../../../data/data';
 @Component({
   selector: 'app-blog-detail',
   imports: [RouterLink, NavbarOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './blog-detail.html',
 })
 export class BlogDetail implements AfterViewInit {

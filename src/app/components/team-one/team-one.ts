@@ -4,7 +4,7 @@ import { teamData } from '../../data/data';
 
 @Component({
   selector: 'app-team-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './team-one.html',
 })
 export class TeamOne implements AfterViewInit {

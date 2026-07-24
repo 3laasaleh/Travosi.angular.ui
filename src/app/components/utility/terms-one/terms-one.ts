@@ -3,7 +3,7 @@ import { datas } from '../../../data/data';
 
 @Component({
   selector: 'app-terms-one',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './terms-one.html',
 })
 export class TermsOne {

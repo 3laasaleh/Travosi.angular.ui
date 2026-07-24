@@ -11,7 +11,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-list-right-sidebar',
   imports: [RouterLink, NavbarOne, PriceFilter, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './list-right-sidebar.html',
 })
 export class ListRightSidebar implements AfterViewInit {

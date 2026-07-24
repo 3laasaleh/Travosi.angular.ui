@@ -25,7 +25,7 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
     TourPackages12item,
   ],
   templateUrl: './home.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './home.scss',
 })
 export class Home implements AfterViewInit {

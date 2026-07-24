@@ -5,7 +5,7 @@ import { AuthService } from '../../pages/user/auth-pages/_services/auth.service'
 @Component({
   selector: 'app-sidebar-menu',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar-menu.html',
   styles: [':host { display: contents; }'],
 })

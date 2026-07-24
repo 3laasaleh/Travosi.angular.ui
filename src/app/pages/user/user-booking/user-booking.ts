@@ -23,8 +23,8 @@ interface UserBookingItem {
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarOne, AccountTab, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [CommonModule, NavbarOne, AccountTab, FooterOne, SwitcherOne],
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })
 export class UserBooking implements OnInit {

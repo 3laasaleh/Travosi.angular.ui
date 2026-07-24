@@ -9,7 +9,7 @@ import { SidebarMenu } from '../../layout/sidebar-menu/sidebar-menu';
   standalone: true,
   imports: [CommonModule, RouterLink, SidebarMenu],
   templateUrl: './admin-page.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './admin-page.scss',
 })
 export class AdminPage implements OnInit {

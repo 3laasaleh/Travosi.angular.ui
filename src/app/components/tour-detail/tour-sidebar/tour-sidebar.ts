@@ -5,7 +5,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-tour-sidebar',
   imports: [FormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-sidebar.html',
 })
 export class TourSidebar implements AfterViewInit {

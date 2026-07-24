@@ -14,7 +14,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-navbar-one',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './navbar-one.html',
 })
 export class NavbarOne implements OnInit, AfterViewInit {
@@ -34,9 +34,11 @@ export class NavbarOne implements OnInit, AfterViewInit {
   searchmenu = false;
   account = false;
   _authService =inject(AuthService);
- 
+ isLoggedIn:boolean=false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+   this.isLoggedIn =this._authService.getCurentUser() ? true:false;
+  }
 
   ngOnInit(): void {
     this.activeMenu = this.router.url.split('?')[0];
@@ -82,7 +84,5 @@ export class NavbarOne implements OnInit, AfterViewInit {
     }
   }
 
-  isUserLoggined(){
-    return this._authService.isLoggedIn();
-  }
+
 }

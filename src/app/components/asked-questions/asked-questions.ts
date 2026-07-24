@@ -3,7 +3,7 @@ import { datas } from '../../data/data';
 
 @Component({
   selector: 'app-asked-questions',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './asked-questions.html',
 })
 export class AskedQuestions {

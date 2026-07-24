@@ -57,7 +57,6 @@ export const routes: Routes = [
   { path: 'user-invoice', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-invoice/user-invoice').then(m => m.UserInvoice) },
   { path: 'user-social', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-social/user-social').then(m => m.UserSocial) },
   { path: 'user-notification', canActivate: [authGuard], loadComponent: () => import('./pages/innerpages/my-account/user-notification/user-notification').then(m => m.UserNotification) },
-  { path: 'lock-screen', loadComponent: () => import('./pages/user/auth-pages/lock-screen/lock-screen').then(m => m.LockScreen) },
   { path: 'helpcenter', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-page/helpcenter-page').then(m => m.HelpcenterPage) },
   { path: 'helpcenter-faqs', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-faqs/helpcenter-faqs').then(m => m.HelpcenterFaqs) },
   { path: 'helpcenter-guides', loadComponent: () => import('./pages/innerpages/helpcenter/helpcenter-guides/helpcenter-guides').then(m => m.HelpcenterGuides) },

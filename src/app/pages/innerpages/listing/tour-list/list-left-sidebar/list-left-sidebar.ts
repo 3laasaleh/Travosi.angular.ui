@@ -11,7 +11,7 @@ import { packageData } from '../../../../../data/data';
 @Component({
   selector: 'app-list-left-sidebar',
   imports: [RouterLink, NavbarOne, PriceFilter, PaginationOne, FooterOne, SwitcherOne],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './list-left-sidebar.html',
 })
 export class ListLeftSidebar implements AfterViewInit {

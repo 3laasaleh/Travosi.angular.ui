@@ -6,7 +6,7 @@ import { packageData } from '../../../data/data';
 @Component({
   selector: 'app-tour-packages-slider',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-packages-slider.html',
 })
 export class TourPackagesSlider implements AfterViewInit {

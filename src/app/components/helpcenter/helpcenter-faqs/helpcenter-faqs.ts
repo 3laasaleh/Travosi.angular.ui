@@ -6,7 +6,7 @@ import { datas, datas2, datas3, datas4 } from '../../../data/data';
 @Component({
   selector: 'app-helpcenter-faqs-comp',
   imports: [RouterLink],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './helpcenter-faqs.html',
 })
 export class HelpcenterFaqsComp implements AfterViewInit {

@@ -5,7 +5,7 @@ import feather from 'feather-icons';
 @Component({
   selector: 'app-selected-date',
   imports: [FormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './selected-date.html',
 })
 export class SelectedDate implements AfterViewInit {
