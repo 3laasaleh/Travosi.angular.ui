@@ -5,16 +5,22 @@
       <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Quick access to management sections.</p>
     </div>
 
-    <nav class="space-y-2 text-sm">
-      <a [class.bg-primary]="activeMenu === '/destinations'"        [class.active]="activeMenu === '/destinations'"      routerLink="/admin/destinations" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white ">Destinations</a>
-      <a [class.bg-primary]="activeMenu === '/tours'"               [class.active]="activeMenu === '/tours'"             routerLink="/admin/tours" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Tours</a>
-      <a [class.bg-primary]="activeMenu === '/packages'"            [class.active]="activeMenu === '/packages'"          routerLink="/admin/packages" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Packages</a>
-      <a [class.bg-primary]="activeMenu === '/destinations'"        [class.active]="activeMenu === '/user-booking'"      routerLink="/user-booking" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Booking</a>
-      <a [class.bg-primary]="activeMenu === '/destinations'"        [class.active]="activeMenu === '/customers'"         routerLink="/admin/customers" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Customers</a>
-      <a [class.bg-primary]="activeMenu === '/tasks'"               [class.active]="activeMenu === '/tasks'"             routerLink="/admin/tasks" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Tasks</a>
-      <a [class.bg-primary]="activeMenu === '/destinations'"        [class.active]="activeMenu === '/service-types'"     routerLink="/admin/service-types" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Service Types</a>
-      <a [class.bg-primary]="activeMenu === '/flight-companies'"     [class.active]="activeMenu === '/flight-companies'"  routerLink="/admin/flight-companies" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white   ">Flight Companies</a>
-      <a [class.bg-primary]="activeMenu === '/hotels'"              [class.active]="activeMenu === '/hotels'"            routerLink="/admin/hotels" class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white">Hotels</a>
+    <nav aria-label="Admin sections">
+      <ul class="space-y-2 text-sm">
+        @for (item of menuItems; track item.path) {
+          <li [class.active]="activeMenu === item.path">
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active !border-primary !bg-primary !text-white"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+              class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white"
+            >
+              {{ item.label }}
+            </a>
+          </li>
+        }
+      </ul>
     </nav>
   </aside>
 }
