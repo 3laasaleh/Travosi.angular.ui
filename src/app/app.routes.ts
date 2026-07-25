@@ -42,7 +42,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'activate',
+    path: 'account/activate',
     loadComponent: () =>
       import('./pages/user/auth-pages/activate-page/activate-page').then((m) => m.ActivatePage),
   },

@@ -79,7 +79,10 @@
       <div class="rounded-3xl border border-slate-200 bg-white p-5">
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-xl font-semibold">{{ 'destinationRecords' | translate }}</h2>
-          <div class="flex items-center gap-2"><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span class="text-sm text-slate-500">{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div>
+          <div class="flex items-center gap-2">
+            <button type="button" class="rounded-full border px-3 py-1 text-sm hover:text-primary" (click)="prevPage()" [disabled]="paginationInfo.page === paginationInfo.totalPages">{{ 'previous' | translate }}
+          </button><span class="text-sm text-slate-500">{{ paginationInfo.page }} / {{ paginationInfo.totalPages }}</span>
+          <button type="button" class="rounded-full border px-3 py-1 text-sm hover:text-primary" (click)="nextPage()" [disabled]="paginationInfo?.page === paginationInfo?.totalPages">{{ 'next' | translate }}</button></div>
         </div>
         @if (isLoading) { <div class="py-6 text-sm text-slate-500">{{ 'loadingDestinations' | translate }}</div> }
         @else if (viewMode === 'table') {

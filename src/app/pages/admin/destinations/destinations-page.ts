@@ -1,3 +1,4 @@
+import { datas } from './../../../data/data';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +12,13 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { AdminService } from '../admin.service';
-
+import { IGenericResponse } from '../../../core/models/genericReponse.model';
+export interface PaginationInfoDTO {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
 interface DestinationImageUpload {
   file?: File;
   url: string;
@@ -36,15 +43,19 @@ export class Destinations implements OnInit, OnDestroy {
   destinations: any[] = [];
   imageUploads: DestinationImageUpload[] = [];
   viewMode: 'table' | 'grid' = 'table';
-  page = 1;
-  pageSize = 6;
+ 
   selectedDestination: any = null;
   previewDestination: any = null;
   previewImageIndex = 0;
   isLoading = false;
   errorMessage = '';
   successMessage = '';
-
+  paginationInfo: PaginationInfoDTO = {
+    page: 1,
+    pageSize: 5,
+    totalCount: 0,
+    totalPages: 0,
+  };
   destinationForm = this.createForm();
 
   constructor(
@@ -60,32 +71,38 @@ export class Destinations implements OnInit, OnDestroy {
     this.revokeNewImageUrls();
   }
 
-  get totalPages(): number {
-    return Math.max(1, Math.ceil(this.destinations.length / this.pageSize));
-  }
+  
 
   get pagedDestinations(): any[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.destinations.slice(start, start + this.pageSize);
+    const start = (this.paginationInfo.page - 1) * this.paginationInfo.pageSize;
+    return this.destinations.slice(start, start + this.paginationInfo.pageSize);
   }
 
   loadDestinations(): void {
     this.isLoading = true;
+    this.destinations=[];
     this.errorMessage = '';
     this.adminService
-      .getDestinations(1, 100)
+      .getDestinations(this.paginationInfo.page, this.paginationInfo.pageSize)
       .pipe(
         catchError(() => {
-          this.errorMessage = 'destinationServiceUnavailable';
-          return of({ data: this.getFallbackDestinations() });
+          return of({ data: [] });
         }),
       )
-      .subscribe((res: any) => {
-        const payload = res?.data ?? res;
-        this.destinations = Array.isArray(payload)
-          ? payload
-          : (payload?.items ?? payload?.destinations ?? payload?.result ?? []);
-        this.page = 1;
+      .subscribe((res: IGenericResponse<any>) => {
+        if (!res.isSuccess) {
+          this.errorMessage = 'destinationServiceUnavailable';
+        } else {
+          debugger;
+          const paggingData = res?.data;
+          this.destinations = paggingData.data;
+          this.paginationInfo = {
+            page: paggingData.page,
+            pageSize: paggingData.pageSize,
+            totalCount: paggingData.totalCount,
+            totalPages: paggingData.totalPages,
+          };
+        }
         this.isLoading = false;
         this.cdr.markForCheck();
       });
@@ -128,29 +145,31 @@ export class Destinations implements OnInit, OnDestroy {
       ? this.adminService.updateDestination(editing.id, payload)
       : this.adminService.createDestination(payload);
 
-    request$.pipe(
-      catchError(() => {
-        this.errorMessage = 'destinationSaveError';
+    request$
+      .pipe(
+        catchError(() => {
+          this.errorMessage = 'destinationSaveError';
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          return of(null);
+        }),
+      )
+      .subscribe((res: any) => {
+        if (res === null) return;
+        if (editing) {
+          Object.assign(editing, localRecord);
+          this.successMessage = 'destinationUpdated';
+        } else {
+          this.destinations = [
+            { ...localRecord, id: res?.id ?? res?.data?.id ?? Date.now() },
+            ...this.destinations,
+          ];
+          this.successMessage = 'destinationCreated';
+        }
+        this.resetForm();
         this.isLoading = false;
         this.cdr.markForCheck();
-        return of(null);
-      }),
-    ).subscribe((res: any) => {
-      if (res === null) return;
-      if (editing) {
-        Object.assign(editing, localRecord);
-        this.successMessage = 'destinationUpdated';
-      } else {
-        this.destinations = [
-          { ...localRecord, id: res?.id ?? res?.data?.id ?? Date.now() },
-          ...this.destinations,
-        ];
-        this.successMessage = 'destinationCreated';
-      }
-      this.resetForm();
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+      });
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -248,27 +267,35 @@ export class Destinations implements OnInit, OnDestroy {
 
   deactivateDestination(destination: any): void {
     this.isLoading = true;
-    this.adminService.deactivateDestination(destination.id).pipe(
-      catchError(() => {
+    this.adminService
+      .deactivateDestination(destination.id)
+      .pipe(
+        catchError(() => {
+          destination.isActive = false;
+          this.successMessage = 'destinationDeactivated';
+          this.isLoading = false;
+          return of({});
+        }),
+      )
+      .subscribe(() => {
         destination.isActive = false;
         this.successMessage = 'destinationDeactivated';
         this.isLoading = false;
-        return of({});
-      }),
-    ).subscribe(() => {
-      destination.isActive = false;
-      this.successMessage = 'destinationDeactivated';
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+        this.cdr.markForCheck();
+      });
   }
 
   nextPage(): void {
-    if (this.page < this.totalPages) this.page++;
+    if (this.paginationInfo.page < this.paginationInfo?.totalPages) 
+    {
+      this.paginationInfo.page++;
+      this.loadDestinations();
+    }
+      
   }
 
   prevPage(): void {
-    if (this.page > 1) this.page--;
+    if (this.paginationInfo.page > 1) this.paginationInfo.page--;
   }
 
   getImages(destination: any): any[] {
@@ -277,9 +304,7 @@ export class Destinations implements OnInit, OnDestroy {
   }
 
   imageUrl(image: any): string {
-    return typeof image === 'string'
-      ? image
-      : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
+    return typeof image === 'string' ? image : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
   }
 
   private resetForm(): void {
@@ -304,11 +329,17 @@ export class Destinations implements OnInit, OnDestroy {
       }),
       nameAr: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/)],
+        validators: [
+          Validators.required,
+          Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/),
+        ],
       }),
       subDescription: new FormControl('', { nonNullable: true }),
       description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
+      images: new FormControl<string[]>([], {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
       isActive: new FormControl(true, { nonNullable: true }),
     });
   }
@@ -325,7 +356,10 @@ export class Destinations implements OnInit, OnDestroy {
       const image = new Image();
       image.onload = () => {
         URL.revokeObjectURL(url);
-        if (image.naturalWidth <= this.maxImageWidth && image.naturalHeight <= this.maxImageHeight) {
+        if (
+          image.naturalWidth <= this.maxImageWidth &&
+          image.naturalHeight <= this.maxImageHeight
+        ) {
           resolve(file);
           return;
         }
@@ -356,28 +390,5 @@ export class Destinations implements OnInit, OnDestroy {
       };
       image.src = url;
     });
-  }
-
-  private getFallbackDestinations(): any[] {
-    return [
-      {
-        id: 1,
-        nameEng: 'Santorini',
-        nameAr: 'سانتوريني',
-        description: 'A classic island escape.',
-        images: [{ url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff' }],
-        tours: [],
-        isActive: true,
-      },
-      {
-        id: 2,
-        nameEng: 'Marrakech',
-        nameAr: 'مراكش',
-        description: 'A vibrant desert and culture destination.',
-        images: [{ url: 'https://images.unsplash.com/photo-1548013146-72479768bada' }],
-        tours: [],
-        isActive: true,
-      },
-    ];
   }
 }

@@ -9,7 +9,6 @@ export const adminGuard: CanActivateFn = () => {
   const hasToken = !!authService.getToken();
   const role = authService.getCurrentUserRole();
   const hasAccess = role === 'Admin' || role === 'Agent';
-debugger
   if (hasToken && hasAccess) {
     return true;
   }

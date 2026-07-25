@@ -19,22 +19,22 @@ export class AdminService {
     });
   }
 
-  getDestinations(page = 1, pageSize = 10): Observable<any> {
+  getDestinations(page = 1, pageSize = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);
-    return this.http.get(`${environment.baseUrl}Destinations`, {
+    return this.http.get(`${environment.baseUrl}destinations/GetAllDestinations`, {
       headers: this.getHeaders(),
       params,
     });
   }
 
   createDestination(payload: any): Observable<any> {
-    return this.http.post(`${environment.baseUrl}Destinations`, payload, {
+    return this.http.post(`${environment.baseUrl}destinations`, payload, {
       headers: this.getHeaders(),
     });
   }
 
   updateDestination(id: number, payload: any): Observable<any> {
-    return this.http.put(`${environment.baseUrl}Destinations/${id}`, payload, {
+    return this.http.put(`${environment.baseUrl}destinations/${id}`, payload, {
       headers: this.getHeaders(),
     });
   }

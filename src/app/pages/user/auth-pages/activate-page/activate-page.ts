@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 
 @Component({
   selector: 'app-activate-page',
@@ -12,7 +13,7 @@ export class ActivatePage implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-
+  private readonly cdr=inject(ChangeDetectorRef);
   bg = 'assets/images/bg/6.jpg';
   logo = 'assets/images/main-logo.png';
   apiUrl = 'https://localhost:44382/api/Account/Activate';
@@ -44,11 +45,17 @@ export class ActivatePage implements OnInit {
         this.apiUrl,
         { email: this.email, token: this.token },
         { headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }) },
-      )
-      .subscribe({
-        next: () => {
+      ).subscribe({
+        next:(res1 ) => {
+          debugger;
+          const res=res1 as IGenericResponse<string>
           this.isLoading = false;
+          if(res.isSuccess&&res.data)
           this.router.navigateByUrl('/signup-success?status=activated');
+        else{
+          this.errorMessage=res.message;
+        }
+        this.cdr.markForCheck
         },
         error: (error) => {
           this.isLoading = false;
