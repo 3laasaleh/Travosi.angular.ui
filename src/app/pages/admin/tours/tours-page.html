@@ -1,103 +1,37 @@
-<section class="min-h-screen bg-slate-50 px-4  text-slate-800">
+<section class="min-h-screen bg-slate-50 px-4 text-slate-800">
   <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Admin</p>
-        <h1 class="mt-2 text-3xl font-semibold">Tours</h1>
-        <p class="mt-2 text-sm text-slate-500">Add, edit, and deactivate tours with itinerary information.</p>
-      </div>
-      <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">Back to dashboard</a>
-    </div>
-
-    @if (errorMessage) {
-      <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage }}</div>
-    }
-
-    @if (successMessage) {
-      <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage }}</div>
-    }
-
+    <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div><p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p><h1 class="mt-2 text-3xl font-semibold">{{ 'tours' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageTourDetails' | translate }}</p></div>
+      <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a>
+    </header>
+    @if (errorMessage) { <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+    @if (successMessage) { <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
     <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
       <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-        <h2 class="mb-4 text-xl font-semibold">{{ selectedTour ? 'Edit tour' : 'Add tour' }}</h2>
-        <form class="space-y-4" (ngSubmit)="saveTour()">
-          <div>
-            <label class="mb-2 block text-sm font-medium">Title</label>
-            <input [(ngModel)]="tourForm.title" name="title" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-          </div>
+        <h2 class="mb-4 text-xl font-semibold">{{ (selectedTour ? 'editTour' : 'addTour') | translate }}</h2>
+        <form class="space-y-4" [formGroup]="tourForm" (ngSubmit)="saveTour()">
           <div class="grid gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-2 block text-sm font-medium">Destination ID</label>
-              <input [(ngModel)]="tourForm.destinationId" name="destinationId" type="number" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">Duration</label>
-              <input [(ngModel)]="tourForm.duration" name="duration" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">Price</label>
-              <input [(ngModel)]="tourForm.price" name="price" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">Image URL</label>
-              <input [(ngModel)]="tourForm.imageUrl" name="imageUrl" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-            </div>
+            <div><label class="mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label><input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }@if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }</div>
+            <div><label class="mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label><input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> }@if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
+            <div><label class="mb-2 block text-sm font-medium">{{ 'destination' | translate }}</label><select formControlName="destinationId" [disabled]="destinationsLoading || !destinations.length" class="w-full rounded-2xl border bg-white px-3 py-2"><option value="">{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') | translate }}</option>@for (destination of destinations; track destination.id) { <option [ngValue]="destination.id">{{ destination.nameEng ?? destination.name }} {{ destination.nameAr ? '— ' + destination.nameAr : '' }}</option> }</select>@if (tourForm.controls.destinationId.touched && tourForm.controls.destinationId.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }</div>
+            <div><label class="mb-2 block text-sm font-medium">{{ 'duration' | translate }}</label><input formControlName="duration" type="text" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.duration.touched && tourForm.controls.duration.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'durationRequired' | translate }}</p> }</div>
+            <div><label class="mb-2 block text-sm font-medium">{{ 'price' | translate }}</label><input formControlName="price" type="text" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.price.touched && tourForm.controls.price.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'priceRequired' | translate }}</p> }</div>
           </div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }}</label><textarea formControlName="overview" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (tourForm.controls.overview.touched && tourForm.controls.overview.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }</div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'itinerary' | translate }}</label><textarea formControlName="itinerary" rows="4" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (tourForm.controls.itinerary.touched && tourForm.controls.itinerary.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'itineraryRequired' | translate }}</p> }</div>
           <div>
-            <label class="mb-2 block text-sm font-medium">Overview</label>
-            <textarea [(ngModel)]="tourForm.overview" name="overview" rows="3" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+            <div class="mb-2 flex justify-between"><label for="tourImages" class="text-sm font-medium">{{ 'tourImages' | translate }}</label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{ maxImages }}</span></div>
+            <label for="tourImages" class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-white px-4 py-5 text-center"><span class="font-semibold text-primary">{{ 'chooseImages' | translate }}</span><span class="text-xs text-slate-500">{{ 'tourImageRules' | translate }}</span></label>
+            <input id="tourImages" type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" [disabled]="imageUploads.length >= maxImages" (change)="onImagesSelected($event)" />
+            @if (tourForm.controls.images.touched && tourForm.controls.images.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p> }
+            @if (imageUploads.length) { <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">@for (image of imageUploads; track image.url; let index = $index) { <div class="relative overflow-hidden rounded-xl"><img [src]="image.url" [alt]="image.name" class="aspect-[3/2] w-full object-cover" /><button type="button" class="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white" (click)="removeImage(index)">{{ 'remove' | translate }}</button>@if (index === 0) { <span class="absolute bottom-2 left-2 rounded-full bg-primary px-2 py-1 text-[10px] text-white">{{ 'cover' | translate }}</span> }</div> }</div> }
           </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">Itinerary</label>
-            <textarea [(ngModel)]="tourForm.itinerary" name="itinerary" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-          </div>
-          <label class="flex items-center gap-2 text-sm font-medium">
-            <input [(ngModel)]="tourForm.isActive" name="isActive" type="checkbox" />
-            Active tour
-          </label>
-          <div class="flex gap-3">
-            <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ selectedTour ? 'Update tour' : 'Create tour' }}</button>
-            @if (selectedTour) {
-              <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="resetForm()">Cancel</button>
-            }
-          </div>
+          <label class="flex gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeTour' | translate }}</label>
+          <div class="flex gap-3"><button type="submit" [disabled]="tourForm.invalid || isLoading || destinationsLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedTour ? 'updateTour' : 'createTour') | translate }}</button>@if (selectedTour) { <button type="button" class="rounded-full border px-4 py-2 text-sm" (click)="resetForm()">{{ 'cancel' | translate }}</button> }</div>
         </form>
       </div>
-
-      <div class="rounded-3xl border border-slate-200 bg-white p-5">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-xl font-semibold">Tour list</h2>
-          <div class="flex items-center gap-2">
-            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">Previous</button>
-            <span class="text-sm text-slate-500">{{ page }} / {{ totalPages }}</span>
-            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">Next</button>
-          </div>
-        </div>
-
-        @if (isLoading) {
-          <div class="py-6 text-sm text-slate-500">Loading tours...</div>
-        } @else {
-          <div class="space-y-3">
-            @for (tour of pagedTours; track tour.id) {
-              <div class="rounded-2xl border border-slate-200 p-4">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 class="font-semibold">{{ tour.title }}</h3>
-                    <p class="mt-1 text-sm text-slate-500">Destination ID: {{ tour.destinationId }} · {{ tour.duration }} · {{ tour.price }}</p>
-                  </div>
-                  <span class="rounded-full px-2.5 py-1 text-xs font-semibold" [class.bg-emerald-100]="tour.isActive !== false" [class.text-emerald-700]="tour.isActive !== false" [class.bg-rose-100]="tour.isActive === false" [class.text-rose-700]="tour.isActive === false">
-                    {{ tour.isActive === false ? 'Inactive' : 'Active' }}
-                  </span>
-                </div>
-                <p class="mt-3 text-sm text-slate-600">{{ tour.overview }}</p>
-                <div class="mt-4 flex gap-2">
-                  <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold" (click)="startEdit(tour)">Edit</button>
-                  <button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600" (click)="deactivateTour(tour)">Deactivate</button>
-                </div>
-              </div>
-            }
-          </div>
-        }
+      <div class="rounded-3xl border p-5"><div class="mb-4 flex justify-between"><h2 class="text-xl font-semibold">{{ 'tourList' | translate }}</h2><div class="flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span>{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div></div>
+        @if (isLoading) { <p class="py-6 text-sm text-slate-500">{{ 'loadingTours' | translate }}</p> } @else { <div class="space-y-3">@for (tour of pagedTours; track tour.id) { <article class="overflow-hidden rounded-2xl border">@if (getImages(tour)[0]; as image) { <img [src]="imageUrl(image)" [alt]="tour.titleEng" class="aspect-[3/1] w-full object-cover" /> }<div class="p-4"><h3 class="font-semibold">{{ tour.titleEng ?? tour.title }}</h3><p class="text-sm text-slate-500">{{ destinationName(tour.destinationId) }} · {{ tour.duration }} · {{ tour.price }}</p><p class="mt-3 text-sm">{{ tour.description ?? tour.overview }}</p><div class="mt-4 flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-xs" (click)="startEdit(tour)">{{ 'edit' | translate }}</button><button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs text-rose-600" (click)="deactivateTour(tour)">{{ 'deactivate' | translate }}</button></div></div></article> } @empty { <p class="text-sm text-slate-500">{{ 'noToursFound' | translate }}</p> }</div> }
       </div>
     </div>
   </div>

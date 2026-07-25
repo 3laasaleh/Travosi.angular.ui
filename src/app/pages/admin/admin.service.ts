@@ -39,6 +39,14 @@ export class AdminService {
     });
   }
 
+  getTours(page = 1, pageSize = 100): Observable<any> {
+    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    return this.http.get(`${environment.baseUrl}Tours`, {
+      headers: this.getHeaders(),
+      params,
+    });
+  }
+
   deactivateDestination(id: number): Observable<any> {
     return this.http.patch(`${environment.baseUrl}Destinations/${id}/deactivate`, {}, {
       headers: this.getHeaders(),
@@ -47,6 +55,12 @@ export class AdminService {
 
   createTour(payload: any): Observable<any> {
     return this.http.post(`${environment.baseUrl}Destinations/tour`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  updateTour(id: number, payload: any): Observable<any> {
+    return this.http.put(`${environment.baseUrl}Tours/${id}`, payload, {
       headers: this.getHeaders(),
     });
   }
