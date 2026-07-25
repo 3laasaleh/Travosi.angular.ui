@@ -1,4 +1,12 @@
 {
+    "image": "Image",
+    "status": "Status",
+    "actions": "Actions",
+    "view": "View",
+    "close": "Close",
+    "active": "Active",
+    "inactive": "Inactive",
+    "tour": "Tour",
     "admin": "Admin",
     "destinations": "Destinations",
     "tours": "Tours",

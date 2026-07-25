@@ -39,6 +39,8 @@ export class Destinations implements OnInit, OnDestroy {
   page = 1;
   pageSize = 6;
   selectedDestination: any = null;
+  previewDestination: any = null;
+  previewImageIndex = 0;
   isLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -218,6 +220,30 @@ export class Destinations implements OnInit, OnDestroy {
 
   cancelEdit(): void {
     this.resetForm();
+  }
+
+  openPreview(destination: any): void {
+    this.previewDestination = destination;
+    this.previewImageIndex = 0;
+  }
+
+  closePreview(): void {
+    this.previewDestination = null;
+    this.previewImageIndex = 0;
+  }
+
+  showPreviewImage(index: number): void {
+    this.previewImageIndex = index;
+  }
+
+  previewPreviousImage(): void {
+    const count = this.getImages(this.previewDestination).length;
+    if (count) this.previewImageIndex = (this.previewImageIndex - 1 + count) % count;
+  }
+
+  previewNextImage(): void {
+    const count = this.getImages(this.previewDestination).length;
+    if (count) this.previewImageIndex = (this.previewImageIndex + 1) % count;
   }
 
   deactivateDestination(destination: any): void {

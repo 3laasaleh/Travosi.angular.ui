@@ -1,4 +1,12 @@
 {
+    "image": "الصورة",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "view": "عرض",
+    "close": "إغلاق",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "tour": "جولة",
     "admin": "الإدارة",
     "destinations": "الوجهات",
     "tours": "الجولات",

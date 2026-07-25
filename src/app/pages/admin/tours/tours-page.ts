@@ -41,6 +41,8 @@ export class Tours implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
   selectedTour: any = null;
+  previewTour: any = null;
+  previewImageIndex = 0;
   page = 1;
   pageSize = 5;
   tourForm = this.createForm();
@@ -235,6 +237,30 @@ export class Tours implements OnInit, OnDestroy {
   deactivateTour(tour: any): void {
     tour.isActive = false;
     this.successMessage = 'tourDeactivated';
+  }
+
+  openPreview(tour: any): void {
+    this.previewTour = tour;
+    this.previewImageIndex = 0;
+  }
+
+  closePreview(): void {
+    this.previewTour = null;
+    this.previewImageIndex = 0;
+  }
+
+  showPreviewImage(index: number): void {
+    this.previewImageIndex = index;
+  }
+
+  previewPreviousImage(): void {
+    const count = this.getImages(this.previewTour).length;
+    if (count) this.previewImageIndex = (this.previewImageIndex - 1 + count) % count;
+  }
+
+  previewNextImage(): void {
+    const count = this.getImages(this.previewTour).length;
+    if (count) this.previewImageIndex = (this.previewImageIndex + 1) % count;
   }
 
   destinationName(destinationId: number): string {

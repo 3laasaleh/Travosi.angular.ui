@@ -8,8 +8,12 @@
       </div>
       <div class="flex gap-3">
         <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a>
-        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'">
-          {{ (viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate }}
+        <button type="button"
+          class="grid h-10 w-10 place-items-center rounded-full border border-rose-200 bg-rose-50 text-xl text-rose-600 transition hover:bg-rose-600 hover:text-white"
+          [attr.aria-label]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate"
+          [attr.title]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate"
+          (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'">
+          <i class="mdi" [class.mdi-view-grid-outline]="viewMode === 'table'" [class.mdi-table]="viewMode === 'grid'"></i>
         </button>
       </div>
     </header>
@@ -78,12 +82,57 @@
           <div class="flex items-center gap-2"><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span class="text-sm text-slate-500">{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div>
         </div>
         @if (isLoading) { <div class="py-6 text-sm text-slate-500">{{ 'loadingDestinations' | translate }}</div> }
-        @else {
+        @else if (viewMode === 'table') {
+          <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            <table class="min-w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-600">
+                <tr>
+                  <th class="px-4 py-3 font-semibold">{{ 'image' | translate }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ 'englishName' | translate }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ 'arabicName' | translate }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ 'status' | translate }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ 'actions' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of pagedDestinations; track item.id) {
+                  <tr class="border-t border-slate-200 transition hover:bg-slate-50">
+                    <td class="px-4 py-3">
+                      @if (getImages(item)[0]; as image) {
+                        <img [src]="imageUrl(image)" [alt]="item.nameEng" class="h-12 w-20 rounded-lg object-cover" />
+                      } @else {
+                        <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100 text-slate-400"><i class="mdi mdi-image-off-outline text-xl"></i></div>
+                      }
+                    </td>
+                    <td class="px-4 py-3 font-semibold">{{ item.nameEng ?? item.name }}</td>
+                    <td class="px-4 py-3" dir="rtl">{{ item.nameAr }}</td>
+                    <td class="px-4 py-3">
+                      <span class="rounded-full px-2.5 py-1 text-xs font-semibold"
+                        [class.bg-emerald-100]="item.isActive !== false" [class.text-emerald-700]="item.isActive !== false"
+                        [class.bg-slate-100]="item.isActive === false" [class.text-slate-600]="item.isActive === false">
+                        {{ (item.isActive === false ? 'inactive' : 'active') | translate }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex items-center gap-2">
+                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/30 text-primary" [attr.title]="'view' | translate" (click)="openPreview(item)"><i class="mdi mdi-eye-outline"></i></button>
+                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-slate-300 text-slate-600" [attr.title]="'edit' | translate" (click)="startEdit(item)"><i class="mdi mdi-pencil-outline"></i></button>
+                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600" [attr.title]="'deactivate' | translate" (click)="deactivateDestination(item)"><i class="mdi mdi-close-circle-outline"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">{{ 'noDestinationsFound' | translate }}</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
           <div class="grid gap-4 md:grid-cols-2">
             @for (item of pagedDestinations; track item.id) {
               <article class="overflow-hidden rounded-2xl border border-slate-200">
                 @if (getImages(item)[0]; as image) { <img [src]="imageUrl(image)" [alt]="item.nameEng" class="aspect-[3/2] w-full object-cover" /> }
-                <div class="p-4"><h3 class="font-semibold">{{ item.nameEng ?? item.name }}</h3><p dir="rtl" class="text-sm text-slate-500">{{ item.nameAr }}</p><p class="mt-3 text-sm">{{ item.subDescription ?? item.description }}</p><div class="mt-4 flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-xs" (click)="startEdit(item)">{{ 'edit' | translate }}</button><button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs text-rose-600" (click)="deactivateDestination(item)">{{ 'deactivate' | translate }}</button></div></div>
+                <div class="p-4"><h3 class="font-semibold">{{ item.nameEng ?? item.name }}</h3><p dir="rtl" class="text-sm text-slate-500">{{ item.nameAr }}</p><p class="mt-3 text-sm">{{ item.subDescription ?? item.description }}</p><div class="mt-4 flex gap-2"><button type="button" class="inline-flex items-center gap-1 rounded-full border border-primary/30 px-3 py-1 text-xs font-semibold text-primary" (click)="openPreview(item)"><i class="mdi mdi-eye-outline text-base"></i>{{ 'view' | translate }}</button><button type="button" class="rounded-full border px-3 py-1 text-xs" (click)="startEdit(item)">{{ 'edit' | translate }}</button><button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs text-rose-600" (click)="deactivateDestination(item)">{{ 'deactivate' | translate }}</button></div></div>
               </article>
             } @empty { <p class="text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p> }
           </div>
@@ -91,4 +140,38 @@
       </div>
     </div>
   </div>
+
+  @if (previewDestination) {
+    <div class="fixed inset-0 z-999 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" (click)="closePreview()">
+      <div class="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900" (click)="$event.stopPropagation()">
+        <button type="button" class="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-black/55 text-xl text-white backdrop-blur" [attr.aria-label]="'close' | translate" (click)="closePreview()"><i class="mdi mdi-close"></i></button>
+        <div class="relative overflow-hidden bg-slate-200">
+          @if (getImages(previewDestination)[previewImageIndex]; as image) {
+            <img [src]="imageUrl(image)" [alt]="previewDestination.nameEng" class="aspect-[16/9] max-h-[520px] w-full object-cover" />
+            @if (getImages(previewDestination).length > 1) {
+              <button type="button" class="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewPreviousImage()"><i class="mdi mdi-chevron-left"></i></button>
+              <button type="button" class="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewNextImage()"><i class="mdi mdi-chevron-right"></i></button>
+              <span class="absolute bottom-4 right-4 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">{{ previewImageIndex + 1 }} / {{ getImages(previewDestination).length }}</span>
+            }
+          } @else {
+            <div class="grid aspect-[16/9] place-items-center text-slate-400"><i class="mdi mdi-image-off-outline text-6xl"></i></div>
+          }
+          <span class="absolute bottom-4 left-4 rounded-full px-3 py-1 text-xs font-semibold text-white" [class.bg-emerald-500]="previewDestination.isActive !== false" [class.bg-slate-500]="previewDestination.isActive === false">{{ (previewDestination.isActive === false ? 'inactive' : 'active') | translate }}</span>
+        </div>
+        <div class="p-6 md:p-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">{{ 'destination' | translate }}</p>
+          <div class="mt-2 flex flex-col gap-1 md:flex-row md:items-end md:justify-between"><h2 class="text-3xl font-semibold">{{ previewDestination.nameEng ?? previewDestination.name }}</h2><p dir="rtl" class="text-xl font-medium text-slate-500">{{ previewDestination.nameAr }}</p></div>
+          @if (previewDestination.subDescription) { <p class="mt-4 text-lg font-medium text-slate-600 dark:text-slate-300">{{ previewDestination.subDescription }}</p> }
+          <p class="mt-4 whitespace-pre-line leading-7 text-slate-600 dark:text-slate-300">{{ previewDestination.description }}</p>
+          @if (getImages(previewDestination).length > 1) {
+            <div class="mt-6 flex gap-2 overflow-x-auto pb-1">
+              @for (image of getImages(previewDestination); track $index; let index = $index) {
+                <button type="button" class="shrink-0 overflow-hidden rounded-xl border-2" [class.border-primary]="index === previewImageIndex" [class.border-transparent]="index !== previewImageIndex" (click)="showPreviewImage(index)"><img [src]="imageUrl(image)" [alt]="previewDestination.nameEng" class="h-16 w-24 object-cover" /></button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
 </section>
