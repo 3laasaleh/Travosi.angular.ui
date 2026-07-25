@@ -1,261 +1,32 @@
 <section class="min-h-screen bg-slate-50 px-4 text-slate-800">
   <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
     <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p>
-        <h1 class="mt-2 text-3xl font-semibold">{{ 'destinations' | translate }}</h1>
-        <p class="mt-2 text-sm text-slate-500">{{ 'manageDestinationDetails' | translate }}</p>
-      </div>
+      <div><p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p><h1 class="mt-2 text-3xl font-semibold">{{ 'destinations' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageDestinationDetails' | translate }}</p></div>
       <div class="flex gap-3">
         <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a>
-        <button type="button"
-          class="grid h-10 w-10 place-items-center rounded-full border border-rose-200 bg-rose-50 text-xl text-rose-600 transition hover:bg-rose-600 hover:text-white"
-          [attr.aria-label]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate"
-          [attr.title]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate"
-          (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'">
-          <i class="mdi" [class.mdi-view-grid-outline]="viewMode === 'table'" [class.mdi-table]="viewMode === 'grid'"></i>
-        </button>
+        <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-rose-200 bg-rose-50 text-xl text-rose-600 transition hover:bg-rose-600 hover:text-white" [attr.title]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate" (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'"><i class="mdi" [class.mdi-view-grid-outline]="viewMode === 'table'" [class.mdi-table]="viewMode === 'grid'"></i></button>
       </div>
     </header>
-
     @if (errorMessage) { <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
     @if (successMessage) { <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
 
     <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-        @if (isLoading) {
-          <div class="space-y-4" aria-busy="true" [attr.aria-label]="'loadingDestinations' | translate">
-            <div class="h-7 w-44 animate-pulse rounded-full bg-slate-200"></div>
-            <div class="grid gap-4 md:grid-cols-2">
-              @for (field of [1, 2]; track field) {
-                <div class="space-y-2">
-                  <div class="h-4 w-28 animate-pulse rounded-full bg-slate-200"></div>
-                  <div class="h-10 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-                </div>
-              }
-            </div>
-            <div class="space-y-2">
-              <div class="h-4 w-36 animate-pulse rounded-full bg-slate-200"></div>
-              <div class="h-10 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-            </div>
-            <div class="space-y-2">
-              <div class="h-4 w-24 animate-pulse rounded-full bg-slate-200"></div>
-              <div class="h-24 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <div class="h-4 w-32 animate-pulse rounded-full bg-slate-200"></div>
-                <div class="h-4 w-8 animate-pulse rounded-full bg-slate-200"></div>
-              </div>
-              <div class="h-24 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-            </div>
-            <div class="h-4 w-36 animate-pulse rounded-full bg-slate-200"></div>
-            <div class="h-10 w-24 animate-pulse rounded-full bg-slate-200"></div>
-          </div>
-        } @else {
-        <h2 class="mb-4 text-xl font-semibold">{{ (selectedDestination ? 'editDestination' : 'addDestination') | translate }}</h2>
-        <form class="space-y-4" [formGroup]="destinationForm" (ngSubmit)="saveDestination()">
-          <div class="grid gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }}</label>
-              <input formControlName="nameEng" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-              @if (destinationForm.controls.nameEng.touched && destinationForm.controls.nameEng.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p> }
-              @if (destinationForm.controls.nameEng.touched && destinationForm.controls.nameEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>
-              <input formControlName="nameAr" type="text" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-              @if (destinationForm.controls.nameAr.touched && destinationForm.controls.nameAr.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p> }
-              @if (destinationForm.controls.nameAr.touched && destinationForm.controls.nameAr.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-            </div>
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'shortDescription' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label>
-            <input formControlName="subDescription" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'description' | translate }}</label>
-            <textarea formControlName="description" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-            @if (destinationForm.controls.description.touched && destinationForm.controls.description.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }
-          </div>
-          <div>
-            <div class="mb-2 flex justify-between"><label for="destinationImages" class="text-sm font-medium">{{ 'destinationImages' | translate }}</label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{ maxImages }}</span></div>
-            <label for="destinationImages" class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-white px-4 py-5 text-center hover:border-primary">
-              <span class="text-sm font-semibold text-primary">{{ 'chooseImages' | translate }}</span>
-              <span class="mt-1 text-xs text-slate-500">{{ 'destinationImageRules' | translate }}</span>
-            </label>
-            <input id="destinationImages" type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" [disabled]="imageUploads.length >= maxImages" (change)="onImagesSelected($event)" />
-            @if (destinationForm.controls.images.touched && destinationForm.controls.images.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p> }
-            @if (imageUploads.length) {
-              <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                @for (image of imageUploads; track image.url; let index = $index) {
-                  <div class="relative overflow-hidden rounded-xl bg-slate-200">
-                    <img [src]="image.url" [alt]="image.name" class="aspect-[3/2] w-full object-cover" />
-                    <button type="button" class="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white" (click)="removeImage(index)">{{ 'remove' | translate }}</button>
-                    @if (index === 0) { <span class="absolute bottom-2 left-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{ 'cover' | translate }}</span> }
-                  </div>
-                }
-              </div>
-            }
-          </div>
-          <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeDestination' | translate }}</label>
-          <div class="flex gap-3">
-            <button type="submit" [disabled]="destinationForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedDestination ? 'update' : 'add') | translate }}</button>
-            @if (selectedDestination) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }
-          </div>
-        </form>
-        }
-      </div>
-
-      <div class="rounded-3xl border border-slate-200 bg-white p-5">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-xl font-semibold">{{ 'destinationRecords' | translate }}</h2>
-          @if (isLoading) {
-            <div class="flex items-center gap-2" aria-hidden="true">
-              <div class="h-8 w-20 animate-pulse rounded-full bg-slate-200"></div>
-              <div class="h-4 w-10 animate-pulse rounded-full bg-slate-200"></div>
-              <div class="h-8 w-16 animate-pulse rounded-full bg-slate-200"></div>
-            </div>
-          } @else {
-            <div class="flex items-center gap-2">
-              <button type="button" class="rounded-full border px-3 py-1 text-sm hover:text-primary" (click)="prevPage()" [disabled]="paginationInfo.page === 1">{{ 'previous' | translate }}</button>
-              <span class="text-sm text-slate-500">{{ paginationInfo.page }} / {{ paginationInfo.totalPages }}</span>
-              <button type="button" class="rounded-full border px-3 py-1 text-sm hover:text-primary" (click)="nextPage()" [disabled]="paginationInfo.page === paginationInfo.totalPages">{{ 'next' | translate }}</button>
-            </div>
-          }
-        </div>
-        @if (isLoading) {
-          @if (viewMode === 'table') {
-            <div class="overflow-hidden rounded-2xl border border-slate-200" aria-busy="true" [attr.aria-label]="'loadingDestinations' | translate">
-              <div class="grid grid-cols-[80px_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
-                @for (column of [1, 2, 3, 4, 5]; track column) {
-                  <div class="h-4 animate-pulse rounded-full bg-slate-200"></div>
-                }
-              </div>
-              @for (row of [1, 2, 3, 4, 5]; track row) {
-                <div class="grid grid-cols-[80px_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
-                  <div class="h-12 w-20 animate-pulse rounded-lg bg-slate-200"></div>
-                  <div class="h-4 w-3/4 animate-pulse rounded-full bg-slate-200"></div>
-                  <div class="h-4 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
-                  <div class="h-7 w-16 animate-pulse rounded-full bg-slate-200"></div>
-                  <div class="flex gap-2">
-                    @for (action of [1, 2, 3]; track action) {
-                      <div class="h-8 w-8 animate-pulse rounded-full bg-slate-200"></div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          } @else {
-            <div class="grid gap-4 md:grid-cols-2" aria-busy="true" [attr.aria-label]="'loadingDestinations' | translate">
-              @for (card of [1, 2, 3, 4]; track card) {
-                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                  <div class="aspect-[3/2] animate-pulse bg-slate-200"></div>
-                  <div class="space-y-3 p-4">
-                    <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
-                    <div class="h-4 w-1/2 animate-pulse rounded-full bg-slate-200"></div>
-                    <div class="h-4 w-full animate-pulse rounded-full bg-slate-200"></div>
-                    <div class="h-4 w-4/5 animate-pulse rounded-full bg-slate-200"></div>
-                    <div class="flex gap-2 pt-2">
-                      @for (action of [1, 2, 3]; track action) {
-                        <div class="h-8 w-16 animate-pulse rounded-full bg-slate-200"></div>
-                      }
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        }
-        @else if (viewMode === 'table') {
-          <div class="overflow-x-auto rounded-2xl border border-slate-200">
-            <table class="min-w-full text-left text-sm">
-              <thead class="bg-slate-50 text-slate-600">
-                <tr>
-                  <th class="px-4 py-3 font-semibold">{{ 'image' | translate }}</th>
-                  <th class="px-4 py-3 font-semibold">{{ 'englishName' | translate }}</th>
-                  <th class="px-4 py-3 font-semibold">{{ 'arabicName' | translate }}</th>
-                  <th class="px-4 py-3 font-semibold">{{ 'status' | translate }}</th>
-                  <th class="px-4 py-3 font-semibold">{{ 'actions' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (item of pagedDestinations; track item.id) {
-                  <tr class="border-t border-slate-200 transition hover:bg-slate-50">
-                    <td class="px-4 py-3">
-                      @if (getImages(item)[0]; as image) {
-                        <img [src]="imageUrl(image)" [alt]="item.nameEng" class="h-12 w-20 rounded-lg object-cover" />
-                      } @else {
-                        <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100 text-slate-400"><i class="mdi mdi-image-off-outline text-xl"></i></div>
-                      }
-                    </td>
-                    <td class="px-4 py-3 font-semibold">{{ item.nameEng ?? item.name }}</td>
-                    <td class="px-4 py-3" dir="rtl">{{ item.nameAr }}</td>
-                    <td class="px-4 py-3">
-                      <span class="rounded-full px-2.5 py-1 text-xs font-semibold"
-                        [class.bg-emerald-100]="item.isActive !== false" [class.text-emerald-700]="item.isActive !== false"
-                        [class.bg-slate-100]="item.isActive === false" [class.text-slate-600]="item.isActive === false">
-                        {{ (item.isActive === false ? 'inactive' : 'active') | translate }}
-                      </span>
-                    </td>
-                    <td class="px-4 py-3">
-                      <div class="flex items-center gap-2">
-                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/30 text-primary" [attr.title]="'view' | translate" (click)="openPreview(item)"><i class="mdi mdi-eye-outline"></i></button>
-                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-slate-300 text-slate-600" [attr.title]="'edit' | translate" (click)="startEdit(item)"><i class="mdi mdi-pencil-outline"></i></button>
-                        <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600" [attr.title]="'deactivate' | translate" (click)="deactivateDestination(item)"><i class="mdi mdi-close-circle-outline"></i></button>
-                      </div>
-                    </td>
-                  </tr>
-                } @empty {
-                  <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">{{ 'noDestinationsFound' | translate }}</td></tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="grid gap-4 md:grid-cols-2">
-            @for (item of pagedDestinations; track item.id) {
-              <article class="overflow-hidden rounded-2xl border border-slate-200">
-                @if (getImages(item)[0]; as image) { <img [src]="imageUrl(image)" [alt]="item.nameEng" class="aspect-[3/2] w-full object-cover" /> }
-                <div class="p-4"><h3 class="font-semibold">{{ item.nameEng ?? item.name }}</h3><p dir="rtl" class="text-sm text-slate-500">{{ item.nameAr }}</p><p class="mt-3 text-sm">{{ item.subDescription ?? item.description }}</p><div class="mt-4 flex gap-2"><button type="button" class="inline-flex items-center gap-1 rounded-full border border-primary/30 px-3 py-1 text-xs font-semibold text-primary" (click)="openPreview(item)"><i class="mdi mdi-eye-outline text-base"></i>{{ 'view' | translate }}</button><button type="button" class="rounded-full border px-3 py-1 text-xs" (click)="startEdit(item)">{{ 'edit' | translate }}</button><button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs text-rose-600" (click)="deactivateDestination(item)">{{ 'deactivate' | translate }}</button></div></div>
-              </article>
-            } @empty { <p class="text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p> }
-          </div>
-        }
-      </div>
+      <app-destinations-from-card [destinationForm]="destinationForm" [imageUploads]="imageUploads" [selectedDestination]="selectedDestination" [isLoading]="isLoading" [maxImages]="maxImages" (saveDestination)="saveDestination()" (imagesSelected)="onImagesSelected($event)" (imageRemoved)="removeImage($event)" (editCancelled)="cancelEdit()" />
+      <app-admin-destinations-list [destinations]="destinations" [viewMode]="viewMode" [isLoading]="isLoading" [paginationInfo]="paginationInfo" (previousPage)="prevPage()" (nextPage)="nextPage()" (previewRequested)="openPreview($event)" (editRequested)="startEdit($event)" (deactivateRequested)="deactivateDestination($event)" />
     </div>
   </div>
 
   @if (previewDestination) {
     <div class="fixed inset-0 z-999 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" (click)="closePreview()">
       <div class="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900" (click)="$event.stopPropagation()">
-        <button type="button" class="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-black/55 text-xl text-white backdrop-blur" [attr.aria-label]="'close' | translate" (click)="closePreview()"><i class="mdi mdi-close"></i></button>
+        <button type="button" class="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-black/55 text-xl text-white" (click)="closePreview()"><i class="mdi mdi-close"></i></button>
         <div class="relative overflow-hidden bg-slate-200">
           @if (getImages(previewDestination)[previewImageIndex]; as image) {
             <img [src]="imageUrl(image)" [alt]="previewDestination.nameEng" class="aspect-[16/9] max-h-[520px] w-full object-cover" />
-            @if (getImages(previewDestination).length > 1) {
-              <button type="button" class="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewPreviousImage()"><i class="mdi mdi-chevron-left"></i></button>
-              <button type="button" class="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewNextImage()"><i class="mdi mdi-chevron-right"></i></button>
-              <span class="absolute bottom-4 right-4 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">{{ previewImageIndex + 1 }} / {{ getImages(previewDestination).length }}</span>
-            }
-          } @else {
-            <div class="grid aspect-[16/9] place-items-center text-slate-400"><i class="mdi mdi-image-off-outline text-6xl"></i></div>
-          }
-          <span class="absolute bottom-4 left-4 rounded-full px-3 py-1 text-xs font-semibold text-white" [class.bg-emerald-500]="previewDestination.isActive !== false" [class.bg-slate-500]="previewDestination.isActive === false">{{ (previewDestination.isActive === false ? 'inactive' : 'active') | translate }}</span>
+            @if (getImages(previewDestination).length > 1) { <button type="button" class="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewPreviousImage()"><i class="mdi mdi-chevron-left"></i></button><button type="button" class="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white" (click)="previewNextImage()"><i class="mdi mdi-chevron-right"></i></button> }
+          } @else { <div class="grid aspect-[16/9] place-items-center text-slate-400"><i class="mdi mdi-image-off-outline text-6xl"></i></div> }
         </div>
-        <div class="p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">{{ 'destination' | translate }}</p>
-          <div class="mt-2 flex flex-col gap-1 md:flex-row md:items-end md:justify-between"><h2 class="text-3xl font-semibold">{{ previewDestination.nameEng ?? previewDestination.name }}</h2><p dir="rtl" class="text-xl font-medium text-slate-500">{{ previewDestination.nameAr }}</p></div>
-          @if (previewDestination.subDescription) { <p class="mt-4 text-lg font-medium text-slate-600 dark:text-slate-300">{{ previewDestination.subDescription }}</p> }
-          <p class="mt-4 whitespace-pre-line leading-7 text-slate-600 dark:text-slate-300">{{ previewDestination.description }}</p>
-          @if (getImages(previewDestination).length > 1) {
-            <div class="mt-6 flex gap-2 overflow-x-auto pb-1">
-              @for (image of getImages(previewDestination); track $index; let index = $index) {
-                <button type="button" class="shrink-0 overflow-hidden rounded-xl border-2" [class.border-primary]="index === previewImageIndex" [class.border-transparent]="index !== previewImageIndex" (click)="showPreviewImage(index)"><img [src]="imageUrl(image)" [alt]="previewDestination.nameEng" class="h-16 w-24 object-cover" /></button>
-              }
-            </div>
-          }
-        </div>
+        <div class="p-6 md:p-8"><p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">{{ 'destination' | translate }}</p><div class="mt-2 flex justify-between gap-3"><h2 class="text-3xl font-semibold">{{ previewDestination.nameEng }}</h2><p dir="rtl" class="text-xl text-slate-500">{{ previewDestination.nameAr }}</p></div>@if (previewDestination.subDescription) { <p class="mt-4 text-lg font-medium">{{ previewDestination.subDescription }}</p> }<p class="mt-4 whitespace-pre-line leading-7 text-slate-600">{{ previewDestination.description }}</p>@if (getImages(previewDestination).length > 1) { <div class="mt-6 flex gap-2 overflow-x-auto">@for (image of getImages(previewDestination); track $index; let index = $index) { <button type="button" class="overflow-hidden rounded-xl border-2" [class.border-primary]="index === previewImageIndex" (click)="showPreviewImage(index)"><img [src]="imageUrl(image)" [alt]="previewDestination.nameEng" class="h-16 w-24 object-cover" /></button> }</div> }</div>
       </div>
     </div>
   }

@@ -13,6 +13,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { AdminService } from '../admin.service';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
+import { DestinationsFromCard } from './destinations-from-card/destinations-from-card';
+import { DestinationsList } from './destinations-list/destinations-list';
 export interface PaginationInfoDTO {
   page: number;
   pageSize: number;
@@ -29,7 +31,7 @@ interface DestinationImageUpload {
 @Component({
   selector: 'app-destinations',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, DestinationsFromCard, DestinationsList],
   templateUrl: './destinations-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './destinations-page.scss',
