@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AccountTab } from '../account-tab/account-tab';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
@@ -39,6 +39,7 @@ export class UserBooking implements OnInit {
     private apiService: ApiService,
     private authService: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -68,12 +69,17 @@ export class UserBooking implements OnInit {
       next: (data) => {
         this.bookings = Array.isArray(data) ? data : [];
         this.page = 1;
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.errorMessage = 'Unable to load your bookings. Please try again later.';
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
       complete: () => {
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }

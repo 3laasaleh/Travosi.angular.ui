@@ -71,7 +71,22 @@
         </div>
 
         @if (isLoading) {
-          <div class="py-6 text-sm text-slate-500">Loading packages...</div>
+          <div class="space-y-3" aria-busy="true" aria-label="Loading packages">
+            @for (card of [1, 2, 3, 4]; track card) {
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="w-full space-y-3">
+                    <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
+                    <div class="h-4 w-1/2 animate-pulse rounded-full bg-slate-200"></div>
+                  </div>
+                  <div class="h-7 w-16 shrink-0 animate-pulse rounded-full bg-slate-200"></div>
+                </div>
+                <div class="mt-4 h-4 w-full animate-pulse rounded-full bg-slate-200"></div>
+                <div class="mt-2 h-4 w-4/5 animate-pulse rounded-full bg-slate-200"></div>
+                <div class="mt-5 flex gap-2"><div class="h-8 w-16 animate-pulse rounded-full bg-slate-200"></div><div class="h-8 w-24 animate-pulse rounded-full bg-slate-200"></div></div>
+              </div>
+            }
+          </div>
         } @else {
           <div class="space-y-3">
             @for (pkg of pagedPackages; track pkg.id) {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { TaglineOne } from '../../components/tagline-one/tagline-one';
 import { HomeNavbar } from '../../layout/home-navbar/home-navbar';
 import { SelectedDate } from '../../components/selected-date/selected-date';
@@ -28,12 +28,29 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
   changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './home.scss',
 })
-export class Home implements AfterViewInit {
+export class Home implements OnInit, AfterViewInit {
+  isLoading = true;
   bg2 = 'assets/images/bg/2.jpg';
   bg3 = 'assets/images/bg/3.jpg';
   map = 'assets/images/map-plane.png';
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    Promise.all([this.bg2, this.bg3, this.map].map((source) => this.preloadImage(source)))
+      .finally(() => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        requestAnimationFrame(() => this.initializeSlider());
+      });
+  }
+
   ngAfterViewInit(): void {
+    if (!this.isLoading) this.initializeSlider();
+  }
+
+  private initializeSlider(): void {
+    if (!document.querySelector('.swiper-container .swiper')) return;
     new Swiper('.swiper-container .swiper', {
       modules: [Navigation, Autoplay, Pagination],
       autoplay: true,
@@ -42,6 +59,15 @@ export class Home implements AfterViewInit {
         el: '.swiper-pagination',
         type: 'fraction',
       },
+    });
+  }
+
+  private preloadImage(source: string): Promise<void> {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve();
+      image.onerror = () => resolve();
+      image.src = source;
     });
   }
 }
