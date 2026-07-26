@@ -69,7 +69,6 @@ readonly fullName = computed(() => {
   }
   getCurrentUserRole(): string | undefined {
     let r = this.getCurentUser()?.role;
-    if (r) this.logout();
     switch (r) {
       case RoleEnum.Admin:
         return 'Admin';

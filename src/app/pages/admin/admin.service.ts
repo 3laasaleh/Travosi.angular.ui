@@ -33,8 +33,8 @@ export class AdminService {
     });
   }
 
-  updateDestination(id: number, payload: any): Observable<any> {
-    return this.http.put(`${environment.baseUrl}destinations/${id}`, payload, {
+  updateDestination( payload: any): Observable<any> {
+    return this.http.put(`${environment.baseUrl}destinations`, payload, {
       headers: this.getHeaders(),
     });
   }
@@ -47,8 +47,20 @@ export class AdminService {
     });
   }
 
-  deactivateDestination(id: number): Observable<any> {
-    return this.http.patch(`${environment.baseUrl}Destinations/${id}/deactivate`, {}, {
+  
+
+  cangeStatus(id: number): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}destinations/${id}/ChangeStatus`, {}, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deleteDestinationImage(payload: {
+    destinationId: number;
+    imageUrl: string;
+    imageName: string;
+  }): Observable<any> {
+    return this.http.post(`${environment.baseUrl}destinations/deleteImage`, payload, {
       headers: this.getHeaders(),
     });
   }
