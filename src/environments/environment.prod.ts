@@ -1,5 +1,5 @@
 export const environment = {
   partion: true,
-  baseUrl: 'https://sea-world.com/api/',
-  imageUrl: 'https://sea-world.com/parts/',
+  baseUrl: 'http://seeworld.tryasp.net/api/',
+  imageUrl: 'http://seeworld.tryasp.net/images/',
 };
