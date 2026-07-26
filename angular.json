@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "travosy": {
+    "seeworld": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -78,10 +78,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "travosy:build:production"
+              "buildTarget": "seeworld:build:production"
             },
             "development": {
-              "buildTarget": "travosy:build:development"
+              "buildTarget": "seeworld:build:development"
             }
           },
           "defaultConfiguration": "development"
