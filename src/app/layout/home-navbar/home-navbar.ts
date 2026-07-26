@@ -10,19 +10,58 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import feather from 'feather-icons';
 import { AuthService } from '../../pages/user/_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
+import { CurrencyService } from '../../core/services/currency.service';
+import { DestinationsMenu } from './destinations-menu/destinations-menu';
+import { ToursMenu } from './tours-menu/tours-menu';
+import { PackagesMenu } from './packages-menu/packages-menu';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive,TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DestinationsMenu, ToursMenu, PackagesMenu],
   templateUrl: './home-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeNavbar implements AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  readonly languageService = inject(LanguageService);
+  readonly currencyService = inject(CurrencyService);
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
+  languageMenuOpen = false;
+  currencyMenuOpen = false;
+
+  get currentLanguage(): string {
+    return this.languageService.getCurrentLanguage();
+  }
+
+  toggleLanguageMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.languageMenuOpen = !this.languageMenuOpen;
+    this.currencyMenuOpen = false;
+    this.accountMenuOpen = false;
+    this.refreshIcons();
+  }
+
+  toggleCurrencyMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.currencyMenuOpen = !this.currencyMenuOpen;
+    this.languageMenuOpen = false;
+    this.accountMenuOpen = false;
+    this.refreshIcons();
+  }
+
+  switchLanguage(lang: string): void {
+    this.languageService.setGLobalLanguage(lang).subscribe({ error: () => {} });
+    this.closeMenus();
+  }
+
+  switchCurrency(code: string): void {
+    this.currencyService.setCurrency(code);
+    this.closeMenus();
+  }
 
   
   get isAdmin(): boolean {
@@ -69,6 +108,8 @@ export class HomeNavbar implements AfterViewInit {
   closeMenus(): void {
     this.accountMenuOpen = false;
     this.mobileMenuOpen = false;
+    this.languageMenuOpen = false;
+    this.currencyMenuOpen = false;
   }
 
   logout(): void {
@@ -80,6 +121,8 @@ export class HomeNavbar implements AfterViewInit {
   closeAccountMenuOnOutsideClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.accountMenuOpen = false;
+      this.languageMenuOpen = false;
+      this.currencyMenuOpen = false;
     }
   }
 

@@ -1,27 +1,71 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
   inject,
+  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
+import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../pages/user/_services/auth.service';
+import { ApiService } from '../../core/services/apiservice.service';
+import { TaskStatusEnum } from '../../pages/admin/tasks/task-status.enum';
 
 @Component({
   selector: 'app-admin-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe, TranslatePipe],
   templateUrl: './admin-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminNavbar implements AfterViewInit {
+export class AdminNavbar implements OnInit, AfterViewInit {
   private readonly authService = inject(AuthService);
+  private readonly apiService = inject(ApiService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
+  notificationsOpen = false;
+  agentTasks: any[] = [];
+  readonly taskStatusEnum = TaskStatusEnum;
+
+  get isAgent(): boolean {
+    return this.authService.getCurrentUserRole() === 'Agent';
+  }
+
+  get pendingTasksCount(): number {
+    return this.agentTasks.filter((task) => Number(task.status) === TaskStatusEnum.Pending).length;
+  }
+
+  ngOnInit(): void {
+    if (this.isAgent) this.loadAgentTasks();
+  }
+
+  loadAgentTasks(): void {
+    this.apiService.get('Tasks/GetAgentTasks?page=1&pageSize=50').pipe(
+      catchError(() => of(null)),
+      finalize(() => this.cdr.markForCheck()),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      const pageData = response?.data ?? response;
+      const rows = pageData?.data ?? pageData?.items ?? pageData?.tasks ?? pageData;
+      this.agentTasks = Array.isArray(rows) ? rows : [];
+    });
+  }
+
+  toggleNotifications(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsOpen = !this.notificationsOpen;
+    this.accountMenuOpen = false;
+    if (this.notificationsOpen) this.loadAgentTasks();
+    this.refreshIcons();
+  }
 
   get userName(): string {
     const user = this.authService.getCurentUser();
@@ -60,6 +104,7 @@ export class AdminNavbar implements AfterViewInit {
   closeMenus(): void {
     this.accountMenuOpen = false;
     this.mobileMenuOpen = false;
+    this.notificationsOpen = false;
   }
 
   logout(): void {
@@ -71,6 +116,7 @@ export class AdminNavbar implements AfterViewInit {
   closeAccountMenuOnOutsideClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.accountMenuOpen = false;
+      this.notificationsOpen = false;
     }
   }
 

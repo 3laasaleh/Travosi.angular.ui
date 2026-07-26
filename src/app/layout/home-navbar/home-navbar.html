@@ -14,15 +14,9 @@
     </a>
 
     <nav class="ml-auto hidden items-center gap-1 lg:flex" aria-label="Main navigation">
-      <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
-        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
-        Destinations
-      </a>
-      <a routerLink="/tours" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
-        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
-        Tours
-      </a>
-
+      <app-destinations-menu />
+      <app-tours-menu />
+      <app-packages-menu />
 
       <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
         class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
@@ -33,6 +27,62 @@
     <div class="hidden h-8 w-px bg-slate-200 lg:block dark:bg-slate-800"></div>
 
     <div class="flex items-center gap-2">
+      <!-- Language switcher -->
+      <div class="relative">
+        <button type="button"
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"
+          [attr.aria-label]="'language' | translate" aria-haspopup="menu" [attr.aria-expanded]="languageMenuOpen"
+          (click)="toggleLanguageMenu($event)">
+          <i class="mdi mdi-web text-base leading-none"></i>
+          <span class="uppercase">{{ currentLanguage }}</span>
+          <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!languageMenuOpen" [class.mdi-chevron-up]="languageMenuOpen"></i>
+        </button>
+
+        @if (languageMenuOpen) {
+        <div class="absolute right-0 mt-2 w-40 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+          <div class="p-2">
+            <button type="button" (click)="switchLanguage('en')"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+              [class.bg-primary-50]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" role="menuitem">
+              English
+            </button>
+            <button type="button" (click)="switchLanguage('ar')"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+              [class.bg-primary-50]="currentLanguage === 'ar'" [class.text-primary]="currentLanguage === 'ar'" role="menuitem">
+              العربية
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Currency switcher -->
+      <div class="relative">
+        <button type="button"
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"
+          [attr.aria-label]="'currency' | translate" aria-haspopup="menu" [attr.aria-expanded]="currencyMenuOpen"
+          (click)="toggleCurrencyMenu($event)">
+          <span>{{ currencyService.currentCurrency().symbol }}</span>
+          <span class="uppercase">{{ currencyService.currentCurrency().code }}</span>
+          <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!currencyMenuOpen" [class.mdi-chevron-up]="currencyMenuOpen"></i>
+        </button>
+
+        @if (currencyMenuOpen) {
+        <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+          <div class="p-2">
+            @for (option of currencyService.options; track option.code) {
+            <button type="button" (click)="switchCurrency(option.code)"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+              [class.bg-primary-50]="currencyService.currentCurrency().code === option.code" [class.text-primary]="currencyService.currentCurrency().code === option.code" role="menuitem">
+              <span class="w-6 font-bold">{{ option.symbol }}</span>
+              {{ option.labelKey | translate }}
+            </button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+
       <div class="relative">
         @if (isLoggedIn) {
         <button type="button"

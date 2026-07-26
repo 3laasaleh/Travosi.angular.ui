@@ -32,9 +32,39 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/tours/tours-page').then((m) => m.Tours),
       },
       {
-        path: 'admin/packages',
+        path: 'packages',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/admin/packages/packages-page').then((m) => m.Packages),
+      },
+      {
+        path: 'hotels',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/hotels/hotels-page').then((m) => m.Hotels),
+      },
+      {
+        path: 'Airlines',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/airlines/airlines-page').then((m) => m.Airlines),
+      },
+      {
+        path: 'Flights',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/flights/flights-page').then((m) => m.Flights),
+      },
+      {
+        path: 'customers',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/customers/customers-page').then((m) => m.Customers),
+      },
+      {
+        path: 'tasks',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/tasks/tasks-page').then((m) => m.Tasks),
+      },
+      {
+        path: 'quotations',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/quotations/quotations-page').then((m) => m.Quotations),
       },
 
       {path:'',redirectTo:'destinations',pathMatch:'full'}

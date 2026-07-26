@@ -1,0 +1,25 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  <h2 class="mb-4 text-xl font-semibold">{{ (selectedFlight ? 'editFlight' : 'addFlight') | translate }}</h2>
+  <form class="space-y-4" [formGroup]="flightForm" (ngSubmit)="saveFlight()">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'flightNumber' | translate }}</label><input formControlName="flightNumber" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('flightNumber')?.touched && flightForm.get('flightNumber')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'flightNumberRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'airline' | translate }}</label><select formControlName="airlineId" class="w-full rounded-2xl border border-slate-300 px-3 py-2"><option [ngValue]="null" disabled>{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }</select>@if (flightForm.get('airlineId')?.touched && flightForm.get('airlineId')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p> }</div>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'departureAirport' | translate }}</label><input formControlName="departureAirport" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('departureAirport')?.touched && flightForm.get('departureAirport')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureAirportRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arrivalAirport' | translate }}</label><input formControlName="arrivalAirport" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('arrivalAirport')?.touched && flightForm.get('arrivalAirport')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalAirportRequired' | translate }}</p> }</div>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'departureTime' | translate }}</label><input formControlName="departureTime" type="datetime-local" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('departureTime')?.touched && flightForm.get('departureTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureTimeRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label><input formControlName="arrivalTime" type="datetime-local" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('arrivalTime')?.touched && flightForm.get('arrivalTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p> }</div>
+    </div>
+    <div class="grid gap-4 md:grid-cols-3">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'price' | translate }}</label><input formControlName="price" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('price')?.touched && flightForm.get('price')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'priceRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'availableSeats' | translate }}</label><input formControlName="availableSeats" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('availableSeats')?.touched && flightForm.get('availableSeats')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'availableSeatsRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'flightClass' | translate }}</label><select formControlName="flightClass" class="w-full rounded-2xl border border-slate-300 px-3 py-2">@for (option of flightClassOptions; track option.value) { <option [ngValue]="option.value">{{ option.labelKey | translate }}</option> }</select></div>
+    </div>
+    <div class="flex gap-3"><button type="submit" [disabled]="flightForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedFlight ? 'update' : 'add') | translate }}</button>@if (selectedFlight) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+  </form>
+</div>

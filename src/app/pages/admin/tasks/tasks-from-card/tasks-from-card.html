@@ -1,0 +1,15 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  <h2 class="mb-4 text-xl font-semibold">{{ (selectedTask ? 'editTask' : 'addTask') | translate }}</h2>
+  <form class="space-y-4" [formGroup]="taskForm" (ngSubmit)="saveTask()">
+    <div><label class="mb-2 block text-sm font-medium">{{ 'taskTitle' | translate }}</label><input formControlName="title" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (taskForm.get('title')?.touched && taskForm.get('title')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'taskTitleRequired' | translate }}</p> }</div>
+    <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="description" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'assignedAgent' | translate }}</label><select formControlName="agentId" class="w-full rounded-2xl border border-slate-300 px-3 py-2"><option [ngValue]="null" disabled>{{ 'selectAgent' | translate }}</option>@for (agent of agents; track agent.id) { <option [ngValue]="agent.id">{{ agent.firstName }} {{ agent.lastName }}</option> }</select>@if (taskForm.get('agentId')?.touched && taskForm.get('agentId')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'agentRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'dueDate' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="dueDate" type="date" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+    </div>
+    <div><label class="mb-2 block text-sm font-medium">{{ 'taskStatus' | translate }}</label><select formControlName="status" class="w-full rounded-2xl border border-slate-300 px-3 py-2">@for (option of taskStatusOptions; track option.value) { <option [ngValue]="option.value">{{ option.labelKey | translate }}</option> }</select></div>
+    <div class="flex gap-3"><button type="submit" [disabled]="taskForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedTask ? 'update' : 'add') | translate }}</button>@if (selectedTask) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+  </form>
+</div>

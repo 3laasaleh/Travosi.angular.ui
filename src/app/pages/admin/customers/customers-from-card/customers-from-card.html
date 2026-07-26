@@ -1,0 +1,17 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  <h2 class="mb-4 text-xl font-semibold">{{ (selectedCustomer ? 'editCustomer' : 'addCustomer') | translate }}</h2>
+  <form class="space-y-4" [formGroup]="customerForm" (ngSubmit)="saveCustomer()">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'firstName' | translate }}</label><input formControlName="firstName" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.get('firstName')?.touched && customerForm.get('firstName')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'firstNameRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'lastName' | translate }}</label><input formControlName="lastName" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.get('lastName')?.touched && customerForm.get('lastName')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'lastNameRequired' | translate }}</p> }</div>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'email' | translate }}</label><input formControlName="email" type="email" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'emailRequired' | translate }}</p> }@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) { <p class="mt-1 text-xs text-red-600">{{ 'emailInvalid' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'mobile' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="mobile" type="tel" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+    </div>
+    <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeCustomer' | translate }}</label>
+    <div class="flex gap-3"><button type="submit" [disabled]="customerForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedCustomer ? 'update' : 'add') | translate }}</button>@if (selectedCustomer) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+  </form>
+</div>
