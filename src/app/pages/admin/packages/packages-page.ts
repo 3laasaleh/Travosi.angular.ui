@@ -31,7 +31,6 @@ export class Packages implements OnInit {
   };
 
   ngOnInit(): void {
-    this.packages = this.getFallbackPackages();
   }
 
   get pagedPackages(): any[] {
@@ -99,28 +98,5 @@ export class Packages implements OnInit {
     };
   }
 
-  private getFallbackPackages(): any[] {
-    return [
-      {
-        id: 1,
-        title: 'Golden Hour Escape',
-        destinationId: 1,
-        price: '$920',
-        duration: '5 Days',
-        description: 'Beachfront relax and cultural dinner.',
-        imageUrl: '',
-        isActive: true,
-      },
-      {
-        id: 2,
-        title: 'Desert Nights',
-        destinationId: 2,
-        price: '$1180',
-        duration: '6 Days',
-        description: 'Desert camp and local excursions.',
-        imageUrl: '',
-        isActive: true,
-      },
-    ];
-  }
+
 }

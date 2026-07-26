@@ -40,7 +40,7 @@ export class PackagesMenu {
 
   loadPackages(): void {
     this.isLoading = true;
-    this.apiService.getUnauthntecated('Packages/GetAllPackages?page=1&pageSize=100').pipe(
+    this.apiService.getUnauthntecated('Packages?page=1&pageSize=100').pipe(
       catchError(() => of(null)),
       finalize(() => {
         this.isLoading = false;

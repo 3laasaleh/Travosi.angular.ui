@@ -40,7 +40,7 @@ export class ToursMenu {
 
   loadTours(): void {
     this.isLoading = true;
-    this.apiService.getUnauthntecated('Tours/GetAllTours?page=1&pageSize=100').pipe(
+    this.apiService.getUnauthntecated('Tours?page=1&pageSize=100').pipe(
       catchError(() => of(null)),
       finalize(() => {
         this.isLoading = false;

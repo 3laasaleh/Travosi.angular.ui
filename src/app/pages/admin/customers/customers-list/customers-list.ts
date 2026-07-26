@@ -58,7 +58,7 @@ export class CustomersList implements OnInit, OnChanges {
   loadCustomers(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Customers/GetAllCustomers?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Customers?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'customerServiceUnavailable';
         return of(null);

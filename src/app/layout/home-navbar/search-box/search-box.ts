@@ -111,9 +111,9 @@ export class SearchBox implements OnInit {
       );
 
     forkJoin({
-      destinations: load('destinations/GetAllDestinations?page=1&pageSize=100', 'destinations'),
-      tours: load('Tours/GetAllTours?page=1&pageSize=100', 'tours'),
-      packages: load('Packages/GetAllPackages?page=1&pageSize=100', 'packages'),
+      destinations: load('destinations?page=1&pageSize=100', 'destinations'),
+      tours: load('Tours?page=1&pageSize=100', 'tours'),
+      packages: load('Packages?page=1&pageSize=100', 'packages'),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ destinations, tours, packages }) => {

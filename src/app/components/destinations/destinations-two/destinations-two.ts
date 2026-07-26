@@ -37,7 +37,7 @@ export class DestinationsTwo implements OnInit {
   loadDestinations(): void {
     this.isLoading = this.paginationInfo.page === 1;
     this.isLoadingMore = this.paginationInfo.page > 1;
-    this.apiService.getUnauthntecated(`destinations/GetAllDestinations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.getUnauthntecated(`destinations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => of(null)),
       finalize(() => {
         this.isLoading = false;

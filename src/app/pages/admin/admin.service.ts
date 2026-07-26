@@ -21,7 +21,7 @@ export class AdminService {
 
   getDestinations(page = 1, pageSize = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);
-    return this.http.get(`${environment.baseUrl}destinations/GetAllDestinations`, {
+    return this.http.get(`${environment.baseUrl}destinations/`, {
       headers: this.getHeaders(),
       params,
     });

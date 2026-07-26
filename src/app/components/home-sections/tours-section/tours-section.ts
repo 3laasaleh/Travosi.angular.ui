@@ -39,7 +39,7 @@ export class ToursSection implements OnInit {
   loadTours(): void {
     this.isLoading = this.paginationInfo.page === 1;
     this.isLoadingMore = this.paginationInfo.page > 1;
-    this.apiService.getUnauthntecated(`Tours/GetAllTours?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.getUnauthntecated(`Tours/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => of(null)),
       finalize(() => {
         this.isLoading = false;
