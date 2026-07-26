@@ -11,7 +11,8 @@ import { SwitcherOne } from '../../components/switcher-one/switcher-one';
 import Swiper from 'swiper';
 import { Navigation, Autoplay, Pagination } from 'swiper/modules';
 import { DestinationsTwo } from '../../components/destinations/destinations-two/destinations-two';
-import { TourPackages12item } from '../../components/tour-packages/tour-packages-12item/tour-packages-12item';
+import { ToursSection } from '../../components/home-sections/tours-section/tours-section';
+import { PackagesSection } from '../../components/home-sections/packages-section/packages-section';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,8 @@ import { TourPackages12item } from '../../components/tour-packages/tour-packages
     UsersOne,
     FooterOne,
     DestinationsTwo,
-    TourPackages12item,
+    ToursSection,
+    PackagesSection,
   ],
   templateUrl: './home.html',
   changeDetection:ChangeDetectionStrategy.OnPush,
