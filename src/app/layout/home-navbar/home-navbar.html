@@ -13,9 +13,13 @@
       </span>
     </a>
 
+    <div class="hidden min-w-0 flex-1 justify-center md:flex">
+      <app-search-box class="w-full max-w-md" />
+    </div>
+
     <nav class="ml-auto hidden items-center gap-1 lg:flex" aria-label="Main navigation">
       <app-destinations-menu />
-      <app-tours-menu />
+      <!-- <app-tours-menu /> -->
       <app-packages-menu />
 
       <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
@@ -157,6 +161,9 @@
 
   @if (mobileMenuOpen) {
   <nav class="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-800" aria-label="Mobile navigation">
+    <div class="mx-auto mb-3 max-w-[1600px] md:hidden">
+      <app-search-box />
+    </div>
     <div class="mx-auto grid max-w-[1600px] gap-1 sm:grid-cols-3">
       <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
         class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">Destinations</a>

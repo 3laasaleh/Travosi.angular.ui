@@ -13,12 +13,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 import { CurrencyService } from '../../core/services/currency.service';
 import { DestinationsMenu } from './destinations-menu/destinations-menu';
-import { ToursMenu } from './tours-menu/tours-menu';
 import { PackagesMenu } from './packages-menu/packages-menu';
+import { SearchBox } from './search-box/search-box';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, DestinationsMenu, ToursMenu, PackagesMenu],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DestinationsMenu, PackagesMenu, SearchBox],
   templateUrl: './home-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

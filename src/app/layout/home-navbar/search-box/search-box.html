@@ -1,0 +1,49 @@
+<div class="relative w-full max-w-md">
+  <div class="relative">
+    <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-lg text-slate-400"></i>
+    <input
+      type="search"
+      [formControl]="searchControl"
+      [placeholder]="'searchPlaceholder' | translate"
+      role="combobox"
+      aria-autocomplete="list"
+      [attr.aria-expanded]="resultsOpen"
+      class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 ps-10 pe-9 text-sm font-medium text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+      (focus)="onFocus()"
+    />
+    @if (searchControl.value) {
+      <button type="button" class="absolute end-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="'clearSearch' | translate" (click)="clearSearch()">
+        <i class="mdi mdi-close"></i>
+      </button>
+    }
+  </div>
+
+  @if (resultsOpen) {
+    <div class="absolute start-0 end-0 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="listbox">
+      <div class="max-h-96 overflow-y-auto p-2">
+        @if (isLoading) {
+          @for (row of [1,2,3,4]; track row) {
+            <div class="mx-3 my-2 h-4 animate-pulse rounded-full bg-slate-200"></div>
+          }
+        } @else if (hasResults) {
+          @for (group of groups; track group.labelKey) {
+            @if (group.items.length) {
+              <p class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ group.labelKey | translate }}</p>
+              @for (item of group.items; track item.id) {
+                <a [routerLink]="group.route" (click)="closeResults()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="option">
+                  <i [class]="'mdi text-primary ' + group.icon"></i>
+                  <span class="min-w-0">
+                    <span class="block truncate">{{ item.nameEng ?? item.name }}</span>
+                    @if (item.subDescription) { <span class="block truncate text-xs text-slate-400">{{ item.subDescription }}</span> }
+                  </span>
+                </a>
+              }
+            }
+          }
+        } @else {
+          <p class="p-4 text-center text-sm text-slate-500">{{ 'noSearchResults' | translate }}</p>
+        }
+      </div>
+    </div>
+  }
+</div>
