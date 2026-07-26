@@ -2,11 +2,12 @@
   <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
     <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div><p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p><h1 class="mt-2 text-3xl font-semibold">{{ 'tours' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageTourDetails' | translate }}</p></div>
-      <a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a>
+      <div class="flex gap-3"><a routerLink="/admin" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a><button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-primary/40 bg-primary/5 text-xl text-primary transition hover:bg-primary hover:text-white" [attr.title]="(showForm ? 'hideAddTour' : 'showAddTour') | translate" [attr.aria-expanded]="showForm" (click)="toggleForm()"><i class="mdi" [class.mdi-eye-off-outline]="showForm" [class.mdi-plus]="!showForm"></i></button></div>
     </header>
     @if (errorMessage) { <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
     @if (successMessage) { <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
-    <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+    <div [class]="showForm ? 'grid gap-6 xl:grid-cols-[0.95fr_1.05fr]' : 'grid gap-6 grid-cols-1'">
+      @if (showForm) {
       <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
         <h2 class="mb-4 text-xl font-semibold">{{ (selectedTour ? 'editTour' : 'addTour') | translate }}</h2>
         <form class="space-y-4" [formGroup]="tourForm" (ngSubmit)="saveTour()">
@@ -30,6 +31,7 @@
           <div class="flex gap-3"><button type="submit" [disabled]="tourForm.invalid || isLoading || destinationsLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedTour ? 'updateTour' : 'createTour') | translate }}</button>@if (selectedTour) { <button type="button" class="rounded-full border px-4 py-2 text-sm" (click)="resetForm()">{{ 'cancel' | translate }}</button> }</div>
         </form>
       </div>
+      }
       <div class="rounded-3xl border p-5"><div class="mb-4 flex justify-between"><h2 class="text-xl font-semibold">{{ 'tourList' | translate }}</h2><div class="flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span>{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div></div>
         @if (isLoading) {
           <div class="space-y-3" aria-busy="true" [attr.aria-label]="'loadingTours' | translate">

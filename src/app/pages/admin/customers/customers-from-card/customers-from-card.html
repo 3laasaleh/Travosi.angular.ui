@@ -9,8 +9,15 @@
     </div>
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'email' | translate }}</label><input formControlName="email" type="email" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'emailRequired' | translate }}</p> }@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) { <p class="mt-1 text-xs text-red-600">{{ 'emailInvalid' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'mobile' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="mobile" type="tel" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'mobile' | translate }}</label><input formControlName="mobile" type="tel" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.controls.mobile.touched && customerForm.controls.mobile.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'mobileRequired' | translate }}</p> }</div>
     </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'passportNumber' | translate }}</label><input formControlName="passportNumber" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (customerForm.controls.passportNumber.touched && customerForm.controls.passportNumber.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'passportNumberRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'customerType' | translate }}</label><select formControlName="customerType" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">@for (type of customerTypes; track type.value) { <option [ngValue]="type.value">{{ type.label | translate }}</option> }</select></div>
+    </div>
+    @if (customerForm.controls.customerType.value === customerTypeEnum.Company) {
+      <div><label class="mb-2 block text-sm font-medium">{{ 'companyName' | translate }}</label><input formControlName="companyName" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+    }
     <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeCustomer' | translate }}</label>
     <div class="flex gap-3"><button type="submit" [disabled]="customerForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedCustomer ? 'update' : 'add') | translate }}</button>@if (selectedCustomer) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
   </form>

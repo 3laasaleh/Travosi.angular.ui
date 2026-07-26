@@ -25,7 +25,7 @@ activeMenu='';
     { label: 'Destinations', path: '/admin/destinations', icon: 'mdi-map-marker-outline' },
     { label: 'Tours', path: '/admin/tours', icon: 'mdi-compass-outline' },
     { label: 'Packages', path: '/admin/packages', icon: 'mdi-package-variant-closed' },
-    { label: 'Booking', path: '/user-booking', icon: 'mdi-calendar-check-outline' },
+    { label: 'Booking', path: '/admin/agent-booking-manager', icon: 'mdi-calendar-check-outline' },
     { label: 'Customers', path: '/admin/customers', icon: 'mdi-account-group-outline' },
     { label: 'Tasks', path: '/admin/tasks', icon: 'mdi-checkbox-marked-outline' },
     { label: 'Airlines', path: '/admin/Airlines', icon: 'mdi-airplane' },

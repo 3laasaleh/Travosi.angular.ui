@@ -17,6 +17,7 @@ export class Packages implements OnInit {
   errorMessage = '';
   successMessage = '';
   selectedPackage: any = null;
+  showForm = true;
   page = 1;
   pageSize = 4;
 
@@ -56,6 +57,7 @@ export class Packages implements OnInit {
   }
 
   startEdit(pkg: any): void {
+    this.showForm = true;
     this.selectedPackage = pkg;
     this.packageForm = {
       title: pkg.title ?? '',
@@ -96,6 +98,11 @@ export class Packages implements OnInit {
       imageUrl: '',
       isActive: true,
     };
+  }
+
+  toggleForm(): void {
+    this.showForm = !this.showForm;
+    if (!this.showForm) this.resetForm();
   }
 
 

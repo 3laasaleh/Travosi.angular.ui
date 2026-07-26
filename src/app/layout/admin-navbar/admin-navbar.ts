@@ -16,6 +16,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../pages/user/_services/auth.service';
 import { ApiService } from '../../core/services/apiservice.service';
 import { TaskStatusEnum } from '../../pages/admin/tasks/task-status.enum';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -28,10 +29,12 @@ export class AdminNavbar implements OnInit, AfterViewInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  readonly languageService = inject(LanguageService);
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
   notificationsOpen = false;
+  languageMenuOpen = false;
   agentTasks: any[] = [];
   readonly taskStatusEnum = TaskStatusEnum;
 
@@ -65,6 +68,22 @@ export class AdminNavbar implements OnInit, AfterViewInit {
     this.accountMenuOpen = false;
     if (this.notificationsOpen) this.loadAgentTasks();
     this.refreshIcons();
+  }
+
+  get currentLanguage(): string {
+    return this.languageService.getCurrentLanguage();
+  }
+
+  toggleLanguageMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.languageMenuOpen = !this.languageMenuOpen;
+    this.accountMenuOpen = false;
+    this.notificationsOpen = false;
+  }
+
+  switchLanguage(language: string): void {
+    this.languageService.setGLobalLanguage(language).subscribe({ error: () => {} });
+    this.closeMenus();
   }
 
   get userName(): string {
@@ -105,6 +124,7 @@ export class AdminNavbar implements OnInit, AfterViewInit {
     this.accountMenuOpen = false;
     this.mobileMenuOpen = false;
     this.notificationsOpen = false;
+    this.languageMenuOpen = false;
   }
 
   logout(): void {
@@ -117,6 +137,7 @@ export class AdminNavbar implements OnInit, AfterViewInit {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.accountMenuOpen = false;
       this.notificationsOpen = false;
+      this.languageMenuOpen = false;
     }
   }
 

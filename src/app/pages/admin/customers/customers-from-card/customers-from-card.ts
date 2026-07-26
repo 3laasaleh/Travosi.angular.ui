@@ -12,13 +12,17 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { CustomerTypeEnum } from '../customer-type.enum';
 
 export interface CustomerDTO {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
-  mobile?: string;
+  mobile: string;
+  passportNumber?: string;
+  customerType: CustomerTypeEnum;
+  companyName?: string | null;
   isActive: boolean;
 }
 
@@ -30,6 +34,13 @@ export interface CustomerDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomersFromCard implements OnChanges {
+  readonly customerTypeEnum = CustomerTypeEnum;
+  readonly customerTypes = [
+    { value: CustomerTypeEnum.Individual, label: 'individual' },
+    { value: CustomerTypeEnum.Couple, label: 'couple' },
+    { value: CustomerTypeEnum.Family, label: 'family' },
+    { value: CustomerTypeEnum.Company, label: 'company' },
+  ];
   @Input() selectedCustomer: CustomerDTO | null = null;
   @Output() customerSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -61,6 +72,11 @@ export class CustomersFromCard implements OnChanges {
       lastName: form.lastName.trim(),
       email: form.email.trim(),
       mobile: form.mobile.trim(),
+      passportNumber: form.passportNumber.trim(),
+      customerType: form.customerType,
+      companyName: form.customerType === CustomerTypeEnum.Company
+        ? form.companyName.trim()
+        : null,
       isActive: form.isActive,
     };
     if (this.selectedCustomer?.id) payload.id = this.selectedCustomer.id;
@@ -104,6 +120,9 @@ export class CustomersFromCard implements OnChanges {
       lastName: customer.lastName ?? '',
       email: customer.email ?? '',
       mobile: customer.mobile ?? '',
+      passportNumber: customer.passportNumber ?? '',
+      customerType: customer.customerType ?? CustomerTypeEnum.Individual,
+      companyName: customer.companyName ?? '',
       isActive: customer.isActive !== false,
     });
   }
@@ -114,6 +133,9 @@ export class CustomersFromCard implements OnChanges {
       lastName: '',
       email: '',
       mobile: '',
+      passportNumber: '',
+      customerType: CustomerTypeEnum.Individual,
+      companyName: '',
       isActive: true,
     });
     if (emitCancel) this.editCancelled.emit();
@@ -124,7 +146,10 @@ export class CustomersFromCard implements OnChanges {
       firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
       lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-      mobile: new FormControl('', { nonNullable: true }),
+      mobile: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      passportNumber: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      customerType: new FormControl(CustomerTypeEnum.Individual, { nonNullable: true, validators: [Validators.required] }),
+      companyName: new FormControl('', { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
     });
   }

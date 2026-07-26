@@ -66,6 +66,14 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/admin/quotations/quotations-page').then((m) => m.Quotations),
       },
+      {
+        path: 'agent-booking-manager',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./pages/admin/agent-booking-manager/agent-booking-manager').then(
+            (m) => m.AgentBookingManager,
+          ),
+      },
 
       {path:'',redirectTo:'destinations',pathMatch:'full'}
     ],

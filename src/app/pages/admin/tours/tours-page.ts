@@ -41,6 +41,7 @@ export class Tours implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
   selectedTour: any = null;
+  showForm = true;
   previewTour: any = null;
   previewImageIndex = 0;
   page = 1;
@@ -214,6 +215,7 @@ export class Tours implements OnInit, OnDestroy {
   }
 
   startEdit(tour: any): void {
+    this.showForm = true;
     this.selectedTour = tour;
     this.revokeNewImageUrls();
     this.imageUploads = this.getImages(tour).slice(0, this.maxImages).map((image: any, index: number) => ({
@@ -301,6 +303,11 @@ export class Tours implements OnInit, OnDestroy {
       images: [],
       isActive: true,
     });
+  }
+
+  toggleForm(): void {
+    this.showForm = !this.showForm;
+    if (!this.showForm) this.resetForm();
   }
 
   private createForm() {
