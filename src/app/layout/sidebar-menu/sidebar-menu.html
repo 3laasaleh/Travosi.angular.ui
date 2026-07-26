@@ -1,8 +1,26 @@
 @if(showSidebar) {
-  <aside class="hidden lg:block w-72 shrink-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm  dark:bg-slate-900">
-    <div class="mb-6">
-      <h5 class="text-lg font-semibold text-slate-900 dark:text-white">Admin / Agent Menu</h5>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Quick access to management sections.</p>
+  <aside
+    class="hidden lg:block shrink-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 dark:bg-slate-900"
+    [class.w-72]="!collapsed"
+    [class.w-24]="collapsed"
+  >
+    <div class="mb-6 flex items-start gap-2" [class.justify-between]="!collapsed" [class.justify-center]="collapsed">
+      @if (!collapsed) {
+        <div>
+          <h5 class="text-lg font-semibold text-slate-900 dark:text-white">Admin / Agent Menu</h5>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Quick access to management sections.</p>
+        </div>
+      }
+      <button
+        type="button"
+        class="grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full border border-slate-300 text-xl text-slate-600 transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white"
+        [attr.aria-label]="(collapsed ? 'expandMenu' : 'collapseMenu') | translate"
+        [attr.title]="(collapsed ? 'expandMenu' : 'collapseMenu') | translate"
+        [attr.aria-expanded]="!collapsed"
+        (click)="toggleCollapsed()"
+      >
+        <i class="mdi" [class.mdi-chevron-double-left]="!collapsed" [class.mdi-chevron-double-right]="collapsed"></i>
+      </button>
     </div>
 
     <nav aria-label="Admin sections">
@@ -14,9 +32,15 @@
               routerLinkActive="active !border-primary !bg-primary !text-white"
               [routerLinkActiveOptions]="{ exact: true }"
               ariaCurrentWhenActive="page"
-              class="block rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white"
+              class="flex items-center gap-3 rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white"
+              [class.justify-center]="collapsed"
+              [class.px-0]="collapsed"
+              [attr.title]="collapsed ? item.label : null"
             >
-              {{ item.label }}
+              <i [class]="'mdi text-xl leading-none ' + item.icon"></i>
+              @if (!collapsed) {
+                <span>{{ item.label }}</span>
+              }
             </a>
           </li>
         }

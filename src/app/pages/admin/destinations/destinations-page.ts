@@ -14,13 +14,20 @@ import { DestinationsList } from './destinations-list/destinations-list';
 })
 export class Destinations {
   viewMode: 'table' | 'grid' = 'table';
+  showForm = true;
   selectedDestination: any = null;
   previewDestination: any = null;
   previewImageIndex = 0;
   refreshToken = 0;
 
+  toggleForm(): void {
+    this.showForm = !this.showForm;
+    if (!this.showForm) this.selectedDestination = null;
+  }
+
   selectDestinationForEdit(destination: any): void {
     this.selectedDestination = destination;
+    this.showForm = true;
   }
 
   clearSelectedDestination(): void {
