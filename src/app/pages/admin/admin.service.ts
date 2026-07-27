@@ -21,7 +21,7 @@ export class AdminService {
 
   getDestinations(page = 1, pageSize = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);
-    return this.http.get(`${environment.baseUrl}destinations/`, {
+    return this.http.get(`${environment.baseUrl}Destinations`, {
       headers: this.getHeaders(),
       params,
     });
@@ -66,13 +66,13 @@ export class AdminService {
   }
 
   createTour(payload: any): Observable<any> {
-    return this.http.post(`${environment.baseUrl}Destinations/tour`, payload, {
+    return this.http.post(`${environment.baseUrl}Tours`, payload, {
       headers: this.getHeaders(),
     });
   }
 
-  updateTour(id: number, payload: any): Observable<any> {
-    return this.http.put(`${environment.baseUrl}Tours/${id}`, payload, {
+  updateTour(payload: any): Observable<any> {
+    return this.http.put(`${environment.baseUrl}Tours`, payload, {
       headers: this.getHeaders(),
     });
   }

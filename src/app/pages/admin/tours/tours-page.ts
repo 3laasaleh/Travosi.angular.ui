@@ -3,21 +3,21 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnDestroy,
+  HostListener,
   OnInit,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, finalize, of, switchMap } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { AdminService } from '../admin.service';
-
-interface TourImageUpload {
-  file?: File;
-  url: string;
-  name: string;
-  existing: boolean;
-}
 
 @Component({
   selector: 'app-tours',
@@ -27,18 +27,18 @@ interface TourImageUpload {
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',
 })
-export class Tours implements OnInit, OnDestroy {
-  readonly maxImages = 10;
-  readonly maxImageBytes = 5 * 1024 * 1024;
-  readonly maxImageWidth = 2400;
-  readonly maxImageHeight = 1600;
-
+export class Tours implements OnInit {
+  readonly currencies = [
+    { id: 2, code: 'USD', labelKey: 'currencyUsd' },
+    { id: 1, code: 'EGP', labelKey: 'currencyEgp' },
+  ];
   tours: any[] = [];
   destinations: any[] = [];
-  imageUploads: TourImageUpload[] = [];
   isLoading = false;
   isSaving = false;
   destinationsLoading = false;
+  destinationMenuOpen = false;
+  destinationSearchTerm = '';
   errorMessage = '';
   successMessage = '';
   selectedTour: any = null;
@@ -58,10 +58,6 @@ export class Tours implements OnInit, OnDestroy {
     this.loadDestinationsThenTours();
   }
 
-  ngOnDestroy(): void {
-    this.revokeNewImageUrls();
-  }
-
   get pagedTours(): any[] {
     const start = (this.page - 1) * this.pageSize;
     return this.tours.slice(start, start + this.pageSize);
@@ -71,8 +67,25 @@ export class Tours implements OnInit, OnDestroy {
     return Math.max(1, Math.ceil(this.tours.length / this.pageSize));
   }
 
+  get filteredDestinations(): any[] {
+    const searchTerm = this.destinationSearchTerm.trim().toLocaleLowerCase();
+    if (!searchTerm) return this.destinations;
+    return this.destinations.filter((destination) =>
+      this.destinationLabel(destination).toLocaleLowerCase().includes(searchTerm),
+    );
+  }
+
+  get selectedDestination(): any | null {
+    const selectedId = this.tourForm.controls.destinationId.value;
+    return this.destinations.find((destination) => Number(destination.id) === Number(selectedId)) ?? null;
+  }
+
   loadDestinationsThenTours(): void {
-    this.isLoading = true;
+    this.loadDestinations();
+    this.loadTours();
+  }
+
+  loadDestinations(): void {
     this.destinationsLoading = true;
     this.errorMessage = '';
     this.adminService.getDestinations(1, 100).pipe(
@@ -80,28 +93,31 @@ export class Tours implements OnInit, OnDestroy {
         this.errorMessage = 'destinationsLoadError';
         return of(null);
       }),
-      switchMap((res: any) => {
-        if (res === null) return of(null);
-        const payload = res?.data ?? res;
-        this.destinations = Array.isArray(payload)
-          ? payload
-          : (payload?.items ?? payload?.destinations ?? payload?.result ?? []);
-        this.destinationsLoading = false;
-        return this.adminService.getTours(1, 100).pipe(
-          catchError(() => of({ data: this.getFallbackTours() })),
-        );
-      }),
       finalize(() => {
-        this.isLoading = false;
         this.destinationsLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((res: any) => {
-      if (res === null) return;
-      const payload = res?.data ?? res;
-      this.tours = Array.isArray(payload)
-        ? payload
-        : (payload?.items ?? payload?.tours ?? payload?.result ?? []);
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      this.destinations = this.extractCollection(response, ['destinations'])
+        .map((destination) => {
+          const id = Number(destination?.id ?? destination?.destinationId);
+          return { ...destination, id };
+        })
+        .filter((destination) => Number.isFinite(destination.id));
+    });
+  }
+
+  loadTours(): void {
+    this.isLoading = true;
+    this.adminService.getTours(1, 100).pipe(
+      catchError(() => of({ data: this.getFallbackTours() })),
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      this.tours = this.extractCollection(response, ['tours']);
     });
   }
 
@@ -116,37 +132,28 @@ export class Tours implements OnInit, OnDestroy {
     this.isSaving = true;
     this.errorMessage = '';
     this.successMessage = '';
-    const payload = new FormData();
-    payload.append('TitleEng', form.titleEng.trim());
-    payload.append('TitleAr', form.titleAr.trim());
-    payload.append('DestinationId', String(form.destinationId));
-    payload.append('Duration', form.duration);
-    payload.append('Price', form.price);
-    payload.append('Description', form.overview);
-    payload.append('Itinerary', form.itinerary);
-    payload.append('IsActive', String(form.isActive));
-    this.imageUploads
-      .filter((image) => image.file)
-      .forEach((image) => payload.append('Images', image.file!, image.file!.name));
-    this.imageUploads
-      .filter((image) => image.existing)
-      .forEach((image) => payload.append('ExistingImageUrls', image.url));
-
-    const localRecord = {
-      title: form.titleEng.trim(),
+    const payload: any = {
       titleEng: form.titleEng.trim(),
       titleAr: form.titleAr.trim(),
       destinationId: Number(form.destinationId),
-      duration: form.duration,
-      price: form.price,
-      overview: form.overview,
-      itinerary: form.itinerary,
-      images: this.imageUploads.map((image) => ({ url: image.url })),
-      isActive: form.isActive,
+      description: form.description.trim() || null,
+      fullDescription: form.fullDescription.trim() || null,
+      pricePerPerson: Number(form.pricePerPerson),
+      pricePerChild: Number(form.pricePerChild),
+      currencyId: Number(form.currencyId),
+      durationDays: Number(form.durationDays),
+      durationhours: Number(form.durationHours),
+      maxSeats: Number(form.maxSeats),
+      startDate: form.startDate,
+      endDate: form.endDate,
+      coverImageUrl: form.coverImageUrl.trim() || null,
+      cancellationPolicy: form.cancellationPolicy.trim(),
+      isFreeCancelation: form.isFreeCancelation,
     };
     const editing = this.selectedTour;
+    if (editing?.id) payload.id = Number(editing.id);
     const request$ = editing
-      ? this.adminService.updateTour(editing.id, payload)
+      ? this.adminService.updateTour(payload)
       : this.adminService.createTour(payload);
 
     request$.pipe(
@@ -160,82 +167,52 @@ export class Tours implements OnInit, OnDestroy {
       }),
     ).subscribe((res: any) => {
       if (res === null) return;
+      if (res?.isSuccess === false) {
+        this.errorMessage = res?.message || 'tourSaveError';
+        return;
+      }
+      const savedTour = res?.data ?? payload;
       if (editing) {
-        Object.assign(editing, localRecord);
-        this.successMessage = 'tourUpdated';
+        Object.assign(editing, savedTour);
+        this.successMessage = res?.message || 'tourUpdated';
       } else {
         this.tours = [
-          { ...localRecord, id: res?.id ?? res?.data?.id ?? Date.now() },
+          {
+            ...payload,
+            ...savedTour,
+            id: savedTour?.id ?? savedTour?.tourId ?? Date.now(),
+          },
           ...this.tours,
         ];
-        this.successMessage = 'tourCreated';
+        this.page = 1;
+        this.successMessage = res?.message || 'tourCreated';
       }
       this.resetForm();
     });
   }
 
-  async onImagesSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const files = Array.from(input.files ?? []);
-    input.value = '';
-    this.errorMessage = '';
-    if (this.imageUploads.length + files.length > this.maxImages) {
-      this.errorMessage = 'tourImageLimit';
-      return;
-    }
-    this.tourForm.controls.images.setValue(this.imageUploads.map((image) => image.url));
-    this.tourForm.controls.images.markAsTouched();
-    for (const file of files) {
-      if (!file.type.startsWith('image/')) {
-        this.errorMessage = 'invalidImageType';
-        continue;
-      }
-      if (file.size > this.maxImageBytes) {
-        this.errorMessage = 'imageTooLarge';
-        continue;
-      }
-      try {
-        const normalized = await this.normalizeImage(file);
-        this.imageUploads.push({
-          file: normalized,
-          url: URL.createObjectURL(normalized),
-          name: normalized.name,
-          existing: false,
-        });
-      } catch {
-        this.errorMessage = 'imageReadError';
-      }
-    }
-    this.cdr.markForCheck();
-  }
-
-  removeImage(index: number): void {
-    const [removed] = this.imageUploads.splice(index, 1);
-    if (removed?.file) URL.revokeObjectURL(removed.url);
-    this.tourForm.controls.images.setValue(this.imageUploads.map((image) => image.url));
-    this.tourForm.controls.images.markAsTouched();
-  }
-
   startEdit(tour: any): void {
     this.showForm = true;
     this.selectedTour = tour;
-    this.revokeNewImageUrls();
-    this.imageUploads = this.getImages(tour).slice(0, this.maxImages).map((image: any, index: number) => ({
-      url: this.imageUrl(image),
-      name: image?.name ?? `Tour image ${index + 1}`,
-      existing: true,
-    })).filter((image: TourImageUpload) => !!image.url);
     this.tourForm.setValue({
       titleEng: tour.titleEng ?? tour.title ?? '',
       titleAr: tour.titleAr ?? '',
       destinationId: tour.destinationId ?? '',
-      duration: tour.duration ?? '',
-      price: tour.price ?? '',
-      overview: tour.description ?? tour.overview ?? '',
-      itinerary: typeof tour.itinerary === 'string' ? tour.itinerary : '',
-      images: this.imageUploads.map((image) => image.url),
-      isActive: tour.isActive !== false,
+      description: tour.description ?? tour.overview ?? '',
+      fullDescription: tour.fullDescription ?? '',
+      pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
+      pricePerChild: Number(tour.pricePerChild ?? 0),
+      currencyId: Number(tour.currencyId ?? 2),
+      durationDays: Number(tour.durationDays ?? 0),
+      durationHours: Number(tour.durationhours ?? tour.durationHours ?? 0),
+      maxSeats: Number(tour.maxSeats ?? 14),
+      startDate: this.toDateTimeLocal(tour.startDate),
+      endDate: this.toDateTimeLocal(tour.endDate),
+      coverImageUrl: tour.coverImageUrl ?? tour.imageUrl ?? '',
+      cancellationPolicy: tour.cancellationPolicy ?? '',
+      isFreeCancelation: tour.isFreeCancelation === true,
     });
+    this.closeDestinationMenu();
   }
 
   deactivateTour(tour: any): void {
@@ -272,6 +249,54 @@ export class Tours implements OnInit, OnDestroy {
     return destination?.nameEng ?? destination?.name ?? `Destination #${destinationId}`;
   }
 
+  destinationLabel(destination: any): string {
+    return [destination?.nameEng ?? destination?.name, destination?.nameAr]
+      .filter(Boolean)
+      .join(' — ');
+  }
+
+  tourDuration(tour: any): string {
+    const days = Number(tour?.durationDays ?? 0);
+    const hours = Number(tour?.durationhours ?? tour?.durationHours ?? 0);
+    return `${days}d ${hours}h`;
+  }
+
+  tourPrice(tour: any): string {
+    const currency = this.currencies.find((item) => item.id === Number(tour?.currencyId));
+    return `${tour?.pricePerPerson ?? tour?.price ?? 0} ${currency?.code ?? ''}`.trim();
+  }
+
+  toggleDestinationMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.destinationsLoading) return;
+    this.destinationMenuOpen = !this.destinationMenuOpen;
+    if (!this.destinationMenuOpen) this.destinationSearchTerm = '';
+  }
+
+  selectDestination(destination: any): void {
+    const destinationId = Number(destination?.id ?? destination?.destinationId);
+    if (!Number.isFinite(destinationId)) return;
+    this.tourForm.controls.destinationId.setValue(destinationId);
+    this.tourForm.controls.destinationId.markAsDirty();
+    this.tourForm.controls.destinationId.markAsTouched();
+    this.destinationMenuOpen = false;
+    this.destinationSearchTerm = '';
+  }
+
+  updateDestinationSearch(event: Event): void {
+    this.destinationSearchTerm = (event.target as HTMLInputElement).value;
+  }
+
+  closeDestinationMenu(): void {
+    this.destinationMenuOpen = false;
+    this.destinationSearchTerm = '';
+  }
+
+  @HostListener('document:click')
+  closeDestinationMenuOnOutsideClick(): void {
+    this.closeDestinationMenu();
+  }
+
   getImages(tour: any): any[] {
     if (Array.isArray(tour?.images)) return tour.images;
     const cover = tour?.coverImageUrl ?? tour?.imageUrl;
@@ -291,19 +316,25 @@ export class Tours implements OnInit, OnDestroy {
   }
 
   resetForm(): void {
-    this.revokeNewImageUrls();
-    this.imageUploads = [];
     this.selectedTour = null;
+    this.closeDestinationMenu();
     this.tourForm.reset({
       titleEng: '',
       titleAr: '',
       destinationId: '',
-      duration: '',
-      price: '',
-      overview: '',
-      itinerary: '',
-      images: [],
-      isActive: true,
+      description: '',
+      fullDescription: '',
+      pricePerPerson: 0,
+      pricePerChild: 0,
+      currencyId: 2,
+      durationDays: 0,
+      durationHours: 0,
+      maxSeats: 14,
+      startDate: '',
+      endDate: '',
+      coverImageUrl: '',
+      cancellationPolicy: '',
+      isFreeCancelation: false,
     });
   }
 
@@ -323,51 +354,70 @@ export class Tours implements OnInit, OnDestroy {
         validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/)],
       }),
       destinationId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
-      duration: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      price: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      overview: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      itinerary: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
-      isActive: new FormControl(true, { nonNullable: true }),
-    });
+      description: new FormControl('', { nonNullable: true }),
+      fullDescription: new FormControl('', { nonNullable: true }),
+      pricePerPerson: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0.01)],
+      }),
+      pricePerChild: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0)],
+      }),
+      currencyId: new FormControl(2, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1)],
+      }),
+      durationDays: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0)],
+      }),
+      durationHours: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0), Validators.max(23)],
+      }),
+      maxSeats: new FormControl(14, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1)],
+      }),
+      startDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      endDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      coverImageUrl: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.pattern(/^https?:\/\/.+/i)],
+      }),
+      cancellationPolicy: new FormControl('', { nonNullable: true }),
+      isFreeCancelation: new FormControl(false, { nonNullable: true }),
+    }, { validators: this.dateRangeValidator });
   }
 
-  private revokeNewImageUrls(): void {
-    this.imageUploads.filter((image) => image.file).forEach((image) => URL.revokeObjectURL(image.url));
+  private extractCollection(response: any, collectionKeys: string[]): any[] {
+    let current = response;
+    for (let depth = 0; depth < 4 && current; depth++) {
+      if (Array.isArray(current)) return current;
+      for (const key of [...collectionKeys, 'items', 'records', 'result']) {
+        if (Array.isArray(current?.[key])) return current[key];
+      }
+      current = current?.data;
+    }
+    return [];
   }
 
-  private normalizeImage(file: File): Promise<File> {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const image = new Image();
-      image.onload = () => {
-        URL.revokeObjectURL(url);
-        if (image.naturalWidth <= this.maxImageWidth && image.naturalHeight <= this.maxImageHeight) {
-          resolve(file);
-          return;
-        }
-        const scale = Math.min(
-          this.maxImageWidth / image.naturalWidth,
-          this.maxImageHeight / image.naturalHeight,
-        );
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(image.naturalWidth * scale);
-        canvas.height = Math.round(image.naturalHeight * scale);
-        canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(
-          (blob) => blob
-            ? resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' }))
-            : reject(),
-          'image/webp',
-          0.88,
-        );
-      };
-      image.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject();
-      };
-      image.src = url;
-    });
+  private dateRangeValidator(control: AbstractControl): ValidationErrors | null {
+    const startDate = control.get('startDate')?.value;
+    const endDate = control.get('endDate')?.value;
+    if (!startDate || !endDate) return null;
+    return new Date(endDate).getTime() >= new Date(startDate).getTime()
+      ? null
+      : { invalidDateRange: true };
+  }
+
+  private toDateTimeLocal(value: string | null | undefined): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const offset = date.getTimezoneOffset() * 60_000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
   }
 
   private getFallbackTours(): any[] {
