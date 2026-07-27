@@ -42,14 +42,24 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/hotels/hotels-page').then((m) => m.Hotels),
       },
       {
-        path: 'Airlines',
+        path: 'airlines',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/admin/airlines/airlines-page').then((m) => m.Airlines),
       },
       {
-        path: 'Flights',
+        path: 'flights',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/admin/flights/flights-page').then((m) => m.Flights),
+      },
+      {
+        path: 'countries',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/countries/countries-page').then((m) => m.Countries),
+      },
+      {
+        path: 'cities',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/admin/cities/cities-page').then((m) => m.Cities),
       },
       {
         path: 'customers',

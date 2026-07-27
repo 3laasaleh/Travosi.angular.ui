@@ -58,7 +58,7 @@ export class QuotationsList implements OnInit, OnChanges {
   loadQuotations(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Quotations/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Quotations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'quotationServiceUnavailable';
         return of(null);

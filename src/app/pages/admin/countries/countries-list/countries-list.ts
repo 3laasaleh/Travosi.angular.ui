@@ -11,8 +11,9 @@ import {
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { ApiService } from '../../../../core/services/apiservice.service';
 import Swal from 'sweetalert2';
+import { ApiService } from '../../../../core/services/apiservice.service';
+import { CountryDTO } from '../countries-from-card/countries-from-card';
 
 interface PaginationInfoDTO {
   page: number;
@@ -22,22 +23,21 @@ interface PaginationInfoDTO {
 }
 
 @Component({
-  selector: 'app-admin-hotels-list',
+  selector: 'app-admin-countries-list',
   standalone: true,
   imports: [TranslatePipe],
-  templateUrl: './hotels-list.html',
+  templateUrl: './countries-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HotelsList implements OnInit, OnChanges {
+export class CountriesList implements OnInit, OnChanges {
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
-  @Output() editRequested = new EventEmitter<any>();
+  @Output() editRequested = new EventEmitter<CountryDTO>();
 
-  hotels: any[] = [];
+  countries: CountryDTO[] = [];
   isLoading = false;
   errorMessage = '';
-  successMessage = '';
-  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
+  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 1 };
 
   constructor(
     private apiService: ApiService,
@@ -46,22 +46,22 @@ export class HotelsList implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    this.loadHotels();
+    this.loadCountries();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['refreshToken'] && !changes['refreshToken'].firstChange) {
       this.paginationInfo.page = 1;
-      this.loadHotels();
+      this.loadCountries();
     }
   }
 
-  loadHotels(): void {
+  loadCountries(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Hotels/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Countries/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
-        this.errorMessage = 'hotelServiceUnavailable';
+        this.errorMessage = 'countryServiceUnavailable';
         return of(null);
       }),
       finalize(() => {
@@ -71,12 +71,12 @@ export class HotelsList implements OnInit, OnChanges {
     ).subscribe((response: any) => {
       if (response === null) return;
       const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.hotels ?? pageData;
-      this.hotels = Array.isArray(rows) ? rows : [];
+      const rows = pageData?.data ?? pageData?.items ?? pageData?.countries ?? pageData;
+      this.countries = Array.isArray(rows) ? rows : [];
       this.paginationInfo = {
         page: Number(pageData?.page ?? this.paginationInfo.page),
         pageSize: Number(pageData?.pageSize ?? this.paginationInfo.pageSize),
-        totalCount: Number(pageData?.totalCount ?? this.hotels.length),
+        totalCount: Number(pageData?.totalCount ?? this.countries.length),
         totalPages: Math.max(1, Number(pageData?.totalPages ?? 1)),
       };
     });
@@ -85,59 +85,51 @@ export class HotelsList implements OnInit, OnChanges {
   previousPage(): void {
     if (this.paginationInfo.page > 1) {
       this.paginationInfo.page--;
-      this.loadHotels();
+      this.loadCountries();
     }
   }
 
   nextPage(): void {
     if (this.paginationInfo.page < this.paginationInfo.totalPages) {
       this.paginationInfo.page++;
-      this.loadHotels();
+      this.loadCountries();
     }
   }
 
-  async toggleHotelStatus(hotel: any): Promise<void> {
+  async toggleCountryStatus(country: CountryDTO): Promise<void> {
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
-        hotel.isActive ? 'confirmDeactivateHotel' : 'confirmActivateHotel',
+        country.isActive !== false ? 'confirmDeactivateCountry' : 'confirmActivateCountry',
       ),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: this.translate.instant('confirm'),
       cancelButtonText: this.translate.instant('cancel'),
-      confirmButtonColor: hotel.isActive ? '#e11d48' : '#059669',
+      confirmButtonColor: country.isActive !== false ? '#e11d48' : '#059669',
       reverseButtons: true,
     });
     if (!result.isConfirmed) return;
 
-    this.isLoading = true;
-    this.apiService.put(`Hotels/${hotel.id}/ChangeStatus`, {}).pipe(
+    this.apiService.patch(`Countries/${country.id}/ChangeStatus`, {}).pipe(
       catchError(() => {
         Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') });
-        return of({ statusToggleFailed: true });
+        return of(null);
       }),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      }),
+      finalize(() => this.cdr.markForCheck()),
     ).subscribe((response: any) => {
-      if (response?.statusToggleFailed) return;
-      hotel.isActive = !hotel.isActive;
+      if (response === null || response?.isSuccess === false) return;
+      country.isActive = !country.isActive;
       Swal.fire({
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: this.translate.instant('statusUpdated'),
+        title: this.translate.instant('countryStatusUpdated'),
         showConfirmButton: false,
         timer: 2200,
         timerProgressBar: true,
       });
       this.cdr.markForCheck();
     });
-  }
-
-  stars(count: number): number[] {
-    return Array.from({ length: Number(count) || 0 });
   }
 }

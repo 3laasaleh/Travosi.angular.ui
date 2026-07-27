@@ -56,7 +56,7 @@ export class AirlinesList implements OnInit, OnChanges {
   loadAirlines(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Airlines/getall?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Airlines/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'airlineServiceUnavailable';
         return of(null);

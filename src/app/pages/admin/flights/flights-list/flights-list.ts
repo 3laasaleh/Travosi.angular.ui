@@ -58,7 +58,7 @@ export class FlightsList implements OnInit, OnChanges {
   loadFlights(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Flights/GetAllFlights?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Flights/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'flightServiceUnavailable';
         return of(null);

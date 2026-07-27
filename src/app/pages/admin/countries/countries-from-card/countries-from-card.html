@@ -1,0 +1,32 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) {
+    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
+  }
+  @if (successMessage) {
+    <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div>
+  }
+
+  <h2 class="mb-4 text-xl font-semibold">{{ (selectedCountry ? 'editCountry' : 'addCountry') | translate }}</h2>
+  <form class="space-y-4" [formGroup]="countryForm" (ngSubmit)="saveCountry()">
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }}</label>
+      <input formControlName="nameEng" type="text" maxlength="150" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      @if (countryForm.controls.nameEng.touched && countryForm.controls.nameEng.invalid) {
+        <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p>
+      }
+    </div>
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>
+      <input formControlName="nameAr" type="text" maxlength="150" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      @if (countryForm.controls.nameAr.touched && countryForm.controls.nameAr.invalid) {
+        <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p>
+      }
+    </div>
+    <div class="flex gap-3">
+      <button type="submit" [disabled]="countryForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{{ (selectedCountry ? 'update' : 'add') | translate }}</button>
+      @if (selectedCountry) {
+        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
+      }
+    </div>
+  </form>
+</div>

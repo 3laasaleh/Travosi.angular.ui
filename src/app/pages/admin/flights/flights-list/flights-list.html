@@ -62,7 +62,7 @@
       <tbody>
         @for (item of flights; track item.id) { <tr class="border-t border-slate-200 hover:bg-slate-50">
           <td class="px-4 py-3 font-semibold">{{ item.flightNumber }}</td>
-          <td class="px-4 py-3">{{ item.airline?.name }}</td>
+          <td class="px-4 py-3">{{ item.airlineName ?? item.airline?.name }}</td>
           <td class="px-4 py-3">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</td>
           <td class="px-4 py-3">{{ item.departureTime | date: 'short' }}</td>
           <td class="px-4 py-3">{{ item.price }}</td>
@@ -86,7 +86,7 @@
           <h3 class="font-semibold">{{ item.flightNumber }}</h3>
           <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span>
         </div>
-        <p class="mt-1 text-sm text-slate-500">{{ item.airline?.name }}</p>
+        <p class="mt-1 text-sm text-slate-500">{{ item.airlineName ?? item.airline?.name }}</p>
         <p class="mt-2 text-sm font-medium">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</p>
         <p class="mt-1 text-sm text-slate-500">{{ item.departureTime | date: 'short' }} - {{ item.arrivalTime | date: 'short' }}</p>
         <p class="mt-2 text-sm"><span class="font-semibold">{{ item.price }}</span> · {{ item.availableSeats }} {{ 'availableSeats' | translate }}</p>
