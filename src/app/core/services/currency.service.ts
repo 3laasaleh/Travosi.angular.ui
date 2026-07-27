@@ -2,16 +2,15 @@ import { Injectable, signal } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 
 export interface CurrencyOption {
+  id: number;
   code: string;
   symbol: string;
   labelKey: string;
 }
 
 export const CURRENCY_OPTIONS: CurrencyOption[] = [
-  { code: 'USD', symbol: '$', labelKey: 'currencyUsd' },
-  { code: 'EUR', symbol: '€', labelKey: 'currencyEur' },
-  { code: 'EGP', symbol: 'E£', labelKey: 'currencyEgp' },
-  { code: 'SAR', symbol: 'SR', labelKey: 'currencySar' },
+  { id: 1, code: 'USD', symbol: '$', labelKey: 'currencyUsd' },
+  { id: 2, code: 'EGP', symbol: 'E£', labelKey: 'currencyEgp' },
 ];
 
 @Injectable({

@@ -8,12 +8,14 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -54,6 +56,8 @@ export interface QuotationDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuotationsFromCard implements OnInit, OnChanges {
+  private readonly currencyService = inject(CurrencyService);
+
   @Input() selectedQuotation: QuotationDTO | null = null;
   @Output() quotationSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -65,7 +69,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   quotationForm = this.createForm();
   customers: any[] = [];
-  currencies: any[] = [];
+  readonly currencies = this.currencyService.options;
   packages: any[] = [];
   selectedPackageIds = new Set<number>();
   isLoading = false;
@@ -200,14 +204,12 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.optionsLoading = true;
     forkJoin({
       customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => of([]))),
-      currencies: this.apiService.get('Currencies?page=1&pageSize=100').pipe(catchError(() => of([]))),
       packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => of([]))),
     }).pipe(finalize(() => {
       this.optionsLoading = false;
       this.cdr.markForCheck();
-    })).subscribe(({ customers, currencies, packages }) => {
+    })).subscribe(({ customers, packages }) => {
       this.customers = this.rows(customers, 'customers');
-      this.currencies = this.rows(currencies, 'currencies');
       this.packages = this.rows(packages, 'packages');
       if (this.selectedQuotation) this.selectQuotationPackages(this.selectedQuotation.items);
     });
@@ -244,7 +246,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.quotationForm.reset({
       quotationNo: '',
       customerId: '',
-      currencyId: '',
+      currencyId: this.currencyService.currentCurrency().id,
       travelStartDate: '',
       travelEndDate: '',
       adults: 1,
@@ -270,7 +272,10 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return new FormGroup({
       quotationNo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       customerId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
-      currencyId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
+      currencyId: new FormControl<number | ''>(this.currencyService.currentCurrency().id, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
       travelStartDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       travelEndDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       adults: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
