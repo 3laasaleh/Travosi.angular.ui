@@ -79,6 +79,7 @@ export class AdminNavbar implements OnInit, AfterViewInit {
     this.languageMenuOpen = !this.languageMenuOpen;
     this.accountMenuOpen = false;
     this.notificationsOpen = false;
+    this.refreshIcons();
   }
 
   switchLanguage(language: string): void {
@@ -88,7 +89,8 @@ export class AdminNavbar implements OnInit, AfterViewInit {
 
   get userName(): string {
     const user = this.authService.getCurentUser();
-    return [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Administrator';
+    return [user?.firstName, user?.lastName].filter(Boolean).join(' ')
+      || this.languageService.translate.instant('administrator');
   }
 
   get userEmail(): string {

@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-packages',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './packages-page.html',
   changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './packages-page.scss',
@@ -45,14 +46,14 @@ export class Packages implements OnInit {
 
   savePackage(): void {
     if (!this.packageForm.title) {
-      this.errorMessage = 'Please add a package title.';
+      this.errorMessage = 'packageTitleRequired';
       return;
     }
 
     this.packages.unshift({ ...this.packageForm, id: Date.now() });
     this.successMessage = this.selectedPackage
-      ? 'Package updated.'
-      : 'Package created successfully.';
+      ? 'packageUpdated'
+      : 'packageCreated';
     this.resetForm();
   }
 
@@ -72,7 +73,7 @@ export class Packages implements OnInit {
 
   deactivatePackage(pkg: any): void {
     pkg.isActive = false;
-    this.successMessage = 'Package deactivated.';
+    this.successMessage = 'packageDeactivated';
   }
 
   nextPage(): void {

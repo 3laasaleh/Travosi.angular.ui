@@ -2,16 +2,42 @@
   @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
   @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedQuotation ? 'editQuotation' : 'addQuotation') | translate }}</h2>
-  <form class="space-y-4" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
+  <form class="space-y-5" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'customerName' | translate }}</label><input formControlName="customerName" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (quotationForm.get('customerName')?.touched && quotationForm.get('customerName')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'customerNameRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'price' | translate }}</label><input formControlName="price" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (quotationForm.get('price')?.touched && quotationForm.get('price')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'priceRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'quotationNo' | translate }}</label><input formControlName="quotationNo" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label><select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2"><option value="">{{ 'selectCustomer' | translate }}</option>@for (customer of customers; track customer.id) { <option [ngValue]="customer.id">{{ customer.firstName }} {{ customer.lastName }}{{ customer.companyName ? ' — ' + customer.companyName : '' }}</option> }</select></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2"><option value="">{{ 'selectCurrency' | translate }}</option>@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.code ?? currency.name }} {{ currency.symbol }}</option> }</select></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'status' | translate }}</label><select formControlName="status" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">@for (status of statuses; track status.value) { <option [ngValue]="status.value">{{ status.label.toLowerCase() | translate }}</option> }</select></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'travelStartDate' | translate }}</label><input formControlName="travelStartDate" type="date" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'travelEndDate' | translate }}</label><input formControlName="travelEndDate" type="date" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'validUntil' | translate }}</label><input formControlName="validUntil" type="date" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'exchangeRate' | translate }}</label><input formControlName="exchangeRate" type="number" min="0.000001" step="0.000001" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
     </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'adults' | translate }}</label><input formControlName="adults" type="number" min="1" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'children' | translate }}</label><input formControlName="children" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'infants' | translate }}</label><input formControlName="infants" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+    </div>
+
+    <fieldset class="rounded-2xl border border-slate-200 bg-white p-4">
+      <legend class="px-2 text-sm font-semibold">{{ 'selectedPackages' | translate }}</legend>
+      @if (optionsLoading) { <div class="h-24 animate-pulse rounded-xl bg-slate-100"></div> }
+      @else { <div class="max-h-64 space-y-2 overflow-y-auto">@for (pkg of packages; track pkg.id) { <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 hover:border-primary"><span class="flex items-center gap-3"><input type="checkbox" [checked]="isPackageSelected(pkg.id)" (change)="togglePackage(pkg, $any($event.target).checked)" /><span><span class="block font-medium">{{ pkg.title ?? pkg.name }}</span><span class="text-xs text-slate-500">{{ pkg.duration }}</span></span></span><strong>{{ packagePrice(pkg) }}</strong></label> } @empty { <p class="py-4 text-center text-sm text-slate-500">{{ 'noPackagesFound' | translate }}</p> }</div> }
+    </fieldset>
+
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'email' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="email" type="email" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (quotationForm.get('email')?.touched && quotationForm.get('email')?.hasError('email')) { <p class="mt-1 text-xs text-red-600">{{ 'emailInvalid' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'phone' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="phoneNumber" type="tel" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'discount' | translate }}</label><input formControlName="discount" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'taxRate' | translate }} (%)</label><input formControlName="taxRate" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
     </div>
-    <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="description" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
-    <div class="flex gap-3"><button type="submit" [disabled]="quotationForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedQuotation ? 'update' : 'add') | translate }}</button>@if (selectedQuotation) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+
+    <div class="grid gap-3 rounded-2xl bg-slate-900 p-4 text-sm text-white sm:grid-cols-2">
+      <p>{{ 'subTotal' | translate }}: <strong>{{ subTotal | number:'1.2-2' }}</strong></p><p>{{ 'discount' | translate }}: <strong>{{ quotationForm.controls.discount.value | number:'1.2-2' }}</strong></p>
+      <p>{{ 'tax' | translate }}: <strong>{{ tax | number:'1.2-2' }}</strong></p><p>{{ 'totalCost' | translate }}: <strong>{{ totalCost | number:'1.2-2' }}</strong></p>
+      <p class="sm:col-span-2 text-base">{{ 'totalAmount' | translate }}: <strong>{{ totalAmount | number:'1.2-2' }}</strong></p>
+    </div>
+
+    <div><label class="mb-2 block text-sm font-medium">{{ 'notes' | translate }}</label><textarea formControlName="notes" rows="3" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
+    <div class="flex gap-3"><button type="submit" [disabled]="quotationForm.invalid || isLoading || optionsLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedQuotation ? 'update' : 'add') | translate }}</button>@if (selectedQuotation) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
   </form>
 </div>

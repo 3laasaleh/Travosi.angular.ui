@@ -43,17 +43,21 @@
         </button>
 
         @if (languageMenuOpen) {
-        <div class="absolute right-0 mt-2 w-40 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+        <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
           <div class="p-2">
             <button type="button" (click)="switchLanguage('en')"
               class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
               [class.bg-primary-50]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" role="menuitem">
-              English
+              <i class="mdi mdi-alphabet-latin text-lg" aria-hidden="true"></i>
+              <span class="flex-1 text-start">{{ 'languageEnglish' | translate }}</span>
+              @if (currentLanguage === 'en') { <i class="mdi mdi-check text-base" aria-hidden="true"></i> }
             </button>
             <button type="button" (click)="switchLanguage('ar')"
               class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
               [class.bg-primary-50]="currentLanguage === 'ar'" [class.text-primary]="currentLanguage === 'ar'" role="menuitem">
-              العربية
+              <i class="mdi mdi-abjad-arabic text-lg" aria-hidden="true"></i>
+              <span class="flex-1 text-start">{{ 'languageArabic' | translate }}</span>
+              @if (currentLanguage === 'ar') { <i class="mdi mdi-check text-base" aria-hidden="true"></i> }
             </button>
           </div>
         </div>

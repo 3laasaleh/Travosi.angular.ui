@@ -7,8 +7,8 @@
     <div class="mb-6 flex items-start gap-2" [class.justify-between]="!collapsed" [class.justify-center]="collapsed">
       @if (!collapsed) {
         <div>
-          <h5 class="text-lg font-semibold text-slate-900 dark:text-white">Admin / Agent Menu</h5>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Quick access to management sections.</p>
+          <h5 class="text-lg font-semibold text-slate-900 dark:text-white">{{ 'adminAgentMenu' | translate }}</h5>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ 'quickAccessManagement' | translate }}</p>
         </div>
       }
       <button
@@ -23,7 +23,7 @@
       </button>
     </div>
 
-    <nav aria-label="Admin sections">
+    <nav [attr.aria-label]="'adminNavigation' | translate">
       <ul class="space-y-2 text-sm">
         @for (item of menuItems; track item.path) {
           <li [class.active]="activeMenu === item.path">
@@ -35,11 +35,11 @@
               class="flex items-center gap-3 rounded-2xl border border-gray-100 bg-slate-50 px-4 py-3 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white"
               [class.justify-center]="collapsed"
               [class.px-0]="collapsed"
-              [attr.title]="collapsed ? item.label : null"
+              [attr.title]="collapsed ? (item.label | translate) : null"
             >
               <i [class]="'mdi text-xl leading-none ' + item.icon"></i>
               @if (!collapsed) {
-                <span>{{ item.label }}</span>
+                <span>{{ item.label | translate }}</span>
               }
             </a>
           </li>

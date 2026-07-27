@@ -23,7 +23,7 @@ export class LanguageService {
   getCurrentLanguage() {
     let lang = this.cookieService.get("lang");
     if (!lang) {
-      lang = "ar"
+      lang = "en"
       this.setGLobalLanguage(lang);
     }
     return lang;
@@ -33,7 +33,7 @@ export class LanguageService {
 
   setGLobalLanguage(lang?: string) {
     if (!lang)
-      lang = "ar";
+      lang = "en";
     // Save in cookie
     this.cookieService.set('lang', lang, {
       path: '/',

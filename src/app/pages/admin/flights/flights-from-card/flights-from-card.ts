@@ -63,7 +63,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   loadAirlines(): void {
-    this.apiService.get('Airlines/GetAllAirlines?page=1&pageSize=100').pipe(
+    this.apiService.get('Airlines/GetAll?page=1&pageSize=100').pipe(
       catchError(() => of(null)),
       finalize(() => this.cdr.markForCheck()),
     ).subscribe((response: any) => {

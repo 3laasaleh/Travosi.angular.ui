@@ -87,6 +87,22 @@ export class ApiService {
 
   }
 
+  patch(url: string, data: any): Observable<any> {
+    return this.http.patch<any>(environment.baseUrl + url, data, {
+      headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }),
+    });
+  }
+
+  patchFile(url: string, data: any): Observable<Blob> {
+    return this.http.patch(environment.baseUrl + url, data, {
+      headers: new HttpHeaders({
+        Authorization: "Bearer " + this.getToken(),
+        Accept: "application/pdf, application/json",
+      }),
+      responseType: 'blob',
+    });
+  }
+
   delete(url: string, id: any): Observable<any> {
     return this.http.delete<any>(environment.baseUrl + url + "/" + id,
       { headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }) });

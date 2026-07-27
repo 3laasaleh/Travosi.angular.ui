@@ -35,6 +35,8 @@ export class QuotationsList implements OnInit, OnChanges {
   quotations: any[] = [];
   isLoading = false;
   errorMessage = '';
+  sendMessage = '';
+  sendingQuotationId: number | null = null;
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
 
   constructor(
@@ -56,7 +58,7 @@ export class QuotationsList implements OnInit, OnChanges {
   loadQuotations(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.apiService.get(`Quotations/GetAllQuotations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
+    this.apiService.get(`Quotations/GetAll?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'quotationServiceUnavailable';
         return of(null);
@@ -91,5 +93,49 @@ export class QuotationsList implements OnInit, OnChanges {
       this.paginationInfo.page++;
       this.loadQuotations();
     }
+  }
+
+  sendQuotation(quotation: any): void {
+    const id = Number(quotation.id);
+    if (!id || this.sendingQuotationId !== null) return;
+    this.sendingQuotationId = id;
+    this.errorMessage = '';
+    this.sendMessage = '';
+
+    this.apiService.patchFile(`Quotations/${id}/Send`, {}).pipe(
+      catchError(() => {
+        this.errorMessage = 'quotationSendError';
+        return of(null);
+      }),
+      finalize(() => {
+        this.sendingQuotationId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((blob: Blob | null) => {
+      if (blob === null) return;
+      if (blob.type.includes('pdf')) {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${quotation.quotationNo ?? `quotation-${id}`}.pdf`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+        this.sendMessage = 'quotationPdfDownloaded';
+        return;
+      }
+
+      // The documented endpoint returns GenericResponse<bool>. In that case the
+      // quotation was sent/generated server-side but there is no PDF body to save.
+      blob.text().then((text) => {
+        try {
+          const response = JSON.parse(text);
+          this.sendMessage = response?.message ?? 'quotationSent';
+          if (response?.isSuccess === false) this.errorMessage = response.message;
+        } catch {
+          this.sendMessage = 'quotationSent';
+        }
+        this.cdr.markForCheck();
+      });
+    });
   }
 }
