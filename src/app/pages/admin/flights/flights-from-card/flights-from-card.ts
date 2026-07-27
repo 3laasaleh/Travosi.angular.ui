@@ -75,6 +75,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   saveFlight(): void {
+    if (this.isLoading) return;
     if (this.flightForm.invalid) {
       this.flightForm.markAllAsTouched();
       return;

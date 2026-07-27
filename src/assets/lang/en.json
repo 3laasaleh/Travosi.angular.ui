@@ -406,4 +406,6 @@
     ,"confirmDeactivateCity": "Are you sure you want to deactivate this city?"
     ,"confirmActivateCity": "Are you sure you want to activate this city?"
     ,"cityStatusUpdated": "City status updated successfully."
+    ,"saving": "Saving..."
+    ,"forgotPasswordError": "Unable to send the password reset email. Please try again."
 }

@@ -55,6 +55,7 @@ export class HotelsFromCard implements OnChanges {
   }
 
   saveHotel(): void {
+    if (this.isLoading) return;
     if (this.hotelForm.invalid) {
       this.hotelForm.markAllAsTouched();
       return;

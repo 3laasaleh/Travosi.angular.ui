@@ -59,6 +59,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
   }
 
   saveCity(): void {
+    if (this.isLoading) return;
     if (this.cityForm.invalid) {
       this.cityForm.markAllAsTouched();
       return;

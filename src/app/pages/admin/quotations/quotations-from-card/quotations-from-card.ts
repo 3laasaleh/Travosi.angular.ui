@@ -132,6 +132,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   saveQuotation(): void {
+    if (this.isLoading) return;
     if (this.quotationForm.invalid || !this.selectedPackageIds.size) {
       this.quotationForm.markAllAsTouched();
       if (!this.selectedPackageIds.size) this.errorMessage = 'selectAtLeastOnePackage';

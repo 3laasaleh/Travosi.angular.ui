@@ -49,6 +49,7 @@ export class CountriesFromCard implements OnChanges {
   }
 
   saveCountry(): void {
+    if (this.isLoading) return;
     if (this.countryForm.invalid) {
       this.countryForm.markAllAsTouched();
       return;

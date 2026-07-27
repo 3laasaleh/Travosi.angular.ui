@@ -70,6 +70,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   }
 
   saveTask(): void {
+    if (this.isLoading) return;
     if (this.taskForm.invalid) {
       this.taskForm.markAllAsTouched();
       return;

@@ -49,6 +49,7 @@ export class AirlinesFromCard implements OnChanges {
   }
 
   saveAirline(): void {
+    if (this.isLoading) return;
     if (this.airlineForm.invalid) {
       this.airlineForm.markAllAsTouched();
       return;

@@ -37,6 +37,7 @@ export class Tours implements OnInit, OnDestroy {
   destinations: any[] = [];
   imageUploads: TourImageUpload[] = [];
   isLoading = false;
+  isSaving = false;
   destinationsLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -105,13 +106,14 @@ export class Tours implements OnInit, OnDestroy {
   }
 
   saveTour(): void {
+    if (this.isSaving) return;
     if (this.tourForm.invalid) {
       this.tourForm.markAllAsTouched();
       return;
     }
     const form = this.tourForm.getRawValue();
 
-    this.isLoading = true;
+    this.isSaving = true;
     this.errorMessage = '';
     this.successMessage = '';
     const payload = new FormData();
@@ -153,7 +155,7 @@ export class Tours implements OnInit, OnDestroy {
         return of(null);
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.isSaving = false;
         this.cdr.markForCheck();
       }),
     ).subscribe((res: any) => {

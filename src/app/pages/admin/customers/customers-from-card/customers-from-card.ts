@@ -62,6 +62,7 @@ export class CustomersFromCard implements OnChanges {
   }
 
   saveCustomer(): void {
+    if (this.isLoading) return;
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched();
       return;
