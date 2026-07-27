@@ -36,6 +36,7 @@ export class CitiesList implements OnInit, OnChanges {
 
   cities: CityDTO[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 1 };
 
@@ -97,6 +98,7 @@ export class CitiesList implements OnInit, OnChanges {
   }
 
   async toggleCityStatus(city: CityDTO): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -111,12 +113,16 @@ export class CitiesList implements OnInit, OnChanges {
     });
     if (!result.isConfirmed) return;
 
+    this.statusUpdatingId = Number(city.id);
     this.apiService.patch(`Cities/${city.id}/ChangeStatus`, {}).pipe(
       catchError(() => {
         Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') });
         return of(null);
       }),
-      finalize(() => this.cdr.markForCheck()),
+      finalize(() => {
+        this.statusUpdatingId = null;
+        this.cdr.markForCheck();
+      }),
     ).subscribe((response: any) => {
       if (response === null || response?.isSuccess === false) return;
       city.isActive = !city.isActive;

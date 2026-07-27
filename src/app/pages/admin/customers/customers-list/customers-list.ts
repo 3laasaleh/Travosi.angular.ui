@@ -35,6 +35,7 @@ export class CustomersList implements OnInit, OnChanges {
 
   customers: any[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
 
@@ -96,6 +97,7 @@ export class CustomersList implements OnInit, OnChanges {
   }
 
   async toggleCustomerStatus(customer: any): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -110,14 +112,14 @@ export class CustomersList implements OnInit, OnChanges {
     });
     if (!result.isConfirmed) return;
 
-    this.isLoading = true;
+    this.statusUpdatingId = Number(customer.id);
     this.apiService.put(`Customers/${customer.id}/ChangeStatus`, {}).pipe(
       catchError(() => {
         Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') });
         return of({ statusToggleFailed: true });
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.statusUpdatingId = null;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {

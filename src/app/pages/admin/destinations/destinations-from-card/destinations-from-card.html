@@ -4,32 +4,6 @@
   @if (successMessage) { <div
     class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
     successMessage | translate }}</div> }
-  @if (isLoading) {
-  <div class="space-y-4" aria-busy="true" [attr.aria-label]="'loadingDestinations' | translate">
-    <div class="h-7 w-44 animate-pulse rounded-full bg-slate-200"></div>
-    <div class="grid gap-4 md:grid-cols-2">@for (field of [1, 2]; track field) { <div class="space-y-2">
-        <div class="h-4 w-28 animate-pulse rounded-full bg-slate-200"></div>
-        <div class="h-10 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-      </div> }</div>
-    <div class="space-y-2">
-      <div class="h-4 w-36 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-10 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-    </div>
-    <div class="space-y-2">
-      <div class="h-4 w-24 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-24 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-    </div>
-    <div class="space-y-2">
-      <div class="flex justify-between">
-        <div class="h-4 w-32 animate-pulse rounded-full bg-slate-200"></div>
-        <div class="h-4 w-8 animate-pulse rounded-full bg-slate-200"></div>
-      </div>
-      <div class="h-24 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-    </div>
-    <div class="h-4 w-36 animate-pulse rounded-full bg-slate-200"></div>
-    <div class="h-10 w-24 animate-pulse rounded-full bg-slate-200"></div>
-  </div>
-  } @else {
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedDestination ? 'editDestination' : 'addDestination') | translate }}
   </h2>
   <form class="space-y-4" [formGroup]="destinationForm" (ngSubmit)="saveDestination()">
@@ -73,9 +47,12 @@
           <div class="relative overflow-hidden rounded-xl bg-slate-200">
           <img [src]="getImageUrl(image.url)" [alt]="image.name" class="aspect-[3/2] w-full object-cover" />
             <button type="button"
-              class="absolute right-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600"
+              class="absolute right-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="deletingImageIndex !== null"
               [attr.aria-label]="'removeImage' | translate" [attr.title]="'removeImage' | translate"
-              (click)="removeImage(index)"><i class="mdi mdi-close"></i></button>
+              (click)="removeImage(index)">
+              <i class="mdi" [class.mdi-loading]="deletingImageIndex === index" [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"></i>
+            </button>
           @if (index === 0)
           { <span
             class="absolute bottom-2 left-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">
@@ -86,10 +63,11 @@
     <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{
       'activeDestination' | translate }}</label>
     <div class="flex gap-3"><button type="submit" [disabled]="destinationForm.invalid || isLoading"
-        class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">{{ (selectedDestination ? 'update' :
-        'add') | translate }}</button>@if (selectedDestination) { <button type="button"
-        class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' |
+        class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+        @if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> }
+        @else { {{ (selectedDestination ? 'update' : 'add') | translate }} }
+        </button>@if (selectedDestination) { <button type="button" [disabled]="isLoading"
+        class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60" (click)="cancelEdit()">{{ 'cancel' |
         translate }}</button> }</div>
   </form>
-  }
 </div>

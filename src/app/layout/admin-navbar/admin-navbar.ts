@@ -35,6 +35,7 @@ export class AdminNavbar implements OnInit, AfterViewInit {
   mobileMenuOpen = false;
   notificationsOpen = false;
   languageMenuOpen = false;
+  switchingLanguage: string | null = null;
   agentTasks: any[] = [];
   readonly taskStatusEnum = TaskStatusEnum;
 
@@ -83,8 +84,15 @@ export class AdminNavbar implements OnInit, AfterViewInit {
   }
 
   switchLanguage(language: string): void {
-    this.languageService.setGLobalLanguage(language).subscribe({ error: () => {} });
-    this.closeMenus();
+    if (this.switchingLanguage !== null) return;
+    this.switchingLanguage = language;
+    this.languageService.setGLobalLanguage(language).pipe(
+      finalize(() => {
+        this.switchingLanguage = null;
+        this.closeMenus();
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({ error: () => {} });
   }
 
   get userName(): string {

@@ -5,6 +5,7 @@ import feather from 'feather-icons';
 import { AuthService } from '../../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { finalize } from 'rxjs';
 
 interface RegistrationPayload {
   firstName: string;
@@ -54,6 +55,7 @@ export class SignupPage implements AfterViewInit {
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) return;
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -73,7 +75,12 @@ export class SignupPage implements AfterViewInit {
 
     this.isSubmitting = true;
 
-    this._authService.registeration(payload).subscribe({
+    this._authService.registeration(payload).pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
       next: (res: IGenericResponse<string>) => {
         if(res.isSuccess){
         this.successMessage =res.data?? 'Sign up compeleted successfully.';
@@ -82,11 +89,8 @@ export class SignupPage implements AfterViewInit {
         else{
         this.errorMessage =res.message?? 'Failed to signup please try agian!';
         }
-           this.isSubmitting = false;
-       this.cdr.markForCheck();
       },
       error: (error) => {
-        this.isSubmitting = false;
         this.errorMessage =
           error?.error?.message || error?.message || 'Registration failed. Please try again.';
       },

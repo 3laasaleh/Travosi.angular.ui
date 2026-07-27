@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import feather from 'feather-icons';
 import { AccountTab } from '../../account-tab/account-tab';
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-user-setting',
@@ -21,6 +22,7 @@ export class UserSetting implements AfterViewInit {
   public _route = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly apiService = inject(ApiService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   currentUser: any;
   isPersonalSubmitting = false;
@@ -64,6 +66,7 @@ export class UserSetting implements AfterViewInit {
   }
 
   savePersonalDetails(): void {
+    if (this.isPersonalSubmitting) return;
     this.personalMessage = '';
     this.personalError = '';
 
@@ -79,20 +82,24 @@ export class UserSetting implements AfterViewInit {
       phone: this.personalForm.value.phone,
     };
 
-    this.apiService.post('Account/UpdateProfile', payload).subscribe({
+    this.apiService.post('Account/UpdateProfile', payload).pipe(
+      finalize(() => {
+        this.isPersonalSubmitting = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
       next: () => {
         this.personalMessage = 'personalSaveSuccess';
         this.personalForm.markAsPristine();
-        this.isPersonalSubmitting = false;
       },
       error: () => {
         this.personalError = 'personalSaveError';
-        this.isPersonalSubmitting = false;
       },
     });
   }
 
   changePassword(): void {
+    if (this.isPasswordSubmitting) return;
     this.passwordMessage = '';
     this.passwordError = '';
 
@@ -108,15 +115,18 @@ export class UserSetting implements AfterViewInit {
     };
 
     this.isPasswordSubmitting = true;
-    this.apiService.put('Account/ChangePassword', payload).subscribe({
+    this.apiService.put('Account/ChangePassword', payload).pipe(
+      finalize(() => {
+        this.isPasswordSubmitting = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
       next: () => {
         this.passwordMessage = 'passwordSaveSuccess';
         this.passwordForm.reset();
-        this.isPasswordSubmitting = false;
       },
       error: () => {
         this.passwordError = 'passwordSaveError';
-        this.isPasswordSubmitting = false;
       },
     });
   }

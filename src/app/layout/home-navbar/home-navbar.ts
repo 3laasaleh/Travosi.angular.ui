@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -15,6 +16,7 @@ import { CurrencyService } from '../../core/services/currency.service';
 import { DestinationsMenu } from './destinations-menu/destinations-menu';
 import { PackagesMenu } from './packages-menu/packages-menu';
 import { SearchBox } from './search-box/search-box';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-home-navbar',
@@ -25,6 +27,7 @@ import { SearchBox } from './search-box/search-box';
 export class HomeNavbar implements AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly languageService = inject(LanguageService);
   readonly currencyService = inject(CurrencyService);
 
@@ -32,6 +35,7 @@ export class HomeNavbar implements AfterViewInit {
   mobileMenuOpen = false;
   languageMenuOpen = false;
   currencyMenuOpen = false;
+  switchingLanguage: string | null = null;
 
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
@@ -54,8 +58,15 @@ export class HomeNavbar implements AfterViewInit {
   }
 
   switchLanguage(lang: string): void {
-    this.languageService.setGLobalLanguage(lang).subscribe({ error: () => {} });
-    this.closeMenus();
+    if (this.switchingLanguage !== null) return;
+    this.switchingLanguage = lang;
+    this.languageService.setGLobalLanguage(lang).pipe(
+      finalize(() => {
+        this.switchingLanguage = null;
+        this.closeMenus();
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({ error: () => {} });
   }
 
   switchCurrency(code: string): void {

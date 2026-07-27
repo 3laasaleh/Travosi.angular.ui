@@ -41,10 +41,11 @@
                         </div>
 
                         <div class="mb-4">
-                            <button type="button" (click)="onSubmit()" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md w-full" 
-                            [disabled]="loginForm.invalid">
+                            <button type="button" (click)="onSubmit()" class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-2 text-center text-base text-white duration-500 disabled:cursor-not-allowed disabled:opacity-60" 
+                            [disabled]="loginForm.invalid || isSubmitting">
                                 @if (isSubmitting) {
-                                    {{ 'submittingSignin' | translate }}
+                                    <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+                                    <span>{{ 'submittingSignin' | translate }}</span>
                                 } @else {
                                     {{ 'signin' | translate }}
                                 }

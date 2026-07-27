@@ -55,6 +55,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   destinationForm = this.createForm();
   imageUploads: DestinationImageUpload[] = [];
   isLoading = false;
+  deletingImageIndex: number | null = null;
   errorMessage = '';
   successMessage = '';
 
@@ -75,6 +76,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
   saveDestination(): void {
+    if (this.isLoading) return;
     if (this.destinationForm.invalid) {
       this.destinationForm.markAllAsTouched();
       return;
@@ -159,6 +161,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
   async removeImage(index: number): Promise<void> {
+    if (this.deletingImageIndex !== null) return;
     const image = this.imageUploads[index];
     if (!image) return;
 
@@ -175,7 +178,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     if (!confirmation.isConfirmed) return;
 
     if (image.existing && this.selectedDestination?.id) {
-      this.isLoading = true;
+      this.deletingImageIndex = index;
       this.adminService.deleteDestinationImage({
         destinationId: this.selectedDestination.id,
         imageUrl: image.url,
@@ -186,7 +189,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           return of({ imageDeleteFailed: true });
         }),
         finalize(() => {
-          this.isLoading = false;
+          this.deletingImageIndex = null;
           this.cdr.markForCheck();
         }),
       ).subscribe((response: any) => {

@@ -23,9 +23,9 @@
       }
     </div>
     <div class="flex gap-3">
-      <button type="submit" [disabled]="countryForm.invalid || isLoading" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{{ (selectedCountry ? 'update' : 'add') | translate }}</button>
+      <button type="submit" [disabled]="countryForm.invalid || isLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedCountry ? 'update' : 'add') | translate }} }</button>
       @if (selectedCountry) {
-        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
+        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
       }
     </div>
   </form>

@@ -37,6 +37,7 @@ export class DestinationsList implements OnInit, OnChanges {
 
   destinations: any[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
@@ -99,24 +100,27 @@ export class DestinationsList implements OnInit, OnChanges {
   }
 
   deactivateDestination(destination: any): void {
-    this.isLoading = true;
+    if (this.statusUpdatingId !== null || destination.isActive === false) return;
+    this.statusUpdatingId = Number(destination.id);
     this.adminService.cangeStatus(destination.id).pipe(
       catchError(() => {
         this.errorMessage = 'destinationSaveError';
         return of(null);
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.statusUpdatingId = null;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
       this.successMessage = 'destinationDeactivated';
-      this.loadDestinations();
+      destination.isActive = false;
+      this.cdr.markForCheck();
     });
   }
 
   async toggleDestinationStatus(destination: any): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -131,7 +135,7 @@ export class DestinationsList implements OnInit, OnChanges {
     });
     if (!result.isConfirmed) return;
 
-    this.isLoading = true;
+    this.statusUpdatingId = Number(destination.id);
     this.adminService.cangeStatus(destination.id).pipe(
       catchError(() => {
         Swal.fire({
@@ -141,7 +145,7 @@ export class DestinationsList implements OnInit, OnChanges {
         return of({ statusToggleFailed: true });
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.statusUpdatingId = null;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
@@ -156,7 +160,6 @@ export class DestinationsList implements OnInit, OnChanges {
         timer: 2200,
         timerProgressBar: true,
       });
-        this.isLoading = false;
       this.cdr.markForCheck();
     });
   }

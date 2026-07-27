@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { SwitcherOne } from '../../../../components/switcher-one/switcher-one';
@@ -6,6 +6,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-reset-password',
@@ -19,6 +20,7 @@ export class ResetPassword implements AfterViewInit {
   private readonly apiService = inject(ApiService);
   private readonly fb = inject(FormBuilder);
   private readonly jwtHelper = inject(JwtHelperService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   bg = 'assets/images/bg/6.jpg';
   email = '';
@@ -84,6 +86,7 @@ export class ResetPassword implements AfterViewInit {
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) return;
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -100,14 +103,17 @@ export class ResetPassword implements AfterViewInit {
       password: this.password?.value,
     };
 
-    this.apiService.post('Account/changepassword', payload).subscribe({
+    this.apiService.post('Account/changepassword', payload).pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
       next: () => {
         this.successMessage = 'resetPasswordSuccess';
-        this.isSubmitting = false;
       },
       error: () => {
         this.errorMessage = 'resetPasswordError';
-        this.isSubmitting = false;
       },
     });
   }

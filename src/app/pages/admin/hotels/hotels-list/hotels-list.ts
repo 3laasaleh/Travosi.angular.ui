@@ -35,6 +35,7 @@ export class HotelsList implements OnInit, OnChanges {
 
   hotels: any[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
@@ -97,6 +98,7 @@ export class HotelsList implements OnInit, OnChanges {
   }
 
   async toggleHotelStatus(hotel: any): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -111,14 +113,14 @@ export class HotelsList implements OnInit, OnChanges {
     });
     if (!result.isConfirmed) return;
 
-    this.isLoading = true;
+    this.statusUpdatingId = Number(hotel.id);
     this.apiService.put(`Hotels/${hotel.id}/ChangeStatus`, {}).pipe(
       catchError(() => {
         Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') });
         return of({ statusToggleFailed: true });
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.statusUpdatingId = null;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {

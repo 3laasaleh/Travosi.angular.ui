@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login-page',
@@ -34,6 +35,7 @@ export class LoginPage implements AfterViewInit {
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) return;
     this.errorMessage = '';
 
     if (this.loginForm.invalid) {
@@ -50,16 +52,18 @@ export class LoginPage implements AfterViewInit {
     };
 
     // AuthService handles storing the login result and redirection
-    this._authService.login(payload).subscribe({
+    this._authService.login(payload).pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
       next: (res: IGenericResponse<UserProfileDTO>) => {
         if(!res.isSuccess&&res?.message)
         this.errorMessage = res?.message ??"" ;
-        this.isSubmitting = false;
-        this.cdr.detectChanges();
       },
       error: (error) => {
         this.errorMessage = error.message;
-        this.isSubmitting = false;
       },
     });
 

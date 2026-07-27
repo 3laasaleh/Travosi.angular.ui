@@ -55,8 +55,13 @@
                                     <p class="text-sm text-red-600">{{ personalError | translate }}</p>
                                 }
                             }
-                            <button type="submit" class="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md mt-5" [disabled]="personalForm.invalid || personalForm.pristine || isPersonalSubmitting">
-                                {{ 'saveChanges' | translate }}
+                            <button type="submit" class="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2 text-center text-base font-semibold text-white duration-500 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="personalForm.invalid || personalForm.pristine || isPersonalSubmitting">
+                                @if (isPersonalSubmitting) {
+                                    <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+                                    <span>{{ 'saving' | translate }}</span>
+                                } @else {
+                                    {{ 'saveChanges' | translate }}
+                                }
                             </button>
                         </form>
                     </div>
@@ -98,8 +103,13 @@
                                     <p class="text-sm text-red-600">{{ passwordError | translate }}</p>
                                 }
                             }
-                            <button type="submit" class="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md mt-5" [disabled]="passwordForm.invalid || isPasswordSubmitting">
-                                {{ 'savePassword' | translate }}
+                            <button type="submit" class="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2 text-center text-base font-semibold text-white duration-500 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="passwordForm.invalid || isPasswordSubmitting">
+                                @if (isPasswordSubmitting) {
+                                    <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+                                    <span>{{ 'saving' | translate }}</span>
+                                } @else {
+                                    {{ 'savePassword' | translate }}
+                                }
                             </button>
                         </form>
                     </div>

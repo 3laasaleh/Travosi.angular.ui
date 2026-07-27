@@ -79,13 +79,14 @@
           <td class="px-4 py-3 font-semibold">{{ item.nameEng ?? item.name }}</td>
           <td class="px-4 py-3" dir="rtl">{{ item.nameAr }}</td>
           <td class="px-4 py-3">
-            <button type="button" role="switch" [attr.aria-checked]="item.isActive !== false"
+            <button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false"
               [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate"
-              class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
               [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false"
               (click)="toggleDestinationStatus(item)">
-              <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
-                [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span>
+              @if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white" aria-hidden="true"></i> }
+              @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
+                [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }
             </button>
           </td>
           <td class="px-4 py-3">
@@ -97,9 +98,11 @@
                 class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white cursor-pointer" (click)="editRequested.emit(item)"><i
                   class="mdi mdi-pencil-outline"></i></button>
               }
-              <button type="button"
-                class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 transition-colors duration-200 hover:border-rose-600 hover:bg-rose-600 hover:text-white cursor-pointer"
-                (click)="deactivateDestination(item)"><i class="mdi mdi-close-circle-outline"></i></button></div>
+              @if (item.isActive !== false) {
+                <button type="button" [disabled]="statusUpdatingId !== null"
+                  class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 transition-colors duration-200 hover:border-rose-600 hover:bg-rose-600 hover:text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                  (click)="deactivateDestination(item)"><i class="mdi" [class.mdi-loading]="statusUpdatingId === item.id" [class.mdi-spin]="statusUpdatingId === item.id" [class.mdi-close-circle-outline]="statusUpdatingId !== item.id"></i></button>
+              }</div>
           </td>
         </tr> } @empty { <tr>
           <td colspan="5" class="p-8 text-center text-slate-500">{{ 'noDestinationsFound' | translate }}</td>
@@ -118,8 +121,8 @@
         <div class="mt-4 flex gap-2"><button type="button" class="rounded-full border border-primary/40 px-3 py-1 text-xs font-semibold text-primary transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white"
             (click)="previewRequested.emit(item)">{{ 'view' | translate }}</button><button type="button"
             class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(item)">{{ 'edit' | translate
-            }}</button><button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition-colors duration-200 hover:border-rose-600 hover:bg-rose-600 hover:text-white"
-            (click)="deactivateDestination(item)">{{ 'deactivate' | translate }}</button></div>
+            }}</button>@if (item.isActive !== false) { <button type="button" [disabled]="statusUpdatingId !== null" class="inline-flex items-center justify-center gap-2 rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition-colors duration-200 hover:border-rose-600 hover:bg-rose-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            (click)="deactivateDestination(item)">@if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'submitting' | translate }}</span> } @else { {{ 'deactivate' | translate }} }</button> }</div>
       </div>
     </article> } @empty { <p class="text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p> }</div>
   }
