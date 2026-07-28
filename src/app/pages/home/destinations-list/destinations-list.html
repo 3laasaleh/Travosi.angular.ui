@@ -1,0 +1,104 @@
+<app-home-navbar />
+
+<section
+  class="relative table w-full bg-cover bg-center bg-no-repeat py-36"
+  [style.background-image]="'url(' + heroImage + ')'"
+>
+  <div class="absolute inset-0 bg-gradient-to-b from-slate-900/55 via-slate-900/75 to-slate-900"></div>
+  <div class="container relative pt-10 text-center">
+    <h1 class="text-4xl font-semibold tracking-wide text-white">{{ 'destinations' | translate }}</h1>
+  </div>
+</section>
+
+<main class="relative py-16 md:py-24">
+  <div class="container relative">
+    @if (errorMessage) {
+      <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        {{ errorMessage | translate }}
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true">
+        @for (card of [1,2,3,4,5,6,7,8]; track card) {
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="aspect-[4/3] animate-pulse bg-slate-200"></div>
+            <div class="space-y-3 p-4">
+              <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
+              <div class="h-4 w-full animate-pulse rounded-full bg-slate-200"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (destination of destinations; track destination.id) {
+          <a
+            [routerLink]="['/destinations', destination.id]"
+            class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
+          >
+            <div class="overflow-hidden">
+              <img
+                [src]="imageUrl(destination)"
+                [alt]="destination.nameEng ?? destination.name"
+                class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+            </div>
+            <div class="p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h2 class="text-lg font-semibold transition group-hover:text-primary">
+                    {{ destination.nameEng ?? destination.name }}
+                  </h2>
+                  @if (destination.nameAr) {
+                    <p dir="rtl" class="mt-1 text-sm text-slate-400">{{ destination.nameAr }}</p>
+                  }
+                </div>
+                <i class="mdi mdi-arrow-right text-xl text-primary rtl:rotate-180"></i>
+              </div>
+              @if (destination.subDescription ?? destination.description) {
+                <p class="mt-3 line-clamp-2 text-sm leading-6 text-slate-500">
+                  {{ destination.subDescription ?? destination.description }}
+                </p>
+              }
+            </div>
+          </a>
+        } @empty {
+          <p class="col-span-full py-12 text-center text-slate-500">
+            {{ 'noDestinationsFound' | translate }}
+          </p>
+        }
+      </div>
+    }
+
+    @if (!isLoading) {
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+        <span class="text-sm font-medium text-slate-500">
+          {{ 'totalRecords' | translate }}: {{ paginationInfo.totalCount }}
+        </span>
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 text-sm text-slate-500">
+            <span>{{ 'pageSize' | translate }}</span>
+            <select
+              class="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+              [value]="paginationInfo.pageSize"
+              (change)="onPageSizeChange($event)"
+            >
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </label>
+          <app-pagination-one
+            [compact]="true"
+            [currentPage]="paginationInfo.page"
+            [totalPages]="paginationInfo.totalPages"
+            (pageChange)="onPageChange($event)"
+          />
+        </div>
+      </div>
+    }
+  </div>
+</main>
+
+<app-footer-one />

@@ -13,7 +13,21 @@ export const routes: Routes = [
   {
     path: 'destinations',
     loadComponent: () =>
-      import('./pages/destinations-list/destinations-list').then((m) => m.DestinationsList),
+      import('./pages/home/destinations-list/destinations-list').then(
+        (m) => m.HomeDestinationsList,
+      ),
+  },
+  {
+    path: 'destinations/:id',
+    loadComponent: () =>
+      import('./pages/home/destination-detail/destination-detail').then(
+        (m) => m.HomeDestinationDetail,
+      ),
+  },
+  {
+    path: 'tours/:id',
+    loadComponent: () =>
+      import('./pages/home/tour-page/tour-page').then((m) => m.HomeTourPage),
   },
   {
     path: 'admin',
