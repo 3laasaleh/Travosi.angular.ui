@@ -8,7 +8,7 @@ import { destinations } from '../../data/data';
 import { HomeNavbar } from '../../layout/home-navbar/home-navbar';
 @Component({
   selector: 'app-destinations-list',
-  imports: [RouterLink, HomeNavbar, PaginationOne, FooterOne, SwitcherOne],
+  imports: [RouterLink, HomeNavbar, PaginationOne, FooterOne],
   templateUrl: './destinations-list.html',
   changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './destinations-list.scss',
