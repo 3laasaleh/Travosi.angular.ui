@@ -27,7 +27,7 @@
   }
   
   @else {
-  <div class="grid gap-4 md:grid-cols-3">@for (card of [1,2,3,4]; track card) { <div
+  <div class="grid gap-4 md:grid-cols-2">@for (card of [1,2,3,4]; track card) { <div
       class="overflow-hidden rounded-2xl border">
       <div class="aspect-[3/2] animate-pulse bg-slate-200"></div>
       <div class="space-y-3 p-4">
@@ -93,7 +93,7 @@
     </table>
   </div>
   } @else {
-  <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-3">@for (item of destinations; track item.id) { <article
+  <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2 " >@for (item of destinations; track item.id) { <article
       class="overflow-hidden rounded-2xl border">@if (getImages(item)[0]; as image) { 
         <img [src]="imageUrl(image)"
         [alt]="item.nameEng" class="aspect-[3/2] w-full object-cover" /> }<div class="p-4">
@@ -109,9 +109,12 @@
     </article> } @empty { <p class="text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p> }</div>
   }
   @if (!isLoading) {
-    <div class="mt-4 flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-4">
-      <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
-      <app-pagination-one [compact]="true" [currentPage]="paginationInfo.page" [totalPages]="paginationInfo.totalPages" (pageChange)="onPageChange($event)" />
+    <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+      <span class="text-sm font-medium text-slate-500">{{ 'totalRecords' | translate }}: {{ paginationInfo.totalCount }}</span>
+      <div class="flex flex-wrap items-center gap-2">
+        <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
+        <app-pagination-one [compact]="true" [currentPage]="paginationInfo.page" [totalPages]="paginationInfo.totalPages" (pageChange)="onPageChange($event)" />
+      </div>
     </div>
   }
 </div>
