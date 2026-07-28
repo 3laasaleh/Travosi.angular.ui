@@ -13,7 +13,7 @@ import { HotelsList } from './hotels-list/hotels-list';
 })
 export class Hotels {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedHotel: any = null;
   refreshToken = 0;
 

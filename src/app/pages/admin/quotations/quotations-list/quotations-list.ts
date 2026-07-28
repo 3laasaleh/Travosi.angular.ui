@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../../core/services/apiservice.service';
 
 interface PaginationInfoDTO {
@@ -23,7 +24,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-admin-quotations-list',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, PaginationOne],
   templateUrl: './quotations-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -87,6 +88,12 @@ export class QuotationsList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadQuotations();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    this.paginationInfo.page = page;
+    this.loadQuotations();
   }
 
   onPageSizeChange(event: Event): void {

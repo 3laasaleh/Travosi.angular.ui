@@ -23,7 +23,7 @@ export class Tasks {
     return this.authService.getCurrentUserRole() === 'Admin';
   }
 
-  showForm = this.authService.getCurrentUserRole() === 'Admin';
+  showForm = false;
 
   toggleForm(): void {
     this.showForm = !this.showForm;

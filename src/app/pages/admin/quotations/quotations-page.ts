@@ -13,7 +13,7 @@ import { QuotationsList } from './quotations-list/quotations-list';
 })
 export class Quotations {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedQuotation: any = null;
   refreshToken = 0;
 

@@ -14,7 +14,7 @@ import { DestinationsList } from './destinations-list/destinations-list';
 })
 export class Destinations {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedDestination: any = null;
   previewDestination: any = null;
   previewImageIndex = 0;

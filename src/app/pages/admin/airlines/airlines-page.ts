@@ -13,7 +13,7 @@ import { AirlinesList } from './airlines-list/airlines-list';
 })
 export class Airlines {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedAirline: any = null;
   refreshToken = 0;
 

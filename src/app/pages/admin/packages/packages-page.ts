@@ -3,11 +3,12 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PaginationOne } from '../../../components/listing/tour-grid/pagination-one/pagination-one';
 
 @Component({
   selector: 'app-packages',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, PaginationOne],
   templateUrl: './packages-page.html',
   changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './packages-page.scss',
@@ -19,7 +20,7 @@ export class Packages implements OnInit {
   errorMessage = '';
   successMessage = '';
   selectedPackage: any = null;
-  showForm = true;
+  showForm = false;
   page = 1;
   pageSize = 10;
 
@@ -87,6 +88,11 @@ export class Packages implements OnInit {
     if (this.page > 1) {
       this.page--;
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.page || page < 1 || page > this.totalPages) return;
+    this.page = page;
   }
 
   onPageSizeChange(event: Event): void {

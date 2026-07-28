@@ -12,6 +12,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { FLIGHT_CLASS_OPTIONS } from '../flight-class.enum';
 
@@ -25,7 +26,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-admin-flights-list',
   standalone: true,
-  imports: [TranslatePipe, DatePipe],
+  imports: [TranslatePipe, DatePipe, PaginationOne],
   templateUrl: './flights-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -87,6 +88,12 @@ export class FlightsList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadFlights();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    this.paginationInfo.page = page;
+    this.loadFlights();
   }
 
   onPageSizeChange(event: Event): void {

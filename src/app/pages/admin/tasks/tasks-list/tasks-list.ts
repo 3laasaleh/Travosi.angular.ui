@@ -12,6 +12,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { AuthService } from '../../../user/_services/auth.service';
 import { TASK_STATUS_OPTIONS, TaskStatusEnum } from '../task-status.enum';
@@ -26,7 +27,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-admin-tasks-list',
   standalone: true,
-  imports: [TranslatePipe, DatePipe],
+  imports: [TranslatePipe, DatePipe, PaginationOne],
   templateUrl: './tasks-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -97,6 +98,12 @@ export class TasksList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadTasks();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    this.paginationInfo.page = page;
+    this.loadTasks();
   }
 
   onPageSizeChange(event: Event): void {

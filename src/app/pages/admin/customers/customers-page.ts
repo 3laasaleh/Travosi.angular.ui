@@ -13,7 +13,7 @@ import { CustomersList } from './customers-list/customers-list';
 })
 export class Customers {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedCustomer: any = null;
   refreshToken = 0;
 

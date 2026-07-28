@@ -4,20 +4,6 @@
   }
   <div class="mb-4 flex items-center justify-between">
     <h2 class="text-xl font-semibold">{{ 'cityRecords' | translate }}</h2>
-    @if (isLoading) {
-      <div class="flex items-center gap-2" aria-hidden="true">
-        <div class="h-8 w-20 animate-pulse rounded-full bg-slate-200"></div>
-        <div class="h-4 w-10 animate-pulse rounded-full bg-slate-200"></div>
-        <div class="h-8 w-16 animate-pulse rounded-full bg-slate-200"></div>
-      </div>
-    } @else {
-      <div class="flex items-center gap-2">
-        <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
-        <button type="button" class="rounded-full border px-3 py-1 text-sm enabled:hover:text-primary disabled:cursor-not-allowed disabled:opacity-60" (click)="previousPage()" [disabled]="paginationInfo.page === 1">{{ 'previous' | translate }}</button>
-        <span class="text-sm text-slate-500">{{ paginationInfo.page }} / {{ paginationInfo.totalPages }}</span>
-        <button type="button" class="rounded-full border px-3 py-1 text-sm enabled:hover:text-primary disabled:cursor-not-allowed disabled:opacity-60" (click)="nextPage()" [disabled]="paginationInfo.page === paginationInfo.totalPages">{{ 'next' | translate }}</button>
-      </div>
-    }
   </div>
 
   @if (isLoading) {
@@ -44,9 +30,9 @@
       </div>
     }
   } @else if (viewMode === 'table') {
-    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+    <div class="max-h-[70vh] overflow-auto rounded-2xl border border-slate-200">
       <table class="min-w-full text-left text-sm">
-        <thead class="bg-slate-50 text-slate-600">
+        <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
           <tr>
             <th class="px-4 py-3">{{ 'englishName' | translate }}</th>
             <th class="px-4 py-3">{{ 'arabicName' | translate }}</th>
@@ -83,7 +69,7 @@
       </table>
     </div>
   } @else {
-    <div class="grid gap-4 md:grid-cols-2">
+    <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2">
       @for (city of cities; track city.id) {
         <article class="overflow-hidden rounded-2xl border">
           <div class="p-4">
@@ -107,6 +93,12 @@
       } @empty {
         <p class="text-sm text-slate-500">{{ 'noCitiesFound' | translate }}</p>
       }
+    </div>
+  }
+  @if (!isLoading) {
+    <div class="mt-4 flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-4">
+      <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
+      <app-pagination-one [compact]="true" [currentPage]="paginationInfo.page" [totalPages]="paginationInfo.totalPages" (pageChange)="onPageChange($event)" />
     </div>
   }
 </div>

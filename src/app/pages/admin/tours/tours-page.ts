@@ -17,12 +17,13 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-tours',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, PaginationOne],
   templateUrl: './tours-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',
@@ -43,7 +44,7 @@ export class Tours implements OnInit {
   errorMessage = '';
   successMessage = '';
   selectedTour: any = null;
-  showForm = true;
+  showForm = false;
   previewTour: any = null;
   previewImageIndex = 0;
   page = 1;
@@ -323,6 +324,12 @@ export class Tours implements OnInit {
       this.page--;
       this.loadTours();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.page || page < 1 || page > this.totalPages) return;
+    this.page = page;
+    this.loadTours();
   }
 
   onPageSizeChange(event: Event): void {

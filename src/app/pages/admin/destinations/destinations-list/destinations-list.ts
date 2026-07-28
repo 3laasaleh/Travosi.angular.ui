@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../../admin.service';
 import Swal from 'sweetalert2';
 
@@ -25,7 +26,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-admin-destinations-list',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, PaginationOne],
   templateUrl: './destinations-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -91,6 +92,12 @@ export class DestinationsList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadDestinations();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    this.paginationInfo.page = page;
+    this.loadDestinations();
   }
 
   onPageSizeChange(event: Event): void {

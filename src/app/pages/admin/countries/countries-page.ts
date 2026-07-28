@@ -13,7 +13,7 @@ import { CountriesList } from './countries-list/countries-list';
 })
 export class Countries {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedCountry: any = null;
   refreshToken = 0;
 

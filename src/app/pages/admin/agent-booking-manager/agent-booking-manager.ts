@@ -3,12 +3,13 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { PaginationOne } from '../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../core/services/apiservice.service';
 
 @Component({
   selector: 'app-agent-booking-manager',
   standalone: true,
-  imports: [DatePipe, RouterLink, TranslatePipe],
+  imports: [DatePipe, RouterLink, TranslatePipe, PaginationOne],
   templateUrl: './agent-booking-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,6 +59,12 @@ export class AgentBookingManager implements OnInit {
       this.page--;
       this.loadBookings();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.page || page < 1 || page > this.totalPages) return;
+    this.page = page;
+    this.loadBookings();
   }
 
   onPageSizeChange(event: Event): void {

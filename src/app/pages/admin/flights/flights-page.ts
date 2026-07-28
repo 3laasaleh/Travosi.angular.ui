@@ -13,7 +13,7 @@ import { FlightsList } from './flights-list/flights-list';
 })
 export class Flights {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedFlight: any = null;
   refreshToken = 0;
 

@@ -13,7 +13,7 @@ import { CitiesList } from './cities-list/cities-list';
 })
 export class Cities {
   viewMode: 'table' | 'grid' = 'table';
-  showForm = true;
+  showForm = false;
   selectedCity: any = null;
   refreshToken = 0;
 

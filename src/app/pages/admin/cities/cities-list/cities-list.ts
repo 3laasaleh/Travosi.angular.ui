@@ -12,6 +12,7 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
+import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CityDTO } from '../cities-from-card/cities-from-card';
 
@@ -25,7 +26,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-admin-cities-list',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, PaginationOne],
   templateUrl: './cities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -89,6 +90,12 @@ export class CitiesList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadCities();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    this.paginationInfo.page = page;
+    this.loadCities();
   }
 
   onPageSizeChange(event: Event): void {
