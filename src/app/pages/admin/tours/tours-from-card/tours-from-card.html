@@ -1,0 +1,137 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  <h2 class="mb-4 text-xl font-semibold">{{ (selectedTour ? 'editTour' : 'addTour') | translate }}</h2>
+  <form class="space-y-4" [formGroup]="tourForm" (ngSubmit)="saveTour()">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label><input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }@if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label><input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> }@if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
+      <div>
+        <label class="mb-2 block text-sm font-medium" id="tourDestinationLabel">{{ 'destination' | translate }}</label>
+        <div class="relative" (click)="$event.stopPropagation()" (keydown.escape)="closeDestinationMenu()">
+          <button type="button"
+            class="flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-3 py-2 text-start disabled:cursor-not-allowed disabled:opacity-60"
+            [disabled]="destinationsLoading"
+            [attr.aria-expanded]="destinationMenuOpen"
+            aria-haspopup="listbox"
+            aria-labelledby="tourDestinationLabel"
+            aria-controls="tourDestinationOptions"
+            (click)="toggleDestinationMenu($event)">
+            @if (destinationsLoading) {
+              <span class="flex items-center gap-2 text-slate-500"><i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>{{ 'loadingDestinations' | translate }}</span>
+            } @else if (selectedDestination) {
+              <span class="truncate">{{ destinationLabel(selectedDestination) }}</span>
+            } @else {
+              <span class="text-slate-500">{{ 'selectDestination' | translate }}</span>
+            }
+            <i class="mdi text-lg text-slate-500" [class.mdi-chevron-down]="!destinationMenuOpen" [class.mdi-chevron-up]="destinationMenuOpen" aria-hidden="true"></i>
+          </button>
+
+          @if (destinationMenuOpen) {
+            <div class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+              <div class="border-b border-slate-100 p-2">
+                <div class="relative">
+                  <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true"></i>
+                  <input type="search"
+                    class="w-full rounded-xl border border-slate-200 py-2 pe-3 ps-9 text-sm outline-none focus:border-primary"
+                    [value]="destinationSearchTerm"
+                    [placeholder]="'searchDestinations' | translate"
+                    [attr.aria-label]="'searchDestinations' | translate"
+                    (input)="updateDestinationSearch($event)" />
+                </div>
+              </div>
+              <div id="tourDestinationOptions" class="max-h-56 overflow-y-auto p-2" role="listbox">
+                @for (destination of filteredDestinations; track destination.id) {
+                  <button type="button"
+                    class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-start text-sm hover:bg-primary/5 hover:text-primary"
+                    [class.bg-primary-50]="tourForm.controls.destinationId.value === destination.id"
+                    [class.text-primary]="tourForm.controls.destinationId.value === destination.id"
+                    [attr.aria-selected]="tourForm.controls.destinationId.value === destination.id"
+                    role="option"
+                    (click)="selectDestination(destination)">
+                    <span class="truncate">{{ destinationLabel(destination) }}</span>
+                    @if (tourForm.controls.destinationId.value === destination.id) { <i class="mdi mdi-check" aria-hidden="true"></i> }
+                  </button>
+                } @empty {
+                  <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (destinations.length ? 'noMatchingDestinations' : 'noDestinationsFound') | translate }}</p>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        @if (tourForm.controls.destinationId.touched && tourForm.controls.destinationId.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }
+      </div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }}</label><input formControlName="pricePerPerson" type="number" min="0.01" step="0.01" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.pricePerPerson.touched && tourForm.controls.pricePerPerson.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerChild' | translate }}</label><input formControlName="pricePerChild" type="number" min="0" step="0.01" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.pricePerChild.touched && tourForm.controls.pricePerChild.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border bg-white px-3 py-2">@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input formControlName="maxSeats" type="number" min="1" step="1" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label><input formControlName="durationDays" type="number" min="0" step="1" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.durationDays.touched && tourForm.controls.durationDays.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'durationHours' | translate }}</label><input formControlName="durationHours" type="number" min="0" max="23" step="1" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.durationHours.touched && tourForm.controls.durationHours.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}</label><input formControlName="startDate" type="datetime-local" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.startDate.touched && tourForm.controls.startDate.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'startDateRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}</label><input formControlName="endDate" type="datetime-local" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.endDate.touched && tourForm.controls.endDate.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'endDateRequired' | translate }}</p> }@if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) { <p class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p> }</div>
+    </div>
+    <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="description" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+    <div><label class="mb-2 block text-sm font-medium">{{ 'fullDescription' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="fullDescription" rows="4" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+    <div><label class="mb-2 block text-sm font-medium">{{ 'coverImageUrl' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="coverImageUrl" type="url" placeholder="https://example.com/image.jpg" class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.coverImageUrl.touched && tourForm.controls.coverImageUrl.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'validUrlRequired' | translate }}</p> }</div>
+
+    <!-- Gallery images -->
+    <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+      <div class="mb-2 flex items-center justify-between"><label class="text-sm font-medium">{{ 'tourImages' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold text-primary" (click)="addGalleryImage()"><i class="mdi mdi-plus"></i> {{ 'addImage' | translate }}</button></div>
+      @for (imageCtrl of galleryImagesArray.controls; track $index; let i = $index) {
+        <div class="mb-2 flex items-center gap-2">
+          <input [formControl]="imageCtrl" type="url" placeholder="https://example.com/photo.jpg" class="w-full rounded-2xl border px-3 py-2" />
+          <button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border text-red-500" [attr.aria-label]="'remove' | translate" (click)="removeGalleryImage(i)"><i class="mdi mdi-close"></i></button>
+        </div>
+        @if (imageCtrl.touched && imageCtrl.invalid) { <p class="mb-2 -mt-1 text-xs text-red-600">{{ 'validUrlRequired' | translate }}</p> }
+      } @empty { <p class="text-xs text-slate-500">{{ 'noImagesAdded' | translate }}</p> }
+    </div>
+
+    <!-- Highlights -->
+    <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+      <div class="mb-2 flex items-center justify-between"><label class="text-sm font-medium">{{ 'tourHighlights' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold text-primary" (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button></div>
+      <p class="mb-2 text-xs text-slate-500">{{ 'tourHighlightsHint' | translate }}</p>
+      @for (highlightCtrl of highlightsArray.controls; track $index; let i = $index) {
+        <div class="mb-2 flex items-center gap-2">
+          <input [formControl]="highlightCtrl" type="text" [placeholder]="'highlightPlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2" />
+          <button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border text-red-500" [attr.aria-label]="'remove' | translate" (click)="removeHighlight(i)"><i class="mdi mdi-close"></i></button>
+        </div>
+      } @empty { <p class="text-xs text-slate-500">{{ 'noHighlightsAdded' | translate }}</p> }
+    </div>
+
+    <!-- Includes / Excludes -->
+    <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+      <div class="mb-2 flex items-center justify-between"><label class="text-sm font-medium">{{ 'whatsIncludedExcluded' | translate }}</label><div class="flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold text-emerald-600" (click)="addInclude(true)"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button><button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold text-rose-600" (click)="addInclude(false)"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button></div></div>
+      <p class="mb-2 text-xs text-slate-500">{{ 'whatsIncludedExcludedHint' | translate }}</p>
+      @for (includeGroup of includesArray.controls; track $index; let i = $index) {
+        <div class="mb-2 flex items-center gap-2" [formGroup]="includeGroup">
+          <i class="mdi text-lg" [class.mdi-check-circle]="includeGroup.controls['isIncluded'].value" [class.text-emerald-500]="includeGroup.controls['isIncluded'].value" [class.mdi-close-circle]="!includeGroup.controls['isIncluded'].value" [class.text-rose-500]="!includeGroup.controls['isIncluded'].value"></i>
+          <input formControlName="text" type="text" [placeholder]="'includePlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2" />
+          <button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border text-red-500" [attr.aria-label]="'remove' | translate" (click)="removeInclude(i)"><i class="mdi mdi-close"></i></button>
+        </div>
+      } @empty { <p class="text-xs text-slate-500">{{ 'noIncludesAdded' | translate }}</p> }
+    </div>
+
+    <!-- Itinerary (day-by-day program) -->
+    <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+      <div class="mb-2 flex items-center justify-between"><label class="text-sm font-medium">{{ 'itinerary' | translate }}</label><button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold text-primary" (click)="addItineraryDay()"><i class="mdi mdi-plus"></i> {{ 'addDay' | translate }}</button></div>
+      <p class="mb-2 text-xs text-slate-500">{{ 'itineraryHint' | translate }}</p>
+      @for (dayGroup of itineraryArray.controls; track $index; let i = $index) {
+        <div class="mb-3 rounded-xl border bg-white p-3" [formGroup]="dayGroup">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 text-sm font-semibold text-primary"><i class="mdi mdi-map-marker-path"></i>{{ 'day' | translate }} {{ dayGroup.controls['dayNumber'].value }}</span>
+            <button type="button" class="grid h-8 w-8 place-items-center rounded-full border text-red-500" [attr.aria-label]="'remove' | translate" (click)="removeItineraryDay(i)"><i class="mdi mdi-close"></i></button>
+          </div>
+          <input formControlName="title" type="text" [placeholder]="'dayTitlePlaceholder' | translate" class="mb-2 w-full rounded-2xl border px-3 py-2" />
+          @if (dayGroup.controls['title'].touched && dayGroup.controls['title'].invalid) { <p class="mb-2 -mt-1 text-xs text-red-600">{{ 'dayTitleRequired' | translate }}</p> }
+          <textarea formControlName="description" rows="2" [placeholder]="'dayDescriptionPlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2"></textarea>
+          @if (dayGroup.controls['description'].touched && dayGroup.controls['description'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'dayDescriptionRequired' | translate }}</p> }
+        </div>
+      } @empty { <p class="text-xs text-slate-500">{{ 'noItineraryAdded' | translate }}</p> }
+    </div>
+
+    <div><label class="mb-2 block text-sm font-medium">{{ 'cancellationPolicy' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="cancellationPolicy" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+    <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isFreeCancelation" type="checkbox" />{{ 'freeCancellation' | translate }}</label>
+    <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeTour' | translate }}</label>
+    <div class="flex gap-3"><button type="submit" [disabled]="tourForm.invalid || isSaving || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isSaving) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedTour ? 'updateTour' : 'createTour') | translate }} }</button>@if (selectedTour) { <button type="button" [disabled]="isSaving" class="rounded-full border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+  </form>
+</div>
