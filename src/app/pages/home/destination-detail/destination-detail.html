@@ -77,9 +77,9 @@
         </div>
 
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          @for (tour of tours; track tour.id) {
+          @for (tour of tours; track tour.id ?? tour.tourId) {
             <a
-              [routerLink]="['/tours', tour.id]"
+              [routerLink]="['/tours', tour.id ?? tour.tourId]"
               class="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
             >
               <div class="mx-2 mt-2 overflow-hidden rounded-lg">

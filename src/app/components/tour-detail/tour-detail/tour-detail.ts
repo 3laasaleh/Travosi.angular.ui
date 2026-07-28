@@ -44,7 +44,7 @@ export class TourDetail implements AfterViewInit {
   }
 
   get durationDays(): number | string {
-    return this.tour?.durationDays ?? this.tour?.days ?? 0;
+    return this.tour?.durationDays ?? this.tour?.days ?? this.tour?.duration ?? 0;
   }
 
   get durationHours(): number | string {

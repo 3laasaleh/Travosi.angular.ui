@@ -134,7 +134,11 @@ export class HomeTourPage implements OnInit {
   }
 
   private extractEntity(response: any, key: string): any {
-    const data = response?.data ?? response;
+    if (response?.isSuccess === false) return null;
+    const data =
+      response && Object.prototype.hasOwnProperty.call(response, 'data')
+        ? response.data
+        : response;
     return data?.[key] ?? data;
   }
 
