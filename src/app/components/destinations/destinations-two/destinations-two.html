@@ -13,15 +13,15 @@
     </div>
     } @else {
     <div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 relative mt-6 gap-6">
-        @for (item of destinations; track item.id) {
-            <div class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
+        @for (item of destinations; track item.id ?? item.destinationId) {
+            <a [routerLink]="['/destinations', item.id ?? item.destinationId]" class="group relative overflow-hidden rounded-md shadow dark:shadow-gray-800">
                 <img [src]="imageUrl(item)" class="aspect-[4/3] w-full object-cover scale-125 group-hover:scale-100 duration-500" [alt]="item.nameEng ?? item.name">
                 <div class="absolute inset-0 bg-gradient-to-b to-slate-900 from-transparent opacity-0 group-hover:opacity-100 duration-500"></div>
                 <div class="absolute p-4 bottom-0 start-0">
-                    <a href="javascript:void(0)" class="text-lg font-medium text-white hover:text-primary duration-500 ease-in-out">{{ item.nameEng ?? item.name }}</a>
+                    <span class="text-lg font-medium text-white group-hover:text-primary duration-500 ease-in-out">{{ item.nameEng ?? item.name }}</span>
                     <p class="text-white/70 group-hover:text-white text-sm duration-500">{{ item.subDescription }}</p>
                 </div>
-            </div>
+            </a>
         } @empty {
             <p class="col-span-full text-center text-slate-400">{{ 'noDestinationsFound' | translate }}</p>
         }

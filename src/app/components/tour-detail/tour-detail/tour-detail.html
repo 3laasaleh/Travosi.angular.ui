@@ -1,14 +1,27 @@
 <div>
+    @if (tour) {
+    <h5 class="text-2xl font-semibold">{{ title }}</h5>
+    <p class="flex items-center text-slate-400 font-medium mt-2"><i data-feather="map-pin" class="size-4 me-1"></i> {{ destinationName }}</p>
+    } @else {
     <h5 class="text-2xl font-semibold">New Zealand’s South Island brims with majestic</h5>
     <p class="flex items-center text-slate-400 font-medium mt-2"><i data-feather="map-pin" class="size-4 me-1"></i> New Zealand</p>
+
+    }
 
     <ul class="list-none">
         <li class="inline-flex items-center me-5 mt-5">
             <i data-feather="clock" class="size-6 stroke-[1.5] text-primary"></i>
 
             <div class="ms-3">
-                <p class="font-medium">Duration</p>
+                <p class="font-medium">{{ 'duration' | translate }}</p>
+                @if (tour) {
+                <span class="text-slate-400 font-medium text-sm">
+                    {{ durationDays }} {{ 'days' | translate }}
+                    @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }
+                </span>
+                } @else {
                 <span class="text-slate-400 font-medium text-sm">2 day</span>
+                }
             </div>
         </li>
 
@@ -16,8 +29,8 @@
             <i data-feather="activity" class="size-6 stroke-[1.5] text-primary"></i>
 
             <div class="ms-3">
-                <p class="font-medium">Type</p>
-                <span class="text-slate-400 font-medium text-sm">Adventure</span>
+                <p class="font-medium">{{ 'type' | translate }}</p>
+                <span class="text-slate-400 font-medium text-sm">{{ tour ? tourType : 'Adventure' }}</span>
             </div>
         </li>
 
@@ -25,8 +38,8 @@
             <i data-feather="users" class="size-6 stroke-[1.5] text-primary"></i>
 
             <div class="ms-3">
-                <p class="font-medium">Group Size:</p>
-                <span class="text-slate-400 font-medium text-sm">50 Peoples</span>
+                <p class="font-medium">{{ 'groupSize' | translate }}</p>
+                <span class="text-slate-400 font-medium text-sm">{{ tour ? groupSize : 50 }} {{ 'people' | translate }}</span>
             </div>
         </li>
 
@@ -34,8 +47,8 @@
             <i data-feather="globe" class="size-6 stroke-[1.5] text-primary"></i>
 
             <div class="ms-3">
-                <p class="font-medium">Languages</p>
-                <span class="text-slate-400 font-medium text-sm">English</span>
+                <p class="font-medium">{{ 'languages' | translate }}</p>
+                <span class="text-slate-400 font-medium text-sm">{{ tour ? languages : 'English' }}</span>
             </div>
         </li>
 
@@ -43,16 +56,20 @@
             <i data-feather="dollar-sign" class="size-6 stroke-[1.5] text-primary"></i>
 
             <div class="ms-3">
-                <p class="font-medium">$50 / Person</p>
-                <span class="text-slate-400 font-medium text-sm">1 Day</span>
+                <p class="font-medium">{{ tour ? currencySymbol : '$' }} {{ tour ? price : 50 }} / {{ 'person' | translate }}</p>
+                <span class="text-slate-400 font-medium text-sm">{{ 'pricePerPerson' | translate }}</span>
             </div>
         </li>
     </ul>
 
     <div class="mt-6">
-        <h5 class="text-lg font-semibold">Tour Descriptions:</h5>
+        <h5 class="text-lg font-semibold">{{ 'tourDescriptions' | translate }}:</h5>
+        @if (tour) {
+        <p class="whitespace-pre-line text-slate-400 mt-6">{{ description }}</p>
+        } @else {
         <p class="text-slate-400 mt-6">The most well-known dummy text is the 'Lorem Ipsum', which is said to have originated in the 16th century. Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin. It contains a series of real Latin words. This ancient dummy text is also incomprehensible, but it imitates the rhythm of most European languages in Latin script.</p>
         <p class="text-slate-400 mt-3">The advantage of its Latin origin and the relative meaninglessness of Lorum Ipsum is that the text does not attract attention to itself or distract the viewer's attention from the layout.</p>
+        }
     </div>
 
     <div class="mt-6">

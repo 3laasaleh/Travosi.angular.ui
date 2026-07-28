@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 import { DestinationsFromCard } from './destinations-from-card/destinations-from-card';
 import { DestinationsList } from './destinations-list/destinations-list';
 
@@ -69,6 +70,12 @@ export class Destinations {
   }
 
   imageUrl(image: any): string {
-    return typeof image === 'string' ? image : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
+    const url = typeof image === 'string'
+      ? image
+      : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
+
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+
+    return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
   }
 }
