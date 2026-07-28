@@ -18,12 +18,14 @@ import { environment } from '../../../../../environments/environment';
 import Swal from 'sweetalert2';
 
 interface DestinationImageUpload {
+  id?:number;
   file?: File;
   url: string;
   name: string;
   existing: boolean;
 }
-interface ImageDto {
+interface DestinationImageDto {
+  id:Number,
   imageName: string;
   imageUrl: string;
 }
@@ -34,7 +36,7 @@ export interface DestinationDTO {
   subDescription?: string;
   description?: string;
   isActive: boolean;
-  images: ImageDto[];
+  images: DestinationImageDto[];
 }
 @Component({
   selector: 'app-destinations-from-card',
@@ -179,11 +181,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
     if (image.existing && this.selectedDestination?.id) {
       this.deletingImageIndex = index;
-      this.adminService.deleteDestinationImage({
-        destinationId: this.selectedDestination.id,
-        imageUrl: image.url,
-        imageName: image.name,
-      }).pipe(
+      debugger;
+      this.adminService.deleteDestinationImage(image?.id!).pipe(
         catchError(() => {
           Swal.fire({ icon: 'error', title: this.translate.instant('imageDeleteError') });
           return of({ imageDeleteFailed: true });
@@ -210,9 +209,11 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   private populateForm(destination: any): void {
     this.revokeNewImageUrls();
-    this.imageUploads = this.getImages(destination)
+    debugger
+    this.imageUploads =   destination.images
       .slice(0, this.maxImages)
       .map((image: any, index: number) => ({
+        id:image.id,
         url: this.imageUrl(image),
         name: image?.imageName ?? image?.name ?? `Destination image ${index + 1}`,
         existing: true,
@@ -289,10 +290,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     });
   }
 
-  private getImages(destination: any): any[] {
-    if (Array.isArray(destination?.images)) return destination.images;
-    return destination?.imageUrl ? [{ url: destination.imageUrl }] : [];
-  }
+
 
   private imageUrl(image: any): string {
     return typeof image === 'string' ? image : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
@@ -345,6 +343,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
     getImageUrl(url: string): string {
+      if(url.includes('blob'))
+        return url;
       return  environment.imageUrl +url ;
     }
 }

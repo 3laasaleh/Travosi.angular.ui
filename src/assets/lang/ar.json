@@ -186,7 +186,7 @@
     "update": "تحديث",
     "add": "إضافة",
     "cancel": "إلغاء",
-    "destinationRecords": "سجلات الوجهات",
+    "destinationsData": "سجلات الوجهات",
     "previous": "السابق",
     "next": "التالي",
     "loadingDestinations": "جارٍ تحميل الوجهات...",
@@ -428,4 +428,5 @@
     ,"nonNegativeValueRequired": "أدخل صفرًا أو قيمة موجبة."
     ,"durationHoursRange": "يجب أن تكون الساعات بين 0 و23."
     ,"validUrlRequired": "أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://."
+    ,"pageSize": "حجم الصفحة"
 }

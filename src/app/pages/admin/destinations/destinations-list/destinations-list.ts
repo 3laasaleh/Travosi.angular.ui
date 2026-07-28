@@ -30,6 +30,7 @@ interface PaginationInfoDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DestinationsList implements OnInit, OnChanges {
+  readonly pageSizeOptions = [10, 20, 50];
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
   @Output() previewRequested = new EventEmitter<any>();
@@ -40,7 +41,7 @@ export class DestinationsList implements OnInit, OnChanges {
   statusUpdatingId: number | null = null;
   errorMessage = '';
   successMessage = '';
-  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
+  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
     private adminService: AdminService,
@@ -90,6 +91,14 @@ export class DestinationsList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadDestinations();
     }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.paginationInfo.pageSize = pageSize;
+    this.paginationInfo.page = 1;
+    this.loadDestinations();
   }
 
   nextPage(): void {

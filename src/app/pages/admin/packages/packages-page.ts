@@ -13,6 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './packages-page.scss',
 })
 export class Packages implements OnInit {
+  readonly pageSizeOptions = [10, 20, 50];
   packages: any[] = [];
   isLoading = false;
   errorMessage = '';
@@ -20,7 +21,7 @@ export class Packages implements OnInit {
   selectedPackage: any = null;
   showForm = true;
   page = 1;
-  pageSize = 4;
+  pageSize = 10;
 
   packageForm: any = {
     title: '',
@@ -86,6 +87,13 @@ export class Packages implements OnInit {
     if (this.page > 1) {
       this.page--;
     }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.pageSize = pageSize;
+    this.page = 1;
   }
 
   resetForm(): void {

@@ -13,6 +13,7 @@ import { ApiService } from '../../../core/services/apiservice.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentBookingManager implements OnInit {
+  readonly pageSizeOptions = [10, 20, 50];
   bookings: any[] = [];
   isLoading = false;
   errorMessage = '';
@@ -57,6 +58,14 @@ export class AgentBookingManager implements OnInit {
       this.page--;
       this.loadBookings();
     }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.pageSize = pageSize;
+    this.page = 1;
+    this.loadBookings();
   }
 
   nextPage(): void {

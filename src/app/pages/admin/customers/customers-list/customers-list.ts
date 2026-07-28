@@ -29,6 +29,7 @@ interface PaginationInfoDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomersList implements OnInit, OnChanges {
+  readonly pageSizeOptions = [10, 20, 50];
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
   @Output() editRequested = new EventEmitter<any>();
@@ -37,7 +38,7 @@ export class CustomersList implements OnInit, OnChanges {
   isLoading = false;
   statusUpdatingId: number | null = null;
   errorMessage = '';
-  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
+  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
     private apiService: ApiService,
@@ -87,6 +88,14 @@ export class CustomersList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadCustomers();
     }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.paginationInfo.pageSize = pageSize;
+    this.paginationInfo.page = 1;
+    this.loadCustomers();
   }
 
   nextPage(): void {

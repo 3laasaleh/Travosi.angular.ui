@@ -31,6 +31,7 @@ interface PaginationInfoDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksList implements OnInit, OnChanges {
+  readonly pageSizeOptions = [10, 20, 50];
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
   @Output() editRequested = new EventEmitter<any>();
@@ -38,7 +39,7 @@ export class TasksList implements OnInit, OnChanges {
   tasks: any[] = [];
   isLoading = false;
   errorMessage = '';
-  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 5, totalCount: 0, totalPages: 0 };
+  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
   readonly taskStatusEnum = TaskStatusEnum;
 
   constructor(
@@ -96,6 +97,14 @@ export class TasksList implements OnInit, OnChanges {
       this.paginationInfo.page--;
       this.loadTasks();
     }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.paginationInfo.pageSize = pageSize;
+    this.paginationInfo.page = 1;
+    this.loadTasks();
   }
 
   nextPage(): void {

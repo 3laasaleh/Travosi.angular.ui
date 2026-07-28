@@ -186,7 +186,7 @@
     "update": "Update",
     "add": "Add",
     "cancel": "Cancel",
-    "destinationRecords": "Destination records",
+    "destinationsData": "Destinations",
     "previous": "Previous",
     "next": "Next",
     "loadingDestinations": "Loading destinations...",
@@ -428,4 +428,5 @@
     ,"nonNegativeValueRequired": "Enter zero or a positive value."
     ,"durationHoursRange": "Hours must be between 0 and 23."
     ,"validUrlRequired": "Enter a valid URL beginning with http:// or https://."
+    ,"pageSize": "Page size"
 }

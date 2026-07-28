@@ -21,7 +21,7 @@ export class AdminService {
 
   getDestinations(page = 1, pageSize = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);
-    return this.http.get(`${environment.baseUrl}Destinations`, {
+    return this.http.get(`${environment.baseUrl}Destinations/GetAll`, {
       headers: this.getHeaders(),
       params,
     });
@@ -55,12 +55,8 @@ export class AdminService {
     });
   }
 
-  deleteDestinationImage(payload: {
-    destinationId: number;
-    imageUrl: string;
-    imageName: string;
-  }): Observable<any> {
-    return this.http.post(`${environment.baseUrl}destinations/deleteImage`, payload, {
+  deleteDestinationImage(imageId:number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}destinations/deleteImage/${imageId}`, {
       headers: this.getHeaders(),
     });
   }

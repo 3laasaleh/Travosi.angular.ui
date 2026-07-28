@@ -66,9 +66,10 @@
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-xl font-semibold">{{ 'packageList' | translate }}</h2>
           <div class="flex items-center gap-2">
-            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button>
+            <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
+            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-60" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button>
             <span class="text-sm text-slate-500">{{ page }} / {{ totalPages }}</span>
-            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button>
+            <button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-60" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button>
           </div>
         </div>
 

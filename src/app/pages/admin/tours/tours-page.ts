@@ -28,6 +28,7 @@ import { AdminService } from '../admin.service';
   styleUrl: './tours-page.scss',
 })
 export class Tours implements OnInit {
+  readonly pageSizeOptions = [10, 20, 50];
   readonly currencies = [
     { id: 2, code: 'USD', labelKey: 'currencyUsd' },
     { id: 1, code: 'EGP', labelKey: 'currencyEgp' },
@@ -46,7 +47,9 @@ export class Tours implements OnInit {
   previewTour: any = null;
   previewImageIndex = 0;
   page = 1;
-  pageSize = 5;
+  pageSize = 10;
+  totalCount = 0;
+  totalPages = 1;
   tourForm = this.createForm();
 
   constructor(
@@ -59,12 +62,7 @@ export class Tours implements OnInit {
   }
 
   get pagedTours(): any[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.tours.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.max(1, Math.ceil(this.tours.length / this.pageSize));
+    return this.tours;
   }
 
   get filteredDestinations(): any[] {
@@ -110,14 +108,19 @@ export class Tours implements OnInit {
 
   loadTours(): void {
     this.isLoading = true;
-    this.adminService.getTours(1, 100).pipe(
+    this.adminService.getTours(this.page, this.pageSize).pipe(
       catchError(() => of({ data: this.getFallbackTours() })),
       finalize(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
+      const pageData = response?.data ?? response;
       this.tours = this.extractCollection(response, ['tours']);
+      this.page = Number(pageData?.page ?? this.page);
+      this.pageSize = Number(pageData?.pageSize ?? this.pageSize);
+      this.totalCount = Number(pageData?.totalCount ?? this.tours.length);
+      this.totalPages = Math.max(1, Number(pageData?.totalPages ?? 1));
     });
   }
 
@@ -188,6 +191,7 @@ export class Tours implements OnInit {
         this.successMessage = res?.message || 'tourCreated';
       }
       this.resetForm();
+      this.loadTours();
     });
   }
 
@@ -308,11 +312,25 @@ export class Tours implements OnInit {
   }
 
   nextPage(): void {
-    if (this.page < this.totalPages) this.page++;
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.loadTours();
+    }
   }
 
   prevPage(): void {
-    if (this.page > 1) this.page--;
+    if (this.page > 1) {
+      this.page--;
+      this.loadTours();
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const pageSize = Number((event.target as HTMLSelectElement).value);
+    if (!this.pageSizeOptions.includes(pageSize)) return;
+    this.pageSize = pageSize;
+    this.page = 1;
+    this.loadTours();
   }
 
   resetForm(): void {

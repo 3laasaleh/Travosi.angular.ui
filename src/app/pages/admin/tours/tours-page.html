@@ -87,7 +87,7 @@
         </form>
       </div>
       }
-      <div class="rounded-3xl border p-5"><div class="mb-4 flex justify-between"><h2 class="text-xl font-semibold">{{ 'tourList' | translate }}</h2><div class="flex gap-2"><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span>{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div></div>
+      <div class="rounded-3xl border p-5"><div class="mb-4 flex justify-between"><h2 class="text-xl font-semibold">{{ 'tourList' | translate }}</h2><div class="flex flex-wrap items-center gap-2"><label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label><button type="button" class="rounded-full border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-60" (click)="prevPage()" [disabled]="page === 1">{{ 'previous' | translate }}</button><span>{{ page }} / {{ totalPages }}</span><button type="button" class="rounded-full border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-60" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'next' | translate }}</button></div></div>
         @if (isLoading) {
           <div class="space-y-3" aria-busy="true" [attr.aria-label]="'loadingTours' | translate">
             @for (card of [1, 2, 3, 4]; track card) {
