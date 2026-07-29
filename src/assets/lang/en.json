@@ -177,7 +177,8 @@
     "tourImages": "Tour images",
     "chooseImages": "Choose images",
     "destinationImageRules": "JPG, PNG or WebP - maximum 5 images and 5 MB each",
-    "tourImageRules": "JPG, PNG or WebP - maximum 10 images and 5 MB each",
+    "tourImageRules": "JPG, PNG or WebP - maximum 5 images and 5 MB each",
+    "tourImageLimit": "A tour can have a maximum of 5 images.",
     "imagesRequired": "At least one image is required.",
     "remove": "Remove",
     "cover": "Cover",
@@ -445,14 +446,28 @@
     ,"noIncludesAdded": "No inclusions or exclusions added yet."
     ,"included": "Included"
     ,"excluded": "Not included"
-    ,"itineraryHint": "Build the day-by-day program travelers will follow during the tour."
+    ,"itineraryHint": "Add the itinerary steps in order, including their times, details, and parent relationships."
+    ,"addStep": "Add step"
+    ,"addChild": "Add child"
+    ,"step": "Step"
+    ,"stepTitle": "Step title"
+    ,"stepTitlePlaceholder": "e.g. Hotel pickup and museum visit"
+    ,"stepTitleRequired": "Step title is required."
+    ,"itineraryValue": "Step value"
+    ,"itineraryValuePlaceholder": "e.g. Cairo Museum"
+    ,"startTime": "Start time"
+    ,"endTime": "End time"
+    ,"childStep": "Child step"
+    ,"parentStepId": "Parent step ID"
+    ,"stepDescriptionPlaceholder": "Describe what happens during this step..."
+    ,"itinerarySteps": "Itinerary steps"
     ,"addDay": "Add day"
     ,"day": "Day"
     ,"dayTitlePlaceholder": "e.g. Arrival and city tour"
     ,"dayTitleRequired": "Day title is required."
     ,"dayDescriptionPlaceholder": "Describe the activities planned for this day..."
     ,"dayDescriptionRequired": "Day description is required."
-    ,"noItineraryAdded": "No itinerary days added yet."
+    ,"noItineraryAdded": "No itinerary steps added yet."
     ,"seatsAvailable": "seats available"
     ,"toursLoadError": "Unable to load tours."
     ,"destinationNotFound": "Destination not found."

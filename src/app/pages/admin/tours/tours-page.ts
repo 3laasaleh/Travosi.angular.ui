@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 import { ToursFromCard } from './tours-from-card/tours-from-card';
 import { ToursList } from './tours-list/tours-list';
 
@@ -36,10 +37,12 @@ export class Tours {
 
   clearSelectedTour(): void {
     this.selectedTour = null;
+    this.showForm = false;
   }
 
   handleTourSaved(): void {
     this.selectedTour = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 
@@ -86,6 +89,17 @@ export class Tours {
     return `${tour?.pricePerPerson ?? tour?.price ?? 0} ${currency?.code ?? ''}`.trim();
   }
 
+  getItinerary(tour: any): any[] {
+    const itinerary = tour?.itinerary ?? tour?.itineraries;
+    return Array.isArray(itinerary) ? itinerary : [];
+  }
+
+  itineraryTime(item: any): string {
+    const startTime = this.formatTime(item?.startTime);
+    const endTime = this.formatTime(item?.endTime);
+    return [startTime, endTime].filter(Boolean).join(' - ');
+  }
+
   getImages(tour: any): any[] {
     if (Array.isArray(tour?.images) && tour.images.length) return tour.images;
     const cover = tour?.coverImageUrl ?? tour?.imageUrl;
@@ -93,6 +107,15 @@ export class Tours {
   }
 
   imageUrl(image: any): string {
-    return typeof image === 'string' ? image : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
+    const url = typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  private formatTime(value: unknown): string {
+    if (typeof value !== 'string') return '';
+    const match = value.match(/^(\d{2}):(\d{2})/);
+    return match ? `${match[1]}:${match[2]}` : '';
   }
 }

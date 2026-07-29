@@ -177,7 +177,8 @@
     "tourImages": "صور الجولة",
     "chooseImages": "اختر الصور",
     "destinationImageRules": "JPG أو PNG أو WebP - بحد أقصى 5 صور و5 ميجابايت لكل صورة",
-    "tourImageRules": "JPG أو PNG أو WebP - بحد أقصى 10 صور و5 ميجابايت لكل صورة",
+    "tourImageRules": "JPG أو PNG أو WebP - بحد أقصى 5 صور و5 ميجابايت لكل صورة",
+    "tourImageLimit": "الحد الأقصى للجولة هو 5 صور.",
     "imagesRequired": "صورة واحدة على الأقل مطلوبة.",
     "remove": "إزالة",
     "cover": "الغلاف",
@@ -445,14 +446,28 @@
     ,"noIncludesAdded": "لم تتم إضافة عناصر مشمولة أو غير مشمولة بعد."
     ,"included": "مشمول"
     ,"excluded": "غير مشمول"
-    ,"itineraryHint": "قم ببناء برنامج الجولة يومًا بيوم الذي سيتبعه المسافرون."
+    ,"itineraryHint": "أضف خطوات خط السير بالترتيب مع الأوقات والتفاصيل وعلاقات الخطوات الرئيسية والفرعية."
+    ,"addStep": "إضافة خطوة"
+    ,"addChild": "إضافة خطوة فرعية"
+    ,"step": "الخطوة"
+    ,"stepTitle": "عنوان الخطوة"
+    ,"stepTitlePlaceholder": "مثال: الانتقال من الفندق وزيارة المتحف"
+    ,"stepTitleRequired": "عنوان الخطوة مطلوب."
+    ,"itineraryValue": "قيمة الخطوة"
+    ,"itineraryValuePlaceholder": "مثال: المتحف المصري"
+    ,"startTime": "وقت البدء"
+    ,"endTime": "وقت الانتهاء"
+    ,"childStep": "خطوة فرعية"
+    ,"parentStepId": "معرّف الخطوة الرئيسية"
+    ,"stepDescriptionPlaceholder": "صف ما يحدث خلال هذه الخطوة..."
+    ,"itinerarySteps": "خطوات خط السير"
     ,"addDay": "إضافة يوم"
     ,"day": "اليوم"
     ,"dayTitlePlaceholder": "مثال: الوصول وجولة في المدينة"
     ,"dayTitleRequired": "عنوان اليوم مطلوب."
     ,"dayDescriptionPlaceholder": "صف الأنشطة المخطط لها في هذا اليوم..."
     ,"dayDescriptionRequired": "وصف اليوم مطلوب."
-    ,"noItineraryAdded": "لم تتم إضافة أيام لخط السير بعد."
+    ,"noItineraryAdded": "لم تتم إضافة خطوات إلى خط السير بعد."
     ,"seatsAvailable": "مقعد متاح"
     ,"toursLoadError": "تعذر تحميل الجولات."
     ,"destinationNotFound": "الوجهة غير موجودة."

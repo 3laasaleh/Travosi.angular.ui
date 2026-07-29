@@ -6,12 +6,12 @@
             <span class="flex justify-between pb-2">
                 <span>
                     <label for="" class="text-lg">$</label>
-                    <input type="number" class="text-slate-400 ps-1" min="0" max="200" name="number0" [(ngModel)]="numberValues[0]" (input)="updateSliders()" />
+                    <input type="text" appNumbersOnly class="text-slate-400 ps-1" name="number0" [(ngModel)]="numberValues[0]" (input)="updateSliders()" />
                 </span>
 
                 <span>
                     <label for="" class="text-lg">$</label>
-                    <input type="number" class="text-slate-400 ps-1" min="0" max="200" name="number1" [(ngModel)]="numberValues[1]" (input)="updateSliders()" />
+                    <input type="text" appNumbersOnly class="text-slate-400 ps-1" name="number1" [(ngModel)]="numberValues[1]" (input)="updateSliders()" />
                 </span>
             </span>
             <input min="0" max="200" step="5" type="range" name="range0" [(ngModel)]="rangeValues[0]" (input)="updateNumbers()" />

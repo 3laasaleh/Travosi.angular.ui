@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../../admin.service';
 
@@ -127,6 +128,9 @@ export class ToursList implements OnInit, OnChanges {
   }
 
   imageUrl(image: any): string {
-    return typeof image === 'string' ? image : (image?.url ?? image?.imageUrl ?? image?.path ?? '');
+    const url = typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 }

@@ -61,6 +61,12 @@ export class AdminService {
     });
   }
 
+  deleteTourImage(imageId: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Tours/deleteImage/${imageId}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
   createTour(payload: any): Observable<any> {
     return this.http.post(`${environment.baseUrl}Tours`, payload, {
       headers: this.getHeaders(),

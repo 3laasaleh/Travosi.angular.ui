@@ -13,6 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { FLIGHT_CLASS_OPTIONS, FlightClassEnum } from '../flight-class.enum';
 
 export interface FlightDTO {
@@ -31,7 +32,7 @@ export interface FlightDTO {
 @Component({
   selector: 'app-flights-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective],
   templateUrl: './flights-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

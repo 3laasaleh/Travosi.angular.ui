@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 
 @Component({
   selector: 'app-price-filter',
-  imports: [FormsModule],
+  imports: [FormsModule, NumbersOnlyDirective],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './price-filter.html',
 })
