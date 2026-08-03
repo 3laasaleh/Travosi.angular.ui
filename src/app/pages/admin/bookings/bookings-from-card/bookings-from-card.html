@@ -1,0 +1,40 @@
+<div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  <h2 class="mb-4 text-xl font-semibold">{{ 'assignBookingAgent' | translate }}</h2>
+
+  @if (selectedBooking) {
+    <div class="mb-4 rounded-2xl border border-slate-200 bg-white p-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p class="font-semibold">#{{ selectedBooking.bookingId ?? selectedBooking.id }} — {{ selectedBooking.tourName ?? selectedBooking.tour?.title ?? '-' }}</p>
+        <p class="text-sm text-slate-500">{{ selectedBooking.bookingDate | date: 'mediumDate' }}</p>
+      </div>
+      <p class="mt-1 text-sm text-slate-600">{{ 'customer' | translate }}: {{ selectedBooking.customerName ?? selectedBooking.customer?.name ?? '-' }}</p>
+      <p class="mt-1 text-sm text-slate-600">{{ selectedBooking.guests ?? selectedBooking.numberOfGuests }} {{ 'guests' | translate }} — {{ 'total' | translate }}: {{ selectedBooking.totalAmount ?? selectedBooking.amount }}</p>
+      @if (selectedBooking.notes) { <p class="mt-2 rounded-xl bg-slate-50 p-2 text-xs text-slate-600"><span class="font-semibold">{{ 'notes' | translate }}:</span> {{ selectedBooking.notes }}</p> }
+    </div>
+  }
+
+  <form class="space-y-4" [formGroup]="bookingForm" (ngSubmit)="saveAssignment()">
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'assignedAgent' | translate }}</label>
+      <select formControlName="agentId" class="w-full rounded-2xl border border-slate-300 px-3 py-2">
+        <option [ngValue]="null" disabled>{{ 'selectAgent' | translate }}</option>
+        @for (agent of agents; track agent.id) {
+          <option [ngValue]="agent.id">{{ agent.firstName }} {{ agent.lastName }}</option>
+        }
+      </select>
+      @if (bookingForm.get('agentId')?.touched && bookingForm.get('agentId')?.hasError('required')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'agentRequired' | translate }}</p>
+      }
+    </div>
+    <div class="flex gap-3">
+      <button type="submit" [disabled]="bookingForm.invalid || isLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+        @if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ 'assignAgent' | translate }} }
+      </button>
+      @if (selectedBooking) {
+        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
+      }
+    </div>
+  </form>
+</div>
