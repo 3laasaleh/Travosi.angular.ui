@@ -84,7 +84,9 @@
                     <span class="mt-1 grid size-8 shrink-0 place-items-center rounded-full"
                       [class.bg-amber-50]="task.status === taskStatusEnum.Pending" [class.text-amber-600]="task.status === taskStatusEnum.Pending"
                       [class.bg-sky-50]="task.status === taskStatusEnum.InProgress" [class.text-sky-600]="task.status === taskStatusEnum.InProgress"
-                      [class.bg-emerald-50]="task.status === taskStatusEnum.Completed" [class.text-emerald-600]="task.status === taskStatusEnum.Completed">
+                      [class.bg-emerald-50]="task.status === taskStatusEnum.Completed" [class.text-emerald-600]="task.status === taskStatusEnum.Completed"
+                      [class.bg-rose-50]="task.status === taskStatusEnum.Returned" [class.text-rose-600]="task.status === taskStatusEnum.Returned"
+                      [class.bg-slate-100]="task.status === taskStatusEnum.Closed" [class.text-slate-600]="task.status === taskStatusEnum.Closed">
                       <i class="mdi mdi-clipboard-text-outline"></i>
                     </span>
                     <span class="min-w-0">

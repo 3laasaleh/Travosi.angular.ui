@@ -10,10 +10,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import Swal from 'sweetalert2';
 import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { TaskNotificationsService } from '../../../../core/services/task-notifications.service';
 import { AuthService } from '../../../user/_services/auth.service';
 import { TASK_STATUS_OPTIONS, TaskStatusEnum } from '../task-status.enum';
 
@@ -39,6 +41,7 @@ export class TasksList implements OnInit, OnChanges {
 
   tasks: any[] = [];
   isLoading = false;
+  updatingTaskId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
   readonly taskStatusEnum = TaskStatusEnum;
@@ -46,6 +49,8 @@ export class TasksList implements OnInit, OnChanges {
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
+    private taskNotifications: TaskNotificationsService,
+    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -123,5 +128,94 @@ export class TasksList implements OnInit, OnChanges {
 
   taskStatusKey(value: number): string {
     return TASK_STATUS_OPTIONS.find((option) => option.value === Number(value))?.labelKey ?? '';
+  }
+
+  canStart(task: any): boolean {
+    const status = Number(task?.status);
+    return !this.isAdmin && (status === TaskStatusEnum.Pending || status === TaskStatusEnum.Returned);
+  }
+
+  canFinish(task: any): boolean {
+    return !this.isAdmin && Number(task?.status) === TaskStatusEnum.InProgress;
+  }
+
+  canReview(task: any): boolean {
+    return this.isAdmin && Number(task?.status) === TaskStatusEnum.Completed;
+  }
+
+  startTask(task: any): void {
+    this.changeStatus(task, TaskStatusEnum.InProgress);
+  }
+
+  async finishTask(task: any): Promise<void> {
+    const result = await Swal.fire({
+      title: this.translate.instant('finishTask'),
+      input: 'textarea',
+      inputLabel: this.translate.instant('agentCompletionNote'),
+      inputPlaceholder: this.translate.instant('agentCompletionNotePlaceholder'),
+      inputValue: task?.agentDescription ?? '',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('finishTask'),
+      cancelButtonText: this.translate.instant('cancel'),
+      inputValidator: (value) =>
+        value?.trim() ? null : this.translate.instant('agentCompletionNoteRequired'),
+    });
+    if (!result.isConfirmed) return;
+    this.changeStatus(task, TaskStatusEnum.Completed, String(result.value).trim());
+  }
+
+  closeTask(task: any): void {
+    this.changeStatus(task, TaskStatusEnum.Closed);
+  }
+
+  async returnTask(task: any): Promise<void> {
+    const result = await Swal.fire({
+      title: this.translate.instant('returnTask'),
+      input: 'textarea',
+      inputLabel: this.translate.instant('returnReason'),
+      inputPlaceholder: this.translate.instant('returnReasonPlaceholder'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('returnTask'),
+      cancelButtonText: this.translate.instant('cancel'),
+    });
+    if (!result.isConfirmed) return;
+    this.changeStatus(task, TaskStatusEnum.Returned, String(result.value ?? '').trim() || undefined);
+  }
+
+  private changeStatus(task: any, status: TaskStatusEnum, description?: string): void {
+    const taskId = Number(task?.id);
+    if (!Number.isInteger(taskId) || taskId <= 0 || this.updatingTaskId !== null) return;
+
+    const payload: any = { status: Number(status) };
+    if (description !== undefined) payload.description = description;
+
+    this.updatingTaskId = taskId;
+    this.apiService.patch(`Tasks/${taskId}/ChangeStatus`, payload).pipe(
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('taskStatusUpdateError') });
+        return of(null);
+      }),
+      finalize(() => {
+        this.updatingTaskId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('taskStatusUpdateError') });
+        return;
+      }
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: response?.message || this.translate.instant('taskStatusUpdated'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.taskNotifications.notifyChanged();
+      this.loadTasks();
+    });
   }
 }

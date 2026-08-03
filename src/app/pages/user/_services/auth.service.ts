@@ -80,7 +80,7 @@ readonly fullName = computed(() => {
         return 'Customer';
     }
   }
-  login(user: any) {
+  login(user: any, returnUrl: string | null = null) {
     return this.http.post(environment.baseUrl + 'Account/login', user).pipe(
       map((res: any) => {
         if (res.isSuccess) {
@@ -88,7 +88,8 @@ readonly fullName = computed(() => {
           this._coockiesService.set('userSignedIn', JSON.stringify(userData), 1, '/');
           this._coockiesService.set('token', token, 1, '/');
           this.currentUser.set(userData);
-          this._router.navigate(['/home']);
+          if (returnUrl && returnUrl.startsWith('/')) this._router.navigateByUrl(returnUrl);
+          else this._router.navigate(['/home']);
         }
         return res;
       }),

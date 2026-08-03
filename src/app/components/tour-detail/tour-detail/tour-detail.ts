@@ -92,6 +92,34 @@ export class TourDetail implements AfterViewInit {
     return this.tour?.fullDescription ?? this.tour?.description ?? this.tour?.overview ?? '';
   }
 
+  get itineraryItems(): any[] {
+    const items = this.tour?.itinerary ?? this.tour?.itineraries ?? [];
+    return Array.isArray(items) ? items : [];
+  }
+
+  get itinerarySteps(): any[] {
+    const ids = new Set(this.itineraryItems.map((item) => Number(item?.id)));
+    return this.itineraryItems.filter(
+      (item) => item?.isChildNode !== true || !item?.parentId || !ids.has(Number(item.parentId)),
+    );
+  }
+
+  itineraryChildren(step: any): any[] {
+    const stepId = Number(step?.id);
+    if (!Number.isFinite(stepId) || stepId <= 0) return [];
+    return this.itineraryItems.filter(
+      (item) => item?.isChildNode === true && Number(item?.parentId) === stepId,
+    );
+  }
+
+  itineraryTime(step: any): string {
+    const format = (value: unknown): string => {
+      const match = typeof value === 'string' ? value.match(/^(\d{2}):(\d{2})/) : null;
+      return match ? `${match[1]}:${match[2]}` : '';
+    };
+    return [format(step?.startTime), format(step?.endTime)].filter(Boolean).join(' - ');
+  }
+
   ngAfterViewInit(): void {
     feather.replace();
   }

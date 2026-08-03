@@ -75,8 +75,11 @@
         }
       </section>
 
-      <div class="mx-auto max-w-5xl">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <app-tour-detail [tour]="tour" />
+        <aside>
+          <app-tour-booking-card [tour]="tour" />
+        </aside>
       </div>
     </div>
   </main>

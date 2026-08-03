@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  effect,
   ElementRef,
   HostListener,
   inject,
@@ -15,6 +16,7 @@ import feather from 'feather-icons';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../pages/user/_services/auth.service';
 import { ApiService } from '../../core/services/apiservice.service';
+import { TaskNotificationsService } from '../../core/services/task-notifications.service';
 import { TaskStatusEnum } from '../../pages/admin/tasks/task-status.enum';
 import { LanguageService } from '../../core/services/language.service';
 
@@ -29,7 +31,15 @@ export class AdminNavbar implements OnInit, AfterViewInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly taskNotifications = inject(TaskNotificationsService);
   readonly languageService = inject(LanguageService);
+
+  constructor() {
+    effect(() => {
+      this.taskNotifications.changed();
+      if (this.isAgent) this.loadAgentTasks();
+    });
+  }
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
@@ -44,12 +54,13 @@ export class AdminNavbar implements OnInit, AfterViewInit {
   }
 
   get pendingTasksCount(): number {
-    return this.agentTasks.filter((task) => Number(task.status) === TaskStatusEnum.Pending).length;
+    return this.agentTasks.filter((task) => {
+      const status = Number(task.status);
+      return status === TaskStatusEnum.Pending || status === TaskStatusEnum.Returned;
+    }).length;
   }
 
-  ngOnInit(): void {
-    if (this.isAgent) this.loadAgentTasks();
-  }
+  ngOnInit(): void {}
 
   loadAgentTasks(): void {
     this.apiService.get('Tasks/GetAgentTasks?page=1&pageSize=50').pipe(

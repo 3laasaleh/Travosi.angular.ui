@@ -1,0 +1,101 @@
+<div class="sticky top-24 rounded-2xl border border-gray-100 p-6 shadow dark:border-gray-800 dark:shadow-gray-800 bg-white dark:bg-slate-900">
+    <div class="flex items-end justify-between">
+        <div>
+            <span class="text-slate-400 text-sm font-medium">{{ 'pricePerPerson' | translate }}</span>
+            <p class="text-2xl font-semibold">{{ currencySymbol }}{{ pricePerPerson | number: '1.0-2' }}</p>
+        </div>
+        @if (pricePerChild > 0) {
+        <div class="text-end">
+            <span class="text-slate-400 text-xs font-medium">{{ 'pricePerChild' | translate }}</span>
+            <p class="text-base font-semibold">{{ currencySymbol }}{{ pricePerChild | number: '1.0-2' }}</p>
+        </div>
+        }
+    </div>
+
+    <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="bookNow()">
+        <div class="mb-4">
+            <label for="travelDate" class="font-semibold text-sm">{{ 'travelDate' | translate }}</label>
+            <input
+                id="travelDate"
+                type="date"
+                formControlName="travelDate"
+                [min]="minTravelDate"
+                class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+            />
+            @if (bookingForm.controls.travelDate.touched && bookingForm.controls.travelDate.invalid) {
+            <p class="mt-1 text-xs text-red-500">{{ 'travelDateRequired' | translate }}</p>
+            }
+        </div>
+
+        <div class="mb-4 grid grid-cols-2 gap-3">
+            <div>
+                <label for="adults" class="font-semibold text-sm">{{ 'adults' | translate }}</label>
+                <input
+                    id="adults"
+                    type="number"
+                    min="1"
+                    formControlName="adults"
+                    class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                />
+            </div>
+            <div>
+                <label for="children" class="font-semibold text-sm">{{ 'children' | translate }}</label>
+                <input
+                    id="children"
+                    type="number"
+                    min="0"
+                    formControlName="children"
+                    class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                />
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="bookingNotes" class="font-semibold text-sm">{{ 'notes' | translate }}</label>
+            <textarea
+                id="bookingNotes"
+                formControlName="notes"
+                rows="3"
+                class="mt-2 w-full py-2 px-3 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                [placeholder]="'bookingNotesPlaceholder' | translate"
+            ></textarea>
+        </div>
+
+        @if (maxSeats > 0) {
+        <p class="mb-4 text-xs text-slate-400">
+            <i class="mdi mdi-account-group-outline me-1"></i>{{ maxSeats }} {{ 'seatsAvailable' | translate }}
+        </p>
+        }
+
+        <div class="mb-4 flex items-center justify-between rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
+            <span class="font-semibold text-sm">{{ 'total' | translate }}</span>
+            <span class="text-lg font-bold text-primary">{{ currencySymbol }}{{ totalAmount | number: '1.0-2' }}</span>
+        </div>
+
+        @if (errorMessage) {
+        <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
+        }
+        @if (successMessage) {
+        <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div>
+        }
+
+        @if (isLoggedIn) {
+        <button
+            type="submit"
+            [disabled]="isSubmitting"
+            class="py-2.5 px-5 w-full inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md disabled:cursor-not-allowed disabled:opacity-60"
+        >
+            @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin me-1"></i> }
+            {{ 'bookNow' | translate }}
+        </button>
+        } @else {
+        <button
+            type="button"
+            (click)="goToLogin()"
+            class="py-2.5 px-5 w-full inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md"
+        >
+            <i class="mdi mdi-login me-1"></i>{{ 'loginToBook' | translate }}
+        </button>
+        }
+    </form>
+</div>

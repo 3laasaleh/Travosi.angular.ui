@@ -1,6 +1,6 @@
 import { UserProfileDTO } from './../models/userProfile.model';
 import { AfterViewInit, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../_services/auth.service';
@@ -19,6 +19,7 @@ export class LoginPage implements AfterViewInit {
   logo = 'assets/images/main-logo.png';
   private readonly fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
    cdr=inject(ChangeDetectorRef);
 
   loginForm = this.fb.nonNullable.group({
@@ -52,7 +53,8 @@ export class LoginPage implements AfterViewInit {
     };
 
     // AuthService handles storing the login result and redirection
-    this._authService.login(payload).pipe(
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    this._authService.login(payload, returnUrl).pipe(
       finalize(() => {
         this.isSubmitting = false;
         this.cdr.markForCheck();
