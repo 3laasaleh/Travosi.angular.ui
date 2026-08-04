@@ -1,0 +1,242 @@
+diff --git a/TravelAgency.Domain/Entities/WebsiteVisitor.cs b/TravelAgency.Domain/Entities/WebsiteVisitor.cs
+new file mode 100644
+--- /dev/null
++++ b/TravelAgency.Domain/Entities/WebsiteVisitor.cs
+@@ -0,0 +1,11 @@
++namespace TravelAgency.Domain.Entities
++{
++    public class WebsiteVisitor
++    {
++        public int Id { get; set; }
++        public Guid VisitorId { get; set; }
++        public DateTime FirstVisitedAtUtc { get; set; }
++        public DateTime LastVisitedAtUtc { get; set; }
++        public int VisitCount { get; set; }
++    }
++}
+diff --git a/TravelAgency.Domain/Repositories/IWebsiteVisitorRepository.cs b/TravelAgency.Domain/Repositories/IWebsiteVisitorRepository.cs
+new file mode 100644
+--- /dev/null
++++ b/TravelAgency.Domain/Repositories/IWebsiteVisitorRepository.cs
+@@ -0,0 +1,11 @@
++namespace TravelAgency.Domain.Repositories
++{
++    public interface IWebsiteVisitorRepository
++    {
++        Task RegisterVisitAsync(
++            Guid visitorId,
++            DateTime visitedAtUtc,
++            CancellationToken cancellationToken = default);
++        Task<int> CountAsync(CancellationToken cancellationToken = default);
++    }
++}
+diff --git a/TravelAgency.Application/DTOs/AboutUs/RegisterWebsiteVisitorDTO.cs b/TravelAgency.Application/DTOs/AboutUs/RegisterWebsiteVisitorDTO.cs
+new file mode 100644
+--- /dev/null
++++ b/TravelAgency.Application/DTOs/AboutUs/RegisterWebsiteVisitorDTO.cs
+@@ -0,0 +1,7 @@
++namespace TravelAgency.Application.DTOs.AboutUs
++{
++    public class RegisterWebsiteVisitorDTO
++    {
++        public Guid VisitorId { get; set; }
++    }
++}
+diff --git a/TravelAgency.Application/Interfaces/IAboutUsService.cs b/TravelAgency.Application/Interfaces/IAboutUsService.cs
+--- a/TravelAgency.Application/Interfaces/IAboutUsService.cs
++++ b/TravelAgency.Application/Interfaces/IAboutUsService.cs
+@@ -8,4 +8,7 @@ namespace TravelAgency.Application.Interfaces
+         Task<GenericResponse<AboutUsStatisticsDTO>> GetStatisticsAsync(
+             CancellationToken cancellationToken);
++        Task<GenericResponse<int>> RegisterVisitorAsync(
++            Guid visitorId,
++            CancellationToken cancellationToken);
+     }
+ }
+diff --git a/TravelAgency.Application/Services/AboutUsService.cs b/TravelAgency.Application/Services/AboutUsService.cs
+--- a/TravelAgency.Application/Services/AboutUsService.cs
++++ b/TravelAgency.Application/Services/AboutUsService.cs
+@@ -8,31 +8,45 @@ namespace TravelAgency.Application.Services
+ {
+     public class AboutUsService : IAboutUsService
+     {
+-        private readonly IGenericRepository<Traveler> _travelerRepository;
++        private readonly IWebsiteVisitorRepository _visitorRepository;
+         private readonly IGenericRepository<Package> _packageRepository;
+ 
+         public AboutUsService(
+-            IGenericRepository<Traveler> travelerRepository,
++            IWebsiteVisitorRepository visitorRepository,
+             IGenericRepository<Package> packageRepository)
+         {
+-            _travelerRepository = travelerRepository;
++            _visitorRepository = visitorRepository;
+             _packageRepository = packageRepository;
+         }
+ 
+         public async Task<GenericResponse<AboutUsStatisticsDTO>> GetStatisticsAsync(
+             CancellationToken cancellationToken)
+         {
+-            // A traveler is the closest domain equivalent to a public-page visitor.
+-            var totalVisitors = await _travelerRepository.CountAsync(
+-                cancellationToken: cancellationToken);
++            var totalVisitors = await _visitorRepository.CountAsync(cancellationToken);
+             var totalPackages = await _packageRepository.CountAsync(
++                package => package.IsActive,
+                 cancellationToken: cancellationToken);
+ 
+             return GenericResponse<AboutUsStatisticsDTO>.Success(new AboutUsStatisticsDTO
+             {
+                 TotalVisitors = totalVisitors,
+                 TotalPackages = totalPackages
+             });
+         }
++
++        public async Task<GenericResponse<int>> RegisterVisitorAsync(
++            Guid visitorId,
++            CancellationToken cancellationToken)
++        {
++            if (visitorId == Guid.Empty)
++                return GenericResponse<int>.BadRequest("A valid visitor ID is required.");
++
++            await _visitorRepository.RegisterVisitAsync(
++                visitorId,
++                DateTime.UtcNow,
++                cancellationToken);
++            var totalVisitors = await _visitorRepository.CountAsync(cancellationToken);
++            return GenericResponse<int>.Success(totalVisitors);
++        }
+     }
+ }
+diff --git a/TravelAgency.API/Controllers/AboutUsController.cs b/TravelAgency.API/Controllers/AboutUsController.cs
+--- a/TravelAgency.API/Controllers/AboutUsController.cs
++++ b/TravelAgency.API/Controllers/AboutUsController.cs
+@@ -31,5 +31,14 @@ namespace TravelAgency.API.Controllers
+         public async Task<GenericResponse<AboutUsStatisticsDTO>> GetStatistics(
+             CancellationToken cancellationToken)
+             => await _aboutUsService.GetStatisticsAsync(cancellationToken);
++
++        /// <summary>
++        /// Registers or updates one anonymous browser visitor and returns the unique visitor total.
++        /// </summary>
++        [HttpPost("Visitors")]
++        public async Task<GenericResponse<int>> RegisterVisitor(
++            [FromBody] RegisterWebsiteVisitorDTO request,
++            CancellationToken cancellationToken)
++            => await _aboutUsService.RegisterVisitorAsync(request.VisitorId, cancellationToken);
+     }
+ }
+diff --git a/TravelAgency.InfraStructure/Repositories/WebsiteVisitorRepository.cs b/TravelAgency.InfraStructure/Repositories/WebsiteVisitorRepository.cs
+new file mode 100644
+--- /dev/null
++++ b/TravelAgency.InfraStructure/Repositories/WebsiteVisitorRepository.cs
+@@ -0,0 +1,74 @@
++using Microsoft.EntityFrameworkCore;
++using TravelAgency.Domain.Entities;
++using TravelAgency.Domain.Repositories;
++using TravelAgency.InfraStructure.Persistence;
++
++namespace TravelAgency.InfraStructure.Repositories
++{
++    public class WebsiteVisitorRepository : IWebsiteVisitorRepository
++    {
++        private readonly TravelAgencyContext _db;
++
++        public WebsiteVisitorRepository(TravelAgencyContext db)
++        {
++            _db = db;
++        }
++
++        public Task<int> CountAsync(CancellationToken cancellationToken = default)
++            => _db.WebsiteVisitors.CountAsync(cancellationToken);
++
++        public async Task RegisterVisitAsync(
++            Guid visitorId,
++            DateTime visitedAtUtc,
++            CancellationToken cancellationToken = default)
++        {
++            var updatedRows = await UpdateExistingVisitorAsync(
++                visitorId,
++                visitedAtUtc,
++                cancellationToken);
++            if (updatedRows > 0)
++                return;
++
++            var visitor = new WebsiteVisitor
++            {
++                VisitorId = visitorId,
++                FirstVisitedAtUtc = visitedAtUtc,
++                LastVisitedAtUtc = visitedAtUtc,
++                VisitCount = 1
++            };
++            _db.WebsiteVisitors.Add(visitor);
++
++            try
++            {
++                await _db.SaveChangesAsync(cancellationToken);
++            }
++            catch (DbUpdateException)
++            {
++                // A concurrent request may have inserted the same unique visitor first.
++                _db.Entry(visitor).State = EntityState.Detached;
++                updatedRows = await UpdateExistingVisitorAsync(
++                    visitorId,
++                    visitedAtUtc,
++                    cancellationToken);
++                if (updatedRows == 0)
++                    throw;
++            }
++        }
++
++        private Task<int> UpdateExistingVisitorAsync(
++            Guid visitorId,
++            DateTime visitedAtUtc,
++            CancellationToken cancellationToken)
++            => _db.WebsiteVisitors
++                .Where(visitor => visitor.VisitorId == visitorId)
++                .ExecuteUpdateAsync(
++                    setters => setters
++                        .SetProperty(
++                            visitor => visitor.LastVisitedAtUtc,
++                            visitedAtUtc)
++                        .SetProperty(
++                            visitor => visitor.VisitCount,
++                            visitor => visitor.VisitCount + 1),
++                    cancellationToken);
++    }
++}
+diff --git a/TravelAgency.InfraStructure/ConfigureService.cs b/TravelAgency.InfraStructure/ConfigureService.cs
+--- a/TravelAgency.InfraStructure/ConfigureService.cs
++++ b/TravelAgency.InfraStructure/ConfigureService.cs
+@@ -15,5 +15,6 @@ namespace TravelAgency.InfraStructure
+         public static void AddRepositories(this IServiceCollection services) {
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+             services.AddScoped<IUserRepository, UserRepository>();
++            services.AddScoped<IWebsiteVisitorRepository, WebsiteVisitorRepository>();
+ 
+         }
+diff --git a/TravelAgency.InfraStructure/Persistence/TravelAgencyContext.cs b/TravelAgency.InfraStructure/Persistence/TravelAgencyContext.cs
+--- a/TravelAgency.InfraStructure/Persistence/TravelAgencyContext.cs
++++ b/TravelAgency.InfraStructure/Persistence/TravelAgencyContext.cs
+@@ -98,5 +98,6 @@ namespace TravelAgency.InfraStructure.Persistence
+ 
+         public DbSet<AgentTask> AgentTasks => Set<AgentTask>();
+         public DbSet<Notification> Notifications => Set<Notification>();
++        public DbSet<WebsiteVisitor> WebsiteVisitors => Set<WebsiteVisitor>();
+ 
+         #endregion
+@@ -392,4 +393,14 @@ namespace TravelAgency.InfraStructure.Persistence
+                  .OnDelete(DeleteBehavior.Cascade);
+             });
+ 
++            modelBuilder.Entity<WebsiteVisitor>(visitor =>
++            {
++                visitor.HasKey(item => item.Id);
++                visitor.HasIndex(item => item.VisitorId).IsUnique();
++                visitor.Property(item => item.VisitorId).IsRequired();
++                visitor.Property(item => item.FirstVisitedAtUtc).HasPrecision(0);
++                visitor.Property(item => item.LastVisitedAtUtc).HasPrecision(0);
++                visitor.Property(item => item.VisitCount).HasDefaultValue(1);
++            });
++
+             modelBuilder.AddUsersSeed();

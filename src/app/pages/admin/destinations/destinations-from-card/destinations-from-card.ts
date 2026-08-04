@@ -16,6 +16,10 @@ import { catchError, finalize, of } from 'rxjs';
 import { AdminService } from '../../admin.service';
 import { environment } from '../../../../../environments/environment';
 import Swal from 'sweetalert2';
+import {
+  ImageUploadValidationError,
+  normalizeImageUpload,
+} from '../../shared/image-upload.util';
 
 interface DestinationImageUpload {
   id?:number;
@@ -52,8 +56,18 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
+  readonly minImageWidth = 1200;
+  readonly minImageHeight = 675;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
+  private readonly imageConstraints = {
+    minWidth: this.minImageWidth,
+    minHeight: this.minImageHeight,
+    maxWidth: this.maxImageWidth,
+    maxHeight: this.maxImageHeight,
+    minAspectRatio: (4 / 3) - 0.03,
+    maxAspectRatio: (16 / 9) + 0.03,
+  };
   destinationForm = this.createForm();
   imageUploads: DestinationImageUpload[] = [];
   isLoading = false;
@@ -147,15 +161,17 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         continue;
       }
       try {
-        const normalized = await this.normalizeImage(file);
+        const normalized = await normalizeImageUpload(file, this.imageConstraints);
         this.imageUploads.push({
           file: normalized,
           url: URL.createObjectURL(normalized),
           name: normalized.name,
           existing: false,
         });
-      } catch {
-        this.errorMessage = 'imageReadError';
+      } catch (error) {
+        this.errorMessage = error instanceof ImageUploadValidationError
+          ? error.translationKey
+          : 'imageReadError';
       }
     }
     this.syncImagesControl();
@@ -300,46 +316,6 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.imageUploads
       .filter((image) => image.file)
       .forEach((image) => URL.revokeObjectURL(image.url));
-  }
-
-  private normalizeImage(file: File): Promise<File> {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const image = new Image();
-      image.onload = () => {
-        URL.revokeObjectURL(url);
-        if (
-          image.naturalWidth <= this.maxImageWidth &&
-          image.naturalHeight <= this.maxImageHeight
-        ) {
-          resolve(file);
-          return;
-        }
-        const scale = Math.min(
-          this.maxImageWidth / image.naturalWidth,
-          this.maxImageHeight / image.naturalHeight,
-        );
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(image.naturalWidth * scale);
-        canvas.height = Math.round(image.naturalHeight * scale);
-        canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(
-          (blob) =>
-            blob
-              ? resolve(
-                  new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' }),
-                )
-              : reject(),
-          'image/webp',
-          0.88,
-        );
-      };
-      image.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject();
-      };
-      image.src = url;
-    });
   }
 
     getImageUrl(url: string): string {
