@@ -101,10 +101,13 @@
           aria-label="Open account menu" aria-haspopup="menu" [attr.aria-expanded]="accountMenuOpen"
           (click)="toggleAccountMenu($event)">
 
-          <span
-            class="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">
-            {{ userInitials }}
-          </span>
+          @if (profileImageUrl) {
+            <img [src]="profileImageUrl" [alt]="userName" class="size-9 rounded-full object-cover ring-2 ring-primary/15" />
+          } @else {
+            <span class="flex size-9 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">
+              {{ userInitials }}
+            </span>
+          }
           <span class="hidden max-w-36 md:block">
             <span class="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</span>
           </span>

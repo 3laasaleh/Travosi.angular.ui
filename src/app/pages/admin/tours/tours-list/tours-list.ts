@@ -9,11 +9,12 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { PaginationOne } from '../../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../../admin.service';
+import Swal from 'sweetalert2';
 
 interface PaginationInfoDTO {
   page: number;
@@ -42,6 +43,7 @@ export class ToursList implements OnInit, OnChanges {
 
   tours: any[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
@@ -49,6 +51,7 @@ export class ToursList implements OnInit, OnChanges {
   constructor(
     private adminService: AdminService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -102,6 +105,62 @@ export class ToursList implements OnInit, OnChanges {
     this.loadTours();
   }
 
+  async toggleTourStatus(tour: any): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
+    const currentlyActive = tour?.isActive !== false;
+    const nextStatus = !currentlyActive;
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant(
+        currentlyActive ? 'confirmDeactivateTour' : 'confirmActivateTour',
+      ),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: currentlyActive ? '#e11d48' : '#059669',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    const tourId = Number(tour?.id ?? tour?.tourId);
+    if (!Number.isInteger(tourId) || tourId <= 0) return;
+    this.statusUpdatingId = tourId;
+    this.adminService.changeTourStatus(tourId, nextStatus).pipe(
+      catchError(() => {
+        Swal.fire({
+          icon: 'error',
+          title: this.translate.instant('tourStatusUpdateError'),
+        });
+        return of({ statusToggleFailed: true });
+      }),
+      finalize(() => {
+        this.statusUpdatingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.statusToggleFailed) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({
+          icon: 'error',
+          title: response?.message || this.translate.instant('tourStatusUpdateError'),
+        });
+        return;
+      }
+      tour.isActive = nextStatus;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: this.translate.instant('tourStatusUpdated'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.cdr.markForCheck();
+    });
+  }
+
   destinationName(tour: any): string {
     return (
       tour?.destination?.nameEng ??
@@ -118,7 +177,9 @@ export class ToursList implements OnInit, OnChanges {
 
   tourPrice(tour: any): string {
     const currency = this.currencies.find((item) => item.id === Number(tour?.currencyId));
-    return `${tour?.pricePerPerson ?? tour?.price ?? 0} ${currency?.code ?? ''}`.trim();
+    const currencyCode = String(currency?.code ?? '').toUpperCase();
+    const suffix = currencyCode === 'USD' ? '$' : currencyCode;
+    return `${tour?.pricePerPerson ?? tour?.price ?? 0} ${suffix}`.trim();
   }
 
   getImages(tour: any): any[] {

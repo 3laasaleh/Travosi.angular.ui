@@ -8,5 +8,6 @@ export interface UserProfileDTO{
               mobile: string;
               firstName?: string;
               lastName?: string;
+              profileImageUrl?: string | null;
 }
 

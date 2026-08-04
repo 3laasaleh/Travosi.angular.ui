@@ -20,6 +20,11 @@ export class ItineraryTimeline {
     return Array.isArray(children) ? children : [];
   }
 
+  dayNumber(item: any, fallback: number): number {
+    const value = Number(item?.dayNumber ?? item?.DayNumber);
+    return Number.isInteger(value) && value > 0 ? value : fallback;
+  }
+
   time(item: any): string {
     const start = this.formatTime(item?.startTime);
     const end = this.formatTime(item?.endTime);

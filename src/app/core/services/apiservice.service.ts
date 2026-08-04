@@ -108,6 +108,12 @@ export class ApiService {
       { headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }) });
   }
 
+  deleteRequest(url: string): Observable<any> {
+    return this.http.delete<any>(environment.baseUrl + url, {
+      headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }),
+    });
+  }
+
 
   // add
   uploadFile(url: string, data: any): Observable<any> {

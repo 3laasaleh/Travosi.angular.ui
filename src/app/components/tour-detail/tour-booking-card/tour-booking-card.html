@@ -1,101 +1,99 @@
-<div class="sticky top-24 rounded-2xl border border-gray-100 p-6 shadow dark:border-gray-800 dark:shadow-gray-800 bg-white dark:bg-slate-900">
-    <div class="flex items-end justify-between">
-        <div>
-            <span class="text-slate-400 text-sm font-medium">{{ 'pricePerPerson' | translate }}</span>
-            <p class="text-2xl font-semibold">{{ currencySymbol }}{{ pricePerPerson | number: '1.0-2' }}</p>
-        </div>
-        @if (pricePerChild > 0) {
-        <div class="text-end">
-            <span class="text-slate-400 text-xs font-medium">{{ 'pricePerChild' | translate }}</span>
-            <p class="text-base font-semibold">{{ currencySymbol }}{{ pricePerChild | number: '1.0-2' }}</p>
-        </div>
+@if (isSubmitting) {
+  <div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status" aria-live="assertive" [attr.aria-label]="'creatingBooking' | translate">
+    <div class="flex min-w-64 flex-col items-center rounded-3xl border border-white/15 bg-white px-8 py-7 text-center shadow-2xl">
+      <span class="relative grid h-16 w-16 place-items-center">
+        <span class="absolute inset-0 animate-spin rounded-full border-4 border-slate-200 border-t-rose-600"></span>
+        <i class="mdi mdi-calendar-check-outline text-2xl text-rose-600"></i>
+      </span>
+      <p class="mt-5 font-semibold text-slate-800">{{ 'creatingBooking' | translate }}</p>
+      <p class="mt-1 text-xs text-slate-500">{{ 'pleaseWaitForRequest' | translate }}</p>
+    </div>
+  </div>
+}
+
+<div class="sticky top-24 rounded-2xl border border-gray-100 bg-white p-6 shadow dark:border-gray-800 dark:bg-slate-900 dark:shadow-gray-800">
+  <div class="flex items-end justify-between">
+    <div>
+      <span class="text-sm font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
+      <p class="text-2xl font-semibold">{{ currencySymbol }}{{ pricePerPerson | number: '1.0-2' }}</p>
+    </div>
+    @if (pricePerChild > 0) {
+      <div class="text-end">
+        <span class="text-xs font-medium text-slate-400">{{ 'pricePerChild' | translate }}</span>
+        <p class="text-base font-semibold">{{ currencySymbol }}{{ pricePerChild | number: '1.0-2' }}</p>
+      </div>
+    }
+  </div>
+
+  <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="bookNow()">
+    <div class="mb-4 grid grid-cols-2 gap-3">
+      <div>
+        <label for="bookingDateFrom" class="text-sm font-semibold">{{ 'dateFrom' | translate }}</label>
+        <input id="bookingDateFrom" type="date" formControlName="dateFrom" [min]="minTravelDate" [attr.max]="maxTravelDate"
+          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-rose-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.invalid) {
+          <p class="mt-1 text-xs text-red-500">{{ 'dateFromRequired' | translate }}</p>
         }
+      </div>
+      <div>
+        <label for="bookingDateTo" class="text-sm font-semibold">{{ 'dateTo' | translate }}</label>
+        <input id="bookingDateTo" type="date" formControlName="dateTo" [min]="minDateTo" [attr.max]="maxTravelDate"
+          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-rose-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        @if (bookingForm.controls.dateTo.touched && bookingForm.controls.dateTo.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">{{ 'dateToRequired' | translate }}</p>
+        }
+        @if ((bookingForm.controls.dateFrom.touched || bookingForm.controls.dateTo.touched) && bookingForm.hasError('invalidBookingDateRange')) {
+          <p class="mt-1 text-xs text-red-500">{{ 'bookingDateRangeInvalid' | translate }}</p>
+        }
+      </div>
     </div>
 
-    <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="bookNow()">
-        <div class="mb-4">
-            <label for="travelDate" class="font-semibold text-sm">{{ 'travelDate' | translate }}</label>
-            <input
-                id="travelDate"
-                type="date"
-                formControlName="travelDate"
-                [min]="minTravelDate"
-                class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-            />
-            @if (bookingForm.controls.travelDate.touched && bookingForm.controls.travelDate.invalid) {
-            <p class="mt-1 text-xs text-red-500">{{ 'travelDateRequired' | translate }}</p>
-            }
-        </div>
+    <div class="mb-4 grid grid-cols-2 gap-3">
+      <div>
+        <label for="adults" class="text-sm font-semibold">{{ 'adults' | translate }}</label>
+        <input id="adults" type="number" min="1" step="1" formControlName="adults"
+          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-rose-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.invalid) { <p class="mt-1 text-xs text-red-500">{{ 'atLeastOneAdult' | translate }}</p> }
+      </div>
+      <div>
+        <label for="children" class="text-sm font-semibold">{{ 'children' | translate }}</label>
+        <input id="children" type="number" min="0" step="1" formControlName="children"
+          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-rose-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        @if (bookingForm.controls.children.touched && bookingForm.controls.children.invalid) { <p class="mt-1 text-xs text-red-500">{{ 'childrenCannotBeNegative' | translate }}</p> }
+      </div>
+    </div>
 
-        <div class="mb-4 grid grid-cols-2 gap-3">
-            <div>
-                <label for="adults" class="font-semibold text-sm">{{ 'adults' | translate }}</label>
-                <input
-                    id="adults"
-                    type="number"
-                    min="1"
-                    formControlName="adults"
-                    class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                />
-            </div>
-            <div>
-                <label for="children" class="font-semibold text-sm">{{ 'children' | translate }}</label>
-                <input
-                    id="children"
-                    type="number"
-                    min="0"
-                    formControlName="children"
-                    class="mt-2 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                />
-            </div>
-        </div>
+    <div class="mb-4">
+      <label for="specialRequests" class="text-sm font-semibold">{{ 'specialRequests' | translate }}</label>
+      <textarea id="specialRequests" formControlName="specialRequests" rows="3" maxlength="1000"
+        class="mt-2 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-rose-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200"
+        [placeholder]="'specialRequestsPlaceholder' | translate"></textarea>
+      @if (bookingForm.controls.specialRequests.touched && bookingForm.controls.specialRequests.hasError('maxlength')) { <p class="mt-1 text-xs text-red-500">{{ 'specialRequestsMaxLength' | translate }}</p> }
+    </div>
 
-        <div class="mb-4">
-            <label for="bookingNotes" class="font-semibold text-sm">{{ 'notes' | translate }}</label>
-            <textarea
-                id="bookingNotes"
-                formControlName="notes"
-                rows="3"
-                class="mt-2 w-full py-2 px-3 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                [placeholder]="'bookingNotesPlaceholder' | translate"
-            ></textarea>
-        </div>
+    @if (hasSeatLimit) {
+      <p class="mb-4 text-xs" [class.text-slate-400]="guests <= seatsAvailable" [class.text-red-500]="guests > seatsAvailable">
+        <i class="mdi mdi-account-group-outline me-1"></i>{{ seatsAvailable }} {{ 'seatsAvailable' | translate }}
+      </p>
+    }
 
-        @if (maxSeats > 0) {
-        <p class="mb-4 text-xs text-slate-400">
-            <i class="mdi mdi-account-group-outline me-1"></i>{{ maxSeats }} {{ 'seatsAvailable' | translate }}
-        </p>
-        }
+    <div class="mb-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800">
+      <span class="text-sm font-semibold">{{ 'total' | translate }} · {{ guests }} {{ 'travelers' | translate }}</span>
+      <span class="text-lg font-bold text-rose-600">{{ currencySymbol }}{{ totalAmount | number: '1.0-2' }}</span>
+    </div>
 
-        <div class="mb-4 flex items-center justify-between rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
-            <span class="font-semibold text-sm">{{ 'total' | translate }}</span>
-            <span class="text-lg font-bold text-primary">{{ currencySymbol }}{{ totalAmount | number: '1.0-2' }}</span>
-        </div>
+    @if (errorMessage) { <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
+    @if (successMessage) { <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
 
-        @if (errorMessage) {
-        <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
-        }
-        @if (successMessage) {
-        <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div>
-        }
-
-        @if (isLoggedIn) {
-        <button
-            type="submit"
-            [disabled]="isSubmitting"
-            class="py-2.5 px-5 w-full inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md disabled:cursor-not-allowed disabled:opacity-60"
-        >
-            @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin me-1"></i> }
-            {{ 'bookNow' | translate }}
-        </button>
-        } @else {
-        <button
-            type="button"
-            (click)="goToLogin()"
-            class="py-2.5 px-5 w-full inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md"
-        >
-            <i class="mdi mdi-login me-1"></i>{{ 'loginToBook' | translate }}
-        </button>
-        }
-    </form>
+    @if (isLoggedIn) {
+      <button type="submit" [disabled]="isSubmitting || tour?.isActive === false"
+        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-rose-600">
+        @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span> } @else { <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span> }
+      </button>
+    } @else {
+      <button type="button" (click)="goToLogin()" class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-rose-700">
+        <i class="mdi mdi-login"></i>{{ 'loginToBook' | translate }}
+      </button>
+    }
+  </form>
 </div>

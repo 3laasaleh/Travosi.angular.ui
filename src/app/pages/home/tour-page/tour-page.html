@@ -49,12 +49,35 @@
       <section class="mb-12">
         @if (images.length) {
           <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
-            <div class="overflow-hidden rounded-2xl bg-slate-100 shadow-sm">
+            <div class="group relative overflow-hidden rounded-2xl bg-slate-100 shadow-sm">
               <img
                 [src]="imageUrl(images[selectedImageIndex])"
                 [alt]="title"
-                class="aspect-[16/9] max-h-[620px] w-full object-cover"
+                class="aspect-[16/9] max-h-[620px] w-full object-cover transition-opacity duration-300"
               />
+              @if (images.length > 1) {
+                <button
+                  type="button"
+                  (click)="previousImage()"
+                  [attr.aria-label]="'previous' | translate"
+                  [title]="'previous' | translate"
+                  class="absolute start-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/40 bg-slate-950/55 text-2xl text-white shadow-lg backdrop-blur-sm transition hover:bg-primary focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <i class="mdi mdi-chevron-left rtl:rotate-180"></i>
+                </button>
+                <button
+                  type="button"
+                  (click)="nextImage()"
+                  [attr.aria-label]="'next' | translate"
+                  [title]="'next' | translate"
+                  class="absolute end-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/40 bg-slate-950/55 text-2xl text-white shadow-lg backdrop-blur-sm transition hover:bg-primary focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <i class="mdi mdi-chevron-right rtl:rotate-180"></i>
+                </button>
+                <span class="absolute bottom-4 end-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  {{ selectedImageIndex + 1 }} / {{ images.length }}
+                </span>
+              }
             </div>
             @if (images.length > 1) {
               <div class="flex gap-3 overflow-x-auto lg:max-h-[620px] lg:flex-col lg:overflow-y-auto">

@@ -24,9 +24,14 @@
   padding: 0px 20px;
 }
 
-button:hover not:disabled,
-a:hover not:disabled {
-  cursor: pointer ;
+button:not(:disabled):hover,
+[role='button']:not([aria-disabled='true']):hover {
+  cursor: pointer;
+}
+
+button:disabled:hover,
+[role='button'][aria-disabled='true']:hover {
+  cursor: not-allowed;
 }
 .text-logo-blue{
       color: #1ec2f2;

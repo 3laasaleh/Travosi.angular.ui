@@ -5,6 +5,7 @@ export interface TourItineraryItem {
   title: string;
   value: string;
   description: string;
+  dayNumber: number;
   startTime: string | null;
   endTime: string | null;
   tourId: number | null;
@@ -19,6 +20,7 @@ export function createEmptyTourItinerary(tourId: number | null = null): TourItin
     title: '',
     value: '',
     description: '',
+    dayNumber: 1,
     startTime: null,
     endTime: null,
     tourId,
@@ -37,6 +39,7 @@ export function readTourItinerary(
     title: String(item?.title ?? ''),
     value: String(item?.value ?? ''),
     description: String(item?.description ?? ''),
+    dayNumber: toDayNumber(item?.dayNumber ?? item?.DayNumber),
     startTime: toTimeInput(item?.startTime),
     endTime: toTimeInput(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
@@ -56,6 +59,7 @@ export function toTourItineraryPayload(
     title: String(item?.title ?? '').trim(),
     value: String(item?.value ?? '').trim(),
     description: String(item?.description ?? '').trim(),
+    dayNumber: toDayNumber(item?.dayNumber ?? item?.DayNumber),
     startTime: toApiTime(item?.startTime),
     endTime: toApiTime(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
@@ -76,6 +80,11 @@ function toRequiredId(value: unknown): number {
 function toOptionalId(value: unknown): number | null {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+function toDayNumber(value: unknown): number {
+  const dayNumber = Number(value);
+  return Number.isInteger(dayNumber) && dayNumber > 0 ? dayNumber : 1;
 }
 
 function toTimeInput(value: unknown): string | null {

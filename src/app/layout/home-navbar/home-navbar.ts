@@ -92,6 +92,10 @@ export class HomeNavbar implements AfterViewInit {
     return this.authService.getCurentUser()?.email ?? '';
   }
 
+  get profileImageUrl(): string | null {
+    return this.authService.profileImageUrl();
+  }
+
   get userInitials(): string {
     return this.userName
       .split(' ')

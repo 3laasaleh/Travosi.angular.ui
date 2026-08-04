@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
@@ -15,7 +16,7 @@ interface PaginationInfoDTO {
 
 @Component({
   selector: 'app-packages-section',
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './packages-section.html',
 })

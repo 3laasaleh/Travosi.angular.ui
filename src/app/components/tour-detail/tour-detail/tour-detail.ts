@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,7 +13,7 @@ import { datas } from '../../../data/data';
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail.html',
 })
@@ -76,16 +77,15 @@ export class TourDetail implements AfterViewInit {
     return languages || '-';
   }
 
-  get price(): number | string {
-    return this.tour?.pricePerPerson ?? this.tour?.price ?? 0;
+  get price(): number {
+    return this.currencyService.convertPrice(
+      this.tour?.pricePerPerson ?? this.tour?.price ?? 0,
+      this.tour?.currencyId ?? this.tour?.currency,
+    );
   }
 
   get currencySymbol(): string {
-    return (
-      this.tour?.currencySymbol ??
-      this.tour?.currency?.symbol ??
-      this.currencyService.currentCurrency().symbol
-    );
+    return this.currencyService.displaySymbol(this.tour?.currencyId ?? this.tour?.currency);
   }
 
   get description(): string {

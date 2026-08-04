@@ -40,6 +40,17 @@ readonly fullName = computed(() => {
     return `${user.firstName} ${user.lastName}`;
 });
 
+readonly profileImageUrl = computed(() => {
+  const value = this.currentUser()?.profileImageUrl;
+  if (!value) return null;
+  if (/^(blob:|data:|https?:\/\/)/i.test(value)) return value;
+
+  const relativePath = String(value)
+    .replace(/^\/+/, '')
+    .replace(/^images\//i, '');
+  return `${environment.imageUrl.replace(/\/+$/, '')}/${relativePath}`;
+});
+
   constructor(
     private jwtHelper: JwtHelperService,
     private _router: Router,
@@ -115,5 +126,14 @@ readonly fullName = computed(() => {
 
   getToken(): string {
     return this._coockiesService.get('token') || '';
+  }
+
+  updateProfileImage(profileImageUrl: string | null): void {
+    const user = this.getCurentUser();
+    if (!user) return;
+
+    const updatedUser: UserProfileDTO = { ...user, profileImageUrl };
+    this.currentUser.set(updatedUser);
+    this._coockiesService.set('userSignedIn', JSON.stringify(updatedUser), 1, '/');
   }
 }

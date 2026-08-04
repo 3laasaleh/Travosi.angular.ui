@@ -6,6 +6,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -20,7 +21,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ItineraryTimeline],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ItineraryTimeline],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,12 +78,15 @@ export class HomePackagePage implements OnInit {
     return this.travelPackage?.destinationName ?? this.travelPackage?.destination?.nameEng ?? this.travelPackage?.destination?.name ?? '';
   }
 
-  get price(): number | string {
-    return this.travelPackage?.pricePerPerson ?? this.travelPackage?.price ?? 0;
+  get price(): number {
+    return this.currencyService.convertPrice(
+      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price ?? 0,
+      this.travelPackage?.currencyId ?? 'USD',
+    );
   }
 
   get currencySymbol(): string {
-    return this.travelPackage?.currencySymbol ?? this.travelPackage?.currency?.symbol ?? this.currencyService.currentCurrency().symbol;
+    return this.currencyService.displaySymbol(this.travelPackage?.currencyId ?? 'USD');
   }
 
   get duration(): string {

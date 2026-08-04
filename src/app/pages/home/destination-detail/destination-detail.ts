@@ -6,6 +6,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -19,7 +20,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -84,8 +85,15 @@ export class HomeDestinationDetail implements OnInit {
     return tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '';
   }
 
-  tourPrice(tour: any): number | string {
-    return tour?.pricePerPerson ?? tour?.price ?? 0;
+  tourPrice(tour: any): number {
+    return this.currencyService.convertPrice(
+      tour?.pricePerPerson ?? tour?.price ?? 0,
+      tour?.currencyId ?? tour?.currency,
+    );
+  }
+
+  tourCurrencySymbol(tour: any): string {
+    return this.currencyService.displaySymbol(tour?.currencyId ?? tour?.currency);
   }
 
   tourDestinationName(tour: any): string {

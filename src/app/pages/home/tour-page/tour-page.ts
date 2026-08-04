@@ -92,6 +92,18 @@ export class HomeTourPage implements OnInit {
     this.selectedImageIndex = index;
   }
 
+  previousImage(): void {
+    const imageCount = this.images.length;
+    if (imageCount < 2) return;
+    this.selectedImageIndex = (this.selectedImageIndex - 1 + imageCount) % imageCount;
+  }
+
+  nextImage(): void {
+    const imageCount = this.images.length;
+    if (imageCount < 2) return;
+    this.selectedImageIndex = (this.selectedImageIndex + 1) % imageCount;
+  }
+
   imageUrl(source: any): string {
     const url =
       typeof source === 'string'

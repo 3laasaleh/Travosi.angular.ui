@@ -1,77 +1,79 @@
-<div class="relative md:-mt-48 -mt-32">
-    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
-        <div class="profile-pic text-center mb-5">
-            <input id="pro-img" name="profile-image" type="file" class="hidden" (change)="loadFile($event)" />
-            <div>
-                <div class="relative h-28 w-28 mx-auto">
-                    <img [src]="imageSrc" class="rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800" id="profile-image" alt="">
-                    <label class="absolute inset-0 cursor-pointer" for="pro-img"></label>
-                </div>
-
-                <div class="mt-4">
-                    <h5 class="text-lg font-semibold">{{ userName }}</h5>
-                    <p class="text-slate-400">{{ userEmail }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="border-t border-gray-100 dark:border-gray-700">
-            <ul class="list-none sidebar-nav mb-0 pb-0" id="navmenu-nav">
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-booking'">
-                    <a routerLink="/user-booking" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="airplay" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">My Booking</h6>
-                    </a>
-                </li>
-                <!-- <li class="navbar-item account-menu" [class.active]="currentUrl == '/user-billing'">
-                    <a routerLink="/user-billing" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="edit" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Billing</h6>
-                    </a>
-                </li> -->
-
-                <!-- <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-payment'">
-                    <a routerLink="/user-payment" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="credit-card" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Payment</h6>
-                    </a>
-                </li> -->
-<!-- 
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-invoice'">
-                    <a routerLink="/user-invoice" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="file-text" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Invoice</h6>
-                    </a>
-                </li>
-
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-social'">
-                    <a routerLink="/user-social" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="share-2" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Social Profile</h6>
-                    </a>
-                </li> -->
-
-                <!-- <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-notification'">
-                    <a routerLink="/user-notification" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="bell" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Notifications</h6>
-                    </a>
-                </li> -->
-
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-setting'">
-                    <a routerLink="/user-setting" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="settings" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Settings</h6>
-                    </a>
-                </li>
-
-                <li class="navbar-item ms-0 account-menu" [class.active]="currentUrl == '/user-screen'">
-                    <a (click)="onLogoutClicked()" class="navbar-link text-slate-400 flex items-center py-2 rounded">
-                        <span class="me-2 mb-0"><i data-feather="log-out" class="size-4"></i></span>
-                        <h6 class="mb-0 font-medium">Sign Out</h6>
-                    </a>
-                </li>
-            </ul>
-        </div>
+@if (isImageRequestActive) {
+  <div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status" aria-live="assertive">
+    <div class="flex min-w-64 flex-col items-center rounded-3xl border border-white/15 bg-white px-8 py-7 text-center shadow-2xl">
+      <span class="relative grid h-16 w-16 place-items-center">
+        <span class="absolute inset-0 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></span>
+        <i class="mdi mdi-account-circle-outline text-2xl text-primary"></i>
+      </span>
+      <p class="mt-5 font-semibold text-slate-800">{{ (isRemovingImage ? 'removingProfileImage' : 'uploadingProfileImage') | translate }}</p>
+      <p class="mt-1 text-xs text-slate-500">{{ 'pleaseWaitForRequest' | translate }}</p>
     </div>
+  </div>
+}
+
+<div class="relative md:-mt-48 -mt-32">
+  <div class="rounded-md bg-white p-6 shadow dark:bg-slate-900 dark:shadow-gray-800">
+    <div class="mb-5 text-center">
+      <input #profileImageInput id="pro-img" name="profile-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" (change)="loadFile($event)" />
+
+      <div class="relative mx-auto h-28 w-28">
+        @if (imageSrc) {
+          <img [src]="imageSrc" class="h-28 w-28 rounded-full object-cover shadow ring-4 ring-slate-50 dark:shadow-gray-800 dark:ring-slate-800" id="profile-image" [alt]="userName" />
+        } @else {
+          <div class="grid h-28 w-28 place-items-center rounded-full bg-gradient-to-br from-primary to-sky-500 text-3xl font-bold text-white shadow ring-4 ring-slate-50 dark:ring-slate-800" role="img" [attr.aria-label]="userName">
+            {{ userInitials }}
+          </div>
+        }
+        <button type="button" [disabled]="isImageRequestActive" (click)="profileImageInput.click()"
+          class="absolute bottom-0 end-0 grid h-9 w-9 place-items-center rounded-full border-2 border-white bg-primary text-white shadow-lg transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-900"
+          [attr.aria-label]="(hasProfileImage ? 'changeProfileImage' : 'addProfileImage') | translate"
+          [title]="(hasProfileImage ? 'changeProfileImage' : 'addProfileImage') | translate">
+          <i class="mdi mdi-camera-outline text-lg"></i>
+        </button>
+      </div>
+
+      <div class="mt-4">
+        <h5 class="text-lg font-semibold">{{ userName }}</h5>
+        <p class="text-slate-400">{{ userEmail }}</p>
+        <p class="mx-auto mt-2 max-w-56 text-xs leading-5 text-slate-400">{{ 'profileImageHint' | translate }}</p>
+      </div>
+
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        <button type="button" [disabled]="isImageRequestActive" (click)="profileImageInput.click()"
+          class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+          <i class="mdi mdi-camera-outline"></i>
+          {{ (hasProfileImage ? 'changeProfileImage' : 'addProfileImage') | translate }}
+        </button>
+        @if (hasProfileImage) {
+          <button type="button" [disabled]="isImageRequestActive" (click)="removeProfileImage()"
+            class="inline-flex items-center gap-1.5 rounded-full border border-rose-200 px-4 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent">
+            <i class="mdi mdi-delete-outline"></i>{{ 'removeImage' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100 dark:border-gray-700">
+      <ul class="sidebar-nav mb-0 list-none pb-0" id="navmenu-nav">
+        <li class="navbar-item account-menu ms-0" [class.active]="currentUrl == '/user-booking'">
+          <a routerLink="/user-booking" class="navbar-link flex items-center rounded py-2 text-slate-400">
+            <span class="me-2 mb-0"><i data-feather="airplay" class="size-4"></i></span>
+            <h6 class="mb-0 font-medium">{{ 'myBookings' | translate }}</h6>
+          </a>
+        </li>
+        <li class="navbar-item account-menu ms-0" [class.active]="currentUrl == '/user-setting'">
+          <a routerLink="/user-setting" class="navbar-link flex items-center rounded py-2 text-slate-400">
+            <span class="me-2 mb-0"><i data-feather="settings" class="size-4"></i></span>
+            <h6 class="mb-0 font-medium">{{ 'settings' | translate }}</h6>
+          </a>
+        </li>
+        <li class="navbar-item account-menu ms-0">
+          <button type="button" (click)="onLogoutClicked()" class="navbar-link flex w-full items-center rounded py-2 text-slate-400">
+            <span class="me-2 mb-0"><i data-feather="log-out" class="size-4"></i></span>
+            <h6 class="mb-0 font-medium">{{ 'signOut' | translate }}</h6>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

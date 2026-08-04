@@ -116,6 +116,10 @@ export class AdminNavbar implements OnInit, AfterViewInit {
     return this.authService.getCurentUser()?.email ?? '';
   }
 
+  get profileImageUrl(): string | null {
+    return this.authService.profileImageUrl();
+  }
+
   get userInitials(): string {
     const initials = this.userName
       .split(' ')

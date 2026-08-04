@@ -19,7 +19,7 @@ export class Tours {
     { id: 2, code: 'USD' },
     { id: 1, code: 'EGP' },
   ];
-  viewMode: 'table' | 'grid' = 'table';
+  viewMode: 'table' | 'grid' = 'grid';
   showForm = false;
   selectedTour: any = null;
   previewTour: any = null;
@@ -32,6 +32,7 @@ export class Tours {
   }
 
   selectTourForEdit(tour: any): void {
+    if (tour?.isActive !== false) return;
     this.selectedTour = tour;
     this.showForm = true;
   }
