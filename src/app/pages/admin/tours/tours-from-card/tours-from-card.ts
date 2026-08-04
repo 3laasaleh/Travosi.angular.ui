@@ -26,6 +26,7 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { AdminService } from '../../admin.service';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   createEmptyTourItinerary,
   readTourItinerary,
@@ -43,7 +44,7 @@ interface TourImageUpload {
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective],
+  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, NgTemplateOutlet],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -70,7 +71,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   errorMessage = '';
   successMessage = '';
   tourForm = this.createForm();
-  private itineraryClientSequence = 0;
 
   constructor(
     private adminService: AdminService,
@@ -115,26 +115,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get itineraryArray(): FormArray<FormGroup> {
     return this.tourForm.controls.itinerary;
-  }
-
-  get rootItineraryGroups(): FormGroup[] {
-    const clientIds = new Set(
-      this.itineraryArray.controls.map((group) => String(group.controls['clientId'].value)),
-    );
-    return this.itineraryArray.controls.filter((group) => {
-      const isChildNode = group.controls['isChildNode'].value === true;
-      const parentClientId = group.controls['parentClientId'].value;
-      return !isChildNode || !parentClientId || !clientIds.has(String(parentClientId));
-    });
-  }
-
-  itineraryChildGroups(parentGroup: FormGroup): FormGroup[] {
-    const parentClientId = String(parentGroup.controls['clientId'].value);
-    return this.itineraryArray.controls.filter(
-      (group) =>
-        group.controls['isChildNode'].value === true &&
-        String(group.controls['parentClientId'].value) === parentClientId,
-    );
   }
 
   loadDestinations(): void {
@@ -211,17 +191,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     form.itinerary
       .map((item: any) => toTourItineraryPayload(item, tourId))
       .filter((item) => !!item.title || !!item.value || !!item.description)
-      .forEach((item, index) => {
-        payload.append(`Itinerary[${index}].Id`, String(item.id));
-        if (item.parentId) payload.append(`Itinerary[${index}].ParentId`, String(item.parentId));
-        payload.append(`Itinerary[${index}].IsChildNode`, String(item.isChildNode));
-        payload.append(`Itinerary[${index}].Title`, item.title);
-        payload.append(`Itinerary[${index}].Value`, item.value);
-        payload.append(`Itinerary[${index}].Description`, item.description);
-        if (item.startTime) payload.append(`Itinerary[${index}].StartTime`, item.startTime);
-        if (item.endTime) payload.append(`Itinerary[${index}].EndTime`, item.endTime);
-        if (item.tourId) payload.append(`Itinerary[${index}].TourId`, String(item.tourId));
-      });
+      .forEach((item, index) =>
+        this.appendItineraryItem(payload, item, `Itinerary[${index}]`),
+      );
 
     this.imageUploads
       .filter((image) => image.file)
@@ -277,49 +249,24 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   addItineraryStep(): void {
     const tourId = this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId);
-    this.itineraryArray.push(
-      this.createItineraryGroup(
-        createEmptyTourItinerary(tourId),
-        this.nextItineraryClientId(),
-        null,
-      ),
-    );
+    this.itineraryArray.push(this.createItineraryGroup(createEmptyTourItinerary(tourId)));
   }
 
   addItineraryChild(parentGroup: FormGroup): void {
     const tourId = this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId);
     const parentId = this.toOptionalId(parentGroup.controls['id'].value);
-    const parentClientId = String(parentGroup.controls['clientId'].value);
     const child = createEmptyTourItinerary(tourId);
     child.parentId = parentId;
     child.isChildNode = true;
-    const childGroup = this.createItineraryGroup(
-      child,
-      this.nextItineraryClientId(),
-      parentClientId,
-    );
-    const parentIndex = this.itineraryArray.controls.indexOf(parentGroup);
-    let insertIndex = parentIndex + 1;
-    while (
-      insertIndex < this.itineraryArray.length &&
-      String(this.itineraryArray.at(insertIndex).controls['parentClientId'].value) === parentClientId
-    ) {
-      insertIndex++;
-    }
-    this.itineraryArray.insert(insertIndex, childGroup);
+    this.itineraryChildrenArray(parentGroup).push(this.createItineraryGroup(child));
   }
 
-  removeItineraryStep(group: FormGroup): void {
-    const clientId = String(group.controls['clientId'].value);
-    for (let index = this.itineraryArray.length - 1; index >= 0; index--) {
-      const current = this.itineraryArray.at(index);
-      if (
-        current === group ||
-        String(current.controls['parentClientId'].value) === clientId
-      ) {
-        this.itineraryArray.removeAt(index);
-      }
-    }
+  itineraryChildrenArray(group: FormGroup): FormArray<FormGroup> {
+    return group.controls['childs'] as FormArray<FormGroup>;
+  }
+
+  removeItineraryStep(collection: FormArray<FormGroup>, index: number): void {
+    collection.removeAt(index);
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -569,15 +516,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  private createItineraryGroup(
-    item: any,
-    clientId = this.nextItineraryClientId(),
-    parentClientId: string | null = null,
-  ): FormGroup {
+  private createItineraryGroup(item: any): FormGroup {
     const itinerary = readTourItinerary(item, this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId));
     return new FormGroup({
-      clientId: new FormControl(clientId, { nonNullable: true }),
-      parentClientId: new FormControl<string | null>(parentClientId),
       id: new FormControl(itinerary.id, { nonNullable: true }),
       parentId: new FormControl<number | null>(itinerary.parentId),
       isChildNode: new FormControl(itinerary.isChildNode, { nonNullable: true }),
@@ -587,6 +528,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       startTime: new FormControl<string | null>(itinerary.startTime),
       endTime: new FormControl<string | null>(itinerary.endTime),
       tourId: new FormControl<number | null>(itinerary.tourId),
+      childs: new FormArray<FormGroup>(
+        itinerary.childs.map((child) => this.createItineraryGroup(child)),
+      ),
     });
   }
 
@@ -612,23 +556,23 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private setItinerary(itinerary: any[]): void {
     this.itineraryArray.clear();
     const items = Array.isArray(itinerary) ? itinerary : [];
-    this.itineraryClientSequence = 0;
-    const idToClientId = new Map<number, string>();
-    items.forEach((item) => {
-      const id = this.toOptionalId(item?.id);
-      if (id) idToClientId.set(id, `server-itinerary-${id}`);
-    });
-    items.forEach((item) => {
-      const id = this.toOptionalId(item?.id);
-      const parentId = this.toOptionalId(item?.parentId);
-      this.itineraryArray.push(
-        this.createItineraryGroup(
-          item,
-          (id && idToClientId.get(id)) || this.nextItineraryClientId(),
-          parentId ? (idToClientId.get(parentId) ?? `server-itinerary-${parentId}`) : null,
-        ),
-      );
-    });
+    items.forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
+  }
+
+  private appendItineraryItem(payload: FormData, item: any, prefix: string): void {
+    payload.append(`${prefix}.Id`, String(item.id ?? 0));
+    if (item.parentId) payload.append(`${prefix}.ParentId`, String(item.parentId));
+    payload.append(`${prefix}.IsChildNode`, String(item.isChildNode === true));
+    payload.append(`${prefix}.Title`, String(item.title ?? ''));
+    payload.append(`${prefix}.Value`, String(item.value ?? ''));
+    payload.append(`${prefix}.Description`, String(item.description ?? ''));
+    if (item.startTime) payload.append(`${prefix}.StartTime`, String(item.startTime));
+    if (item.endTime) payload.append(`${prefix}.EndTime`, String(item.endTime));
+    if (item.tourId) payload.append(`${prefix}.TourId`, String(item.tourId));
+    const children = Array.isArray(item.childs) ? item.childs : [];
+    children.forEach((child: any, index: number) =>
+      this.appendItineraryItem(payload, child, `${prefix}.Childs[${index}]`),
+    );
   }
 
   getImageUrl(url: string): string {
@@ -751,8 +695,4 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return Number.isInteger(id) && id > 0 ? id : null;
   }
 
-  private nextItineraryClientId(): string {
-    this.itineraryClientSequence++;
-    return `new-itinerary-${this.itineraryClientSequence}`;
-  }
 }

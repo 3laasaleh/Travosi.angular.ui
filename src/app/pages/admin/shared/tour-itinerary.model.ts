@@ -8,6 +8,7 @@ export interface TourItineraryItem {
   startTime: string | null;
   endTime: string | null;
   tourId: number | null;
+  childs: TourItineraryItem[];
 }
 
 export function createEmptyTourItinerary(tourId: number | null = null): TourItineraryItem {
@@ -21,6 +22,7 @@ export function createEmptyTourItinerary(tourId: number | null = null): TourItin
     startTime: null,
     endTime: null,
     tourId,
+    childs: [],
   };
 }
 
@@ -38,6 +40,7 @@ export function readTourItinerary(
     startTime: toTimeInput(item?.startTime),
     endTime: toTimeInput(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
+    childs: readChildren(item).map((child) => readTourItinerary(child, fallbackTourId)),
   };
 }
 
@@ -56,7 +59,13 @@ export function toTourItineraryPayload(
     startTime: toApiTime(item?.startTime),
     endTime: toApiTime(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
+    childs: readChildren(item).map((child) => toTourItineraryPayload(child, fallbackTourId)),
   };
+}
+
+function readChildren(item: any): any[] {
+  const children = item?.childs ?? item?.children ?? item?.childItineraries;
+  return Array.isArray(children) ? children : [];
 }
 
 function toRequiredId(value: unknown): number {
