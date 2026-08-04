@@ -63,6 +63,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
+  readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
+    const hours = Math.floor(index / 4).toString().padStart(2, '0');
+    const minutes = ((index % 4) * 15).toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  });
   readonly formSteps = [
     { id: 1, label: 'tourDetailsStep', icon: 'mdi-file-document-edit-outline' },
     { id: 2, label: 'tourImagesStep', icon: 'mdi-image-multiple-outline' },
@@ -384,6 +389,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraftCollection = this.itineraryArray;
     this.itineraryDraftIndex = null;
     this.itineraryDraftIsChild = false;
+    this.attachItineraryScheduleValidator();
   }
 
   openItineraryChildEditor(parentGroup: FormGroup): void {
@@ -398,6 +404,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraftCollection = this.itineraryChildrenArray(parentGroup);
     this.itineraryDraftIndex = null;
     this.itineraryDraftIsChild = true;
+    this.attachItineraryScheduleValidator();
   }
 
   editItineraryStep(
@@ -410,6 +417,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraftCollection = collection;
     this.itineraryDraftIndex = index;
     this.itineraryDraftIsChild = isChild;
+    this.attachItineraryScheduleValidator();
   }
 
   saveItineraryStep(): void {
@@ -731,8 +739,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)],
       }),
-      startTime: new FormControl<string | null>(itinerary.startTime),
-      endTime: new FormControl<string | null>(itinerary.endTime),
+      startTime: new FormControl<string | null>(itinerary.startTime, {
+        validators: [this.quarterHourTimeValidator],
+      }),
+      endTime: new FormControl<string | null>(itinerary.endTime, {
+        validators: [this.quarterHourTimeValidator],
+      }),
       tourId: new FormControl<number | null>(itinerary.tourId),
       childs: new FormArray<FormGroup>(
         depth === 0
@@ -775,6 +787,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraftCollection = null;
     this.itineraryDraftIndex = null;
     this.itineraryDraftIsChild = false;
+  }
+
+  private attachItineraryScheduleValidator(): void {
+    if (!this.itineraryDraft) return;
+    this.itineraryDraft.addValidators(this.itineraryStartTimeConflictValidator);
+    this.itineraryDraft.updateValueAndValidity();
   }
 
   private validateDetailsStep(): boolean {
@@ -1006,6 +1024,32 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ? null
       : { invalidItineraryTimeRange: true };
   }
+
+  private quarterHourTimeValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (value === null || value === undefined || value === '') return null;
+    return /^([01]\d|2[0-3]):(00|15|30|45)$/.test(String(value))
+      ? null
+      : { invalidQuarterHourTime: true };
+  }
+
+  private readonly itineraryStartTimeConflictValidator = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const startTime = control.get('startTime')?.value;
+    const dayNumber = Number(control.get('dayNumber')?.value);
+    if (!startTime || !Number.isInteger(dayNumber) || !this.itineraryDraftCollection) {
+      return null;
+    }
+
+    const hasConflict = this.itineraryDraftCollection.controls.some((step, index) => {
+      if (index === this.itineraryDraftIndex) return false;
+      return Number(step.get('dayNumber')?.value) === dayNumber
+        && step.get('startTime')?.value === startTime;
+    });
+
+    return hasConflict ? { duplicateItineraryStartTime: true } : null;
+  };
 
   private createTrialTourDefaults() {
     const start = new Date();

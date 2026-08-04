@@ -99,7 +99,11 @@ readonly profileImageUrl = computed(() => {
           this._coockiesService.set('userSignedIn', JSON.stringify(userData), 1, '/');
           this._coockiesService.set('token', token, 1, '/');
           this.currentUser.set(userData);
-          if (returnUrl && returnUrl.startsWith('/')) this._router.navigateByUrl(returnUrl);
+          const isAdminOrAgent = userData.role === RoleEnum.Admin
+            || userData.role === RoleEnum.Agent;
+
+          if (isAdminOrAgent) this._router.navigate(['/admin']);
+          else if (returnUrl && returnUrl.startsWith('/')) this._router.navigateByUrl(returnUrl);
           else this._router.navigate(['/home']);
         }
         return res;

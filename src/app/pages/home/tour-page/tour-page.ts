@@ -17,11 +17,12 @@ import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
+import { ImageViewerModal } from '../../../components/image-viewer-modal/image-viewer-modal';
 
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +36,7 @@ export class HomeTourPage implements OnInit {
   isLoading = true;
   errorMessage = '';
   selectedImageIndex = 0;
+  imageViewerOpen = false;
 
   get images(): any[] {
     if (Array.isArray(this.tour?.images) && this.tour.images.length) return this.tour.images;
@@ -52,8 +54,16 @@ export class HomeTourPage implements OnInit {
     return id === null || id === undefined ? null : Number(id);
   }
 
+  get resolvedImages(): string[] {
+    return this.images.map((image) => this.imageUrl(image));
+  }
+
   get itinerary(): any[] {
-    const value = this.tour?.itinerary ?? this.tour?.itineraries ?? this.tour?.tourItinerary;
+    const value = this.tour?.itinerary
+      ?? this.tour?.Itinerary
+      ?? this.tour?.itineraries
+      ?? this.tour?.tourItinerary
+      ?? this.tour?.itinerarySteps;
     return Array.isArray(value) ? value : [];
   }
 
@@ -104,6 +114,14 @@ export class HomeTourPage implements OnInit {
     this.selectedImageIndex = (this.selectedImageIndex + 1) % imageCount;
   }
 
+  openImageViewer(): void {
+    if (this.images.length) this.imageViewerOpen = true;
+  }
+
+  closeImageViewer(): void {
+    this.imageViewerOpen = false;
+  }
+
   imageUrl(source: any): string {
     const url =
       typeof source === 'string'
@@ -120,6 +138,7 @@ export class HomeTourPage implements OnInit {
     this.errorMessage = '';
     this.tour = null;
     this.selectedImageIndex = 0;
+    this.imageViewerOpen = false;
 
     this.tourRequest(tourId)
       .pipe(

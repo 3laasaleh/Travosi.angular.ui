@@ -9,7 +9,7 @@ import feather from 'feather-icons';
   templateUrl: './footer-one.html',
 })
 export class FooterOne implements AfterViewInit {
-  logo = 'assets/images/logo-light.png';
+  logo = 'assets/images/main-logo.png';
   year = new Date().getFullYear();
 
   ngAfterViewInit(): void {

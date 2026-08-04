@@ -16,11 +16,12 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
+import { ImageViewerModal } from '../../../components/image-viewer-modal/image-viewer-modal';
 
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +36,21 @@ export class HomeDestinationDetail implements OnInit {
   tours: any[] = [];
   isLoading = true;
   errorMessage = '';
+  selectedImageIndex = 0;
+  imageViewerOpen = false;
+
+  get images(): any[] {
+    if (Array.isArray(this.destination?.images) && this.destination.images.length) {
+      return this.destination.images;
+    }
+
+    const fallback = this.destination?.coverImageUrl ?? this.destination?.imageUrl;
+    return fallback ? [fallback] : [];
+  }
+
+  get resolvedImages(): string[] {
+    return this.images.map((image) => this.imageUrl(image));
+  }
 
   ngOnInit(): void {
     this.route.paramMap
@@ -69,8 +85,32 @@ export class HomeDestinationDetail implements OnInit {
   }
 
   destinationImage(): string {
-    const image = Array.isArray(this.destination?.images) ? this.destination.images[0] : null;
-    return this.imageUrl(image ?? this.destination?.imageUrl);
+    return this.imageUrl(this.images[0]);
+  }
+
+  selectImage(index: number): void {
+    if (index < 0 || index >= this.images.length) return;
+    this.selectedImageIndex = index;
+  }
+
+  previousImage(): void {
+    const imageCount = this.images.length;
+    if (imageCount < 2) return;
+    this.selectedImageIndex = (this.selectedImageIndex - 1 + imageCount) % imageCount;
+  }
+
+  nextImage(): void {
+    const imageCount = this.images.length;
+    if (imageCount < 2) return;
+    this.selectedImageIndex = (this.selectedImageIndex + 1) % imageCount;
+  }
+
+  openImageViewer(): void {
+    if (this.images.length) this.imageViewerOpen = true;
+  }
+
+  closeImageViewer(): void {
+    this.imageViewerOpen = false;
   }
 
   tourImage(tour: any): string {
@@ -111,6 +151,8 @@ export class HomeDestinationDetail implements OnInit {
     this.errorMessage = '';
     this.destination = null;
     this.tours = [];
+    this.selectedImageIndex = 0;
+    this.imageViewerOpen = false;
 
     forkJoin({
       destination: this.destinationRequest(destinationId),

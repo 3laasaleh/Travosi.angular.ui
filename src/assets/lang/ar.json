@@ -566,6 +566,8 @@
     ,"stepTitleMaxLength": "يجب ألا يتجاوز عنوان الخطوة 200 حرف."
     ,"stepDescriptionMaxLength": "يجب ألا يتجاوز وصف الخطوة 2000 حرف."
     ,"endTimeAfterStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء."
+    ,"itineraryTimeQuarterHour": "اختر وقتًا بدقائق 00 أو 15 أو 30 أو 45."
+    ,"itineraryTimeConflict": "توجد خطوة أخرى في هذا اليوم تبدأ في الوقت نفسه. اختر وقتًا مختلفًا."
     ,"savingTourDetails": "جارٍ حفظ بيانات الجولة..."
     ,"uploadingTourImages": "جارٍ رفع صور الجولة..."
     ,"savingTourItinerary": "جارٍ حفظ خط سير الجولة..."

@@ -566,6 +566,8 @@
     ,"stepTitleMaxLength": "Step title cannot exceed 200 characters."
     ,"stepDescriptionMaxLength": "Step description cannot exceed 2,000 characters."
     ,"endTimeAfterStart": "End time must be after start time."
+    ,"itineraryTimeQuarterHour": "Choose a time using 00, 15, 30, or 45 minutes."
+    ,"itineraryTimeConflict": "Another itinerary step on this day already starts at this time. Choose a different time."
     ,"savingTourDetails": "Saving tour details..."
     ,"uploadingTourImages": "Uploading tour images..."
     ,"savingTourItinerary": "Saving tour itinerary..."

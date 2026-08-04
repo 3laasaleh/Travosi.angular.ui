@@ -16,7 +16,7 @@ export class ItineraryTimeline {
   }
 
   children(item: any): any[] {
-    const children = item?.childs ?? item?.children ?? item?.childItineraries;
+    const children = item?.childs ?? item?.Childs ?? item?.children ?? item?.childItineraries;
     return Array.isArray(children) ? children : [];
   }
 
@@ -25,10 +25,22 @@ export class ItineraryTimeline {
     return Number.isInteger(value) && value > 0 ? value : fallback;
   }
 
+  title(item: any): string {
+    return String(item?.title ?? item?.Title ?? '');
+  }
+
+  value(item: any): string {
+    return String(item?.value ?? item?.Value ?? '');
+  }
+
+  description(item: any): string {
+    return String(item?.description ?? item?.Description ?? '');
+  }
+
   time(item: any): string {
-    const start = this.formatTime(item?.startTime);
-    const end = this.formatTime(item?.endTime);
-    if (start && end) return `${start} – ${end}`;
+    const start = this.formatTime(item?.startTime ?? item?.StartTime);
+    const end = this.formatTime(item?.endTime ?? item?.EndTime);
+    if (start && end) return `${start} - ${end}`;
     return start || end;
   }
 
