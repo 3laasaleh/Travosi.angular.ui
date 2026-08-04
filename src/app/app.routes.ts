@@ -30,6 +30,11 @@ export const routes: Routes = [
       import('./pages/home/tour-page/tour-page').then((m) => m.HomeTourPage),
   },
   {
+    path: 'packages/:id',
+    loadComponent: () =>
+      import('./pages/home/package-page/package-page').then((m) => m.HomePackagePage),
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/admin-page').then((m) => m.AdminPage),

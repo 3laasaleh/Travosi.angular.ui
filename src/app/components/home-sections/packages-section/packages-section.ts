@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
@@ -14,7 +15,7 @@ interface PaginationInfoDTO {
 
 @Component({
   selector: 'app-packages-section',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './packages-section.html',
 })

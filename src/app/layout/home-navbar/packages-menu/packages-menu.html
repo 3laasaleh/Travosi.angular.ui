@@ -18,10 +18,10 @@
             <div class="mx-3 my-2 h-4 animate-pulse rounded-full bg-slate-200"></div>
           }
         } @else {
-          @for (item of packages; track item.id) {
-            <a routerLink="/packages" (click)="closeMenu()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="menuitem">
+          @for (item of packages; track item.id ?? item.packageId) {
+            <a [routerLink]="['/packages', item.id ?? item.packageId]" (click)="closeMenu()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="menuitem">
               <i class="mdi mdi-package-variant-closed text-primary"></i>
-              {{ item.nameEng ?? item.name }}
+              {{ item.titleEng ?? item.nameEng ?? item.title ?? item.name }}
             </a>
           } @empty {
             <p class="p-4 text-center text-sm text-slate-500">{{ 'noPackagesFound' | translate }}</p>

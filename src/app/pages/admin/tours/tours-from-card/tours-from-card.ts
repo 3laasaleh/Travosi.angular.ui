@@ -28,7 +28,6 @@ import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { AdminService } from '../../admin.service';
-import { NgTemplateOutlet } from '@angular/common';
 import {
   createEmptyTourItinerary,
   readTourItinerary,
@@ -46,7 +45,7 @@ interface TourImageUpload {
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, NgTemplateOutlet],
+  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -72,6 +71,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   errorMessage = '';
   successMessage = '';
   tourForm = this.createForm();
+  itineraryDraft: FormGroup | null = null;
+  itineraryDraftIsChild = false;
+  private itineraryDraftCollection: FormArray<FormGroup> | null = null;
+  private itineraryDraftIndex: number | null = null;
 
   private get defaultCurrencyId(): number {
     return this.currencyService.options[0].id;
@@ -148,6 +151,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   saveTour(): void {
     if (this.isSaving) return;
+    if (this.itineraryDraft) {
+      this.itineraryDraft.markAllAsTouched();
+      this.errorMessage = 'saveItineraryStepFirst';
+      return;
+    }
     if (this.tourForm.invalid) {
       this.tourForm.markAllAsTouched();
       return;
@@ -253,18 +261,57 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.includesArray.removeAt(index);
   }
 
-  addItineraryStep(): void {
+  openItineraryStepEditor(): void {
+    if (this.itineraryDraft) return;
     const tourId = this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId);
-    this.itineraryArray.push(this.createItineraryGroup(createEmptyTourItinerary(tourId)));
+    this.itineraryDraft = this.createItineraryGroup(createEmptyTourItinerary(tourId));
+    this.itineraryDraftCollection = this.itineraryArray;
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = false;
   }
 
-  addItineraryChild(parentGroup: FormGroup): void {
+  openItineraryChildEditor(parentGroup: FormGroup): void {
+    if (this.itineraryDraft) return;
     const tourId = this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId);
     const parentId = this.toOptionalId(parentGroup.controls['id'].value);
     const child = createEmptyTourItinerary(tourId);
     child.parentId = parentId;
     child.isChildNode = true;
-    this.itineraryChildrenArray(parentGroup).push(this.createItineraryGroup(child));
+    this.itineraryDraft = this.createItineraryGroup(child);
+    this.itineraryDraftCollection = this.itineraryChildrenArray(parentGroup);
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = true;
+  }
+
+  editItineraryStep(
+    collection: FormArray<FormGroup>,
+    index: number,
+    isChild: boolean,
+  ): void {
+    if (this.itineraryDraft) return;
+    this.itineraryDraft = this.createItineraryGroup(collection.at(index).getRawValue());
+    this.itineraryDraftCollection = collection;
+    this.itineraryDraftIndex = index;
+    this.itineraryDraftIsChild = isChild;
+  }
+
+  saveItineraryStep(): void {
+    if (!this.itineraryDraft || !this.itineraryDraftCollection) return;
+    if (this.itineraryDraft.invalid) {
+      this.itineraryDraft.markAllAsTouched();
+      return;
+    }
+    if (this.itineraryDraftIndex === null) {
+      this.itineraryDraftCollection.push(this.itineraryDraft);
+    } else {
+      this.itineraryDraftCollection.setControl(this.itineraryDraftIndex, this.itineraryDraft);
+    }
+    this.tourForm.markAsDirty();
+    this.closeItineraryEditor();
+  }
+
+  cancelItineraryStep(): void {
+    this.closeItineraryEditor();
   }
 
   itineraryChildrenArray(group: FormGroup): FormArray<FormGroup> {
@@ -272,7 +319,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   removeItineraryStep(collection: FormArray<FormGroup>, index: number): void {
+    if (this.itineraryDraft) return;
     collection.removeAt(index);
+    this.tourForm.markAsDirty();
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -393,6 +442,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private populateForm(tour: any): void {
+    this.closeItineraryEditor();
     this.revokeNewImageUrls();
     const tourImages = Array.isArray(tour?.images) && tour.images.length
       ? tour.images
@@ -435,6 +485,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.closeItineraryEditor();
     this.closeDestinationMenu();
     this.revokeNewImageUrls();
     this.imageUploads = [];
@@ -522,7 +573,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  private createItineraryGroup(item: any): FormGroup {
+  private createItineraryGroup(item: any, depth = 0): FormGroup {
     const itinerary = readTourItinerary(item, this.toOptionalId(this.selectedTour?.id ?? this.selectedTour?.tourId));
     return new FormGroup({
       id: new FormControl(itinerary.id, { nonNullable: true }),
@@ -535,7 +586,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       endTime: new FormControl<string | null>(itinerary.endTime),
       tourId: new FormControl<number | null>(itinerary.tourId),
       childs: new FormArray<FormGroup>(
-        itinerary.childs.map((child) => this.createItineraryGroup(child)),
+        depth === 0
+          ? itinerary.childs.map((child) => this.createItineraryGroup(child, 1))
+          : [],
       ),
     });
   }
@@ -563,6 +616,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryArray.clear();
     const items = Array.isArray(itinerary) ? itinerary : [];
     items.forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
+  }
+
+  private closeItineraryEditor(): void {
+    this.itineraryDraft = null;
+    this.itineraryDraftCollection = null;
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = false;
   }
 
   private appendItineraryItem(payload: FormData, item: any, prefix: string): void {

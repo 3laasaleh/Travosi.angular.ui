@@ -32,6 +32,10 @@ export class Packages implements OnInit {
   pageSize = 10;
 
   packageForm: any = this.createEmptyPackageForm();
+  itineraryDraft: TourItineraryItem | null = null;
+  itineraryDraftIsChild = false;
+  private itineraryDraftCollection: TourItineraryItem[] | null = null;
+  private itineraryDraftIndex: number | null = null;
 
   ngOnInit(): void {
   }
@@ -46,6 +50,10 @@ export class Packages implements OnInit {
   }
 
   savePackage(): void {
+    if (this.itineraryDraft) {
+      this.errorMessage = 'saveItineraryStepFirst';
+      return;
+    }
     if (!this.packageForm.title.trim()) {
       this.errorMessage = 'packageTitleRequired';
       return;
@@ -75,6 +83,7 @@ export class Packages implements OnInit {
   }
 
   startEdit(pkg: any): void {
+    this.closeItineraryEditor();
     this.showForm = true;
     this.selectedPackage = pkg;
     this.packageForm = {
@@ -85,8 +94,9 @@ export class Packages implements OnInit {
       description: pkg.description ?? '',
       imageUrl: pkg.imageUrl ?? '',
       isActive: pkg.isActive !== false,
-      itinerary: (pkg.itinerary ?? pkg.itineraries ?? [])
-        .map((item: any) => readTourItinerary(item)),
+      itinerary: (Array.isArray(pkg.itinerary ?? pkg.itineraries)
+        ? (pkg.itinerary ?? pkg.itineraries)
+        : []).map((item: any) => this.readTwoLevelItinerary(item)),
     };
   }
 
@@ -120,6 +130,7 @@ export class Packages implements OnInit {
   }
 
   resetForm(): void {
+    this.closeItineraryEditor();
     this.selectedPackage = null;
     this.packageForm = this.createEmptyPackageForm();
   }
@@ -129,20 +140,59 @@ export class Packages implements OnInit {
     if (!this.showForm) this.resetForm();
   }
 
-  addItineraryStep(): void {
-    this.packageForm.itinerary.push(createEmptyTourItinerary());
+  openItineraryStepEditor(): void {
+    if (this.itineraryDraft) return;
+    this.itineraryDraft = createEmptyTourItinerary();
+    this.itineraryDraftCollection = this.packageForm.itinerary;
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = false;
   }
 
-  addItineraryChild(parent: TourItineraryItem): void {
-    const child: TourItineraryItem = {
+  openItineraryChildEditor(parent: TourItineraryItem): void {
+    if (this.itineraryDraft) return;
+    this.itineraryDraft = {
       ...createEmptyTourItinerary(),
       parentId: parent.id > 0 ? parent.id : null,
       isChildNode: true,
     };
-    parent.childs.push(child);
+    this.itineraryDraftCollection = parent.childs;
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = true;
+  }
+
+  editItineraryStep(
+    collection: TourItineraryItem[],
+    index: number,
+    isChild: boolean,
+  ): void {
+    if (this.itineraryDraft) return;
+    this.itineraryDraft = readTourItinerary(collection[index]);
+    this.itineraryDraftCollection = collection;
+    this.itineraryDraftIndex = index;
+    this.itineraryDraftIsChild = isChild;
+  }
+
+  saveItineraryStep(): void {
+    if (!this.itineraryDraft || !this.itineraryDraftCollection) return;
+    if (!this.itineraryDraft.title.trim()) {
+      this.errorMessage = 'stepTitleRequired';
+      return;
+    }
+    if (this.itineraryDraftIndex === null) {
+      this.itineraryDraftCollection.push(this.itineraryDraft);
+    } else {
+      this.itineraryDraftCollection[this.itineraryDraftIndex] = this.itineraryDraft;
+    }
+    this.errorMessage = '';
+    this.closeItineraryEditor();
+  }
+
+  cancelItineraryStep(): void {
+    this.closeItineraryEditor();
   }
 
   removeItineraryStep(collection: TourItineraryItem[], index: number): void {
+    if (this.itineraryDraft) return;
     collection.splice(index, 1);
   }
 
@@ -163,5 +213,18 @@ export class Packages implements OnInit {
     return items.some(
       (item) => !item.title.trim() || this.hasUntitledItinerary(item.childs),
     );
+  }
+
+  private readTwoLevelItinerary(item: any): TourItineraryItem {
+    const itinerary = readTourItinerary(item);
+    itinerary.childs = itinerary.childs.map((child) => ({ ...child, childs: [] }));
+    return itinerary;
+  }
+
+  private closeItineraryEditor(): void {
+    this.itineraryDraft = null;
+    this.itineraryDraftCollection = null;
+    this.itineraryDraftIndex = null;
+    this.itineraryDraftIsChild = false;
   }
 }

@@ -81,6 +81,11 @@
           <app-tour-booking-card [tour]="tour" />
         </aside>
       </div>
+      @if (itinerary.length) {
+        <div class="mt-12">
+          <app-itinerary-timeline [items]="itinerary" />
+        </div>
+      }
     </div>
   </main>
 }

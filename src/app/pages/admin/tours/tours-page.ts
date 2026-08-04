@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
+import { ItineraryTimeline } from '../../../components/itinerary-timeline/itinerary-timeline';
 import { ToursFromCard } from './tours-from-card/tours-from-card';
 import { ToursList } from './tours-list/tours-list';
 
 @Component({
   selector: 'app-tours',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, ToursFromCard, ToursList],
+  imports: [RouterLink, TranslatePipe, ToursFromCard, ToursList, ItineraryTimeline],
   templateUrl: './tours-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',

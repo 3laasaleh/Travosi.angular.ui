@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { TourDetail } from '../../../components/tour-detail/tour-detail/tour-detail';
 import { TourBookingCard } from '../../../components/tour-detail/tour-booking-card/tour-booking-card';
+import { ItineraryTimeline } from '../../../components/itinerary-timeline/itinerary-timeline';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
@@ -20,7 +21,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,6 +50,11 @@ export class HomeTourPage implements OnInit {
   get destinationId(): number | null {
     const id = this.tour?.destinationId ?? this.tour?.destination?.id;
     return id === null || id === undefined ? null : Number(id);
+  }
+
+  get itinerary(): any[] {
+    const value = this.tour?.itinerary ?? this.tour?.itineraries ?? this.tour?.tourItinerary;
+    return Array.isArray(value) ? value : [];
   }
 
   get title(): string {
