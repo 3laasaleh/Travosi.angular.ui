@@ -25,7 +25,7 @@ export class SidebarMenu {
     { label: 'destinations', path: '/admin/destinations', icon: 'mdi-map-marker-outline' },
     { label: 'tours', path: '/admin/tours', icon: 'mdi-compass-outline' },
     { label: 'packages', path: '/admin/packages', icon: 'mdi-package-variant-closed' },
-    { label: 'bookings', path: '/admin/agent-booking-manager', icon: 'mdi-calendar-check-outline' },
+    { label: 'bookings', path: '/admin/bookings', icon: 'mdi-calendar-check-outline' },
     { label: 'customers', path: '/admin/customers', icon: 'mdi-account-group-outline' },
     { label: 'tasks', path: '/admin/tasks', icon: 'mdi-checkbox-marked-outline' },
     { label: 'airlines', path: '/admin/airlines', icon: 'mdi-airplane' },

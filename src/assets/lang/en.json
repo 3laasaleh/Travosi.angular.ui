@@ -139,6 +139,19 @@
     "taskStatusPending": "Pending",
     "taskStatusInProgress": "In progress",
     "taskStatusCompleted": "Completed",
+    "taskStatusReturned": "Returned",
+    "taskStatusClosed": "Closed",
+    "startTask": "Start",
+    "finishTask": "Finish",
+    "closeTask": "Close",
+    "returnTask": "Return",
+    "agentCompletionNote": "Completion note",
+    "agentCompletionNotePlaceholder": "Describe what was done to complete this task...",
+    "agentCompletionNoteRequired": "A completion note is required.",
+    "returnReason": "Return reason",
+    "returnReasonPlaceholder": "Explain why the task is being returned...",
+    "taskStatusUpdated": "Task status updated.",
+    "taskStatusUpdateError": "The task status could not be updated.",
     "taskRecords": "Task records",
     "noTasksFound": "No tasks found.",
     "taskSaveError": "The task could not be saved.",
@@ -219,7 +232,6 @@
     "destinationUpdated": "Destination updated successfully.",
     "destinationCreated": "Destination created successfully.",
     "destinationImageLimit": "A destination can have a maximum of 5 images.",
-    "tourImageLimit": "A tour can have a maximum of 10 images.",
     "invalidImageType": "Please select image files only.",
     "imageTooLarge": "Each image must be 5 MB or smaller.",
     "imageReadError": "An image could not be read.",
@@ -363,6 +375,30 @@
     ,"countries": "Countries"
     ,"cities": "Cities"
     ,"bookingsLoadError": "Bookings could not be loaded. Please try again."
+    ,"total": "Total"
+    ,"travelDate": "Travel date"
+    ,"travelDateRequired": "Travel date is required."
+    ,"bookNow": "Book now"
+    ,"loginToBook": "Log in to book"
+    ,"bookingNotesPlaceholder": "Any special requests or notes for our team..."
+    ,"bookingCreated": "Your booking was created successfully. Our team will call you to confirm."
+    ,"bookingCreateError": "Your booking could not be created. Please try again."
+    ,"bookingSeatsExceeded": "The number of guests exceeds the available seats."
+    ,"bookingStatusPending": "Pending"
+    ,"bookingStatusConfirmed": "Confirmed"
+    ,"bookingStatusCancelled": "Cancelled"
+    ,"bookingStatusCompleted": "Completed"
+    ,"confirmBooking": "Confirm"
+    ,"completeBooking": "Complete"
+    ,"cancelBooking": "Cancel booking"
+    ,"cancelBookingConfirm": "Are you sure you want to cancel this booking?"
+    ,"bookingStatusUpdated": "Booking status updated."
+    ,"bookingStatusUpdateError": "The booking status could not be updated."
+    ,"assignAgent": "Assign agent"
+    ,"assignBookingAgent": "Assign booking to agent"
+    ,"hideAssignBooking": "Hide assignment form"
+    ,"bookingAssigned": "The booking was assigned to the agent."
+    ,"bookingAssignError": "The booking could not be assigned."
     ,"packageTitleRequired": "Please add a package title."
     ,"packageUpdated": "Package updated successfully."
     ,"packageCreated": "Package created successfully."

@@ -91,12 +91,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/quotations/quotations-page').then((m) => m.Quotations),
       },
       {
-        path: 'agent-booking-manager',
+        path: 'bookings',
         canActivate: [adminGuard],
         loadComponent: () =>
-          import('./pages/admin/agent-booking-manager/agent-booking-manager').then(
-            (m) => m.AgentBookingManager,
-          ),
+          import('./pages/admin/bookings/bookings-page').then((m) => m.Bookings),
+      },
+      {
+        path: 'agent-booking-manager',
+        redirectTo: 'bookings',
       },
 
       {path:'',redirectTo:'destinations',pathMatch:'full'}

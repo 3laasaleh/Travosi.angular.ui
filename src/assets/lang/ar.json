@@ -139,6 +139,19 @@
     "taskStatusPending": "قيد الانتظار",
     "taskStatusInProgress": "قيد التنفيذ",
     "taskStatusCompleted": "مكتملة",
+    "taskStatusReturned": "معادة",
+    "taskStatusClosed": "مغلقة",
+    "startTask": "بدء",
+    "finishTask": "إنهاء",
+    "closeTask": "إغلاق",
+    "returnTask": "إعادة",
+    "agentCompletionNote": "ملاحظة الإنجاز",
+    "agentCompletionNotePlaceholder": "صف ما تم إنجازه لإكمال هذه المهمة...",
+    "agentCompletionNoteRequired": "ملاحظة الإنجاز مطلوبة.",
+    "returnReason": "سبب الإعادة",
+    "returnReasonPlaceholder": "اشرح سبب إعادة المهمة...",
+    "taskStatusUpdated": "تم تحديث حالة المهمة.",
+    "taskStatusUpdateError": "تعذر تحديث حالة المهمة.",
     "taskRecords": "سجلات المهام",
     "noTasksFound": "لا توجد مهام.",
     "taskSaveError": "تعذر حفظ المهمة.",
@@ -219,7 +232,6 @@
     "destinationUpdated": "تم تحديث الوجهة بنجاح.",
     "destinationCreated": "تم إنشاء الوجهة بنجاح.",
     "destinationImageLimit": "الحد الأقصى للوجهة هو 5 صور.",
-    "tourImageLimit": "الحد الأقصى للجولة هو 10 صور.",
     "invalidImageType": "يرجى اختيار ملفات صور فقط.",
     "imageTooLarge": "يجب ألا يتجاوز حجم كل صورة 5 ميجابايت.",
     "imageReadError": "تعذر قراءة إحدى الصور.",
@@ -363,6 +375,30 @@
     ,"countries": "الدول"
     ,"cities": "المدن"
     ,"bookingsLoadError": "تعذر تحميل الحجوزات. يرجى المحاولة مرة أخرى."
+    ,"total": "الإجمالي"
+    ,"travelDate": "تاريخ السفر"
+    ,"travelDateRequired": "تاريخ السفر مطلوب."
+    ,"bookNow": "احجز الآن"
+    ,"loginToBook": "سجل الدخول للحجز"
+    ,"bookingNotesPlaceholder": "أي طلبات خاصة أو ملاحظات لفريقنا..."
+    ,"bookingCreated": "تم إنشاء حجزك بنجاح. سيتصل بك فريقنا للتأكيد."
+    ,"bookingCreateError": "تعذر إنشاء حجزك. يرجى المحاولة مرة أخرى."
+    ,"bookingSeatsExceeded": "عدد الضيوف يتجاوز المقاعد المتاحة."
+    ,"bookingStatusPending": "قيد الانتظار"
+    ,"bookingStatusConfirmed": "مؤكد"
+    ,"bookingStatusCancelled": "ملغي"
+    ,"bookingStatusCompleted": "مكتمل"
+    ,"confirmBooking": "تأكيد"
+    ,"completeBooking": "إكمال"
+    ,"cancelBooking": "إلغاء الحجز"
+    ,"cancelBookingConfirm": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟"
+    ,"bookingStatusUpdated": "تم تحديث حالة الحجز."
+    ,"bookingStatusUpdateError": "تعذر تحديث حالة الحجز."
+    ,"assignAgent": "تعيين وكيل"
+    ,"assignBookingAgent": "تعيين الحجز لوكيل"
+    ,"hideAssignBooking": "إخفاء نموذج التعيين"
+    ,"bookingAssigned": "تم تعيين الحجز للوكيل."
+    ,"bookingAssignError": "تعذر تعيين الحجز."
     ,"packageTitleRequired": "يرجى إضافة عنوان للباقة."
     ,"packageUpdated": "تم تحديث الباقة بنجاح."
     ,"packageCreated": "تم إنشاء الباقة بنجاح."

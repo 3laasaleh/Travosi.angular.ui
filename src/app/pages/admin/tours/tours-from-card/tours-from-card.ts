@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -25,6 +26,7 @@ import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
+import { CurrencyService } from '../../../../core/services/currency.service';
 import { AdminService } from '../../admin.service';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -49,14 +51,13 @@ interface TourImageUpload {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
+  private readonly currencyService = inject(CurrencyService);
+
   @Input() selectedTour: any = null;
   @Output() tourSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
 
-  readonly currencies = [
-    { id: 2, code: 'USD', labelKey: 'currencyUsd' },
-    { id: 1, code: 'EGP', labelKey: 'currencyEgp' },
-  ];
+  readonly currencies = this.currencyService.options;
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly maxImageWidth = 2400;
@@ -71,6 +72,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   errorMessage = '';
   successMessage = '';
   tourForm = this.createForm();
+
+  private get defaultCurrencyId(): number {
+    return this.currencyService.options[0].id;
+  }
+  private itineraryClientSequence = 0;
 
   constructor(
     private adminService: AdminService,
@@ -411,7 +417,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescription: tour.fullDescription ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
       pricePerChild: Number(tour.pricePerChild ?? 0),
-      currencyId: Number(tour.currencyId ?? 2),
+      currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
       durationDays: Number(tour.durationDays ?? 0),
       durationHours: Number(tour.durationhours ?? tour.durationHours ?? 0),
       maxSeats: Number(tour.maxSeats ?? 14),
@@ -440,7 +446,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescription: '',
       pricePerPerson: 0,
       pricePerChild: 0,
-      currencyId: 2,
+      currencyId: this.defaultCurrencyId,
       durationDays: 0,
       durationHours: 0,
       maxSeats: 14,
@@ -478,7 +484,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),
-      currencyId: new FormControl(2, {
+      currencyId: new FormControl(this.defaultCurrencyId, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1)],
       }),

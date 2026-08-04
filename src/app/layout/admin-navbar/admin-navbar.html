@@ -84,7 +84,9 @@
                     <span class="mt-1 grid size-8 shrink-0 place-items-center rounded-full"
                       [class.bg-amber-50]="task.status === taskStatusEnum.Pending" [class.text-amber-600]="task.status === taskStatusEnum.Pending"
                       [class.bg-sky-50]="task.status === taskStatusEnum.InProgress" [class.text-sky-600]="task.status === taskStatusEnum.InProgress"
-                      [class.bg-emerald-50]="task.status === taskStatusEnum.Completed" [class.text-emerald-600]="task.status === taskStatusEnum.Completed">
+                      [class.bg-emerald-50]="task.status === taskStatusEnum.Completed" [class.text-emerald-600]="task.status === taskStatusEnum.Completed"
+                      [class.bg-rose-50]="task.status === taskStatusEnum.Returned" [class.text-rose-600]="task.status === taskStatusEnum.Returned"
+                      [class.bg-slate-100]="task.status === taskStatusEnum.Closed" [class.text-slate-600]="task.status === taskStatusEnum.Closed">
                       <i class="mdi mdi-clipboard-text-outline"></i>
                     </span>
                     <span class="min-w-0">
@@ -161,7 +163,7 @@
         <a routerLink="/admin/destinations" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'destinations' | translate }}</a>
         <a routerLink="/admin/tours" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'tours' | translate }}</a>
         <a routerLink="/admin/packages" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'packages' | translate }}</a>
-        <a routerLink="/admin/agent-booking-manager" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'bookings' | translate }}</a>
+        <a routerLink="/admin/bookings" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'bookings' | translate }}</a>
         <a routerLink="/home" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary sm:hidden dark:text-slate-300 dark:hover:bg-slate-800">{{ 'viewWebsite' | translate }}</a>
       </div>
     </nav>

@@ -11,6 +11,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { TourDetail } from '../../../components/tour-detail/tour-detail/tour-detail';
+import { TourBookingCard } from '../../../components/tour-detail/tour-booking-card/tour-booking-card';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
@@ -19,7 +20,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
