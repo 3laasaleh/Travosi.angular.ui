@@ -135,8 +135,8 @@
             <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userEmail }}</p>
           </div>
            <div class="p-2">
-          @if(isAdmin){
-            <a routerLink="/admin" routerLinkActive="bg-primary-50 text-primary"   class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
+          @if (canAccessConfigurations) {
+            <a routerLink="/configurations" routerLinkActive="bg-primary-50 text-primary"   class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
               role="menuitem">
               <i data-feather="settings" class="size-4"></i>
               {{'Configurations'|translate}}</a>
@@ -180,8 +180,8 @@
       <a routerLink="/tours-list" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
         class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">Tours</a>
 
-      @if(isAdmin){
-      <a routerLink="/admin" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+      @if (canAccessConfigurations) {
+      <a routerLink="/configurations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
         class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">{{'Configurations'|translate}}</a>
       }
       <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"

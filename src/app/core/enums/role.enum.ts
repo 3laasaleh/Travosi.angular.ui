@@ -1,7 +1,8 @@
 export enum RoleEnum{
     Admin=0,
-    Customer,
-    Agent
+    Agent=1,
+    Customer=2
+
 
     
 } 

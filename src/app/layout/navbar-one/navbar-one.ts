@@ -1,4 +1,3 @@
-import { AuthService } from '../../features/user/_services/auth.service';
 import {
   AfterViewInit,
   Component,
@@ -10,6 +9,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
+import { AuthService } from '../../features/user/_services/auth.service';
 
 @Component({
   selector: 'app-navbar-one',

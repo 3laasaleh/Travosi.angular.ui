@@ -3,10 +3,10 @@ import { HttpInterceptor, HttpEvent, HttpRequest, HttpHandler, HttpResponse } fr
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { MessageStatusEnum } from '../enums/messagestatus.enum';
-import { AuthService } from '../../features/user/_services/auth.service';
 import { IGenericResponse } from '../models/genericReponse.model';
 import { ToasterService } from '../services/toaster.service';
 import { LoaderService } from '../services/loader.service';
+import { AuthService } from '../../features/user/_services/auth.service';
 @Injectable()
 export class Global_Interceptor implements HttpInterceptor {
   constructor(private toaster: ToasterService,

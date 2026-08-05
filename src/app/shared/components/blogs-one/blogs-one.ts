@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
-import { blogData } from '../../data/data';
+import { blogData } from '../../../data/data';
 
 @Component({
   selector: 'app-blogs-one',

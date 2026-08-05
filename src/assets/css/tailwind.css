@@ -74,11 +74,5 @@
 
 /* Custom */
 @import "./custom/_general.css";
-@import "./custom/features/_helper.css";
-@import "./custom/structure/_topnav.css";
-@import "./custom/features/_countdown.css";
-@import "./custom/features/_contact.css";
-@import "./custom/features/_testi.css";
-@import "./custom/features/_datepicker.css";
-@import "./custom/features/_range-slider.css";
-@import "./custom/features/_swiper-slider.css";
+@import "./custom/pages/_helper.css";
+

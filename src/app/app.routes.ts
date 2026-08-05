@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './core/gaurds/admin.guard';
 import { authGuard } from './core/gaurds/auth.guard';
+import { adminGuard } from './core/gaurds/admin.guard';
 
 export const routes: Routes = [
   {
@@ -35,71 +35,71 @@ export const routes: Routes = [
       import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
   },
   {
-    path: 'admin',
+    path: 'configurations',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/admin/admin-page').then((m) => m.AdminPage),
+    loadComponent: () => import('./features/configurations/configurations-page').then((m) => m.ConfigurationsPage),
     children: [
       {
         path: 'destinations',
         canActivate: [adminGuard],
         loadComponent: () =>
-          import('./features/admin/destinations/destinations-page').then((m) => m.Destinations),
+          import('./features/configurations/destinations/destinations-page').then((m) => m.Destinations),
       },
       {
         path: 'tours',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/tours/tours-page').then((m) => m.Tours),
+        loadComponent: () => import('./features/configurations/tours/tours-page').then((m) => m.Tours),
       },
       {
         path: 'packages',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/packages/packages-page').then((m) => m.Packages),
+        loadComponent: () => import('./features/configurations/packages/packages-page').then((m) => m.Packages),
       },
       {
         path: 'hotels',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/hotels/hotels-page').then((m) => m.Hotels),
+        loadComponent: () => import('./features/configurations/hotels/hotels-page').then((m) => m.Hotels),
       },
       {
         path: 'airlines',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/airlines/airlines-page').then((m) => m.Airlines),
+        loadComponent: () => import('./features/configurations/airlines/airlines-page').then((m) => m.Airlines),
       },
       {
         path: 'flights',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/flights/flights-page').then((m) => m.Flights),
+        loadComponent: () => import('./features/configurations/flights/flights-page').then((m) => m.Flights),
       },
       {
         path: 'countries',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/countries/countries-page').then((m) => m.Countries),
+        loadComponent: () => import('./features/configurations/countries/countries-page').then((m) => m.Countries),
       },
       {
         path: 'cities',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/cities/cities-page').then((m) => m.Cities),
+        loadComponent: () => import('./features/configurations/cities/cities-page').then((m) => m.Cities),
       },
       {
         path: 'customers',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/customers/customers-page').then((m) => m.Customers),
+        loadComponent: () => import('./features/configurations/customers/customers-page').then((m) => m.Customers),
       },
       {
         path: 'tasks',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/tasks/tasks-page').then((m) => m.Tasks),
+        loadComponent: () => import('./features/configurations/tasks/tasks-page').then((m) => m.Tasks),
       },
       {
         path: 'quotations',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/quotations/quotations-page').then((m) => m.Quotations),
+        loadComponent: () => import('./features/configurations/quotations/quotations-page').then((m) => m.Quotations),
       },
       {
         path: 'bookings',
         canActivate: [adminGuard],
         loadComponent: () =>
-          import('./features/admin/bookings/bookings-page').then((m) => m.Bookings),
+          import('./features/configurations/bookings/bookings-page').then((m) => m.Bookings),
       },
       {
         path: 'agent-booking-manager',
@@ -163,12 +163,7 @@ export const routes: Routes = [
     path: 'aboutus',
     loadComponent: () => import('./features/innerpages/about-us/about-us').then((m) => m.AboutUs),
   },
-  {
-    path: 'user-billing',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/innerpages/my-account/user-billing/user-billing').then((m) => m.UserBilling),
-  },
+
   {
     path: 'user-payment',
     canActivate: [authGuard],

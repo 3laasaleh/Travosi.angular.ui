@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { datas } from '../../data/data';
+import { datas } from '../../../data/data';
 
 @Component({
   selector: 'app-asked-questions',

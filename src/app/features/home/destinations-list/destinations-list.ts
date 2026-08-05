@@ -8,11 +8,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { PaginationOne } from '../../../components/listing/tour-grid/pagination-one/pagination-one';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
+import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 
 interface PaginationInfo {
   page: number;

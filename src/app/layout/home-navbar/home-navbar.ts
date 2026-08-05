@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import feather from 'feather-icons';
-import { AuthService } from '../../features/user/_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 import { CurrencyService } from '../../core/services/currency.service';
@@ -17,6 +16,7 @@ import { DestinationsMenu } from './destinations-menu/destinations-menu';
 import { PackagesMenu } from './packages-menu/packages-menu';
 import { SearchBox } from './search-box/search-box';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../features/user/_services/auth.service';
 
 @Component({
   selector: 'app-home-navbar',
@@ -75,8 +75,8 @@ export class HomeNavbar implements AfterViewInit {
   }
 
   
-  get isAdmin(): boolean {
-    return this.authService.isAdmin() ?? false;
+  get canAccessConfigurations(): boolean {
+    return this.authService.isAdmin() || this.authService.isAgent();
   }
 
   get isLoggedIn(): boolean {

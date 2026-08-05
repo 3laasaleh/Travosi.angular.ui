@@ -22,18 +22,18 @@ export class SidebarMenu {
   collapsed = false;
 
   readonly menuItems: SidebarMenuItem[] = [
-    { label: 'destinations', path: '/admin/destinations', icon: 'mdi-map-marker-outline' },
-    { label: 'tours', path: '/admin/tours', icon: 'mdi-compass-outline' },
-    { label: 'packages', path: '/admin/packages', icon: 'mdi-package-variant-closed' },
-    { label: 'bookings', path: '/admin/bookings', icon: 'mdi-calendar-check-outline' },
-    { label: 'customers', path: '/admin/customers', icon: 'mdi-account-group-outline' },
-    { label: 'tasks', path: '/admin/tasks', icon: 'mdi-checkbox-marked-outline' },
-    { label: 'airlines', path: '/admin/airlines', icon: 'mdi-airplane' },
-    { label: 'hotels', path: '/admin/hotels', icon: 'mdi-bed-outline' },
-    { label: 'flights', path: '/admin/flights', icon: 'mdi-airplane-takeoff' },
-    { label: 'countries', path: '/admin/countries', icon: 'mdi-earth' },
-    { label: 'cities', path: '/admin/cities', icon: 'mdi-city-variant-outline' },
-    { label: 'quotations', path: '/admin/quotations', icon: 'mdi-file-document-outline' },
+    { label: 'destinations', path: '/configurations/destinations', icon: 'mdi-map-marker-outline' },
+    { label: 'tours', path: '/configurations/tours', icon: 'mdi-compass-outline' },
+    { label: 'packages', path: '/configurations/packages', icon: 'mdi-package-variant-closed' },
+    { label: 'bookings', path: '/configurations/bookings', icon: 'mdi-calendar-check-outline' },
+    { label: 'customers', path: '/configurations/customers', icon: 'mdi-account-group-outline' },
+    { label: 'tasks', path: '/configurations/tasks', icon: 'mdi-checkbox-marked-outline' },
+    { label: 'airlines', path: '/configurations/airlines', icon: 'mdi-airplane' },
+    { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
+    { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },
+    { label: 'countries', path: '/configurations/countries', icon: 'mdi-earth' },
+    { label: 'cities', path: '/configurations/cities', icon: 'mdi-city-variant-outline' },
+    { label: 'quotations', path: '/configurations/quotations', icon: 'mdi-file-document-outline' },
   ];
 
   toggleCollapsed(): void {

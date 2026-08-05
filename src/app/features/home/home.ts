@@ -15,7 +15,6 @@ import { ApiService } from '../../core/services/apiservice.service';
 import { VisitorTrackingService } from '../../core/services/visitor-tracking.service';
 import { FooterOne } from '../../layout/footer-one/footer-one';
 import { AgencyOne } from '../../shared/components/agency-one/agency-one';
-import { DestinationsTwo } from '../../shared/components/destinations/destinations-two/destinations-two';
 import { PackagesSection } from '../../shared/components/home-sections/packages-section/packages-section';
 import { ToursSection } from '../../shared/components/home-sections/tours-section/tours-section';
 import { SelectedDate } from '../../shared/components/selected-date/selected-date';
@@ -29,7 +28,6 @@ import { UsersOne } from '../../shared/components/users-one/users-one';
     AgencyOne,
     UsersOne,
     FooterOne,
-    DestinationsTwo,
     ToursSection,
     PackagesSection,
   ],
