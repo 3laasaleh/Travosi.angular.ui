@@ -86,7 +86,7 @@
     @if (successMessage) { <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
 
     @if (isLoggedIn) {
-      <button type="submit" [disabled]="isSubmitting || tour?.isActive === false"
+      <button type="submit" [disabled]="isSubmitting || product?.isActive === false"
         class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-rose-600">
         @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span> } @else { <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span> }
       </button>

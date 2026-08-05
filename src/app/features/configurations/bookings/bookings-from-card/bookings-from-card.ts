@@ -73,7 +73,7 @@ export class BookingsFromCard implements OnInit, OnChanges {
     this.errorMessage = '';
     this.successMessage = '';
     this.apiService
-      .patch(`Booking/${bookingId}/AssignAgent`, { agentId: this.bookingForm.getRawValue().agentId })
+      .patch(`Bookings/${bookingId}/AssignAgent`, { agentId: this.bookingForm.getRawValue().agentId })
       .pipe(
         catchError(() => {
           this.errorMessage = 'bookingAssignError';

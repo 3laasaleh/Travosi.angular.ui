@@ -9,15 +9,16 @@ import { AuthService } from '../_services/auth.service';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 
 interface UserBookingItem {
-  bookingId: string;
-  tourName: string;
-  destination: string;
-  bookingDate: string;
-  checkInDate: string;
-  checkOutDate: string;
-  guests: number;
-  status: string;
-  totalAmount: string;
+  id: number;
+  tourTitle?: string;
+  packageName?: string;
+  createdDate: string;
+  dateFrom: string;
+  dateTo: string;
+  numberOfTravelers: number;
+  statusName: string;
+  totalPrice: number;
+  cancellationFeeAmount: number;
 }
 
 @Component({
@@ -65,7 +66,7 @@ export class UserBooking implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.apiService.get(`Booking/user/${userId}`).subscribe({
+    this.apiService.get(`Bookings/user/${userId}`).subscribe({
       next: (data) => {
         this.bookings = Array.isArray(data) ? data : [];
         this.page = 1;

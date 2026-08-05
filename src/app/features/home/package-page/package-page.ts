@@ -17,11 +17,12 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
+import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ItineraryTimeline],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

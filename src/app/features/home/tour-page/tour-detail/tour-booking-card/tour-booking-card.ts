@@ -38,6 +38,15 @@ export class TourBookingCard {
   private readonly translate = inject(TranslateService);
 
   @Input() tour: any = null;
+  @Input() travelPackage: any = null;
+
+  get product(): any {
+    return this.tour ?? this.travelPackage;
+  }
+
+  get isPackage(): boolean {
+    return this.travelPackage != null;
+  }
 
   isSubmitting = false;
   errorMessage = '';
@@ -56,22 +65,22 @@ export class TourBookingCard {
   }
 
   get pricePerPerson(): number {
-    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price);
+    return apiPrice(this.product?.pricePerPerson ?? this.product?.price);
   }
 
   get pricePerChild(): number {
-    return apiPrice(this.tour?.pricePerChild);
+    return apiPrice(this.product?.pricePerChild);
   }
 
   get seatsAvailable(): number {
-    const available = Number(this.tour?.seatsAvailable);
+    const available = Number(this.product?.seatsAvailable);
     if (Number.isFinite(available) && available >= 0) return available;
-    return Math.max(0, Number(this.tour?.maxSeats ?? 0) - Number(this.tour?.seatsBooked ?? 0));
+    return Math.max(0, Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) - Number(this.product?.seatsBooked ?? 0));
   }
 
   get hasSeatLimit(): boolean {
-    return this.tour?.seatsAvailable !== null && this.tour?.seatsAvailable !== undefined
-      || Number(this.tour?.maxSeats ?? 0) > 0;
+    return this.product?.seatsAvailable !== null && this.product?.seatsAvailable !== undefined
+      || Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) > 0;
   }
 
   get guests(): number {
@@ -86,17 +95,17 @@ export class TourBookingCard {
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.tour);
+    return apiCurrencyLabel(this.product);
   }
 
   get minTravelDate(): string {
     const today = this.toDateInput(new Date());
-    const tourStart = this.toDateInput(this.tour?.startDate);
-    return tourStart && tourStart > today ? tourStart : today;
+    const productStart = this.toDateInput(this.product?.startDate ?? this.product?.dateFrom);
+    return productStart && productStart > today ? productStart : today;
   }
 
   get maxTravelDate(): string | null {
-    return this.toDateInput(this.tour?.endDate) || null;
+    return this.toDateInput(this.product?.endDate ?? this.product?.dateTo) || null;
   }
 
   get minDateTo(): string {
@@ -122,8 +131,8 @@ export class TourBookingCard {
       return;
     }
 
-    if (this.tour?.isActive === false) {
-      this.errorMessage = 'tourUnavailableForBooking';
+    if (this.product?.isActive === false) {
+      this.errorMessage = this.isPackage ? 'packageUnavailableForBooking' : 'tourUnavailableForBooking';
       return;
     }
 
@@ -133,8 +142,8 @@ export class TourBookingCard {
     }
 
     const form = this.bookingForm.getRawValue();
-    const tourId = Number(this.tour?.id ?? this.tour?.tourId);
-    if (!Number.isInteger(tourId) || tourId <= 0) {
+    const productId = Number(this.product?.id ?? this.product?.tourId ?? this.product?.packageId);
+    if (!Number.isInteger(productId) || productId <= 0) {
       this.errorMessage = 'bookingCreateError';
       return;
     }
@@ -143,8 +152,8 @@ export class TourBookingCard {
       SpecialRequests: form.specialRequests.trim() || null,
       DateFrom: this.toApiDate(form.dateFrom),
       DateTo: this.toApiDate(form.dateTo),
-      TourId: tourId,
-      PackageId: null,
+      TourId: this.isPackage ? null : productId,
+      PackageId: this.isPackage ? productId : null,
       TravelDate: this.toApiDate(form.dateFrom),
       Adults: form.adults,
       Children: form.children,

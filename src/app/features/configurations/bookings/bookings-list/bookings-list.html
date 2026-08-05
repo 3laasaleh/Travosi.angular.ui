@@ -1,130 +1,94 @@
 <div class="rounded-3xl border border-slate-200 bg-white p-5">
-  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
-  <div class="mb-4 flex items-center justify-between">
+  @if (errorMessage) {
+    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
+  }
+
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h2 class="text-xl font-semibold">{{ 'bookingRecords' | translate }}</h2>
+    <label class="flex items-center gap-2 text-sm font-medium text-slate-600">
+      <span>{{ 'filterByStatus' | translate }}</span>
+      <select class="rounded-full border border-slate-200 bg-white px-4 py-2 outline-none focus:border-primary" [value]="selectedStatus" (change)="onStatusFilterChange($event)">
+        <option value="">{{ 'allStatuses' | translate }}</option>
+        @for (option of [bookingStatusEnum.Pending, bookingStatusEnum.Confirmed, bookingStatusEnum.Cancelled, bookingStatusEnum.Completed]; track option) {
+          <option [value]="option">{{ bookingStatusKey(option) | translate }}</option>
+        }
+      </select>
+    </label>
   </div>
 
   @if (isLoading) {
-  <div class="overflow-hidden rounded-2xl border border-slate-200">
-    <div class="grid grid-cols-[1fr_1fr_1fr_120px_120px_120px] gap-4 bg-slate-50 px-4 py-3">
-      @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+    <div class="space-y-3">
+      @for (row of [1,2,3,4,5]; track row) { <div class="h-12 animate-pulse rounded-xl bg-slate-100"></div> }
     </div>
-    @for (row of [1,2,3,4,5]; track row) {
-    <div class="grid grid-cols-[1fr_1fr_1fr_120px_120px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
-      <div class="h-4 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-4 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-4 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-7 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-7 animate-pulse rounded-full bg-slate-200"></div>
-      <div class="h-8 animate-pulse rounded-full bg-slate-200"></div>
+  } @else if (viewMode === 'table') {
+    <div class="max-h-[70vh] overflow-auto rounded-2xl border border-slate-200">
+      <table class="min-w-full text-left text-sm">
+        <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
+          <tr>
+            <th class="px-4 py-3">{{ 'bookingId' | translate }}</th>
+            <th class="px-4 py-3">{{ 'customer' | translate }}</th>
+            <th class="px-4 py-3">{{ 'customerPhone' | translate }}</th>
+            <th class="px-4 py-3">{{ 'bookingProduct' | translate }}</th>
+            <th class="px-4 py-3">{{ 'assignedAgent' | translate }}</th>
+            <th class="px-4 py-3">{{ 'bookingDate' | translate }}</th>
+            <th class="px-4 py-3">{{ 'guests' | translate }}</th>
+            <th class="px-4 py-3">{{ 'amount' | translate }}</th>
+            <th class="px-4 py-3">{{ 'status' | translate }}</th>
+            <th class="px-4 py-3">{{ 'actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (booking of bookings; track booking.id) {
+            <tr class="border-t border-slate-200 hover:bg-slate-50">
+              <td class="px-4 py-3 font-semibold">#{{ booking.id }}</td>
+              <td class="px-4 py-3">{{ booking.userName || '-' }}</td>
+              <td class="px-4 py-3"><a class="font-medium text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></td>
+              <td class="px-4 py-3"><span class="me-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-500">{{ booking.tourId ? ('tour' | translate) : ('travelPackage' | translate) }}</span>{{ booking.tourTitle ?? booking.packageName ?? '-' }}</td>
+              <td class="px-4 py-3">{{ agentName(booking) || '-' }}</td>
+              <td class="px-4 py-3">{{ booking.createdDate | date: 'mediumDate' }}</td>
+              <td class="px-4 py-3">{{ booking.numberOfTravelers }}</td>
+              <td class="px-4 py-3">${{ booking.totalPrice | number: '1.0-2' }} @if (+booking.cancellationFeeAmount > 0) { <span class="block text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</span> }</td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  [class.bg-amber-50]="+booking.status === bookingStatusEnum.Pending" [class.text-amber-600]="+booking.status === bookingStatusEnum.Pending"
+                  [class.bg-emerald-50]="+booking.status === bookingStatusEnum.Confirmed" [class.text-emerald-600]="+booking.status === bookingStatusEnum.Confirmed"
+                  [class.bg-rose-50]="+booking.status === bookingStatusEnum.Cancelled" [class.text-rose-600]="+booking.status === bookingStatusEnum.Cancelled"
+                  [class.bg-slate-100]="+booking.status === bookingStatusEnum.Completed" [class.text-slate-600]="+booking.status === bookingStatusEnum.Completed">{{ bookingStatusKey(booking.status) | translate }}</span>
+              </td>
+              <td class="px-4 py-3"><div class="flex flex-wrap gap-2">
+                @if (isAdmin) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition hover:bg-primary hover:text-white" [attr.title]="'assignBookingAgent' | translate" (click)="editRequested.emit(booking)"><i class="mdi mdi-account-arrow-right-outline"></i></button> }
+                @if (canConfirm(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-500 hover:text-white disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button> }
+                @if (canComplete(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 transition hover:bg-sky-500 hover:text-white disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button> }
+                @if (canCancel(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-500 hover:text-white disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button> }
+              </div></td>
+            </tr>
+          } @empty { <tr><td colspan="10" class="p-8 text-center text-slate-500">{{ 'noBookingsFound' | translate }}</td></tr> }
+        </tbody>
+      </table>
     </div>
-    }
-  </div>
-  }
-  @else if (viewMode === 'table') {
-  <div class="max-h-[70vh] overflow-auto rounded-2xl border border-slate-200">
-    <table class="min-w-full text-left text-sm">
-      <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
-        <tr>
-          <th class="px-4 py-3">{{ 'bookingId' | translate }}</th>
-          <th class="px-4 py-3">{{ 'customer' | translate }}</th>
-          <th class="px-4 py-3">{{ 'tour' | translate }}</th>
-          <th class="px-4 py-3">{{ 'assignedAgent' | translate }}</th>
-          <th class="px-4 py-3">{{ 'bookingDate' | translate }}</th>
-          <th class="px-4 py-3">{{ 'guests' | translate }}</th>
-          <th class="px-4 py-3">{{ 'amount' | translate }}</th>
-          <th class="px-4 py-3">{{ 'status' | translate }}</th>
-          <th class="px-4 py-3">{{ 'actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (booking of bookings; track booking.id ?? booking.bookingId) {
-        <tr class="border-t border-slate-200 hover:bg-slate-50">
-          <td class="px-4 py-3 font-semibold">{{ booking.bookingId ?? booking.id }}</td>
-          <td class="px-4 py-3">{{ booking.customerName ?? booking.customer?.name ?? '-' }}</td>
-          <td class="px-4 py-3">{{ booking.tourName ?? booking.tour?.title ?? '-' }}</td>
-          <td class="px-4 py-3">{{ agentName(booking) || '-' }}</td>
-          <td class="px-4 py-3">{{ booking.bookingDate | date: 'mediumDate' }}</td>
-          <td class="px-4 py-3">{{ booking.guests ?? booking.numberOfGuests }}</td>
-          <td class="px-4 py-3">{{ booking.totalAmount ?? booking.amount }}</td>
-          <td class="px-4 py-3">
-            <span class="rounded-full px-2.5 py-1 text-xs font-semibold"
-              [class.bg-amber-50]="+booking.status === bookingStatusEnum.Pending" [class.text-amber-600]="+booking.status === bookingStatusEnum.Pending"
-              [class.bg-emerald-50]="+booking.status === bookingStatusEnum.Confirmed" [class.text-emerald-600]="+booking.status === bookingStatusEnum.Confirmed"
-              [class.bg-rose-50]="+booking.status === bookingStatusEnum.Cancelled" [class.text-rose-600]="+booking.status === bookingStatusEnum.Cancelled"
-              [class.bg-slate-100]="+booking.status === bookingStatusEnum.Completed" [class.text-slate-600]="+booking.status === bookingStatusEnum.Completed">{{ bookingStatusKey(booking.status) | translate }}</span>
-          </td>
-          <td class="px-4 py-3">
-            <div class="flex flex-wrap gap-2">
-              @if (isAdmin) {
-                <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white cursor-pointer" [attr.title]="'assignBookingAgent' | translate" (click)="editRequested.emit(booking)"><i class="mdi mdi-account-arrow-right-outline"></i></button>
-              }
-              @if (canConfirm(booking)) {
-                <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 transition-colors duration-200 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button>
-              }
-              @if (canComplete(booking)) {
-                <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors duration-200 hover:border-sky-500 hover:bg-sky-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button>
-              }
-              @if (canCancel(booking)) {
-                <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition-colors duration-200 hover:border-rose-500 hover:bg-rose-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button>
-              }
-            </div>
-          </td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="9" class="p-8 text-center text-slate-500">{{ 'noBookingsFound' | translate }}</td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
   } @else {
-  <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2">
-    @for (booking of bookings; track booking.id ?? booking.bookingId) {
-    <article class="overflow-hidden rounded-2xl border">
-      <div class="p-4">
-        <div class="flex items-center justify-between">
-          <h3 class="font-semibold">#{{ booking.bookingId ?? booking.id }} — {{ booking.tourName ?? booking.tour?.title ?? '-' }}</h3>
-          <span class="rounded-full px-2.5 py-1 text-xs font-semibold"
-            [class.bg-amber-50]="+booking.status === bookingStatusEnum.Pending" [class.text-amber-600]="+booking.status === bookingStatusEnum.Pending"
-            [class.bg-emerald-50]="+booking.status === bookingStatusEnum.Confirmed" [class.text-emerald-600]="+booking.status === bookingStatusEnum.Confirmed"
-            [class.bg-rose-50]="+booking.status === bookingStatusEnum.Cancelled" [class.text-rose-600]="+booking.status === bookingStatusEnum.Cancelled"
-            [class.bg-slate-100]="+booking.status === bookingStatusEnum.Completed" [class.text-slate-600]="+booking.status === bookingStatusEnum.Completed">{{ bookingStatusKey(booking.status) | translate }}</span>
-        </div>
-        <p class="mt-1 text-sm text-slate-500">{{ booking.customerName ?? booking.customer?.name ?? '-' }}</p>
-        @if (agentName(booking)) {
-          <p class="mt-1 text-xs text-slate-500"><i class="mdi mdi-account-tie-outline me-1"></i>{{ agentName(booking) }}</p>
-        }
-        <p class="mt-1 text-sm text-slate-500">{{ booking.bookingDate | date: 'mediumDate' }} — {{ booking.guests ?? booking.numberOfGuests }} {{ 'guests' | translate }} — {{ booking.totalAmount ?? booking.amount }}</p>
-        <div class="mt-4 flex flex-wrap gap-2">
-          @if (isAdmin) {
-            <button type="button" class="rounded-full border border-primary/40 px-3 py-1 text-xs font-semibold text-primary transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white" (click)="editRequested.emit(booking)">{{ 'assignBookingAgent' | translate }}</button>
-          }
-          @if (canConfirm(booking)) {
-            <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 transition-colors duration-200 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button>
-          }
-          @if (canComplete(booking)) {
-            <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors duration-200 hover:border-sky-500 hover:bg-sky-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button>
-          }
-          @if (canCancel(booking)) {
-            <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition-colors duration-200 hover:border-rose-500 hover:bg-rose-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button>
-          }
-        </div>
-      </div>
-    </article>
-    } @empty {
-    <p class="text-sm text-slate-500">{{ 'noBookingsFound' | translate }}</p>
-    }
-  </div>
+    <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2">
+      @for (booking of bookings; track booking.id) {
+        <article class="rounded-2xl border border-slate-200 p-4">
+          <div class="flex items-start justify-between gap-3"><h3 class="font-semibold">#{{ booking.id }} — {{ booking.tourTitle ?? booking.packageName ?? '-' }}</h3><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{{ bookingStatusKey(booking.status) | translate }}</span></div>
+          <p class="mt-2 text-sm text-slate-500">{{ booking.userName || '-' }} · <a class="text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></p>
+          <p class="mt-1 text-sm text-slate-500">{{ booking.createdDate | date: 'mediumDate' }} — {{ booking.numberOfTravelers }} {{ 'guests' | translate }} — ${{ booking.totalPrice | number: '1.0-2' }}</p>
+          @if (+booking.cancellationFeeAmount > 0) { <p class="mt-2 text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</p> }
+          <div class="mt-4 flex flex-wrap gap-2">
+            @if (isAdmin) { <button type="button" class="rounded-full border border-primary/40 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-white" (click)="editRequested.emit(booking)">{{ 'assignBookingAgent' | translate }}</button> }
+            @if (canConfirm(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 hover:bg-emerald-500 hover:text-white disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button> }
+            @if (canComplete(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 hover:bg-sky-500 hover:text-white disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button> }
+            @if (canCancel(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500 hover:text-white disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button> }
+          </div>
+        </article>
+      } @empty { <p class="text-sm text-slate-500">{{ 'noBookingsFound' | translate }}</p> }
+    </div>
   }
+
   @if (!isLoading) {
     <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
       <span class="text-sm font-medium text-slate-500">{{ 'totalRecords' | translate }}: {{ paginationInfo.totalCount }}</span>
-      <div class="flex flex-wrap items-center gap-2">
-        <label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label>
-        <app-pagination-one [compact]="true" [currentPage]="paginationInfo.page" [totalPages]="paginationInfo.totalPages" (pageChange)="onPageChange($event)" />
-      </div>
+      <div class="flex flex-wrap items-center gap-2"><label class="flex items-center gap-1 text-sm text-slate-500"><span>{{ 'pageSize' | translate }}</span><select class="rounded-full border bg-white px-2 py-1 text-sm text-slate-700" [value]="paginationInfo.pageSize" (change)="onPageSizeChange($event)">@for (size of pageSizeOptions; track size) { <option [value]="size">{{ size }}</option> }</select></label><app-pagination-one [compact]="true" [currentPage]="paginationInfo.page" [totalPages]="paginationInfo.totalPages" (pageChange)="onPageChange($event)" /></div>
     </div>
   }
 </div>
