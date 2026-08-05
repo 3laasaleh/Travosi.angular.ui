@@ -1,10 +1,10 @@
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { provideTranslateHttpLoader, TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 
-import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { authSessionInterceptor } from './core/interceptors/auth-session.interceptor';
 
@@ -20,7 +20,9 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({
         prefix: './assets/lang/',
-        suffix: '.json'
+        suffix: '.json',
+        enforceLoading: true,
+        failOnError: true
       })
     }),
    

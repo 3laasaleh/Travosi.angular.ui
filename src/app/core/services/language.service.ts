@@ -8,42 +8,47 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class LanguageService {
-  currentLanguage = signal<string>("");
+  currentLanguage = signal<'en' | 'ar'>('en');
+
   constructor(private http: HttpClient, private cookieService: CookieService, public translate: TranslateService) {
-
     translate.addLangs(['en', 'ar']);
-    let lang = this.getCurrentLanguage();
+    const lang = this.getCurrentLanguage();
+    this.currentLanguage.set(lang);
     translate.use(lang);
-
   }
 
   get isArbic() {
-    return this.getCurrentLanguage() == "ar";
+    return this.getCurrentLanguage() === 'ar';
   }
-  getCurrentLanguage() {
-    let lang = this.cookieService.get("lang");
-    if (!lang) {
-      lang = "en"
-      this.setGLobalLanguage(lang);
+
+  getCurrentLanguage(): 'en' | 'ar' {
+    const storedLanguage = this.cookieService.get('lang');
+    const language = this.normalizeLanguage(storedLanguage);
+
+    if (storedLanguage !== language) {
+      this.saveLanguageCookie(language);
     }
-    return lang;
 
+    return language;
   }
-
 
   setGLobalLanguage(lang?: string) {
-    if (!lang)
-      lang = "en";
-    // Save in cookie
-    this.cookieService.set('lang', lang, {
-      path: '/',
-      sameSite: 'Strict' // or 'Strict' depending on your case
-    });
-    this.translate.use(lang);
-    this.currentLanguage.update(v => v = lang);
+    const language = this.normalizeLanguage(lang);
+    this.saveLanguageCookie(language);
+    this.translate.use(language);
+    this.currentLanguage.set(language);
 
-    // Update subject
-    // Call API to update server-side culture
-    return this.http.post(environment.baseUrl + 'language/set', { language: lang });
+    return this.http.post(environment.baseUrl + 'language/set', { language });
+  }
+
+  private normalizeLanguage(language?: string): 'en' | 'ar' {
+    return language?.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  }
+
+  private saveLanguageCookie(language: 'en' | 'ar'): void {
+    this.cookieService.set('lang', language, {
+      path: '/',
+      sameSite: 'Strict'
+    });
   }
 }
