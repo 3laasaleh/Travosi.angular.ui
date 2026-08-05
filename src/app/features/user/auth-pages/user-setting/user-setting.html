@@ -74,21 +74,24 @@
                                     <label class="form-label font-medium" for="oldPassword">{{ 'oldPassword' | translate }}</label>
                                     <div class="form-icon relative mt-2">
                                         <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
-                                        <input id="oldPassword" type="password" formControlName="oldPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'oldPassword' | translate">
+                                        <input id="oldPassword" [type]="showOldPassword ? 'text' : 'password'" formControlName="oldPassword" class="ps-12 pe-12 w-full py-2 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'oldPassword' | translate">
+                                        <button type="button" (click)="toggleOldPasswordVisibility()" class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="(showOldPassword ? 'hidePassword' : 'showPassword') | translate" [attr.aria-pressed]="showOldPassword"><i class="mdi text-xl" [class.mdi-eye-off-outline]="showOldPassword" [class.mdi-eye-outline]="!showOldPassword" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="form-label font-medium" for="newPassword">{{ 'newPassword' | translate }}</label>
                                     <div class="form-icon relative mt-2">
                                         <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
-                                        <input id="newPassword" type="password" formControlName="newPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'newPassword' | translate">
+                                        <input id="newPassword" [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" class="ps-12 pe-12 w-full py-2 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'newPassword' | translate">
+                                        <button type="button" (click)="toggleNewPasswordVisibility()" class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="(showNewPassword ? 'hidePassword' : 'showPassword') | translate" [attr.aria-pressed]="showNewPassword"><i class="mdi text-xl" [class.mdi-eye-off-outline]="showNewPassword" [class.mdi-eye-outline]="!showNewPassword" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="form-label font-medium" for="confirmPassword">{{ 'confirmNewPassword' | translate }}</label>
                                     <div class="form-icon relative mt-2">
                                         <i data-feather="key" class="w-4 h-4 absolute top-3 start-4"></i>
-                                        <input id="confirmPassword" type="password" formControlName="confirmPassword" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'confirmNewPassword' | translate">
+                                        <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="ps-12 pe-12 w-full py-2 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'confirmNewPassword' | translate">
+                                        <button type="button" (click)="toggleConfirmPasswordVisibility()" class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="(showConfirmPassword ? 'hideConfirmPassword' : 'showConfirmPassword') | translate" [attr.aria-pressed]="showConfirmPassword"><i class="mdi text-xl" [class.mdi-eye-off-outline]="showConfirmPassword" [class.mdi-eye-outline]="!showConfirmPassword" aria-hidden="true"></i></button>
                                     </div>
                                     @if ( passwordForm.touched) {
                                         <p class="mt-1 text-sm text-red-600">{{ 'confirmMismatch' | translate }}</p>

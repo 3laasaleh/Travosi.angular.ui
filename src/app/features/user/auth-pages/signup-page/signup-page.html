@@ -79,7 +79,7 @@
                                     [class.border-red-500]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
                                     [placeholder]="'password' | translate">
                                 <button type="button" (click)="togglePasswordVisibility()"
-                                    class="absolute inset-y-0 end-3 flex items-center text-slate-400 transition hover:text-primary"
+                                    class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
                                     [attr.aria-label]="(showPassword ? 'hidePassword' : 'showPassword') | translate"
                                     [attr.aria-pressed]="showPassword">
                                     <i class="mdi text-xl" [class.mdi-eye-off-outline]="showPassword" [class.mdi-eye-outline]="!showPassword" aria-hidden="true"></i>
@@ -101,7 +101,7 @@
                                     [class.border-red-500]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid"
                                     [placeholder]="'confirmPassword' | translate">
                                 <button type="button" (click)="toggleConfirmPasswordVisibility()"
-                                    class="absolute inset-y-0 end-3 flex items-center text-slate-400 transition hover:text-primary"
+                                    class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
                                     [attr.aria-label]="(showConfirmPassword ? 'hideConfirmPassword' : 'showConfirmPassword') | translate"
                                     [attr.aria-pressed]="showConfirmPassword">
                                     <i class="mdi text-xl" [class.mdi-eye-off-outline]="showConfirmPassword" [class.mdi-eye-outline]="!showConfirmPassword" aria-hidden="true"></i>

@@ -30,6 +30,11 @@ export class LoginPage implements AfterViewInit {
 
   isSubmitting = false;
   errorMessage = '';
+  showPassword = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   ngAfterViewInit(): void {
     feather.replace();

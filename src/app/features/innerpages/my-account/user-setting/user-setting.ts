@@ -3,10 +3,11 @@ import feather from 'feather-icons';
 import { AccountTab } from '../../../user/account-tab/account-tab';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-setting',
-  imports: [HomeNavbar, AccountTab, FooterOne],
+  imports: [HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-setting.html',
 })
@@ -30,6 +31,11 @@ export class UserSetting implements AfterViewInit {
     { name: 'New password :', icon: 'key', placeholder: 'New password' },
     { name: 'Re-type New password :', icon: 'key', placeholder: 'Re-type New password' },
   ];
+  passwordVisibility = this.details3.map(() => false);
+
+  togglePasswordVisibility(index: number): void {
+    this.passwordVisibility[index] = !this.passwordVisibility[index];
+  }
 
   ngAfterViewInit(): void {
     feather.replace();

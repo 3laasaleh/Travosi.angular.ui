@@ -31,6 +31,21 @@ export class UserSetting implements AfterViewInit {
   personalError = '';
   passwordMessage = '';
   passwordError = '';
+  showOldPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
+  toggleOldPasswordVisibility(): void {
+    this.showOldPassword = !this.showOldPassword;
+  }
+
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   personalForm = this.fb.nonNullable.group({
     firstName: [''],
