@@ -57,23 +57,18 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
-  readonly minImageWidth = 1200;
-  readonly minImageHeight = 675;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
   private readonly imageConstraints = {
-    minWidth: this.minImageWidth,
-    minHeight: this.minImageHeight,
     maxWidth: this.maxImageWidth,
     maxHeight: this.maxImageHeight,
-    minAspectRatio: (4 / 3) - 0.03,
-    maxAspectRatio: (16 / 9) + 0.03,
   };
   destinationForm = this.createForm();
   imageUploads: DestinationImageUpload[] = [];
   isLoading = false;
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  imageValidationMessage = '';
   successMessage = '';
 
   constructor(
@@ -147,18 +142,18 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
-    this.errorMessage = '';
+    this.imageValidationMessage = '';
     if (this.imageUploads.length + files.length > this.maxImages) {
-      this.errorMessage = 'destinationImageLimit';
+      this.imageValidationMessage = 'destinationImageLimit';
       return;
     }
     for (const file of files) {
-      if (!file.type.startsWith('image/')) {
-        this.errorMessage = 'invalidImageType';
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        this.imageValidationMessage = 'invalidImageType';
         continue;
       }
       if (file.size > this.maxImageBytes) {
-        this.errorMessage = 'imageTooLarge';
+        this.imageValidationMessage = 'imageTooLarge';
         continue;
       }
       try {
@@ -170,7 +165,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           existing: false,
         });
       } catch (error) {
-        this.errorMessage = error instanceof ImageUploadValidationError
+        this.imageValidationMessage = error instanceof ImageUploadValidationError
           ? error.translationKey
           : 'imageReadError';
       }
@@ -226,6 +221,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   private populateForm(destination: any): void {
     this.revokeNewImageUrls();
+    this.imageValidationMessage = '';
     debugger
     this.imageUploads =   destination.images
       .slice(0, this.maxImages)
@@ -249,6 +245,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   private resetForm(emitCancel: boolean): void {
     this.revokeNewImageUrls();
     this.imageUploads = [];
+    this.imageValidationMessage = '';
     this.destinationForm.reset({
       nameEng: '',
       nameAr: '',
@@ -298,7 +295,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         ],
       }),
       subDescription: new FormControl('', { nonNullable: true }),
-      description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      description: new FormControl('', { nonNullable: true }),
       images: new FormControl<string[]>([], {
         nonNullable: true,
         validators: [Validators.required],

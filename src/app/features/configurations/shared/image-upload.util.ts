@@ -1,10 +1,10 @@
 export interface ImageUploadConstraints {
-  minWidth: number;
-  minHeight: number;
+  minWidth?: number;
+  minHeight?: number;
   maxWidth: number;
   maxHeight: number;
-  minAspectRatio: number;
-  maxAspectRatio: number;
+  minAspectRatio?: number;
+  maxAspectRatio?: number;
 }
 
 export class ImageUploadValidationError extends Error {
@@ -29,14 +29,17 @@ export function normalizeImageUpload(
       const aspectRatio = width / height;
 
       if (
-        aspectRatio < constraints.minAspectRatio
-        || aspectRatio > constraints.maxAspectRatio
+        (constraints.minAspectRatio !== undefined && aspectRatio < constraints.minAspectRatio)
+        || (constraints.maxAspectRatio !== undefined && aspectRatio > constraints.maxAspectRatio)
       ) {
         reject(new ImageUploadValidationError('imageAspectRatioInvalid'));
         return;
       }
 
-      if (width < constraints.minWidth || height < constraints.minHeight) {
+      if (
+        width < (constraints.minWidth ?? 1)
+        || height < (constraints.minHeight ?? 1)
+      ) {
         reject(new ImageUploadValidationError('imageResolutionTooSmall'));
         return;
       }

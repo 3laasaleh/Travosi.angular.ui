@@ -190,8 +190,8 @@
     "destinationImages": "Destination images",
     "tourImages": "Tour images",
     "chooseImages": "Choose images",
-    "destinationImageRules": "Landscape JPG, PNG or WebP - 4:3 to 16:9, at least 1200 x 675 px, maximum 5 MB",
-    "tourImageRules": "Landscape JPG, PNG or WebP - 4:3 to 16:9, at least 1200 x 675 px, maximum 5 MB",
+    "destinationImageRules": "JPG, PNG or WebP, maximum 5 MB",
+    "tourImageRules": "JPG, PNG or WebP, maximum 5 MB",
     "tourImageLimit": "A tour can have a maximum of 5 images.",
     "imagesRequired": "At least one image is required.",
     "remove": "Remove",
@@ -413,7 +413,7 @@
     ,"languageEnglish": "English"
     ,"languageArabic": "Arabic"
     ,"travelAgency": "Travel agency"
-    ,"homeLinkLabel": "See World Holidays home"
+    ,"homeLinkLabel": "Sea World Holidays home"
     ,"openAccountMenu": "Open account menu"
     ,"toggleAdminNavigation": "Toggle admin navigation"
     ,"airlineLogo": "Airline logo"
@@ -573,8 +573,10 @@
     ,"stepTitleMaxLength": "Step title cannot exceed 200 characters."
     ,"stepDescriptionMaxLength": "Step description cannot exceed 2,000 characters."
     ,"endTimeAfterStart": "End time must be after start time."
+    ,"itineraryTimesRequired": "Start and end times are required."
+    ,"itineraryTitleAndTimesRequired": "Add at least one itinerary step. Every step requires a title, start time, and end time."
     ,"itineraryTimeQuarterHour": "Choose a time using 00, 15, 30, or 45 minutes."
-    ,"itineraryTimeConflict": "Another itinerary step on this day already starts at this time. Choose a different time."
+    ,"itineraryTimeConflict": "This time overlaps another itinerary step on the same day. Choose a different time range."
     ,"savingTourDetails": "Saving tour details..."
     ,"uploadingTourImages": "Uploading tour images..."
     ,"savingTourItinerary": "Saving tour itinerary..."
@@ -623,7 +625,7 @@
     ,"noAgentsFound": "No agents are available right now."
     ,"packageImages": "Package images"
     ,"packageImagesHint": "Choose the package gallery; the first image is used as the cover."
-    ,"packageImageRules": "Landscape JPG, PNG or WebP - 4:3 to 16:9, at least 1200 x 675 px, maximum 5 MB"
+    ,"packageImageRules": "JPG, PNG or WebP, maximum 5 MB"
     ,"packageImageLimit": "A package can have a maximum of 5 images."
     ,"packageImagesSaveError": "Unable to upload the package images."
     ,"packageIdMissingAfterCreate": "The package was saved, but the API did not return its ID for image upload."
@@ -643,26 +645,26 @@
     ,"packageDetailsUpdated": "Package details updated. You can now review the images."
     ,"packageImagesSaved": "Package images uploaded successfully."
     ,"packageItineraryRequired": "Add at least one valid itinerary step."
-    ,"validItineraryStepRequired": "Enter a title, a valid day within the package duration, and a valid time range."
+    ,"validItineraryStepRequired": "Enter a title, a valid day, and required start/end times using 00, 15, 30, or 45 minutes."
     ,"savingPackageDetails": "Saving package details..."
     ,"uploadingPackageImages": "Uploading package images..."
     ,"savingPackageItinerary": "Saving package itinerary..."
     ,"deletingPackageImage": "Deleting package image..."
     ,"packageItinerarySaveError": "Unable to save the package itinerary."
-    ,"loadingHomePage": "Loading the See World Holidays home page"
-    ,"travelAroundWorld": "Travel around the world with See World Holidays"
+    ,"loadingHomePage": "Loading the Sea World Holidays home page"
+    ,"travelAroundWorld": "Travel around the world with Sea World Holidays"
     ,"homeHeroPackagesTitle": "Travel farther with a package designed around you"
     ,"homeHeroPackagesDescription": "Discover carefully planned holidays with memorable destinations, comfortable stays, and support from departure to return."
     ,"explorePackages": "Explore holiday packages"
     ,"homeHeroDestinationsTitle": "Your next unforgettable destination is waiting"
     ,"homeHeroDestinationsDescription": "From relaxing escapes to cultural adventures, we help you choose and plan a journey that fits your interests and budget."
     ,"exploreDestinations": "Explore destinations"
-    ,"seeWorldTravelConsultants": "See World Holidays travel consultants"
+    ,"seeWorldTravelConsultants": "Sea World Holidays travel consultants"
     ,"visitors": "Visitors"
     ,"travelPackages": "Travel packages"
-    ,"aboutSeeWorldHolidays": "About See World Holidays"
+    ,"aboutSeeWorldHolidays": "About Sea World Holidays"
     ,"trustedTravelPartnerTitle": "Your trusted partner for thoughtfully planned journeys"
-    ,"trustedTravelPartnerDescription": "See World Holidays brings flights, hotels, tours, transfers, visa assistance, and personalized itineraries together in one seamless service. Our experienced team plans every detail with clarity and care, so you can travel with confidence."
+    ,"trustedTravelPartnerDescription": "Sea World Holidays brings flights, hotels, tours, transfers, visa assistance, and personalized itineraries together in one seamless service. Our experienced team plans every detail with clarity and care, so you can travel with confidence."
     ,"learnMoreAboutUs": "Learn more about us"
     ,"ourTravelPromise": "Our travel promise"
     ,"whyTravelersChooseUs": "Travel planning built around what matters to you"
@@ -673,13 +675,13 @@
     ,"supportThroughoutJourneyDescription": "Our team stays available before, during, and after your trip whenever you need assistance."
     ,"trustedTravelArrangements": "Reliable travel arrangements"
     ,"trustedTravelArrangementsDescription": "We coordinate trusted flights, stays, tours, and transfers with clear information at every step."
-    ,"seeWorldHolidaysLogo": "See World Holidays logo"
+    ,"seeWorldHolidaysLogo": "Sea World Holidays logo"
     ,"mainNavigation": "Main navigation"
     ,"mobileNavigation": "Mobile navigation"
     ,"toggleHomeNavigation": "Toggle website navigation"
     ,"footerTravelDescription": "From tailored holiday packages to flights, hotels, tours, transfers, and visa assistance, we take care of the details so you can travel with confidence."
-    ,"emailSeeWorldHolidays": "Email See World Holidays"
-    ,"callSeeWorldHolidays": "Call See World Holidays"
+    ,"emailSeeWorldHolidays": "Email Sea World Holidays"
+    ,"callSeeWorldHolidays": "Call Sea World Holidays"
     ,"office": "Office"
     ,"officeAddress": "Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor."
     ,"footerCompanyLinks": "Company links"
@@ -695,15 +697,15 @@
     ,"showConfirmPassword": "Show confirmation password"
     ,"hideConfirmPassword": "Hide confirmation password"
     ,"aboutSeeWorld": {
-      "eyebrow": "See World Holidays",
-      "pageTitle": "About See World Holidays",
+      "eyebrow": "Sea World Holidays",
+      "pageTitle": "About Sea World Holidays",
       "tagline": "Discover the world with confidence, comfort, and exceptional care.",
-      "home": "See World",
+      "home": "Sea World",
       "breadcrumb": "About Us",
       "introduction": {
         "eyebrow": "Who we are",
         "title": "Discover the World with Confidence",
-        "paragraphOne": "At See World Holidays, we believe that travel is more than reaching a destination—it's about creating unforgettable experiences, discovering new cultures, and making memories that last a lifetime. Whether you're planning a relaxing beach getaway, an adventurous tour, a family vacation, a honeymoon, or a corporate business trip, our dedicated team is here to make every journey seamless and enjoyable.",
+        "paragraphOne": "At Sea World Holidays, we believe that travel is more than reaching a destination—it's about creating unforgettable experiences, discovering new cultures, and making memories that last a lifetime. Whether you're planning a relaxing beach getaway, an adventurous tour, a family vacation, a honeymoon, or a corporate business trip, our dedicated team is here to make every journey seamless and enjoyable.",
         "paragraphTwo": "With a passion for exceptional service and attention to detail, we provide carefully designed travel solutions tailored to every traveler's needs. From flight bookings and hotel reservations to complete holiday packages, visa assistance, airport transfers, and customized itineraries, we take care of every aspect of your trip so you can focus on enjoying the experience."
       },
       "mission": {
@@ -730,7 +732,7 @@
         ]
       },
       "whyChooseUs": {
-        "title": "Why Choose See World Holidays?",
+        "title": "Why Choose Sea World Holidays?",
         "items": [
           "Experienced travel consultants dedicated to your satisfaction",
           "Personalized itineraries tailored to your preferences and budget",
@@ -742,8 +744,8 @@
       },
       "commitment": {
         "title": "Our Commitment",
-        "description": "Every traveler is unique, and every journey deserves special attention. At See World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
+        "description": "Every traveler is unique, and every journey deserves special attention. At Sea World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
       },
-      "closing": "Let See World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
+      "closing": "Let Sea World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
     }
 }

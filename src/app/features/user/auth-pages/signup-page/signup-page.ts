@@ -94,7 +94,7 @@ export class SignupPage implements AfterViewInit {
       next: (res: IGenericResponse<string>) => {
         if(res.isSuccess){
         this.successMessage =res.data?? 'Sign up compeleted successfully.';
-        this.router.navigateByUrl('/signup-success?status=registered');
+        this.router.navigateByUrl('/login');
         }
         else{
         this.errorMessage =res.message?? 'Failed to signup please try agian!';

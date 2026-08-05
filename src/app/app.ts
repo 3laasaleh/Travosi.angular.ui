@@ -11,7 +11,7 @@ import { VisitorTrackingService } from './core/services/visitor-tracking.service
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('See World');
+  protected readonly title = signal('Sea World');
   private translate = inject(TranslateService);
   private visitorTracking = inject(VisitorTrackingService);
 

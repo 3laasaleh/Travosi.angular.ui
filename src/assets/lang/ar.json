@@ -190,8 +190,8 @@
     "destinationImages": "صور الوجهة",
     "tourImages": "صور الجولة",
     "chooseImages": "اختر الصور",
-    "destinationImageRules": "صورة أفقية JPG أو PNG أو WebP - بنسبة من 4:3 إلى 16:9، ودقة 1200 x 675 بكسل على الأقل، وبحد أقصى 5 ميجابايت",
-    "tourImageRules": "صورة أفقية JPG أو PNG أو WebP - بنسبة من 4:3 إلى 16:9، ودقة 1200 x 675 بكسل على الأقل، وبحد أقصى 5 ميجابايت",
+    "destinationImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
+    "tourImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
     "tourImageLimit": "الحد الأقصى للجولة هو 5 صور.",
     "imagesRequired": "صورة واحدة على الأقل مطلوبة.",
     "remove": "إزالة",
@@ -573,8 +573,10 @@
     ,"stepTitleMaxLength": "يجب ألا يتجاوز عنوان الخطوة 200 حرف."
     ,"stepDescriptionMaxLength": "يجب ألا يتجاوز وصف الخطوة 2000 حرف."
     ,"endTimeAfterStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء."
+    ,"itineraryTimesRequired": "وقت البدء ووقت الانتهاء مطلوبان."
+    ,"itineraryTitleAndTimesRequired": "أضف خطوة واحدة على الأقل إلى خط السير. يجب أن تحتوي كل خطوة على عنوان ووقت بدء ووقت انتهاء."
     ,"itineraryTimeQuarterHour": "اختر وقتًا بدقائق 00 أو 15 أو 30 أو 45."
-    ,"itineraryTimeConflict": "توجد خطوة أخرى في هذا اليوم تبدأ في الوقت نفسه. اختر وقتًا مختلفًا."
+    ,"itineraryTimeConflict": "يتداخل هذا الوقت مع خطوة أخرى في خط سير اليوم نفسه. اختر نطاقًا زمنيًا مختلفًا."
     ,"savingTourDetails": "جارٍ حفظ بيانات الجولة..."
     ,"uploadingTourImages": "جارٍ رفع صور الجولة..."
     ,"savingTourItinerary": "جارٍ حفظ خط سير الجولة..."
@@ -623,7 +625,7 @@
     ,"noAgentsFound": "لا يوجد وكلاء متاحون حاليًا."
     ,"packageImages": "صور الباقة"
     ,"packageImagesHint": "اختر معرض صور الباقة؛ سيتم استخدام الصورة الأولى كغلاف."
-    ,"packageImageRules": "صور أفقية JPG أو PNG أو WebP بنسبة من 4:3 إلى 16:9، وبدقة 1200 × 675 بكسل على الأقل، وبحد أقصى 5 ميجابايت"
+    ,"packageImageRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت"
     ,"packageImageLimit": "يمكن أن تحتوي الباقة على 5 صور كحد أقصى."
     ,"packageImagesSaveError": "تعذر رفع صور الباقة."
     ,"packageIdMissingAfterCreate": "تم حفظ الباقة، لكن الواجهة البرمجية لم تُرجع رقمها لرفع الصور."
@@ -643,7 +645,7 @@
     ,"packageDetailsUpdated": "تم تحديث تفاصيل الباقة. يمكنك الآن مراجعة الصور."
     ,"packageImagesSaved": "تم رفع صور الباقة بنجاح."
     ,"packageItineraryRequired": "أضف خطوة صحيحة واحدة على الأقل إلى خط السير."
-    ,"validItineraryStepRequired": "أدخل عنواناً ويوماً ضمن مدة الباقة ونطاقاً زمنياً صحيحاً."
+    ,"validItineraryStepRequired": "أدخل عنوانًا ويومًا صحيحًا ووقتي بدء وانتهاء بدقائق 00 أو 15 أو 30 أو 45."
     ,"savingPackageDetails": "جارٍ حفظ تفاصيل الباقة..."
     ,"uploadingPackageImages": "جارٍ رفع صور الباقة..."
     ,"savingPackageItinerary": "جارٍ حفظ خط سير الباقة..."

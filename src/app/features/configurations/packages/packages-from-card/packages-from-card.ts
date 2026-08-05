@@ -13,12 +13,16 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { createEmptyTourItinerary, readTourItinerary, TourItineraryItem } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
+import {
+  hasInvalidItinerary,
+  hasItineraryTimeOverlap,
+} from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
 
 interface PackageImageUpload {
@@ -46,18 +50,19 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
+  readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
+    const hours = Math.floor(index / 4).toString().padStart(2, '0');
+    const minutes = ((index % 4) * 15).toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  });
   readonly formSteps = [
     { id: 1, label: 'packageDetailsStep', icon: 'mdi-file-document-edit-outline' },
     { id: 2, label: 'packageImagesStep', icon: 'mdi-image-multiple-outline' },
     { id: 3, label: 'packageItineraryStep', icon: 'mdi-map-marker-path' },
   ] as const;
   private readonly imageConstraints = {
-    minWidth: 1200,
-    minHeight: 675,
     maxWidth: 2400,
     maxHeight: 1600,
-    minAspectRatio: (4 / 3) - 0.03,
-    maxAspectRatio: (16 / 9) + 0.03,
   };
 
   packageForm = this.createForm();
@@ -70,6 +75,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   apiLoadingMessage = '';
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  imageValidationMessage = '';
   successMessage = '';
   activeStep: PackageFormStep = 1;
   completedStep = 0;
@@ -144,16 +150,36 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       ? this.adminService.updatePackage(payload)
       : this.adminService.createPackage(payload);
     request$.pipe(
+      switchMap((detailsResponse: any) => {
+        if (detailsResponse?.isSuccess === false) {
+          return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
+        }
+
+        const packageId = existingId ?? this.extractPackageId(detailsResponse);
+        if (!packageId) {
+          return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
+        }
+
+        return this.adminService.changePackageStatus(packageId, false).pipe(
+          map((statusResponse) => ({ detailsResponse, packageId, statusResponse, statusError: null })),
+          catchError((statusError) => of({ detailsResponse, packageId, statusResponse: null, statusError })),
+        );
+      }),
       catchError((error) => { this.handleRequestError(error, 'packageSaveError'); return of(null); }),
       finalize(() => this.endRequest()),
-    ).subscribe((response: any) => {
-      if (!this.acceptResponse(response, 'packageSaveError')) return;
-      const packageId = existingId ?? this.extractPackageId(response);
+    ).subscribe((result: any) => {
+      if (result === null || !this.acceptResponse(result.detailsResponse, 'packageSaveError')) return;
+      const packageId = result.packageId;
       if (!packageId) { this.errorMessage = 'packageIdMissingAfterCreate'; return; }
       this.savedPackageId = packageId;
+      if (result.statusError) {
+        this.handleRequestError(result.statusError, 'statusUpdateError');
+        return;
+      }
+      if (!this.acceptResponse(result.statusResponse, 'statusUpdateError')) return;
       this.completedStep = Math.max(this.completedStep, 1);
       this.activeStep = 2;
-      this.successMessage = response?.message || (existingId ? 'packageDetailsUpdated' : 'packageDetailsCreated');
+      this.successMessage = result.detailsResponse?.message || (existingId ? 'packageDetailsUpdated' : 'packageDetailsCreated');
       this.showToast('success', this.successMessage);
       this.cdr.markForCheck();
     });
@@ -190,8 +216,12 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.isSaving || !this.currentPackageId) return;
     if (this.itineraryDraft) { this.errorMessage = 'saveItineraryStepFirst'; return; }
     const itinerary = this.packageForm.controls.itinerary.value;
-    if (!itinerary.length || this.hasInvalidItinerary(itinerary)) {
-      this.errorMessage = 'packageItineraryRequired';
+    if (!itinerary.length || hasInvalidItinerary(itinerary, Number(this.packageForm.controls.durationDays.value))) {
+      this.errorMessage = 'itineraryTitleAndTimesRequired';
+      return;
+    }
+    if (hasItineraryTimeOverlap(itinerary)) {
+      this.errorMessage = 'itineraryTimeConflict';
       return;
     }
     this.beginRequest('savingPackageItinerary');
@@ -199,12 +229,30 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       PackageId: this.currentPackageId,
       Itinerary: itinerary.map((item) => this.toItineraryPayload(item)),
     }).pipe(
+      switchMap((itineraryResponse: any) => {
+        if (itineraryResponse?.isSuccess === false) {
+          return of({ itineraryResponse, statusResponse: null, statusError: null });
+        }
+
+        return this.adminService.changePackageStatus(
+          this.currentPackageId!,
+          this.packageForm.controls.isActive.value,
+        ).pipe(
+          map((statusResponse) => ({ itineraryResponse, statusResponse, statusError: null })),
+          catchError((statusError) => of({ itineraryResponse, statusResponse: null, statusError })),
+        );
+      }),
       catchError((error) => { this.handleRequestError(error, 'packageItinerarySaveError'); return of(null); }),
       finalize(() => this.endRequest()),
-    ).subscribe((response: any) => {
-      if (!this.acceptResponse(response, 'packageItinerarySaveError')) return;
+    ).subscribe((result: any) => {
+      if (result === null || !this.acceptResponse(result.itineraryResponse, 'packageItinerarySaveError')) return;
+      if (result.statusError) {
+        this.handleRequestError(result.statusError, 'statusUpdateError');
+        return;
+      }
+      if (!this.acceptResponse(result.statusResponse, 'statusUpdateError')) return;
       this.completedStep = 3;
-      this.showToast('success', response?.message || (this.selectedPackage ? 'packageUpdated' : 'packageCreated'));
+      this.showToast('success', result.itineraryResponse?.message || (this.selectedPackage ? 'packageUpdated' : 'packageCreated'));
       this.packageSaved.emit();
       this.resetForm(false);
     });
@@ -255,15 +303,16 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
-    if (this.imageUploads.length + files.length > this.maxImages) { this.errorMessage = 'packageImageLimit'; return; }
+    this.imageValidationMessage = '';
+    if (this.imageUploads.length + files.length > this.maxImages) { this.imageValidationMessage = 'packageImageLimit'; return; }
     for (const file of files) {
       try {
-        if (!file.type.startsWith('image/')) throw new ImageUploadValidationError('invalidImageType');
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new ImageUploadValidationError('invalidImageType');
         if (file.size > this.maxImageBytes) throw new ImageUploadValidationError('imageTooLarge');
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
         this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false });
       } catch (error) {
-        this.errorMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
+        this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
     }
     this.syncImagesControl();
@@ -327,8 +376,15 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   get invalidDraft(): boolean {
     if (!this.itineraryDraft) return true;
     const maxDay = Number(this.packageForm.controls.durationDays.value);
-    return !this.itineraryDraft.title.trim() || this.itineraryDraft.dayNumber < 1 || this.itineraryDraft.dayNumber > maxDay
-      || (!!this.itineraryDraft.startTime && !!this.itineraryDraft.endTime && this.itineraryDraft.endTime <= this.itineraryDraft.startTime);
+    return hasInvalidItinerary([this.itineraryDraft], maxDay)
+      || this.itineraryDraftHasTimeOverlap;
+  }
+
+  get itineraryDraftHasTimeOverlap(): boolean {
+    if (!this.itineraryDraft || !this.itineraryDraftCollection) return false;
+    const siblings = this.itineraryDraftCollection
+      .filter((_, index) => index !== this.itineraryDraftIndex);
+    return hasItineraryTimeOverlap([this.itineraryDraft, ...siblings]);
   }
 
   cancelItineraryStep(): void { this.closeItineraryEditor(); }
@@ -352,6 +408,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       cancellationPolicy: new FormControl('', { nonNullable: true }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
+      isActive: new FormControl(true, { nonNullable: true }),
       dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       dateTo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
@@ -385,7 +442,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       IsFreeCancelation: value.isFreeCancelation,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
       Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId, DisplayOrder: index })),
-      Images: [], Itinerary: [],
+      Images: [], Itinerary: [], IsActive: false,
     };
     if (id) payload.Id = id;
     return payload;
@@ -399,13 +456,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  private hasInvalidItinerary(items: TourItineraryItem[]): boolean {
-    const maxDay = Number(this.packageForm.controls.durationDays.value);
-    return items.some((item) => !item.title.trim() || item.dayNumber < 1 || item.dayNumber > maxDay || this.hasInvalidItinerary(item.childs));
-  }
-
   private populateForm(item: any): void {
     this.revokeNewImageUrls();
+    this.imageValidationMessage = '';
     const images = Array.isArray(item?.images) ? item.images : [];
     this.imageUploads = images.slice(0, this.maxImages).map((image: any, index: number) => ({
       id: this.toOptionalId(image?.id ?? image?.packageImageId) ?? undefined,
@@ -422,6 +475,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
       maxCapacity: Number(item?.maxCapacity) || 1, cancellationPolicy: item?.cancellationPolicy ?? '',
       isFreeCancelation: item?.isFreeCancelation === true,
+      isActive: item?.isActive !== false,
       dateFrom: this.toDateInput(item?.dateFrom), dateTo: this.toDateInput(item?.dateTo), destinationIds,
       images: this.imageUploads.map((image) => image.url),
       itinerary: (Array.isArray(item?.itinerary) ? item.itinerary : []).map((step: any) => readTourItinerary(step)),
@@ -433,9 +487,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private resetForm(emitCancel: boolean): void {
     this.closeItineraryEditor(); this.closeDestinationMenu(); this.revokeNewImageUrls();
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
+    this.imageValidationMessage = '';
     this.errorMessage = ''; this.successMessage = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', description: '', durationDays: 1, durationHours: 0,
-      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, cancellationPolicy: '', isFreeCancelation: false,
+      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, cancellationPolicy: '', isFreeCancelation: false, isActive: true,
       dateFrom: '', dateTo: '', destinationIds: [], images: [], itinerary: [] });
     if (emitCancel) this.editCancelled.emit();
   }

@@ -21,7 +21,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
@@ -34,6 +34,11 @@ import {
   ImageUploadValidationError,
   normalizeImageUpload,
 } from '../../shared/image-upload.util';
+import {
+  hasInvalidItinerary,
+  hasItineraryTimeOverlap,
+  isQuarterHourTime,
+} from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
 
 interface TourImageUpload {
@@ -65,17 +70,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   ];
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
-  readonly minImageWidth = 1200;
-  readonly minImageHeight = 675;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
   private readonly imageConstraints = {
-    minWidth: this.minImageWidth,
-    minHeight: this.minImageHeight,
     maxWidth: this.maxImageWidth,
     maxHeight: this.maxImageHeight,
-    minAspectRatio: (4 / 3) - 0.03,
-    maxAspectRatio: (16 / 9) + 0.03,
   };
   readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
     const hours = Math.floor(index / 4).toString().padStart(2, '0');
@@ -96,6 +95,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   apiLoadingMessage = '';
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  imageValidationMessage = '';
   successMessage = '';
   activeStep: TourFormStep = 1;
   completedStep = 0;
@@ -228,6 +228,21 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       : this.adminService.updateTour(payload);
 
     request$.pipe(
+      switchMap((detailsResponse: any) => {
+        if (detailsResponse?.isSuccess === false) {
+          return of({ detailsResponse, tourId: null, statusResponse: null, statusError: null });
+        }
+
+        const tourId = existingId ?? this.extractTourId(detailsResponse);
+        if (!tourId) {
+          return of({ detailsResponse, tourId: null, statusResponse: null, statusError: null });
+        }
+
+        return this.adminService.changeTourStatus(tourId, false).pipe(
+          map((statusResponse) => ({ detailsResponse, tourId, statusResponse, statusError: null })),
+          catchError((statusError) => of({ detailsResponse, tourId, statusResponse: null, statusError })),
+        );
+      }),
       catchError((error) => {
         this.errorMessage = 'tourSaveError';
         this.showApiToast('error', error?.error?.message || 'tourSaveError');
@@ -238,20 +253,26 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         this.apiLoadingMessage = '';
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: any) => {
-      if (response === null) return;
+    ).subscribe((result: any) => {
+      if (result === null) return;
+      const response = result.detailsResponse;
       if (response?.isSuccess === false) {
         this.errorMessage = response?.message || 'tourSaveError';
         this.showApiToast('error', this.errorMessage);
         return;
       }
-      const tourId = existingId ?? this.extractTourId(response);
+      const tourId = result.tourId;
       if (!tourId) {
         this.errorMessage = 'tourIdMissingAfterCreate';
         this.showApiToast('error', this.errorMessage);
         return;
       }
       this.savedTourId = tourId;
+      if (result.statusError || result.statusResponse?.isSuccess === false) {
+        this.errorMessage = result.statusResponse?.message || 'tourStatusUpdateError';
+        this.showApiToast('error', this.errorMessage);
+        return;
+      }
       this.completedStep = Math.max(this.completedStep, 1);
       this.activeStep = 2;
       this.successMessage = response?.message || (isCreating ? 'tourDetailsCreated' : 'tourDetailsUpdated');
@@ -331,6 +352,17 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
+    const itinerary = this.itineraryArray.getRawValue();
+    this.itineraryArray.markAllAsTouched();
+    if (!itinerary.length || hasInvalidItinerary(itinerary, Number(this.tourForm.controls.durationDays.value))) {
+      this.errorMessage = 'itineraryTitleAndTimesRequired';
+      return;
+    }
+    if (hasItineraryTimeOverlap(itinerary)) {
+      this.errorMessage = 'itineraryTimeConflict';
+      return;
+    }
+
     this.isSaving = true;
     this.apiLoadingMessage = 'savingTourItinerary';
     this.errorMessage = '';
@@ -341,6 +373,19 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     };
 
     this.adminService.addTourItinerary(payload).pipe(
+      switchMap((itineraryResponse: any) => {
+        if (itineraryResponse?.isSuccess === false) {
+          return of({ itineraryResponse, statusResponse: null, statusError: null });
+        }
+
+        return this.adminService.changeTourStatus(
+          this.currentTourId!,
+          this.tourForm.controls.isActive.value,
+        ).pipe(
+          map((statusResponse) => ({ itineraryResponse, statusResponse, statusError: null })),
+          catchError((statusError) => of({ itineraryResponse, statusResponse: null, statusError })),
+        );
+      }),
       catchError((error) => {
         this.errorMessage = 'tourItinerarySaveError';
         this.showApiToast('error', error?.error?.message || 'tourItinerarySaveError');
@@ -351,10 +396,16 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         this.apiLoadingMessage = '';
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: any) => {
-      if (response === null) return;
+    ).subscribe((result: any) => {
+      if (result === null) return;
+      const response = result.itineraryResponse;
       if (response?.isSuccess === false) {
         this.errorMessage = response?.message || 'tourItinerarySaveError';
+        this.showApiToast('error', this.errorMessage);
+        return;
+      }
+      if (result.statusError || result.statusResponse?.isSuccess === false) {
+        this.errorMessage = result.statusResponse?.message || 'tourStatusUpdateError';
         this.showApiToast('error', this.errorMessage);
         return;
       }
@@ -467,18 +518,18 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
-    this.errorMessage = '';
+    this.imageValidationMessage = '';
     if (this.imageUploads.length + files.length > this.maxImages) {
-      this.errorMessage = 'tourImageLimit';
+      this.imageValidationMessage = 'tourImageLimit';
       return;
     }
     for (const file of files) {
-      if (!file.type.startsWith('image/')) {
-        this.errorMessage = 'invalidImageType';
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        this.imageValidationMessage = 'invalidImageType';
         continue;
       }
       if (file.size > this.maxImageBytes) {
-        this.errorMessage = 'imageTooLarge';
+        this.imageValidationMessage = 'imageTooLarge';
         continue;
       }
       try {
@@ -491,7 +542,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           uploaded: false,
         });
       } catch (error) {
-        this.errorMessage = error instanceof ImageUploadValidationError
+        this.imageValidationMessage = error instanceof ImageUploadValidationError
           ? error.translationKey
           : 'imageReadError';
       }
@@ -586,6 +637,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private populateForm(tour: any): void {
     this.closeItineraryEditor();
     this.revokeNewImageUrls();
+    this.imageValidationMessage = '';
     this.activeStep = 1;
     this.completedStep = 0;
     this.savedTourId = this.toOptionalId(tour?.id ?? tour?.tourId);
@@ -639,6 +691,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.completedStep = 0;
     this.savedTourId = null;
     this.imageUploads = [];
+    this.imageValidationMessage = '';
     const defaults = this.createTrialTourDefaults();
     this.tourForm.reset({
       titleEng: defaults.titleEng,
@@ -756,10 +809,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         validators: [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)],
       }),
       startTime: new FormControl<string | null>(itinerary.startTime, {
-        validators: [this.quarterHourTimeValidator],
+        validators: [Validators.required, this.quarterHourTimeValidator],
       }),
       endTime: new FormControl<string | null>(itinerary.endTime, {
-        validators: [this.quarterHourTimeValidator],
+        validators: [Validators.required, this.quarterHourTimeValidator],
       }),
       tourId: new FormControl<number | null>(itinerary.tourId),
       childs: new FormArray<FormGroup>(
@@ -807,7 +860,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   private attachItineraryScheduleValidator(): void {
     if (!this.itineraryDraft) return;
-    this.itineraryDraft.addValidators(this.itineraryStartTimeConflictValidator);
+    this.itineraryDraft.addValidators(this.itineraryTimeConflictValidator);
     this.itineraryDraft.updateValueAndValidity();
   }
 
@@ -857,6 +910,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       Highlights: this.toListPayload(form.highlights),
       Includes: this.toListPayload(form.includes),
       Excludes: this.toListPayload(form.excludes),
+      IsActive: false,
     };
   }
 
@@ -1002,27 +1056,27 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private quarterHourTimeValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (value === null || value === undefined || value === '') return null;
-    return /^([01]\d|2[0-3]):(00|15|30|45)$/.test(String(value))
+    return isQuarterHourTime(value)
       ? null
       : { invalidQuarterHourTime: true };
   }
 
-  private readonly itineraryStartTimeConflictValidator = (
+  private readonly itineraryTimeConflictValidator = (
     control: AbstractControl,
   ): ValidationErrors | null => {
     const startTime = control.get('startTime')?.value;
+    const endTime = control.get('endTime')?.value;
     const dayNumber = Number(control.get('dayNumber')?.value);
-    if (!startTime || !Number.isInteger(dayNumber) || !this.itineraryDraftCollection) {
+    if (!startTime || !endTime || !Number.isInteger(dayNumber) || !this.itineraryDraftCollection) {
       return null;
     }
 
-    const hasConflict = this.itineraryDraftCollection.controls.some((step, index) => {
-      if (index === this.itineraryDraftIndex) return false;
-      return Number(step.get('dayNumber')?.value) === dayNumber
-        && step.get('startTime')?.value === startTime;
-    });
+    const siblingSteps = this.itineraryDraftCollection.controls
+      .filter((_, index) => index !== this.itineraryDraftIndex)
+      .map((step) => step.getRawValue());
+    const hasConflict = hasItineraryTimeOverlap([control.getRawValue(), ...siblingSteps]);
 
-    return hasConflict ? { duplicateItineraryStartTime: true } : null;
+    return hasConflict ? { itineraryTimeOverlap: true } : null;
   };
 
   private createTrialTourDefaults() {

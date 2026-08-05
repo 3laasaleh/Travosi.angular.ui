@@ -40,6 +40,7 @@ export class AccountTab implements AfterViewInit, OnDestroy {
   userEmail = '';
   isUploadingImage = false;
   isRemovingImage = false;
+  imageValidationMessage = '';
   private previewUrl: string | null = null;
 
   constructor() {
@@ -90,13 +91,14 @@ export class AccountTab implements AfterViewInit, OnDestroy {
     const file = input.files?.[0];
     input.value = '';
     if (!file || this.isImageRequestActive) return;
+    this.imageValidationMessage = '';
 
     if (!this.allowedImageTypes.has(file.type)) {
-      this.showToast('error', 'invalidImageType');
+      this.imageValidationMessage = 'invalidImageType';
       return;
     }
     if (file.size > this.maxImageBytes) {
-      this.showToast('error', 'imageTooLarge');
+      this.imageValidationMessage = 'imageTooLarge';
       return;
     }
 

@@ -51,6 +51,9 @@
           </button>
         }
       </div>
+      @if (imageValidationMessage) {
+        <p class="mx-auto mt-2 max-w-72 text-xs font-medium text-red-600" role="alert">{{ imageValidationMessage | translate }}</p>
+      }
     </div>
 
     <div class="border-t border-gray-100 dark:border-gray-700">

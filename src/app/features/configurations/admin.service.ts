@@ -103,6 +103,15 @@ export class AdminService {
     });
   }
 
+  changePackageStatus(id: number, isActive: boolean): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Packages/ChangeStatus`, {
+      Id: id,
+      IsActive: isActive,
+    }, {
+      headers: this.getHeaders(),
+    });
+  }
+
   deletePackageImage(imageId: number): Observable<any> {
     return this.http.delete(`${environment.baseUrl}Packages/deleteImage/${imageId}`, {
       headers: this.getHeaders(),
