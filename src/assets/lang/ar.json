@@ -625,6 +625,7 @@
     ,"noAgentsFound": "لا يوجد وكلاء متاحون حاليًا."
     ,"packageImages": "صور الباقة"
     ,"packageImagesHint": "اختر معرض صور الباقة؛ سيتم استخدام الصورة الأولى كغلاف."
+    ,"packageImagesUploadStepHint": "ترفع هذه الخطوة صور الباقة المحددة، ويمكنك معاينتها أو إزالتها قبل المتابعة."
     ,"packageImageRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت"
     ,"packageImageLimit": "يمكن أن تحتوي الباقة على 5 صور كحد أقصى."
     ,"packageImagesSaveError": "تعذر رفع صور الباقة."

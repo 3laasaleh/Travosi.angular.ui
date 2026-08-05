@@ -50,6 +50,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
+  readonly maxImageWidth = 2400;
+  readonly maxImageHeight = 1600;
   readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
     const hours = Math.floor(index / 4).toString().padStart(2, '0');
     const minutes = ((index % 4) * 15).toString().padStart(2, '0');
@@ -61,8 +63,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     { id: 3, label: 'packageItineraryStep', icon: 'mdi-map-marker-path' },
   ] as const;
   private readonly imageConstraints = {
-    maxWidth: 2400,
-    maxHeight: 1600,
+    maxWidth: this.maxImageWidth,
+    maxHeight: this.maxImageHeight,
   };
 
   packageForm = this.createForm();
@@ -306,9 +308,15 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageValidationMessage = '';
     if (this.imageUploads.length + files.length > this.maxImages) { this.imageValidationMessage = 'packageImageLimit'; return; }
     for (const file of files) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        this.imageValidationMessage = 'invalidImageType';
+        continue;
+      }
+      if (file.size > this.maxImageBytes) {
+        this.imageValidationMessage = 'imageTooLarge';
+        continue;
+      }
       try {
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new ImageUploadValidationError('invalidImageType');
-        if (file.size > this.maxImageBytes) throw new ImageUploadValidationError('imageTooLarge');
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
         this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false });
       } catch (error) {
@@ -329,13 +337,23 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     });
     if (!result.isConfirmed) return;
     const imageId = Number(image.id);
-    if (image.existing && imageId > 0) {
+    if (image.existing && this.currentPackageId && Number.isInteger(imageId) && imageId > 0) {
       this.deletingImageIndex = index;
       this.adminService.deletePackageImage(imageId).pipe(
-        catchError(() => { this.showToast('error', 'imageDeleteError'); return of(null); }),
+        catchError(() => { this.showToast('error', 'imageDeleteError'); return of({ imageDeleteFailed: true }); }),
         finalize(() => { this.deletingImageIndex = null; this.cdr.markForCheck(); }),
-      ).subscribe((response) => { if (response && response?.isSuccess !== false) this.removeImageLocally(index); });
-    } else this.removeImageLocally(index);
+      ).subscribe((response: any) => {
+        if (response?.imageDeleteFailed || response?.isSuccess === false) {
+          if (response?.isSuccess === false) this.showToast('error', response?.message || 'imageDeleteError');
+          return;
+        }
+        this.removeImageLocally(index);
+        this.showImageDeletedToast();
+      });
+      return;
+    }
+    this.removeImageLocally(index);
+    this.showImageDeletedToast();
   }
 
   openItineraryStepEditor(): void {
@@ -497,8 +515,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private completeImagesStep(): void { this.completedStep = Math.max(this.completedStep, 2); this.activeStep = 3; this.errorMessage = ''; this.cdr.markForCheck(); }
   private closeItineraryEditor(): void { this.itineraryDraft = null; this.itineraryDraftCollection = null; this.itineraryDraftIndex = null; this.itineraryDraftIsChild = false; }
-  private syncImagesControl(): void { this.packageForm.controls.images.setValue(this.imageUploads.map((image) => image.url)); this.packageForm.controls.images.updateValueAndValidity(); }
+  private syncImagesControl(): void { this.packageForm.controls.images.setValue(this.imageUploads.map((image) => image.url)); this.packageForm.controls.images.markAsTouched(); this.packageForm.controls.images.updateValueAndValidity(); }
   private removeImageLocally(index: number): void { const [image] = this.imageUploads.splice(index, 1); if (image?.file) URL.revokeObjectURL(image.url); this.syncImagesControl(); this.cdr.markForCheck(); }
+  private showImageDeletedToast(): void { this.showToast('success', 'imageDeleted'); }
   private beginRequest(message: string): void { this.isSaving = true; this.apiLoadingMessage = message; this.errorMessage = ''; this.successMessage = ''; }
   private endRequest(): void { this.isSaving = false; this.apiLoadingMessage = ''; this.cdr.markForCheck(); }
   private handleRequestError(error: any, fallback: string): void { this.errorMessage = error?.error?.message || fallback; this.showToast('error', this.errorMessage); }

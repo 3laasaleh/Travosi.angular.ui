@@ -625,6 +625,7 @@
     ,"noAgentsFound": "No agents are available right now."
     ,"packageImages": "Package images"
     ,"packageImagesHint": "Choose the package gallery; the first image is used as the cover."
+    ,"packageImagesUploadStepHint": "This step uploads the selected package images. You can preview and remove them before continuing."
     ,"packageImageRules": "JPG, PNG or WebP, maximum 5 MB"
     ,"packageImageLimit": "A package can have a maximum of 5 images."
     ,"packageImagesSaveError": "Unable to upload the package images."

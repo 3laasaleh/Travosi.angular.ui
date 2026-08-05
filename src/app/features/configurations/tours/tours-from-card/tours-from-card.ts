@@ -141,7 +141,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get selectedDestination(): any | null {
     const selectedId = this.tourForm.controls.destinationId.value;
-    return this.destinations.find((destination) => Number(destination.id) === Number(selectedId)) ?? null;
+    if (selectedId === '') return null;
+
+    const destinationId = Number(selectedId);
+    if (!Number.isInteger(destinationId) || destinationId <= 0) return null;
+
+    return this.destinations.find((destination) => Number(destination.id) === destinationId) ?? null;
   }
 
   get highlightsArray(): FormArray<FormGroup> {
@@ -194,9 +199,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return { ...destination, id };
         })
         .filter((destination) => Number.isFinite(destination.id));
-      if (!this.currentTourId && !this.tourForm.controls.destinationId.value && this.destinations.length) {
-        this.tourForm.controls.destinationId.setValue(this.destinations[0].id);
-      }
     });
   }
 
@@ -612,7 +614,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   selectDestination(destination: any): void {
     const destinationId = Number(destination?.id ?? destination?.destinationId);
-    if (!Number.isFinite(destinationId)) return;
+    if (!Number.isInteger(destinationId) || destinationId <= 0) return;
     this.tourForm.controls.destinationId.setValue(destinationId);
     this.tourForm.controls.destinationId.markAsDirty();
     this.tourForm.controls.destinationId.markAsTouched();
@@ -665,7 +667,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescription: tour.fullDescription ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
       pricePerChild: Number(tour.pricePerChild ?? 0),
-      currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
+      // currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
       durationDays: Number(tour.durationDays ?? 0),
       durationHours: Number(tour.durationhours ?? tour.durationHours ?? 0),
       maxSeats: Number(tour.maxSeats ?? 14),
@@ -692,52 +694,50 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.savedTourId = null;
     this.imageUploads = [];
     this.imageValidationMessage = '';
-    const defaults = this.createTrialTourDefaults();
     this.tourForm.reset({
-      titleEng: defaults.titleEng,
-      titleAr: defaults.titleAr,
-      destinationId: this.destinations[0]?.id ?? '',
-      description: defaults.description,
-      fullDescription: defaults.fullDescription,
-      pricePerPerson: defaults.pricePerPerson,
-      pricePerChild: defaults.pricePerChild,
+      titleEng: '',
+      titleAr: '',
+      destinationId: '',
+      description: '',
+      fullDescription: '',
+      pricePerPerson: 0,
+      pricePerChild: 0,
       currencyId: this.defaultCurrencyId,
-      durationDays: defaults.durationDays,
-      durationHours: defaults.durationHours,
-      maxSeats: defaults.maxSeats,
-      startDate: defaults.startDate,
-      endDate: defaults.endDate,
+      durationDays: 0,
+      durationHours: 0,
+      maxSeats: 1,
+      startDate: '',
+      endDate: '',
       images: [],
-      cancellationPolicy: defaults.cancellationPolicy,
-      isFreeCancelation: defaults.isFreeCancelation,
+      cancellationPolicy: '',
+      isFreeCancelation: false,
       isActive: true,
     });
-    this.setHighlights(defaults.highlights);
-    this.setIncludes(defaults.includes);
-    this.setExcludes(defaults.excludes);
+    this.setHighlights([]);
+    this.setIncludes([]);
+    this.setExcludes([]);
     this.setItinerary([]);
     if (emitCancel) this.editCancelled.emit();
   }
 
   private createForm() {
-    const defaults = this.createTrialTourDefaults();
     return new FormGroup({
-      titleEng: new FormControl(defaults.titleEng, {
+      titleEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[A-Za-z][A-Za-z\s'-]*$/)],
       }),
-      titleAr: new FormControl(defaults.titleAr, {
+      titleAr: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/)],
       }),
       destinationId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
-      description: new FormControl(defaults.description, { nonNullable: true }),
-      fullDescription: new FormControl(defaults.fullDescription, { nonNullable: true }),
-      pricePerPerson: new FormControl(defaults.pricePerPerson, {
+      description: new FormControl('', { nonNullable: true }),
+      fullDescription: new FormControl('', { nonNullable: true }),
+      pricePerPerson: new FormControl(0, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0.01)],
       }),
-      pricePerChild: new FormControl(defaults.pricePerChild, {
+      pricePerChild: new FormControl(0, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),
@@ -745,36 +745,30 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1)],
       }),
-      durationDays: new FormControl(defaults.durationDays, {
+      durationDays: new FormControl(0, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),
-      durationHours: new FormControl(defaults.durationHours, {
+      durationHours: new FormControl(0, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0), Validators.max(23)],
       }),
-      maxSeats: new FormControl(defaults.maxSeats, {
+      maxSeats: new FormControl(1, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1)],
       }),
-      startDate: new FormControl(defaults.startDate, { nonNullable: true, validators: [Validators.required] }),
-      endDate: new FormControl(defaults.endDate, { nonNullable: true, validators: [Validators.required] }),
+      startDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      endDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       images: new FormControl<string[]>([], {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      cancellationPolicy: new FormControl(defaults.cancellationPolicy, { nonNullable: true }),
-      isFreeCancelation: new FormControl(defaults.isFreeCancelation, { nonNullable: true }),
+      cancellationPolicy: new FormControl('', { nonNullable: true }),
+      isFreeCancelation: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
-      highlights: new FormArray<FormGroup>(
-        defaults.highlights.map((value) => this.createListItemGroup({ value })),
-      ),
-      includes: new FormArray<FormGroup>(
-        defaults.includes.map((value) => this.createListItemGroup({ value })),
-      ),
-      excludes: new FormArray<FormGroup>(
-        defaults.excludes.map((value) => this.createListItemGroup({ value })),
-      ),
+      highlights: new FormArray<FormGroup>([]),
+      includes: new FormArray<FormGroup>([]),
+      excludes: new FormArray<FormGroup>([]),
       itinerary: new FormArray<FormGroup>([]),
     }, { validators: this.dateRangeValidator });
   }
@@ -1078,35 +1072,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
     return hasConflict ? { itineraryTimeOverlap: true } : null;
   };
-
-  private createTrialTourDefaults() {
-    const start = new Date();
-    const end = new Date(start);
-    end.setDate(end.getDate() + 3);
-    return {
-      titleEng: 'Cairo Highlights Tour',
-      titleAr: 'جولة معالم القاهرة',
-      description: 'A guided tour through Cairo’s most famous landmarks.',
-      fullDescription: 'Explore historic Cairo, local culture, and iconic attractions with an experienced guide.',
-      pricePerPerson: 120,
-      pricePerChild: 60,
-      durationDays: 3,
-      durationHours: 8,
-      maxSeats: 14,
-      startDate: this.formatDateInput(start),
-      endDate: this.formatDateInput(end),
-      cancellationPolicy: 'Free cancellation up to 24 hours before the tour starts.',
-      isFreeCancelation: true,
-      highlights: ['Pyramids and Sphinx guided visit'],
-      includes: ['Professional tour guide'],
-      excludes: ['Personal expenses'],
-    };
-  }
-
-  private formatDateInput(date: Date): string {
-    const offset = date.getTimezoneOffset() * 60_000;
-    return new Date(date.getTime() - offset).toISOString().slice(0, 10);
-  }
 
   private toDateInput(value: string | null | undefined): string {
     if (!value) return '';

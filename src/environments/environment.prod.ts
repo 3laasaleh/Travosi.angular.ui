@@ -1,5 +1,5 @@
 export const environment = {
   partion: true,
-  baseUrl: 'https://seeworld.premiumasp.net/api/',
-  imageUrl: 'https://seeworld.premiumasp.net/images/',
+  baseUrl: 'https://localhost:44382/api/',
+  imageUrl: 'https://localhost:44382/images/',
 };
