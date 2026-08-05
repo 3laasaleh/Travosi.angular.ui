@@ -2,14 +2,14 @@
     <div class="grid md:grid-cols-12 grid-cols-1 items-center gap-6 relative">
         <div class="md:col-span-5">
             <div class="relative">
-                <img [src]="about" class="mx-auto rounded-3xl shadow dark:shadow-gray-700 w-[90%]" alt="">
+                <img [src]="about" class="mx-auto rounded-3xl shadow dark:shadow-gray-700 w-[90%]" [alt]="'seeWorldTravelConsultants' | translate">
 
                 <div class="absolute flex items-center bottom-16 md:-start-10 -start-5 p-4 rounded-lg shadow-md dark:shadow-gray-800 bg-white dark:bg-slate-900 w-56 m-3">
                     <div class="flex items-center justify-center h-[65px] min-w-[65px] bg-primary/5 text-primary text-center rounded-xl me-3">
                         <i data-feather="users" class="size-6"></i>
                     </div>
                     <div class="flex-1">
-                        <span class="text-slate-400">Visitor</span>
+                        <span class="text-slate-400">{{ 'visitors' | translate }}</span>
                         <p class="text-xl font-bold"><span #visitorCount>{{ visitorTotal }}</span></p>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
                         <i data-feather="globe" class="size-6"></i>
                     </div>
                     <div class="flex-1">
-                        <span class="text-slate-400">Travel Packages</span>
+                        <span class="text-slate-400">{{ 'travelPackages' | translate }}</span>
                         <p class="text-xl font-bold flex"><span #packageCount>{{ packageTotal }}</span>+</p>
                     </div>
                 </div>
@@ -28,14 +28,15 @@
 
         <div class="md:col-span-7">
             <div class="lg:ms-8">
-                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">World Best Travel <br> Agency: See World Holidays</h3>
-                <p class="text-slate-400 max-w-xl mb-6">Get instant helpful resources about anything on the go, easily implement secure money transfer solutions, boost your daily efficiency, connect to other app users and create your own See World network, and much more with just a few taps. commodo consequat. Duis aute irure.</p>
-                <a href="javascript:void(0)" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">Read More <i class="mdi mdi-chevron-right align-middle ms-0.5"></i></a>
+                <p class="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-primary">{{ 'aboutSeeWorldHolidays' | translate }}</p>
+                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">{{ 'trustedTravelPartnerTitle' | translate }}</h3>
+                <p class="text-slate-400 max-w-xl mb-6">{{ 'trustedTravelPartnerDescription' | translate }}</p>
+                <a routerLink="/aboutus" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'learnMoreAboutUs' | translate }} <i class="mdi mdi-chevron-right align-middle ms-0.5 rtl:rotate-180"></i></a>
             </div>
         </div>
 
         <div class="absolute bottom-0 start-1/3 -z-1">
-            <img [src]="map" class="lg:w-[600px] w-96" alt="">
+            <img [src]="map" class="lg:w-[600px] w-96" [alt]="'travelAroundWorld' | translate">
         </div>
     </div>
 </div>

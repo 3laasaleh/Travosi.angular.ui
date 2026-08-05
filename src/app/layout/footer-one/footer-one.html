@@ -1,92 +1,53 @@
 <footer class="footer relative border-t border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
-    <div class="container relative">
-        <div class="grid grid-cols-12">
-            <div class="col-span-12">
-                <div class="py-[60px] px-0">
-                    <div class="grid md:grid-cols-12 grid-cols-1 gap-6">
-                        <div class="lg:col-span-3 md:col-span-12">
-                            <a href="#" class="text-[22px] focus:outline-none">
-                                <img [src]="logo" alt="">
-                            </a>
-                            <p class="mt-6 text-slate-500 dark:text-slate-400">Planning for a trip? We will organize your trip with the best places and within best budget!</p>
-                            <ul class="list-none mt-6">
-                                <li class="inline mx-0.5"><a href="https://www.facebook.com/shreethemes" target="_blank" class="size-8 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white text-base text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-900"><i data-feather="facebook" class="size-4 align-middle" title="facebook"></i></a></li>
-                                <li class="inline mx-0.5"><a href="https://www.instagram.com/shreethemes/" target="_blank" class="size-8 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white text-base text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-900"><i data-feather="instagram" class="size-4 align-middle" title="instagram"></i></a></li>
-                                <li class="inline mx-0.5"><a href="mailto:support@shreethemes.in" class="size-8 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white text-base text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-900"><i data-feather="mail" class="size-4 align-middle" title="email"></i></a></li>
-                            </ul>
-                        </div>
-
-                        <div class="lg:col-span-3 md:col-span-4">
-                            <div class="lg:ms-8">
-                                <h5 class="tracking-[1px] text-slate-900 font-semibold dark:text-white">Office</h5>
-                                <h5 class="tracking-[1px] text-slate-800 mt-6 dark:text-slate-100">See World</h5>
-
-                                <div class="flex mt-4">
-                                    <i data-feather="map-pin" class="size-4 text-primary me-2 mt-1"></i>
-                                    <div class="">
-                                        <h6 class="text-slate-500 dark:text-slate-400">Haram, Al Rehab Tower, <br> 7 Mariouteya, in Al Saad Towers, <br> above Bank Misr, first floor</h6>
-                                    </div>
-                                </div>
-
-                                <div class="flex mt-4">
-                                    <i data-feather="mail" class="size-4 text-primary me-2 mt-1"></i>
-                                    <div class="">
-                                        <a href="mailto:Info@seaworldholidays.com" class="text-slate-600 transition hover:text-primary dark:text-slate-300">Info@seaworldholidays.com</a>
-                                    </div>
-                                </div>
-
-                                <div class="flex mt-4">
-                                    <i data-feather="phone" class="size-4 text-primary me-2 mt-1"></i>
-                                    <div class="">
-                                        <a href="tel:+201155011300" class="text-slate-600 transition hover:text-primary dark:text-slate-300">+201155011300</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="lg:col-span-3 md:col-span-4">
-                            <div class="lg:ms-8">
-                                <h5 class="tracking-[1px] text-slate-900 font-semibold dark:text-white">Company</h5>
-                                <ul class="list-none footer-list mt-6">
-                                    <li><a routerLink="/aboutus" class="text-slate-600 transition hover:text-primary dark:text-slate-300"><i class="mdi mdi-chevron-right text-primary"></i> About us</a></li>
-                                    <li class="mt-[10px] ms-0"><a href="javascript:void(0)" class="text-slate-600 transition hover:text-primary dark:text-slate-300"><i class="mdi mdi-chevron-right text-primary"></i> Services</a></li>
-                                    <!-- <li class="mt-[10px] ms-0"><a href="javascript:void(0)" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i class="mdi mdi-chevron-right"></i> Team</a></li>
-                                    <li class="mt-[10px] ms-0"><a href="javascript:void(0)" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i class="mdi mdi-chevron-right"></i> Pricing</a></li>
-                                    <li class="mt-[10px] ms-0"><a routerLink="/blogs" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i class="mdi mdi-chevron-right"></i> Blog</a></li>
-                                    <li class="mt-[10px] ms-0"><a routerLink="/login" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i class="mdi mdi-chevron-right"></i> Login</a></li> -->
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="lg:col-span-3 md:col-span-4">
-                            <h5 class="tracking-[1px] text-slate-900 font-semibold dark:text-white">Newsletter</h5>
-                            <p class="mt-6 text-slate-500 dark:text-slate-400">Sign up and receive the latest tips via email.</p>
-                            <form>
-                                <div class="grid grid-cols-1">
-                                    <div class="my-3">
-                                        <label class="form-label text-slate-700 dark:text-slate-300">Write your email <span class="text-primary">*</span></label>
-                                        <div class="form-icon relative mt-2">
-                                            <i data-feather="mail" class="size-4 absolute top-3 start-4 text-primary"></i>
-                                            <input type="email" class="ps-12 rounded w-full py-2 px-3 h-10 border border-slate-200 bg-white text-slate-700 outline-none placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" placeholder="Email" name="email" required="">
-                                        </div>
-                                    </div>
-                                    <button type="submit" id="submitsubscribe" name="send" class="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">Subscribe</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="container relative">
+    <div class="grid grid-cols-1 gap-8 px-0 py-[60px] md:grid-cols-2 lg:grid-cols-4">
+      <section>
+        <a routerLink="/home" class="inline-block text-[22px] focus:outline-none" [attr.aria-label]="'homeLinkLabel' | translate">
+          <img [src]="logo" [alt]="'seeWorldHolidaysLogo' | translate">
+        </a>
+        <p class="mt-6 leading-7 text-slate-500 dark:text-slate-400">{{ 'footerTravelDescription' | translate }}</p>
+        <div class="mt-6 flex gap-2">
+          <a href="mailto:Info@seaworldholidays.com" class="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-900" [attr.aria-label]="'emailSeeWorldHolidays' | translate"><i data-feather="mail" class="size-4" aria-hidden="true"></i></a>
+          <a href="tel:+201155011300" class="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-900" [attr.aria-label]="'callSeeWorldHolidays' | translate"><i data-feather="phone" class="size-4" aria-hidden="true"></i></a>
         </div>
-    </div>
+      </section>
 
-    <div class="py-[30px] px-0 border-t border-slate-200 dark:border-slate-800">
-        <div class="container relative text-center text-slate-500 dark:text-slate-400">
-            <div class="grid grid-cols-1">
-                <div class="text-center">
-                    <p class="mb-0">© {{ year }} See World. Develop <i class="mdi mdi-heart text-primary"></i>  <a href="https://shreethemes.in/" target="_blank" class="font-medium text-primary hover:underline">All</a>.</p>
-                </div>
-            </div>
+      <section>
+        <h5 class="font-semibold tracking-[1px] text-slate-900 dark:text-white">{{ 'office' | translate }}</h5>
+        <h6 class="mt-6 font-semibold text-slate-800 dark:text-slate-100">See World Holidays</h6>
+        <div class="mt-4 flex items-start">
+          <i data-feather="map-pin" class="me-2 mt-1 size-4 shrink-0 text-primary" aria-hidden="true"></i>
+          <p class="leading-7 text-slate-500 dark:text-slate-400">{{ 'officeAddress' | translate }}</p>
         </div>
+        <div class="mt-4 flex items-center"><i data-feather="mail" class="me-2 size-4 shrink-0 text-primary" aria-hidden="true"></i><a href="mailto:Info@seaworldholidays.com" class="transition hover:text-primary">Info&#64;seaworldholidays.com</a></div>
+        <div class="mt-4 flex items-center"><i data-feather="phone" class="me-2 size-4 shrink-0 text-primary" aria-hidden="true"></i><a href="tel:+201155011300" class="transition hover:text-primary" dir="ltr">+20 115 501 1300</a></div>
+      </section>
+
+      <nav [attr.aria-label]="'footerCompanyLinks' | translate">
+        <h5 class="font-semibold tracking-[1px] text-slate-900 dark:text-white">{{ 'company' | translate }}</h5>
+        <ul class="footer-list mt-6 space-y-3">
+          <li><a routerLink="/aboutus" class="transition hover:text-primary"><i class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'aboutUs' | translate }}</a></li>
+          <li><a routerLink="/destinations" class="transition hover:text-primary"><i class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'destinations' | translate }}</a></li>
+          <li><a routerLink="/packages" class="transition hover:text-primary"><i class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'packages' | translate }}</a></li>
+          <li><a routerLink="/contact" class="transition hover:text-primary"><i class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'contactUs' | translate }}</a></li>
+        </ul>
+      </nav>
+
+      <section>
+        <h5 class="font-semibold tracking-[1px] text-slate-900 dark:text-white">{{ 'newsletter' | translate }}</h5>
+        <p class="mt-6 text-slate-500 dark:text-slate-400">{{ 'newsletterDescription' | translate }}</p>
+        <form class="mt-4" (submit)="$event.preventDefault()">
+          <label for="footerNewsletterEmail" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'writeYourEmail' | translate }} <span class="text-primary">*</span></label>
+          <div class="relative mt-2"><i data-feather="mail" class="absolute start-4 top-3 size-4 text-primary" aria-hidden="true"></i><input id="footerNewsletterEmail" type="email" class="h-10 w-full rounded border border-slate-200 bg-white px-3 pe-3 ps-12 text-slate-700 outline-none placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" [placeholder]="'email' | translate" name="email" required></div>
+          <button type="submit" class="mt-3 w-full rounded-md bg-primary px-5 py-2 font-semibold text-white">{{ 'subscribe' | translate }}</button>
+        </form>
+      </section>
     </div>
+  </div>
+
+  <div class="border-t border-slate-200 px-0 py-[30px] dark:border-slate-800">
+    <div class="container text-center text-slate-500 dark:text-slate-400">
+      <p>&copy; {{ year }} See World Holidays. {{ 'allRightsReserved' | translate }}</p>
+    </div>
+  </div>
 </footer>

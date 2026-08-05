@@ -9,7 +9,7 @@ import {
 import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { apiCurrencyLabel, apiPrice } from '../../../core/utils/api-price.util';
@@ -30,6 +30,7 @@ export class HomePackagePage implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   travelPackage: any = null;
   isLoading = true;
@@ -37,11 +38,17 @@ export class HomePackagePage implements OnInit {
   selectedImageIndex = 0;
 
   get title(): string {
-    return this.travelPackage?.titleEng ?? this.travelPackage?.nameEng ?? this.travelPackage?.title ?? this.travelPackage?.name ?? '';
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (this.travelPackage?.nameAr ?? this.travelPackage?.titleAr ?? this.travelPackage?.nameEng ?? this.travelPackage?.titleEng ?? this.travelPackage?.name ?? this.travelPackage?.title ?? '')
+      : (this.travelPackage?.nameEng ?? this.travelPackage?.titleEng ?? this.travelPackage?.name ?? this.travelPackage?.title ?? this.travelPackage?.nameAr ?? this.travelPackage?.titleAr ?? '');
   }
 
   get description(): string {
-    return this.travelPackage?.fullDescription ?? this.travelPackage?.description ?? this.travelPackage?.subDescription ?? '';
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (this.travelPackage?.descriptionAr ?? this.travelPackage?.fullDescriptionAr ?? this.travelPackage?.description ?? this.travelPackage?.fullDescription ?? this.travelPackage?.subDescription ?? '')
+      : (this.travelPackage?.descriptionEng ?? this.travelPackage?.fullDescriptionEng ?? this.travelPackage?.fullDescription ?? this.travelPackage?.description ?? this.travelPackage?.subDescription ?? '');
   }
 
   get images(): any[] {
@@ -124,7 +131,10 @@ export class HomePackagePage implements OnInit {
   }
 
   tourTitle(tour: any): string {
-    return tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '';
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (tour?.titleAr ?? tour?.nameAr ?? tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '')
+      : (tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? tour?.titleAr ?? tour?.nameAr ?? '');
   }
 
   private loadPackage(packageId: number): void {

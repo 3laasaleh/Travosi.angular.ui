@@ -11,7 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, debounceTime, distinctUntilChanged, forkJoin, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 
@@ -34,6 +34,7 @@ export class SearchBox implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly translate = inject(TranslateService);
 
   searchControl = new FormControl('', { nonNullable: true });
   resultsOpen = false;
@@ -48,6 +49,20 @@ export class SearchBox implements OnInit {
 
   get hasResults(): boolean {
     return this.groups.some((group) => group.items.length > 0);
+  }
+
+  displayName(item: any): string {
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
+      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+  }
+
+  displayDescription(item: any): string {
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (item?.subDescriptionAr ?? item?.descriptionAr ?? item?.subDescription ?? item?.description ?? '')
+      : (item?.subDescriptionEng ?? item?.descriptionEng ?? item?.subDescription ?? item?.description ?? '');
   }
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -16,6 +16,7 @@ import { apiCurrencyLabel, apiPrice } from '../../../../core/utils/api-price.uti
 export class PackagesSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
 
   packages: any[] = [];
   isLoading = false;
@@ -54,6 +55,20 @@ export class PackagesSection implements OnInit {
 
   currencyLabel(item: any): string {
     return apiCurrencyLabel(item);
+  }
+
+  packageTitle(item: any): string {
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
+      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+  }
+
+  packageDescription(item: any): string {
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (item?.descriptionAr ?? item?.subDescriptionAr ?? item?.description ?? item?.subDescription ?? '')
+      : (item?.descriptionEng ?? item?.subDescriptionEng ?? item?.description ?? item?.subDescription ?? '');
   }
 
   imageUrl(item: any): string {

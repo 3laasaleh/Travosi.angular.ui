@@ -20,6 +20,8 @@ import { PackagesSection } from './home-sections/packages-section/packages-secti
 import { ToursSection } from './home-sections/tours-section/tours-section';
 import { SelectedDate } from '../../shared/components/selected-date/selected-date';
 import { UsersOne } from '../../shared/components/users-one/users-one';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +33,8 @@ import { UsersOne } from '../../shared/components/users-one/users-one';
     DestinationsSection,
     ToursSection,
     PackagesSection,
+    TranslatePipe,
+    RouterLink,
   ],
   templateUrl: './home.html',
   changeDetection:ChangeDetectionStrategy.OnPush,

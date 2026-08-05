@@ -34,6 +34,16 @@ export class SignupPage implements AfterViewInit {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
+  showPassword = false;
+  showConfirmPassword = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   signupForm = this.fb.nonNullable.group(
     {

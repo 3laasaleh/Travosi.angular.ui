@@ -7,7 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 
@@ -22,11 +22,19 @@ export class PackagesMenu {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly translate = inject(TranslateService);
 
   menuOpen = false;
   isLoading = false;
   loaded = false;
   packages: any[] = [];
+
+  packageName(item: any): string {
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
+      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+  }
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();

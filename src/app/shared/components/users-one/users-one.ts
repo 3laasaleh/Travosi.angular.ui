@@ -1,14 +1,19 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import { tns } from 'tiny-slider';
-import { clientData } from '../../../data/data';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-users-one',
+  imports: [TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './users-one.html',
 })
 export class UsersOne implements AfterViewInit {
-  clientData = clientData;
+  readonly travelPromises = [
+    { icon: 'mdi-map-marker-path', title: 'personalizedTravelPlanning', description: 'personalizedTravelPlanningDescription' },
+    { icon: 'mdi-headset', title: 'supportThroughoutJourney', description: 'supportThroughoutJourneyDescription' },
+    { icon: 'mdi-shield-check-outline', title: 'trustedTravelArrangements', description: 'trustedTravelArrangementsDescription' },
+  ];
 
   ngAfterViewInit(): void {
     tns({

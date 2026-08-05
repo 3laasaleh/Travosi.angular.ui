@@ -18,10 +18,10 @@
         @for (item of packages; track item.id ?? item.packageId ?? $index) {
           <a [routerLink]="['/packages', item.id ?? item.packageId]" class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
             <article class="flex w-full flex-col">
-              <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="item.titleEng ?? item.nameEng ?? item.title ?? item.name" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" /></div>
+              <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="packageTitle(item)" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" /></div>
               <div class="flex flex-1 flex-col p-4">
-                <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.titleEng ?? item.nameEng ?? item.title ?? item.name }}</h3>
-                @if (item.subDescription ?? item.description) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ item.subDescription ?? item.description }}</p> }
+                <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ packageTitle(item) }}</h3>
+                @if (packageDescription(item); as description) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ description }}</p> }
                 <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><strong class="text-lg text-primary">{{ currencyLabel(item) }} {{ price(item) | number: '1.0-2' }}</strong><span class="text-sm font-semibold text-slate-500 transition group-hover:text-primary">{{ 'exploreNow' | translate }} <i class="mdi mdi-arrow-right rtl:rotate-180"></i></span></div></div>
               </div>
             </article>

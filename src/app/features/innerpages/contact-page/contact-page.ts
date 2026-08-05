@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import feather from 'feather-icons';
-import { NavbarOne } from '../../../layout/navbar-one/navbar-one';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 

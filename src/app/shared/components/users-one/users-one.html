@@ -1,30 +1,19 @@
 <div class="container relative md:mt-24 mt-16">
     <div class="grid grid-cols-1 pb-6 text-center">
-        <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">What Our Users Say</h3>
-        <p class="text-slate-400 max-w-xl mx-auto">This is just a simple text made for this unique and awesome template, you can replace it with any text.</p>
+        <p class="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-primary">{{ 'ourTravelPromise' | translate }}</p>
+        <h3 class="mb-4 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">{{ 'whyTravelersChooseUs' | translate }}</h3>
+        <p class="text-slate-400 max-w-xl mx-auto">{{ 'whyTravelersChooseUsDescription' | translate }}</p>
     </div>
 
     <div class="grid grid-cols-1 mt-6">
         <div class="tiny-three-item">
-            @for (item of clientData; track $index) {
+            @for (item of travelPromises; track item.title) {
                 <div class="tiny-slide text-center">
                     <div class="cursor-e-resize">
-                        <div class="content relative rounded shadow dark:shadow-gray-700 m-2 p-6 bg-white dark:bg-slate-900 before:content-[''] before:absolute before:start-1/2 before:-bottom-[4px] before:box-border before:border-8 before:rotate-[45deg] before:border-t-transparent before:border-e-white dark:before:border-e-slate-900 before:border-b-white dark:before:border-b-slate-900 before:border-s-transparent before:shadow-testi dark:before:shadow-gray-700 before:origin-top-left">
-                            <i class="mdi mdi-format-quote-open mdi-48px text-primary"></i>
-                            <p class="text-slate-400">{{ item.desc }}</p>
-                            <ul class="list-none mb-0 text-amber-400 mt-3">
-                                <li class="inline"><i class="mdi mdi-star"></i></li>
-                                <li class="inline"><i class="mdi mdi-star"></i></li>
-                                <li class="inline"><i class="mdi mdi-star"></i></li>
-                                <li class="inline"><i class="mdi mdi-star"></i></li>
-                                <li class="inline"><i class="mdi mdi-star"></i></li>
-                            </ul>
-                        </div>
-
-                        <div class="text-center mt-5">
-                            <img [src]="item.image" class="size-14 rounded-full shadow-md dark:shadow-gray-700 mx-auto" alt="">
-                            <h6 class="mt-2 font-semibold">{{ item.name }}</h6>
-                            <span class="text-slate-400 text-sm">{{ item.position }}</span>
+                        <div class="content relative m-2 min-h-64 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <span class="mx-auto grid size-16 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary"><i class="mdi" [class]="'mdi ' + item.icon"></i></span>
+                            <h4 class="mt-5 text-xl font-semibold">{{ item.title | translate }}</h4>
+                            <p class="mt-3 leading-7 text-slate-400">{{ item.description | translate }}</p>
                         </div>
                     </div>
                 </div>

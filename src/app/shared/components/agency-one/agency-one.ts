@@ -10,9 +10,12 @@ import {
 } from '@angular/core';
 import { CountUp } from 'countup.js';
 import feather from 'feather-icons';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-agency-one',
+  imports: [TranslatePipe, RouterLink],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './agency-one.html',
 })

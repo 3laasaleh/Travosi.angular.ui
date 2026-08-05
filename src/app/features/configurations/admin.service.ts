@@ -85,6 +85,24 @@ export class AdminService {
     });
   }
 
+  createPackage(payload: any): Observable<any> {
+    return this.http.post(`${environment.baseUrl}Packages`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  updatePackage(payload: any): Observable<any> {
+    return this.http.put(`${environment.baseUrl}Packages`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  addPackageItinerary(payload: any): Observable<any> {
+    return this.http.post(`${environment.baseUrl}Packages/AddItinerary`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
   deletePackageImage(imageId: number): Observable<any> {
     return this.http.delete(`${environment.baseUrl}Packages/deleteImage/${imageId}`, {
       headers: this.getHeaders(),

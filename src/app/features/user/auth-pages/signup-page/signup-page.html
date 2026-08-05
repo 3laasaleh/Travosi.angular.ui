@@ -7,7 +7,7 @@
             <div
                 class="max-w-[800px] h-[98vh] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
                 <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
-                <h5 class="my-2 text-xl font-semibold">{{ 'Sign Up' | translate }}</h5>
+                <h5 class="my-2 text-xl font-semibold">{{ 'signup' | translate }}</h5>
     @if (errorMessage) { <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
     @if (successMessage) { <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
 
@@ -73,10 +73,18 @@
 
                         <div class="mb-1">
                             <label class="font-semibold" for="password">{{ 'password' | translate }}</label>
-                            <input id="password" type="password" formControlName="password"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                                [class.border-red-500]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
-                                placeholder="Password:">
+                            <div class="relative mt-3">
+                                <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200"
+                                    [class.border-red-500]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
+                                    [placeholder]="'password' | translate">
+                                <button type="button" (click)="togglePasswordVisibility()"
+                                    class="absolute inset-y-0 end-3 flex items-center text-slate-400 transition hover:text-primary"
+                                    [attr.aria-label]="(showPassword ? 'hidePassword' : 'showPassword') | translate"
+                                    [attr.aria-pressed]="showPassword">
+                                    <i class="mdi text-xl" [class.mdi-eye-off-outline]="showPassword" [class.mdi-eye-outline]="!showPassword" aria-hidden="true"></i>
+                                </button>
+                            </div>
                             @if (signupForm.get('password')?.touched && signupForm.get('password')?.hasError('required')) {
                                 <p class="mt-1 text-sm text-red-600">{{ 'passwordRequired' | translate }}</p>
                             }
@@ -87,10 +95,18 @@
 
                         <div class="mb-1">
                             <label class="font-semibold" for="confirmPassword">{{ 'confirmPassword' | translate }}</label>
-                            <input id="confirmPassword" type="password" formControlName="confirmPassword"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                                [class.border-red-500]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid"
-                                placeholder="Password:">
+                            <div class="relative mt-3">
+                                <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
+                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200"
+                                    [class.border-red-500]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid"
+                                    [placeholder]="'confirmPassword' | translate">
+                                <button type="button" (click)="toggleConfirmPasswordVisibility()"
+                                    class="absolute inset-y-0 end-3 flex items-center text-slate-400 transition hover:text-primary"
+                                    [attr.aria-label]="(showConfirmPassword ? 'hideConfirmPassword' : 'showConfirmPassword') | translate"
+                                    [attr.aria-pressed]="showConfirmPassword">
+                                    <i class="mdi text-xl" [class.mdi-eye-off-outline]="showConfirmPassword" [class.mdi-eye-outline]="!showConfirmPassword" aria-hidden="true"></i>
+                                </button>
+                            </div>
                             @if (signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.hasError('required')) {
                                 <p class="mt-1 text-sm text-red-600">{{ 'confirmRequired' | translate }}</p>
                             }
@@ -102,7 +118,7 @@
                         <div class="mb-1">
                             <div class="flex items-center w-full mb-0">
                                 <input formControlName="acceptTerms"
-                                    class="form-checkbox size-4 appearance-none rounded border border-gray-200 dark:border-gray-800 accent-red-600 checked:appearance-auto dark:accent-red-600 focus:border-red-300 focus:ring-0 focus:ring-offset-0 focus:ring-red-200 focus:ring-opacity-50 me-2"
+                                    class="form-checkbox size-4 appearance-none rounded border border-gray-200 accent-primary checked:appearance-auto focus:border-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 dark:border-gray-800 dark:accent-primary me-2"
                                     type="checkbox" id="AcceptTC">
                                 <label class="form-check-label text-slate-400" for="AcceptTC">{{ 'acceptTerms' | translate }} <a
                                     href="javascript:void(0)" class="text-primary">{{ 'terms' | translate }}</a></label>
@@ -114,7 +130,7 @@
 
                         <div class="mb-1">
                             <button type="submit"
-                                class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-2 text-center text-base text-white duration-500 disabled:cursor-not-allowed disabled:opacity-60"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-md border border-primary bg-primary px-5 py-2 text-center text-base font-semibold text-white duration-500 hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60"
                                 [disabled]="signupForm.invalid || isSubmitting">
                                 @if (isSubmitting) {
                                     <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>

@@ -1,7 +1,7 @@
 
 <app-home-navbar />
 @if (isLoading) {
-  <section class="relative grid h-screen place-items-center overflow-hidden bg-slate-200" aria-busy="true" aria-label="Loading home page">
+  <section class="relative grid h-screen place-items-center overflow-hidden bg-slate-200" aria-busy="true" [attr.aria-label]="'loadingHomePage' | translate">
     <div class="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-300 via-slate-200 to-slate-300"></div>
     <div class="container relative text-center">
       <div class="mx-auto h-40 w-72 animate-pulse rounded-3xl bg-white/45"></div>
@@ -21,13 +21,12 @@
                         <div class="container relative">
                             <div class="grid grid-cols-1">
                                 <div class="text-center">
-                                    <img [src]="map" class="mx-auto w-[300px]" alt="">
-                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">Find Your Best <br/> Travels Package</h1>
-                                    <p class="text-white/70 text-xl max-w-xl mx-auto">Planning for a trip? We will organize your trip with the best places and within best budget!</p>
-<!--
+                                    <img [src]="map" class="mx-auto w-[300px]" [alt]="'travelAroundWorld' | translate">
+                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">{{ 'homeHeroPackagesTitle' | translate }}</h1>
+                                    <p class="text-white/70 text-xl max-w-xl mx-auto">{{ 'homeHeroPackagesDescription' | translate }}</p>
                                     <div class="mt-6">
-                                        <a href="javascript:void(0)" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">See More</a>
-                                    </div> -->
+                                        <a routerLink="/packages" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'explorePackages' | translate }}</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -40,12 +39,12 @@
                         <div class="container relative">
                             <div class="grid grid-cols-1">
                                 <div class="text-center">
-                                    <img [src]="map" class="mx-auto w-[300px]" alt="">
-                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">Find Next Best <br/> Place To Visit</h1>
-                                    <p class="text-white/70 text-xl max-w-xl mx-auto">Planning for a trip? We will organize your trip with the best places and within best budget!</p>
+                                    <img [src]="map" class="mx-auto w-[300px]" [alt]="'travelAroundWorld' | translate">
+                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">{{ 'homeHeroDestinationsTitle' | translate }}</h1>
+                                    <p class="text-white/70 text-xl max-w-xl mx-auto">{{ 'homeHeroDestinationsDescription' | translate }}</p>
 
                                     <div class="mt-6">
-                                        <a href="javascript:void(0)" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">See More</a>
+                                        <a routerLink="/destinations" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'exploreDestinations' | translate }}</a>
                                     </div>
                                 </div>
                             </div>
