@@ -11,7 +11,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
-import { CurrencyService } from '../../core/services/currency.service';
 import { DestinationsMenu } from './destinations-menu/destinations-menu';
 import { PackagesMenu } from './packages-menu/packages-menu';
 import { SearchBox } from './search-box/search-box';
@@ -29,12 +28,10 @@ export class HomeNavbar implements AfterViewInit {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly languageService = inject(LanguageService);
-  readonly currencyService = inject(CurrencyService);
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
   languageMenuOpen = false;
-  currencyMenuOpen = false;
   switchingLanguage: string | null = null;
 
   get currentLanguage(): string {
@@ -44,15 +41,6 @@ export class HomeNavbar implements AfterViewInit {
   toggleLanguageMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.languageMenuOpen = !this.languageMenuOpen;
-    this.currencyMenuOpen = false;
-    this.accountMenuOpen = false;
-    this.refreshIcons();
-  }
-
-  toggleCurrencyMenu(event: MouseEvent): void {
-    event.stopPropagation();
-    this.currencyMenuOpen = !this.currencyMenuOpen;
-    this.languageMenuOpen = false;
     this.accountMenuOpen = false;
     this.refreshIcons();
   }
@@ -60,6 +48,7 @@ export class HomeNavbar implements AfterViewInit {
   switchLanguage(lang: string): void {
     if (this.switchingLanguage !== null) return;
     this.switchingLanguage = lang;
+    this.mobileMenuOpen = false;
     this.languageService.setGLobalLanguage(lang).pipe(
       finalize(() => {
         this.switchingLanguage = null;
@@ -69,12 +58,6 @@ export class HomeNavbar implements AfterViewInit {
     ).subscribe({ error: () => {} });
   }
 
-  switchCurrency(code: string): void {
-    this.currencyService.setCurrency(code);
-    this.closeMenus();
-  }
-
-  
   get canAccessConfigurations(): boolean {
     return this.authService.isAdmin() || this.authService.isAgent();
   }
@@ -117,6 +100,8 @@ export class HomeNavbar implements AfterViewInit {
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.accountMenuOpen = false;
+    this.languageMenuOpen = false;
     this.refreshIcons();
   }
 
@@ -124,7 +109,6 @@ export class HomeNavbar implements AfterViewInit {
     this.accountMenuOpen = false;
     this.mobileMenuOpen = false;
     this.languageMenuOpen = false;
-    this.currencyMenuOpen = false;
   }
 
   logout(): void {
@@ -137,7 +121,6 @@ export class HomeNavbar implements AfterViewInit {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.accountMenuOpen = false;
       this.languageMenuOpen = false;
-      this.currencyMenuOpen = false;
     }
   }
 
