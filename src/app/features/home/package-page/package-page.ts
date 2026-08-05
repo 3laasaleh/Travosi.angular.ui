@@ -90,7 +90,7 @@ export class HomePackagePage implements OnInit {
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.travelPackage);
+    return apiCurrencyLabel(this.travelPackage.currencyId ?? this.travelPackage?.currency?.id ?? 2);
   }
 
   get duration(): string {

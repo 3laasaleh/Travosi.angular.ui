@@ -79,7 +79,7 @@ export class TourDetail implements AfterViewInit {
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.tour);
+    return apiCurrencyLabel(this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
   }
 
   get description(): string {

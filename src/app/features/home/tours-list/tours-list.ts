@@ -117,7 +117,7 @@ export class HomeToursList implements OnInit {
   }
 
   currencyLabel(tour: any): string {
-    return apiCurrencyLabel(tour);
+    return apiCurrencyLabel(tour?.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   imageUrl(tour: any): string {

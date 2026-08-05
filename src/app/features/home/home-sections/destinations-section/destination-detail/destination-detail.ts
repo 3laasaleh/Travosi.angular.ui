@@ -129,7 +129,7 @@ export class HomeDestinationDetail implements OnInit {
   }
 
   tourCurrencySymbol(tour: any): string {
-    return apiCurrencyLabel(tour);
+    return apiCurrencyLabel(tour.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   tourDestinationName(tour: any): string {

@@ -53,7 +53,7 @@ export class ToursSection implements OnInit {
   }
 
   currencyLabel(item: any): string {
-    return apiCurrencyLabel(item);
+    return apiCurrencyLabel(item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   imageUrl(item: any): string {

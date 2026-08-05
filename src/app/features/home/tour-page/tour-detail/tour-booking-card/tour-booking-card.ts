@@ -95,7 +95,7 @@ export class TourBookingCard {
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.product);
+    return apiCurrencyLabel(this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get minTravelDate(): string {

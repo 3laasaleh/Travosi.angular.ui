@@ -54,7 +54,7 @@ export class PackagesSection implements OnInit {
   }
 
   currencyLabel(item: any): string {
-    return apiCurrencyLabel(item);
+    return apiCurrencyLabel(item.currencyId ?? item?.currency?.id ?? 2);
   }
 
   packageTitle(item: any): string {
