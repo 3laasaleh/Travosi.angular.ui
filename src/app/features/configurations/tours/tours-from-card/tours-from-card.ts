@@ -667,7 +667,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescription: tour.fullDescription ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
       pricePerChild: Number(tour.pricePerChild ?? 0),
-      // currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
+      currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
       durationDays: Number(tour.durationDays ?? 0),
       durationHours: Number(tour.durationhours ?? tour.durationHours ?? 0),
       maxSeats: Number(tour.maxSeats ?? 14),

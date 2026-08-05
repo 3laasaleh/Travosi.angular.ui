@@ -23,14 +23,14 @@ import {
 import { AdminService } from '../../admin.service';
 
 interface DestinationImageUpload {
-  id?:number;
+  id?: number;
   file?: File;
   url: string;
   name: string;
   existing: boolean;
 }
 interface DestinationImageDto {
-  id:Number,
+  id: number;
   imageName: string;
   imageUrl: string;
 }
@@ -105,10 +105,6 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.imageUploads
       .filter((image) => image.file)
       .forEach((image) => payload.append('Images', image.file!, image.file!.name));
-    this.imageUploads
-      .filter((image) => image.existing)
-      .forEach((image) => payload.append('ExistingImageUrls', image.url));
-
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
@@ -127,8 +123,9 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           this.cdr.markForCheck();
         }),
       )
-      .subscribe((res: IGenericResponse<boolean>) => {
-        if (!res.isSuccess) {
+      .subscribe((res: IGenericResponse<DestinationDTO> | null) => {
+        if (res === null) return;
+        if (res.isSuccess === false) {
           this.errorMessage = res.message;
           return;
         }
@@ -193,7 +190,6 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
     if (image.existing && this.selectedDestination?.id) {
       this.deletingImageIndex = index;
-      debugger;
       this.adminService.deleteDestinationImage(image?.id!).pipe(
         catchError(() => {
           Swal.fire({ icon: 'error', title: this.translate.instant('imageDeleteError') });
@@ -204,7 +200,12 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           this.cdr.markForCheck();
         }),
       ).subscribe((response: any) => {
-        if (response?.imageDeleteFailed) return;
+        if (response?.imageDeleteFailed || response?.isSuccess === false) {
+          if (response?.isSuccess === false) {
+            Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('imageDeleteError') });
+          }
+          return;
+        }
         this.removeImageLocally(index);
         this.showImageDeletedToast();
       });
@@ -222,11 +223,11 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   private populateForm(destination: any): void {
     this.revokeNewImageUrls();
     this.imageValidationMessage = '';
-    debugger
-    this.imageUploads =   destination.images
+    const images = Array.isArray(destination?.images) ? destination.images : [];
+    this.imageUploads = images
       .slice(0, this.maxImages)
       .map((image: any, index: number) => ({
-        id:image.id,
+        id: image.id,
         url: this.imageUrl(image),
         name: image?.imageName ?? image?.name ?? `Destination image ${index + 1}`,
         existing: true,
@@ -316,9 +317,9 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       .forEach((image) => URL.revokeObjectURL(image.url));
   }
 
-    getImageUrl(url: string): string {
-      if(url.includes('blob'))
-        return url;
-      return  environment.imageUrl +url ;
-    }
+  getImageUrl(url: string): string {
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
 }

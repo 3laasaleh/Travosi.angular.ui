@@ -165,7 +165,12 @@ export class DestinationsList implements OnInit, OnChanges {
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
-      if (response?.statusToggleFailed) return;
+      if (response?.statusToggleFailed || response?.isSuccess === false) {
+        if (response?.isSuccess === false) {
+          Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('statusUpdateError') });
+        }
+        return;
+      }
       destination.isActive = !destination.isActive;
       Swal.fire({
         toast: true,
@@ -186,6 +191,9 @@ export class DestinationsList implements OnInit, OnChanges {
   }
 
   imageUrl(image: any): string {
-    return  environment.imageUrl +image?.imageUrl ;
+    const url = typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 }

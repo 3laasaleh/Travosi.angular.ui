@@ -23,6 +23,7 @@ export class Airlines {
   }
 
   selectAirlineForEdit(airline: any): void {
+    if (airline?.isActive !== false) return;
     this.selectedAirline = airline;
     this.showForm = true;
   }

@@ -26,20 +26,51 @@
 
   @if (previewPackage) {
     <div class="fixed inset-0 z-999 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" (click)="closePreview()">
-      <div class="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl" (click)="$event.stopPropagation()">
+      <div class="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900" (click)="$event.stopPropagation()">
         <button type="button" class="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-black/55 text-xl text-white" [attr.aria-label]="'close' | translate" (click)="closePreview()"><i class="mdi mdi-close"></i></button>
-        @if (imageUrl(previewPackage); as image) { <img [src]="image" [alt]="packageTitle(previewPackage)" class="aspect-[16/9] max-h-[460px] w-full object-cover" /> }
+        <div class="relative overflow-hidden bg-slate-200">
+          @if (getImages(previewPackage)[previewImageIndex]; as image) {
+            <button type="button" class="group block w-full cursor-zoom-in" [attr.aria-label]="'viewLargerImage' | translate" (click)="openImageMagnifier()">
+              <img [src]="imageUrl(image)" [alt]="packageTitle(previewPackage)" class="aspect-[16/9] max-h-[520px] w-full object-cover" />
+              <span class="absolute bottom-4 left-4 grid h-11 w-11 place-items-center rounded-full bg-black/55 text-xl text-white transition group-hover:scale-105 group-hover:bg-primary"><i class="mdi mdi-magnify-plus-outline"></i></span>
+            </button>
+            @if (getImages(previewPackage).length > 1) {
+              <button type="button" class="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white transition hover:bg-black/70" [attr.aria-label]="'previousImage' | translate" (click)="previewPreviousImage()"><i class="mdi mdi-chevron-left"></i></button>
+              <button type="button" class="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-2xl text-white transition hover:bg-black/70" [attr.aria-label]="'nextImage' | translate" (click)="previewNextImage()"><i class="mdi mdi-chevron-right"></i></button>
+              <span class="absolute bottom-4 right-4 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">{{ previewImageIndex + 1 }} / {{ getImages(previewPackage).length }}</span>
+            }
+          } @else { <div class="grid aspect-[16/9] place-items-center text-slate-400"><i class="mdi mdi-image-off-outline text-6xl"></i></div> }
+        </div>
         <div class="p-6 md:p-8">
           <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">{{ 'travelPackage' | translate }}</p>
           <h2 class="mt-2 text-3xl font-semibold">{{ packageTitle(previewPackage) }}</h2>
           <p class="mt-2 text-sm font-medium text-primary"><i class="mdi mdi-map-marker-outline"></i> {{ destinationName(previewPackage) }}</p>
           <div class="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
             <span>{{ 'duration' | translate }}: {{ previewPackage.durationDays ?? previewPackage.duration ?? '-' }}</span>
-            <span>{{ 'price' | translate }}: {{ previewPackage.pricePerPerson ?? previewPackage.price ?? 0 }}</span>
+            <span>{{ 'price' | translate }}: {{ packagePrice(previewPackage) }}</span>
           </div>
           <p class="mt-5 whitespace-pre-line leading-7 text-slate-600">{{ previewPackage.fullDescription ?? previewPackage.description }}</p>
+          @if (getImages(previewPackage).length > 1) {
+            <div class="mt-6 flex gap-2 overflow-x-auto pb-1">
+              @for (image of getImages(previewPackage); track $index; let index = $index) {
+                <button type="button" class="shrink-0 overflow-hidden rounded-xl border-2" [class.border-primary]="index === previewImageIndex" [class.border-transparent]="index !== previewImageIndex" (click)="showPreviewImage(index)"><img [src]="imageUrl(image)" [alt]="packageTitle(previewPackage)" class="h-16 w-24 object-cover" /></button>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>
+
+    @if (imageMagnifierOpen && getImages(previewPackage)[previewImageIndex]; as magnifiedImage) {
+      <div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 p-4" role="dialog" aria-modal="true" (click)="closeImageMagnifier()">
+        <button type="button" class="absolute right-5 top-5 z-20 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-2xl text-white transition hover:bg-white/25" [attr.aria-label]="'close' | translate" (click)="closeImageMagnifier()"><i class="mdi mdi-close"></i></button>
+        <img [src]="imageUrl(magnifiedImage)" [alt]="packageTitle(previewPackage)" class="max-h-[92vh] max-w-[94vw] object-contain" (click)="$event.stopPropagation()" />
+        @if (getImages(previewPackage).length > 1) {
+          <button type="button" class="absolute left-5 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-3xl text-white transition hover:bg-white/25" [attr.aria-label]="'previousImage' | translate" (click)="$event.stopPropagation(); previewPreviousImage()"><i class="mdi mdi-chevron-left"></i></button>
+          <button type="button" class="absolute right-5 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-3xl text-white transition hover:bg-white/25" [attr.aria-label]="'nextImage' | translate" (click)="$event.stopPropagation(); previewNextImage()"><i class="mdi mdi-chevron-right"></i></button>
+          <span class="absolute bottom-5 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white">{{ previewImageIndex + 1 }} / {{ getImages(previewPackage).length }}</span>
+        }
+      </div>
+    }
   }
 </section>

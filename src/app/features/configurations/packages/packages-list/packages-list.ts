@@ -146,6 +146,13 @@ export class PackagesList implements OnInit, OnChanges {
   }
 
   destinationName(item: any): string {
+    const destinations = Array.isArray(item?.destinations) ? item.destinations : [];
+    if (destinations.length) {
+      return destinations
+        .map((destination: any) => destination?.destinationName ?? destination?.nameEng ?? destination?.name)
+        .filter(Boolean)
+        .join(', ');
+    }
     return item?.destination?.nameEng ?? item?.destinationName ?? `#${item?.destinationId ?? '-'}`;
   }
 
@@ -155,5 +162,10 @@ export class PackagesList implements OnInit, OnChanges {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  packagePrice(item: any): string {
+    const price = Number(item?.pricePerPerson ?? item?.price ?? 0);
+    return `$${Number.isFinite(price) ? price : 0}`;
   }
 }
