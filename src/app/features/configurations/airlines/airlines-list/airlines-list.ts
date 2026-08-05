@@ -9,8 +9,10 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import Swal from 'sweetalert2';
+import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 
@@ -36,12 +38,14 @@ export class AirlinesList implements OnInit, OnChanges {
 
   airlines: any[] = [];
   isLoading = false;
+  statusUpdatingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -107,5 +111,60 @@ export class AirlinesList implements OnInit, OnChanges {
       this.paginationInfo.page++;
       this.loadAirlines();
     }
+  }
+
+  async toggleAirlineStatus(airline: any): Promise<void> {
+    if (this.statusUpdatingId !== null) return;
+    const airlineId = Number(airline?.id);
+    if (!Number.isInteger(airlineId) || airlineId <= 0) return;
+    const isActive = airline?.isActive !== false;
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant(isActive ? 'confirmDeactivateAirline' : 'confirmActivateAirline'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: isActive ? '#e11d48' : '#059669',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.statusUpdatingId = airlineId;
+    this.apiService.patch(`Airlines/${airlineId}/ChangeStatus`, {}).pipe(
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('airlineStatusUpdateError') });
+        return of({ statusToggleFailed: true });
+      }),
+      finalize(() => {
+        this.statusUpdatingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.statusToggleFailed || response?.isSuccess === false) {
+        if (response?.isSuccess === false) {
+          Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('airlineStatusUpdateError') });
+        }
+        return;
+      }
+      airline.isActive = !isActive;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: this.translate.instant('airlineStatusUpdated'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.cdr.markForCheck();
+    });
+  }
+
+  logoUrl(airline: any): string {
+    const url = String(airline?.logoUrl ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 }
