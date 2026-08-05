@@ -4,7 +4,7 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../../pages/user/_services/auth.service';
+import { AuthService } from '../../features/user/_services/auth.service';
 
 export const authSessionInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);

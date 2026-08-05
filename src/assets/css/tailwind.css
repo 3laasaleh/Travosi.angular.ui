@@ -74,11 +74,11 @@
 
 /* Custom */
 @import "./custom/_general.css";
-@import "./custom/pages/_helper.css";
+@import "./custom/features/_helper.css";
 @import "./custom/structure/_topnav.css";
-@import "./custom/pages/_countdown.css";
-@import "./custom/pages/_contact.css";
-@import "./custom/pages/_testi.css";
-@import "./custom/pages/_datepicker.css";
-@import "./custom/pages/_range-slider.css";
-@import "./custom/pages/_swiper-slider.css";
+@import "./custom/features/_countdown.css";
+@import "./custom/features/_contact.css";
+@import "./custom/features/_testi.css";
+@import "./custom/features/_datepicker.css";
+@import "./custom/features/_range-slider.css";
+@import "./custom/features/_swiper-slider.css";

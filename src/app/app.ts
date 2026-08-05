@@ -1,6 +1,7 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { VisitorTrackingService } from './core/services/visitor-tracking.service';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +13,11 @@ import { TranslateService } from '@ngx-translate/core';
 export class App {
   protected readonly title = signal('See World');
   private translate = inject(TranslateService);
+  private visitorTracking = inject(VisitorTrackingService);
 
   constructor() {
     this.translate.addLangs(['en', 'ar']);
+    this.visitorTracking.track().subscribe();
 
   }
 }

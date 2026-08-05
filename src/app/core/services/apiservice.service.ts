@@ -8,7 +8,7 @@ import {
 
 
 import { environment } from "../../../environments/environment";
-import { AuthService } from "../../pages/user/_services/auth.service";
+import { AuthService } from "../../features/user/_services/auth.service";
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +30,9 @@ export class ApiService {
 
     return this.http.get<any[]>(environment.baseUrl + url);
 
+  }
+  postUnauthenticated(url: string, data: unknown): Observable<any> {
+    return this.http.post<any>(environment.baseUrl + url, data);
   }
   get(url: string): Observable<any> {
     const bearer = 'Bearer ' + this.getToken(); // this.anyService.getToken();

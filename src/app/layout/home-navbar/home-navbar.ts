@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import feather from 'feather-icons';
-import { AuthService } from '../../pages/user/_services/auth.service';
+import { AuthService } from '../../features/user/_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 import { CurrencyService } from '../../core/services/currency.service';

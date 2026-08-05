@@ -14,10 +14,10 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
 import { catchError, finalize, of } from 'rxjs';
-import { AuthService } from '../../pages/user/_services/auth.service';
+import { AuthService } from '../../features/user/_services/auth.service';
 import { ApiService } from '../../core/services/apiservice.service';
 import { TaskNotificationsService } from '../../core/services/task-notifications.service';
-import { TaskStatusEnum } from '../../pages/admin/tasks/task-status.enum';
+import { TaskStatusEnum } from '../../features/admin/tasks/task-status.enum';
 import { LanguageService } from '../../core/services/language.service';
 
 @Component({

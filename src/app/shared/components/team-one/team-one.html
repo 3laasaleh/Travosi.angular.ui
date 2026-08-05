@@ -1,0 +1,46 @@
+<div class="container relative">
+    <div class="grid grid-cols-1 pb-6 text-center">
+        <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Our Team</h3>
+        <p class="text-slate-400 max-w-xl mx-auto">This is just a simple text made for this unique and awesome template, you can replace it with any text.</p>
+    </div>
+
+    <div class="grid md:grid-cols-12 grid-cols-1 mt-8 gap-[30px]">
+        @if (isLoading) {
+            @for (item of [1, 2, 3, 4]; track item) {
+                <div class="lg:col-span-3 md:col-span-6 text-center" aria-hidden="true">
+                    <div class="mx-auto h-52 w-52 animate-pulse rounded-full bg-slate-200"></div>
+                    <div class="mx-auto mt-4 h-5 w-32 animate-pulse rounded-full bg-slate-200"></div>
+                    <div class="mx-auto mt-2 h-4 w-20 animate-pulse rounded-full bg-slate-100"></div>
+                </div>
+            }
+        } @else {
+        @for (item of teamData; track item.id) {
+            <div class="lg:col-span-3 md:col-span-6">
+                <div class="group text-center">
+                    <div class="relative inline-flex mx-auto h-52 w-52 items-center justify-center overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                        @if (hasProfileImage(item)) {
+                            <img [src]="item.image" class="h-full w-full object-cover" [alt]="item.name" (error)="showAvatarIcon(item.id)">
+                        } @else {
+                            <i class="mdi mdi-account text-8xl text-slate-400" aria-hidden="true"></i>
+                            <span class="sr-only">{{ item.name }}</span>
+                        }
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black h-52 w-52 rounded-full opacity-0 group-hover:opacity-100 duration-500"></div>
+
+                        <ul class="list-none absolute start-0 end-0 -bottom-20 group-hover:bottom-5 duration-500">
+                            <li class="inline">
+                                <a [href]="'mailto:' + item.email" class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md border border-primary bg-primary text-white" [attr.aria-label]="item.email"><i class="mdi mdi-email-outline"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="content mt-3">
+                        <a href="javascript:void(0)" class="text-lg font-semibold hover:text-primary duration-500">{{ item.name }}</a>
+                        <p class="text-slate-400">{{ item.position }}</p>
+                    </div>
+                </div>
+            </div>
+        } @empty {
+            <p class="col-span-full py-8 text-center text-sm text-slate-500">{{ 'noAgentsFound' | translate }}</p>
+        }
+        }
+    </div>
+</div>
