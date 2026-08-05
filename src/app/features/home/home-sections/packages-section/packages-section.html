@@ -1,0 +1,37 @@
+<section class="relative overflow-hidden py-16 md:py-24">
+  <div class="container relative">
+    <div class="mb-10 text-center">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-primary">{{ 'exploreNow' | translate }}</p>
+      <h2 class="text-2xl font-semibold md:text-3xl">{{ 'packages' | translate }}</h2>
+    </div>
+
+    @if (isLoading) {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true">
+        @for (card of [1,2,3,4,5,6,7,8]; track card) {
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div class="aspect-[4/3] animate-pulse bg-slate-200"></div><div class="space-y-3 p-4"><div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200"></div><div class="h-4 w-full animate-pulse rounded-full bg-slate-200"></div></div></div>
+        }
+      </div>
+    } @else if (hasError) {
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900"><p class="text-slate-500">{{ 'packagesLoadError' | translate }}</p><button type="button" class="mt-5 rounded-full bg-primary px-5 py-2.5 font-semibold text-white" (click)="loadPackages()">{{ 'showMore' | translate }}</button></div>
+    } @else {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (item of packages; track item.id ?? item.packageId ?? $index) {
+          <a [routerLink]="['/packages', item.id ?? item.packageId]" class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+            <article class="flex w-full flex-col">
+              <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="item.titleEng ?? item.nameEng ?? item.title ?? item.name" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" /></div>
+              <div class="flex flex-1 flex-col p-4">
+                <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.titleEng ?? item.nameEng ?? item.title ?? item.name }}</h3>
+                @if (item.subDescription ?? item.description) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ item.subDescription ?? item.description }}</p> }
+                <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><strong class="text-lg text-primary">{{ currencyLabel(item) }} {{ price(item) | number: '1.0-2' }}</strong><span class="text-sm font-semibold text-slate-500 transition group-hover:text-primary">{{ 'exploreNow' | translate }} <i class="mdi mdi-arrow-right rtl:rotate-180"></i></span></div></div>
+              </div>
+            </article>
+          </a>
+        } @empty { <p class="col-span-full text-center text-slate-400">{{ 'noPackagesFound' | translate }}</p> }
+      </div>
+    }
+
+    <div class="mt-10 text-center">
+      <a routerLink="/packages" class="group inline-flex items-center justify-center gap-2 font-semibold text-primary transition hover:gap-3 hover:underline hover:underline-offset-4">{{ 'exploreMore' | translate }}<i class="mdi mdi-arrow-right text-xl rtl:rotate-180"></i></a>
+    </div>
+  </div>
+</section>

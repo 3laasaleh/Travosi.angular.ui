@@ -20,14 +20,26 @@ export const routes: Routes = [
   {
     path: 'destinations/:id',
     loadComponent: () =>
-      import('./features/home/destination-detail/destination-detail').then(
+      import('./features/home/home-sections/destinations-section/destination-detail/destination-detail').then(
         (m) => m.HomeDestinationDetail,
       ),
+  },
+  {
+    path: 'tours',
+    loadComponent: () =>
+      import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
     path: 'tours/:id',
     loadComponent: () =>
       import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
+  },
+  {
+    path: 'packages',
+    loadComponent: () =>
+      import('./features/home/packages-list/packages-list').then(
+        (m) => m.HomePackagesList,
+      ),
   },
   {
     path: 'packages/:id',

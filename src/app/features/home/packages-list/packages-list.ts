@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -12,7 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { LanguageService } from '../../../core/services/language.service';
+import { apiCurrencyLabel, apiPrice } from '../../../core/utils/api-price.util';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -25,22 +26,21 @@ interface PaginationInfo {
 }
 
 @Component({
-  selector: 'app-home-destinations-list',
+  selector: 'app-home-packages-list',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
-  templateUrl: './destinations-list.html',
+  imports: [DecimalPipe, RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
+  templateUrl: './packages-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeDestinationsList implements OnInit {
+export class HomePackagesList implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly languageService = inject(LanguageService);
 
   readonly pageSizeOptions = [8, 12, 24];
   readonly heroImage = 'assets/images/bg/cta.jpg';
 
-  destinations: any[] = [];
+  packages: any[] = [];
   isLoading = false;
   errorMessage = '';
   paginationInfo: PaginationInfo = {
@@ -51,20 +51,20 @@ export class HomeDestinationsList implements OnInit {
   };
 
   ngOnInit(): void {
-    this.loadDestinations();
+    this.loadPackages();
   }
 
-  loadDestinations(): void {
+  loadPackages(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
     this.apiService
       .getUnauthntecated(
-        `destinations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`,
+        `Packages?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`,
       )
       .pipe(
         catchError(() => {
-          this.errorMessage = 'destinationsLoadError';
+          this.errorMessage = 'packagesLoadError';
           return of(null);
         }),
         finalize(() => {
@@ -75,14 +75,25 @@ export class HomeDestinationsList implements OnInit {
       )
       .subscribe((response: any) => {
         if (response === null) {
-          this.destinations = [];
+          this.packages = [];
           return;
         }
 
         const pageData = response?.data ?? response;
-        const rows = pageData?.data ?? pageData?.items ?? pageData?.destinations ?? pageData;
-        this.destinations = Array.isArray(rows) ? rows : [];
-        this.updatePagination(pageData, this.destinations.length);
+        const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
+        this.packages = Array.isArray(rows) ? rows : [];
+
+        const totalCount = Number(pageData?.totalCount ?? this.packages.length);
+        const pageSize = Number(pageData?.pageSize ?? this.paginationInfo.pageSize);
+        this.paginationInfo = {
+          page: Number(pageData?.page ?? this.paginationInfo.page),
+          pageSize,
+          totalCount,
+          totalPages: Math.max(
+            1,
+            Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize))),
+          ),
+        };
       });
   }
 
@@ -92,7 +103,7 @@ export class HomeDestinationsList implements OnInit {
     }
 
     this.paginationInfo.page = page;
-    this.loadDestinations();
+    this.loadPackages();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -102,24 +113,38 @@ export class HomeDestinationsList implements OnInit {
 
     this.paginationInfo.pageSize = pageSize;
     this.paginationInfo.page = 1;
-    this.loadDestinations();
+    this.loadPackages();
   }
 
-  destinationName(destination: any): string {
-    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
-    return isArabic
-      ? destination?.nameAr ?? destination?.nameEng ?? destination?.name ?? ''
-      : destination?.nameEng ?? destination?.name ?? destination?.nameAr ?? '';
+  packageTitle(item: any): string {
+    return item?.titleEng ?? item?.nameEng ?? item?.title ?? item?.name ?? '';
   }
 
-  imageUrl(destination: any): string {
-    const image = Array.isArray(destination?.images) ? destination.images[0] : null;
+  destinationName(item: any): string {
+    return item?.destinationName ?? item?.destination?.nameEng ?? item?.destination?.name ?? '';
+  }
+
+  durationDays(item: any): number | null {
+    const value = Number(item?.durationDays ?? item?.days);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  price(item: any): number {
+    return apiPrice(item?.pricePerPerson ?? item?.price);
+  }
+
+  currencySymbol(item: any): string {
+    return apiCurrencyLabel(item);
+  }
+
+  imageUrl(item: any): string {
+    const image = Array.isArray(item?.images) ? item.images[0] : null;
     const url =
       image?.imageUrl ??
       image?.url ??
       image?.path ??
-      destination?.coverImageUrl ??
-      destination?.imageUrl ??
+      item?.coverImageUrl ??
+      item?.imageUrl ??
       '';
 
     if (!url) return 'assets/images/bg/2.jpg';
@@ -127,19 +152,5 @@ export class HomeDestinationsList implements OnInit {
 
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
-  }
-
-  private updatePagination(pageData: any, rowCount: number): void {
-    const totalCount = Number(pageData?.totalCount ?? rowCount);
-    const pageSize = Number(pageData?.pageSize ?? this.paginationInfo.pageSize);
-    this.paginationInfo = {
-      page: Number(pageData?.page ?? this.paginationInfo.page),
-      pageSize,
-      totalCount,
-      totalPages: Math.max(
-        1,
-        Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize))),
-      ),
-    };
   }
 }

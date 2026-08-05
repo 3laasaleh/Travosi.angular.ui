@@ -4,11 +4,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  inject,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
-import { CurrencyService } from '../../../../../core/services/currency.service';
+import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
 import { datas } from '../../../../../data/data';
 
 @Component({
@@ -18,8 +17,6 @@ import { datas } from '../../../../../data/data';
   templateUrl: './tour-detail.html',
 })
 export class TourDetail implements AfterViewInit {
-  readonly currencyService = inject(CurrencyService);
-
   @Input() tour: any = null;
 
   datas = datas;
@@ -78,14 +75,11 @@ export class TourDetail implements AfterViewInit {
   }
 
   get price(): number {
-    return this.currencyService.convertPrice(
-      this.tour?.pricePerPerson ?? this.tour?.price ?? 0,
-      this.tour?.currencyId ?? this.tour?.currency,
-    );
+    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price);
   }
 
   get currencySymbol(): string {
-    return this.currencyService.displaySymbol(this.tour?.currencyId ?? this.tour?.currency);
+    return apiCurrencyLabel(this.tour);
   }
 
   get description(): string {

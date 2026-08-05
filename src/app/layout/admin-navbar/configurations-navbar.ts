@@ -9,7 +9,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
@@ -22,7 +22,7 @@ import { AuthService } from '../../features/user/_services/auth.service';
 
 @Component({
   selector: 'app-configurations-navbar',
-  imports: [RouterLink, DatePipe, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, DatePipe, TranslatePipe],
   templateUrl: './configurations-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -97,6 +97,7 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   switchLanguage(language: string): void {
     if (this.switchingLanguage !== null) return;
     this.switchingLanguage = language;
+    this.mobileMenuOpen = false;
     this.languageService.setGLobalLanguage(language).pipe(
       finalize(() => {
         this.switchingLanguage = null;
@@ -137,11 +138,17 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   toggleAccountMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.accountMenuOpen = !this.accountMenuOpen;
+    this.mobileMenuOpen = false;
+    this.languageMenuOpen = false;
+    this.notificationsOpen = false;
     this.refreshIcons();
   }
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.accountMenuOpen = false;
+    this.languageMenuOpen = false;
+    this.notificationsOpen = false;
     this.refreshIcons();
   }
 
@@ -166,7 +173,13 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
     }
   }
 
+  @HostListener('document:keydown.escape')
+  closeOnEscape(): void {
+    this.closeMenus();
+  }
+
   private refreshIcons(): void {
     requestAnimationFrame(() => feather.replace());
+    this.cdr.markForCheck();
   }
 }

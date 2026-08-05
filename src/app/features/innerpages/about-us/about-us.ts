@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
@@ -22,6 +23,7 @@ import { UsersOne } from '../../../shared/components/users-one/users-one';
   selector: 'app-about-us',
   imports: [
     RouterLink,
+    TranslatePipe,
     HomeNavbar,
     AgencyOne,
     TeamOne,

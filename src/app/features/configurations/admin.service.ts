@@ -79,6 +79,18 @@ export class AdminService {
     });
   }
 
+  addPackageImages(payload: FormData): Observable<any> {
+    return this.http.post(`${environment.baseUrl}Packages/AddImages`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deletePackageImage(imageId: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Packages/deleteImage/${imageId}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
   addTourItinerary(payload: any): Observable<any> {
     return this.http.post(`${environment.baseUrl}Tours/AddItinerary`, payload, {
       headers: this.getHeaders(),

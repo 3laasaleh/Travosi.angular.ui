@@ -11,12 +11,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
-import { ApiService } from '../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../core/services/currency.service';
-import { FooterOne } from '../../../layout/footer-one/footer-one';
-import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { environment } from '../../../../environments/environment';
-import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
+import { environment } from '../../../../../../environments/environment';
+import { ApiService } from '../../../../../core/services/apiservice.service';
+import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
+import { FooterOne } from '../../../../../layout/footer-one/footer-one';
+import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
+import { ImageViewerModal } from '../../../../../shared/components/image-viewer-modal/image-viewer-modal';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -30,7 +30,6 @@ export class HomeDestinationDetail implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  readonly currencyService = inject(CurrencyService);
 
   destination: any = null;
   tours: any[] = [];
@@ -126,14 +125,11 @@ export class HomeDestinationDetail implements OnInit {
   }
 
   tourPrice(tour: any): number {
-    return this.currencyService.convertPrice(
-      tour?.pricePerPerson ?? tour?.price ?? 0,
-      tour?.currencyId ?? tour?.currency,
-    );
+    return apiPrice(tour?.pricePerPerson ?? tour?.price);
   }
 
   tourCurrencySymbol(tour: any): string {
-    return this.currencyService.displaySymbol(tour?.currencyId ?? tour?.currency);
+    return apiCurrencyLabel(tour);
   }
 
   tourDestinationName(tour: any): string {

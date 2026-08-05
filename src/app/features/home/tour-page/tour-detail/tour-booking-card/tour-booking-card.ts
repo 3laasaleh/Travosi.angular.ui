@@ -19,7 +19,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../../../core/services/currency.service';
+import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
 import { AuthService } from '../../../../user/_services/auth.service';
 
 
@@ -33,7 +33,6 @@ import { AuthService } from '../../../../user/_services/auth.service';
 export class TourBookingCard {
   private readonly apiService = inject(ApiService);
   private readonly authService = inject(AuthService);
-  private readonly currencyService = inject(CurrencyService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
@@ -57,17 +56,11 @@ export class TourBookingCard {
   }
 
   get pricePerPerson(): number {
-    return this.currencyService.convertPrice(
-      this.tour?.pricePerPerson ?? this.tour?.price ?? 0,
-      this.tour?.currencyId ?? this.tour?.currency,
-    );
+    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price);
   }
 
   get pricePerChild(): number {
-    return this.currencyService.convertPrice(
-      this.tour?.pricePerChild ?? 0,
-      this.tour?.currencyId ?? this.tour?.currency,
-    );
+    return apiPrice(this.tour?.pricePerChild);
   }
 
   get seatsAvailable(): number {
@@ -93,7 +86,7 @@ export class TourBookingCard {
   }
 
   get currencySymbol(): string {
-    return this.currencyService.displaySymbol(this.tour?.currencyId ?? this.tour?.currency);
+    return apiCurrencyLabel(this.tour);
   }
 
   get minTravelDate(): string {

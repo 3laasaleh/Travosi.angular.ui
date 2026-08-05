@@ -1,20 +1,13 @@
 <section class="relative overflow-hidden py-16 md:py-24">
   <div class="pointer-events-none absolute -start-28 top-10 size-72 rounded-full bg-primary/5 blur-3xl"></div>
   <div class="container relative">
-    <div class="mb-10 flex flex-col gap-4 text-center sm:flex-row sm:items-end sm:justify-between sm:text-start">
+    <div class="mb-10 text-center">
       <div>
         <p class="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-primary">
           {{ 'exploreNow' | translate }}
         </p>
         <h2 class="text-2xl font-semibold md:text-3xl">{{ 'destinations' | translate }}</h2>
       </div>
-      <a
-        routerLink="/destinations"
-        class="inline-flex items-center justify-center gap-2 font-semibold text-primary transition hover:gap-3"
-      >
-        {{ 'viewAllDestinations' | translate }}
-        <i class="mdi mdi-arrow-right text-xl rtl:rotate-180" aria-hidden="true"></i>
-      </a>
     </div>
 
     @if (isLoading) {
@@ -75,5 +68,12 @@
         }
       </div>
     }
+
+    <div class="mt-10 text-center">
+      <a routerLink="/destinations" class="group inline-flex items-center justify-center gap-2 font-semibold text-primary transition hover:gap-3 hover:underline hover:underline-offset-4">
+        {{ 'exploreMore' | translate }}
+        <i class="mdi mdi-arrow-right text-xl rtl:rotate-180" aria-hidden="true"></i>
+      </a>
+    </div>
   </div>
 </section>

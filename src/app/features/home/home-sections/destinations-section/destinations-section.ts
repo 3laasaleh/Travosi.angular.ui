@@ -39,7 +39,7 @@ export class DestinationsSection implements OnInit {
     this.hasError = false;
 
     this.apiService
-      .getUnauthntecated('destinations?page=1&pageSize=6')
+      .getUnauthntecated('destinations?page=1&pageSize=8')
       .pipe(
         catchError(() => {
           this.hasError = true;
@@ -59,7 +59,7 @@ export class DestinationsSection implements OnInit {
 
         const pageData = response?.data ?? response;
         const rows = pageData?.data ?? pageData?.items ?? pageData?.destinations ?? pageData;
-        this.destinations = Array.isArray(rows) ? rows.slice(0, 6) : [];
+        this.destinations = Array.isArray(rows) ? rows.slice(0, 8) : [];
       });
   }
 

@@ -12,7 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../core/services/currency.service';
+import { apiCurrencyLabel, apiPrice } from '../../../core/utils/api-price.util';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
@@ -30,7 +30,6 @@ export class HomePackagePage implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  readonly currencyService = inject(CurrencyService);
 
   travelPackage: any = null;
   isLoading = true;
@@ -79,14 +78,11 @@ export class HomePackagePage implements OnInit {
   }
 
   get price(): number {
-    return this.currencyService.convertPrice(
-      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price ?? 0,
-      this.travelPackage?.currencyId ?? 'USD',
-    );
+    return apiPrice(this.travelPackage?.pricePerPerson ?? this.travelPackage?.price);
   }
 
   get currencySymbol(): string {
-    return this.currencyService.displaySymbol(this.travelPackage?.currencyId ?? 'USD');
+    return apiCurrencyLabel(this.travelPackage);
   }
 
   get duration(): string {

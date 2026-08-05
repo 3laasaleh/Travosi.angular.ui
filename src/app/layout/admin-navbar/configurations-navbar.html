@@ -1,12 +1,8 @@
 <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-  <div class="mx-auto flex h-20 items-center gap-4 px-4 sm:px-6 lg:px-8">
-    <a routerLink="/home" class="flex shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
-      <a routerLink="/" class="logo">
-        <div>
-          <img src="./assets/images/main-logo.png" class="logo-height" alt="">
-        </div>
-      </a>
-      <span>
+  <div class="mx-auto flex h-16 items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 lg:px-8">
+    <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
+      <img src="./assets/images/main-logo.png" class="h-10 w-auto shrink-0 sm:h-12" alt="See World Holidays">
+      <span class="hidden sm:block">
         <span class="block text-lg font-bold leading-tight text-slate-900 dark:text-white">See World Holidays</span>
         <span class="hidden text-xs font-medium uppercase tracking-[0.2em] text-logo-blue sm:block">{{ 'travelAgency' | translate }}</span>
       </span>
@@ -19,8 +15,8 @@
       <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ 'manageTravelContent' | translate }}</p>
     </div>
 
-    <div class="ml-auto flex items-center gap-2">
-      <div class="relative">
+    <div class="ms-auto flex min-w-0 items-center gap-1 sm:gap-2">
+      <div class="relative hidden lg:block">
         <button type="button"
           class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
           [disabled]="switchingLanguage !== null"
@@ -31,7 +27,7 @@
           <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!languageMenuOpen" [class.mdi-chevron-up]="languageMenuOpen"></i>
         </button>
         @if (languageMenuOpen) {
-          <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+          <div class="absolute end-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
             <div class="p-2">
               <button type="button" (click)="switchLanguage('en')" [disabled]="switchingLanguage !== null" class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-300 dark:hover:bg-slate-800" [class.bg-primary-50]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" role="menuitem">
                 <i class="mdi mdi-alphabet-latin text-lg" aria-hidden="true"></i>
@@ -51,14 +47,14 @@
       </div>
       <a
         routerLink="/home"
-        class="hidden items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary md:flex dark:border-slate-700 dark:text-slate-300"
+        class="hidden items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary lg:flex dark:border-slate-700 dark:text-slate-300"
       >
         <i data-feather="external-link" class="size-4"></i>
         {{ 'viewWebsite' | translate }}
       </a>
 
       @if (isAgent) {
-        <div class="relative">
+        <div class="relative hidden lg:block">
           <button
             type="button"
             class="relative flex size-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
@@ -73,7 +69,7 @@
           </button>
 
           @if (notificationsOpen) {
-            <div class="absolute right-0 mt-2 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+            <div class="absolute end-0 mt-2 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
               <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ 'myTasks' | translate }}</p>
                 <span class="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-600">{{ pendingTasksCount }} {{ 'taskStatusPending' | translate }}</span>
@@ -104,7 +100,7 @@
         </div>
       }
 
-      <div class="relative">
+      <div class="relative hidden lg:block">
         <button
           type="button"
           class="flex items-center gap-3 rounded-2xl p-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -128,7 +124,7 @@
         </button>
 
         @if (accountMenuOpen) {
-          <div class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+          <div class="absolute end-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
             <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ userName }}</p>
               @if (userEmail) {
@@ -156,19 +152,61 @@
         [attr.aria-expanded]="mobileMenuOpen"
         (click)="toggleMobileMenu()"
       >
-        <i [attr.data-feather]="mobileMenuOpen ? 'x' : 'menu'" class="size-5"></i>
+        <i
+          class="mdi text-xl leading-none"
+          [class.mdi-menu]="!mobileMenuOpen"
+          [class.mdi-close]="mobileMenuOpen"
+          aria-hidden="true"
+        ></i>
       </button>
     </div>
   </div>
 
   @if (mobileMenuOpen) {
-    <nav class="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-800" [attr.aria-label]="'adminNavigation' | translate">
+    <nav class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 py-4 shadow-lg lg:hidden dark:border-slate-800 dark:bg-slate-950" [attr.aria-label]="'adminNavigation' | translate">
       <div class="grid gap-1 sm:grid-cols-2">
-        <a routerLink="/configurations/destinations" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'destinations' | translate }}</a>
-        <a routerLink="/configurations/tours" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'tours' | translate }}</a>
-        <a routerLink="/configurations/packages" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'packages' | translate }}</a>
-        <a routerLink="/configurations/bookings" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">{{ 'bookings' | translate }}</a>
-        <a routerLink="/home" (click)="closeMenus()" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary sm:hidden dark:text-slate-300 dark:hover:bg-slate-800">{{ 'viewWebsite' | translate }}</a>
+        <a routerLink="/configurations/destinations" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-map-marker-outline text-xl"></i>{{ 'destinations' | translate }}</a>
+        <a routerLink="/configurations/tours" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-compass-outline text-xl"></i>{{ 'tours' | translate }}</a>
+        <a routerLink="/configurations/packages" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-package-variant-closed text-xl"></i>{{ 'packages' | translate }}</a>
+        <a routerLink="/configurations/bookings" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-calendar-check-outline text-xl"></i>{{ 'bookings' | translate }}</a>
+        <a routerLink="/configurations/customers" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-account-group-outline text-xl"></i>{{ 'customers' | translate }}</a>
+        <a routerLink="/configurations/tasks" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+          <i class="mdi mdi-checkbox-marked-outline text-xl"></i>
+          <span class="flex-1">{{ 'tasks' | translate }}</span>
+          @if (isAgent && pendingTasksCount > 0) { <span class="rounded-full bg-rose-600 px-2 py-0.5 text-xs font-bold text-white">{{ pendingTasksCount }}</span> }
+        </a>
+        <a routerLink="/configurations/airlines" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-airplane text-xl"></i>{{ 'airlines' | translate }}</a>
+        <a routerLink="/configurations/hotels" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-bed-outline text-xl"></i>{{ 'hotels' | translate }}</a>
+        <a routerLink="/configurations/flights" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-airplane-takeoff text-xl"></i>{{ 'flights' | translate }}</a>
+        <a routerLink="/configurations/countries" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-earth text-xl"></i>{{ 'countries' | translate }}</a>
+        <a routerLink="/configurations/cities" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-city-variant-outline text-xl"></i>{{ 'cities' | translate }}</a>
+        <a routerLink="/configurations/quotations" routerLinkActive="!bg-primary !text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"><i class="mdi mdi-file-document-outline text-xl"></i>{{ 'quotations' | translate }}</a>
+      </div>
+
+      <div class="mt-4 grid gap-4 border-t border-slate-200 pt-4 sm:grid-cols-2 dark:border-slate-800">
+        <section>
+          <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200"><i class="mdi mdi-web text-lg"></i>{{ 'language' | translate }}</p>
+          <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5 dark:bg-slate-900">
+            <button type="button" (click)="switchLanguage('en')" [disabled]="switchingLanguage !== null" class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:opacity-60 dark:text-slate-300" [class.bg-white]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" [class.shadow-sm]="currentLanguage === 'en'">{{ 'languageEnglish' | translate }}</button>
+            <button type="button" (click)="switchLanguage('ar')" [disabled]="switchingLanguage !== null" class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:opacity-60 dark:text-slate-300" [class.bg-white]="currentLanguage === 'ar'" [class.text-primary]="currentLanguage === 'ar'" [class.shadow-sm]="currentLanguage === 'ar'">{{ 'languageArabic' | translate }}</button>
+          </div>
+        </section>
+
+        <section>
+          <div class="mb-2 flex items-center gap-3 px-1">
+            @if (profileImageUrl) {
+              <img [src]="profileImageUrl" [alt]="userName" class="size-10 rounded-full object-cover ring-2 ring-primary/15" />
+            } @else {
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">{{ userInitials }}</span>
+            }
+            <div class="min-w-0"><p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</p><p class="truncate text-xs text-slate-500">{{ userEmail }}</p></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <a routerLink="/user-profile" (click)="closeMenus()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"><i data-feather="user" class="size-4"></i>{{ 'myProfile' | translate }}</a>
+            <button type="button" (click)="logout()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"><i data-feather="log-out" class="size-4"></i>{{ 'signOut' | translate }}</button>
+          </div>
+          <a routerLink="/home" (click)="closeMenus()" class="mt-2 flex items-center justify-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-white"><i data-feather="external-link" class="size-4"></i>{{ 'viewWebsite' | translate }}</a>
+        </section>
       </div>
     </nav>
   }

@@ -163,6 +163,7 @@
     "viewAllDestinations": "View all destinations",
     "viewAllTours": "View all tours",
     "viewAllPackages": "View all packages",
+    "exploreMore": "Explore more",
     "showMore": "Show more",
     "loading": "Loading...",
     "searchPlaceholder": "Search destinations, tours, packages...",
@@ -239,6 +240,7 @@
     "imageAspectRatioInvalid": "The image must be landscape with an aspect ratio between 4:3 and 16:9.",
     "destinationDeactivated": "Destination deactivated successfully.",
     "destinationsLoadError": "Destinations could not be loaded. Please try again.",
+    "packagesLoadError": "Packages could not be loaded. Please try again.",
     "tourSaveError": "The tour could not be saved.",
     "tourUpdated": "Tour updated successfully.",
     "tourCreated": "Tour created successfully.",
@@ -405,6 +407,9 @@
     ,"packageUpdated": "Package updated successfully."
     ,"packageCreated": "Package created successfully."
     ,"packageDeactivated": "Package deactivated successfully."
+    ,"packageSaveError": "The package could not be saved. Please try again."
+    ,"confirmDeactivatePackage": "Do you want to deactivate this package?"
+    ,"confirmActivatePackage": "Do you want to activate this package?"
     ,"languageEnglish": "English"
     ,"languageArabic": "Arabic"
     ,"travelAgency": "Travel agency"
@@ -616,4 +621,62 @@
     ,"myBookings": "My bookings"
     ,"settings": "Settings"
     ,"noAgentsFound": "No agents are available right now."
+    ,"packageImages": "Package images"
+    ,"packageImagesHint": "Choose the package gallery; the first image is used as the cover."
+    ,"packageImageRules": "Landscape JPG, PNG or WebP - 4:3 to 16:9, at least 1200 x 675 px, maximum 5 MB"
+    ,"packageImageLimit": "A package can have a maximum of 5 images."
+    ,"packageImagesSaveError": "Unable to upload the package images."
+    ,"packageIdMissingAfterCreate": "The package was saved, but the API did not return its ID for image upload."
+    ,"aboutSeeWorld": {
+      "eyebrow": "See World Holidays",
+      "pageTitle": "About See World Holidays",
+      "tagline": "Discover the world with confidence, comfort, and exceptional care.",
+      "home": "See World",
+      "breadcrumb": "About Us",
+      "introduction": {
+        "eyebrow": "Who we are",
+        "title": "Discover the World with Confidence",
+        "paragraphOne": "At See World Holidays, we believe that travel is more than reaching a destination—it's about creating unforgettable experiences, discovering new cultures, and making memories that last a lifetime. Whether you're planning a relaxing beach getaway, an adventurous tour, a family vacation, a honeymoon, or a corporate business trip, our dedicated team is here to make every journey seamless and enjoyable.",
+        "paragraphTwo": "With a passion for exceptional service and attention to detail, we provide carefully designed travel solutions tailored to every traveler's needs. From flight bookings and hotel reservations to complete holiday packages, visa assistance, airport transfers, and customized itineraries, we take care of every aspect of your trip so you can focus on enjoying the experience."
+      },
+      "mission": {
+        "title": "Our Mission",
+        "description": "Our mission is to deliver outstanding travel experiences by offering reliable, personalized, and affordable travel services. We strive to build lasting relationships with our clients through professionalism, transparency, and exceptional customer care."
+      },
+      "vision": {
+        "title": "Our Vision",
+        "description": "To become one of the region's most trusted travel agencies by connecting people with extraordinary destinations while delivering innovative travel solutions and world-class customer service."
+      },
+      "offer": {
+        "title": "What We Offer",
+        "items": [
+          "International and domestic holiday packages",
+          "Customized private and group tours",
+          "Flight reservations with leading airlines",
+          "Hotel bookings worldwide",
+          "Visa assistance and travel consultation",
+          "Airport transfers and transportation services",
+          "Honeymoon and family vacation packages",
+          "Corporate travel management",
+          "Cruise and luxury travel experiences",
+          "Travel insurance assistance"
+        ]
+      },
+      "whyChooseUs": {
+        "title": "Why Choose See World Holidays?",
+        "items": [
+          "Experienced travel consultants dedicated to your satisfaction",
+          "Personalized itineraries tailored to your preferences and budget",
+          "Competitive pricing with exceptional value",
+          "Trusted partnerships with airlines, hotels, and tourism providers",
+          "Fast, responsive customer support before, during, and after your trip",
+          "Commitment to quality, reliability, and customer satisfaction"
+        ]
+      },
+      "commitment": {
+        "title": "Our Commitment",
+        "description": "Every traveler is unique, and every journey deserves special attention. At See World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
+      },
+      "closing": "Let See World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
+    }
 }

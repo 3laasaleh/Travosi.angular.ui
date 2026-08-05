@@ -8,14 +8,12 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  inject,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../../core/services/currency.service';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -56,8 +54,6 @@ export interface QuotationDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuotationsFromCard implements OnInit, OnChanges {
-  private readonly currencyService = inject(CurrencyService);
-
   @Input() selectedQuotation: QuotationDTO | null = null;
   @Output() quotationSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -69,7 +65,10 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   quotationForm = this.createForm();
   customers: any[] = [];
-  readonly currencies = this.currencyService.options;
+  readonly currencies = [
+    { id: 2, code: 'USD', symbol: '$', labelKey: 'currencyUsd' },
+    { id: 1, code: 'EGP', symbol: 'EGP', labelKey: 'currencyEgp' },
+  ];
   packages: any[] = [];
   selectedPackageIds = new Set<number>();
   isLoading = false;
@@ -247,7 +246,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.quotationForm.reset({
       quotationNo: '',
       customerId: '',
-      currencyId: this.currencyService.currentCurrency().id,
+      currencyId: this.currencies[0].id,
       travelStartDate: '',
       travelEndDate: '',
       adults: 1,
@@ -273,7 +272,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return new FormGroup({
       quotationNo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       customerId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
-      currencyId: new FormControl<number | ''>(this.currencyService.currentCurrency().id, {
+      currencyId: new FormControl<number | ''>(this.currencies[0].id, {
         nonNullable: true,
         validators: [Validators.required],
       }),

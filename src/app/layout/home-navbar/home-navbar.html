@@ -133,7 +133,12 @@
       <button type="button"
         class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 lg:hidden dark:border-slate-700"
         aria-label="Toggle navigation" [attr.aria-expanded]="mobileMenuOpen" (click)="toggleMobileMenu()">
-        <i [attr.data-feather]="mobileMenuOpen ? 'x' : 'menu'" class="size-5"></i>
+        <i
+          class="mdi text-xl leading-none"
+          [class.mdi-menu]="!mobileMenuOpen"
+          [class.mdi-close]="mobileMenuOpen"
+          aria-hidden="true"
+        ></i>
       </button>
     </div>
   </div>
@@ -151,11 +156,21 @@
             <i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i>
             {{ 'destinations' | translate }}
           </a>
-          <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+          <a routerLink="/tours" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            <i class="mdi mdi-compass-outline text-xl" aria-hidden="true"></i>
+            {{ 'tours' | translate }}
+          </a>
+          <a routerLink="/packages" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            <i class="mdi mdi-package-variant-closed text-xl" aria-hidden="true"></i>
+            {{ 'packages' | translate }}
+          </a>
+          <!-- <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
             <i class="mdi mdi-email-outline text-xl" aria-hidden="true"></i>
             Contact Us
-          </a>
+          </a> -->
           @if (canAccessConfigurations) {
             <a routerLink="/configurations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
               class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">

@@ -5,14 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../../core/services/currency.service';
-
-interface PaginationInfoDTO {
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  totalPages: number;
-}
+import { apiCurrencyLabel, apiPrice } from '../../../../core/utils/api-price.util';
 
 @Component({
   selector: 'app-tours-section',
@@ -23,50 +16,44 @@ interface PaginationInfoDTO {
 export class ToursSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
-  readonly currencyService = inject(CurrencyService);
 
   tours: any[] = [];
   isLoading = false;
-  isLoadingMore = false;
-  paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 20, totalCount: 0, totalPages: 1 };
-
-  get hasMore(): boolean {
-    return this.paginationInfo.page < this.paginationInfo.totalPages;
-  }
+  hasError = false;
 
   ngOnInit(): void {
     this.loadTours();
   }
 
   loadTours(): void {
-    this.isLoading = this.paginationInfo.page === 1;
-    this.isLoadingMore = this.paginationInfo.page > 1;
-    this.apiService.getUnauthntecated(`Tours?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
-      catchError(() => of(null)),
+    this.isLoading = true;
+    this.hasError = false;
+    this.apiService.getUnauthntecated('Tours?page=1&pageSize=8').pipe(
+      catchError(() => {
+        this.hasError = true;
+        return of(null);
+      }),
       finalize(() => {
         this.isLoading = false;
-        this.isLoadingMore = false;
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
-      if (response === null) return;
+      if (response === null) {
+        this.tours = [];
+        return;
+      }
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
-      const newItems = Array.isArray(rows) ? rows : [];
-      this.tours = this.paginationInfo.page === 1 ? newItems : [...this.tours, ...newItems];
-      this.paginationInfo = {
-        page: Number(pageData?.page ?? this.paginationInfo.page),
-        pageSize: Number(pageData?.pageSize ?? this.paginationInfo.pageSize),
-        totalCount: Number(pageData?.totalCount ?? this.tours.length),
-        totalPages: Math.max(1, Number(pageData?.totalPages ?? 1)),
-      };
+      this.tours = Array.isArray(rows) ? rows.slice(0, 8) : [];
     });
   }
 
-  showMore(): void {
-    if (!this.hasMore || this.isLoadingMore) return;
-    this.paginationInfo.page++;
-    this.loadTours();
+  price(item: any): number {
+    return apiPrice(item?.pricePerPerson ?? item?.price);
+  }
+
+  currencyLabel(item: any): string {
+    return apiCurrencyLabel(item);
   }
 
   imageUrl(item: any): string {

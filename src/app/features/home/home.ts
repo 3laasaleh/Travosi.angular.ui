@@ -15,9 +15,9 @@ import { ApiService } from '../../core/services/apiservice.service';
 import { VisitorTrackingService } from '../../core/services/visitor-tracking.service';
 import { FooterOne } from '../../layout/footer-one/footer-one';
 import { AgencyOne } from '../../shared/components/agency-one/agency-one';
-import { DestinationsSection } from '../../shared/components/home-sections/destinations-section/destinations-section';
-import { PackagesSection } from '../../shared/components/home-sections/packages-section/packages-section';
-import { ToursSection } from '../../shared/components/home-sections/tours-section/tours-section';
+import { DestinationsSection } from './home-sections/destinations-section/destinations-section';
+import { PackagesSection } from './home-sections/packages-section/packages-section';
+import { ToursSection } from './home-sections/tours-section/tours-section';
 import { SelectedDate } from '../../shared/components/selected-date/selected-date';
 import { UsersOne } from '../../shared/components/users-one/users-one';
 
@@ -25,7 +25,6 @@ import { UsersOne } from '../../shared/components/users-one/users-one';
   selector: 'app-home',
   imports: [
     HomeNavbar,
-    SelectedDate,
     AgencyOne,
     UsersOne,
     FooterOne,

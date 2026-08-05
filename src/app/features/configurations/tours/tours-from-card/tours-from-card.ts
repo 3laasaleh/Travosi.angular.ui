@@ -4,7 +4,6 @@ import {
   Component,
   EventEmitter,
   HostListener,
-  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -26,7 +25,6 @@ import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
-import { CurrencyService } from '../../../../core/services/currency.service';
 
 import {
   createEmptyTourItinerary,
@@ -57,13 +55,14 @@ type TourFormStep = 1 | 2 | 3;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
-  private readonly currencyService = inject(CurrencyService);
-
   @Input() selectedTour: any = null;
   @Output() tourSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
 
-  readonly currencies = this.currencyService.options;
+  readonly currencies = [
+    { id: 2, code: 'USD', labelKey: 'currencyUsd' },
+    { id: 1, code: 'EGP', labelKey: 'currencyEgp' },
+  ];
   readonly maxImages = 5;
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly minImageWidth = 1200;
@@ -108,7 +107,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private itineraryDraftIndex: number | null = null;
 
   private get defaultCurrencyId(): number {
-    return this.currencyService.options[0].id;
+    return this.currencies[0].id;
   }
   private itineraryClientSequence = 0;
 
