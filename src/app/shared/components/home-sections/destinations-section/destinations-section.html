@@ -1,0 +1,79 @@
+<section class="relative overflow-hidden py-16 md:py-24">
+  <div class="pointer-events-none absolute -start-28 top-10 size-72 rounded-full bg-primary/5 blur-3xl"></div>
+  <div class="container relative">
+    <div class="mb-10 flex flex-col gap-4 text-center sm:flex-row sm:items-end sm:justify-between sm:text-start">
+      <div>
+        <p class="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+          {{ 'exploreNow' | translate }}
+        </p>
+        <h2 class="text-2xl font-semibold md:text-3xl">{{ 'destinations' | translate }}</h2>
+      </div>
+      <a
+        routerLink="/destinations"
+        class="inline-flex items-center justify-center gap-2 font-semibold text-primary transition hover:gap-3"
+      >
+        {{ 'viewAllDestinations' | translate }}
+        <i class="mdi mdi-arrow-right text-xl rtl:rotate-180" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    @if (isLoading) {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+        @for (card of [1, 2, 3, 4, 5, 6]; track card) {
+          <div class="relative aspect-[4/3] animate-pulse overflow-hidden rounded-3xl bg-slate-200 dark:bg-slate-800">
+            <div class="absolute inset-x-5 bottom-5 h-6 w-1/2 rounded-full bg-white/45"></div>
+          </div>
+        }
+      </div>
+    } @else if (hasError) {
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900">
+        <i class="mdi mdi-map-marker-off-outline text-5xl text-slate-300" aria-hidden="true"></i>
+        <p class="mt-3 text-slate-500">{{ 'destinationsLoadError' | translate }}</p>
+        <button
+          type="button"
+          class="mt-5 rounded-full bg-primary px-5 py-2.5 font-semibold text-white transition hover:opacity-90"
+          (click)="loadDestinations()"
+        >
+          {{ 'showMore' | translate }}
+        </button>
+      </div>
+    } @else {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        @for (destination of destinations; track destination.id ?? destination.destinationId ?? $index) {
+          <a
+            [routerLink]="['/destinations', destination.id ?? destination.destinationId]"
+            class="group relative aspect-[4/3] overflow-hidden rounded-3xl bg-slate-900 shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            <img
+              [src]="imageUrl(destination)"
+              [alt]="destinationName(destination)"
+              loading="lazy"
+              class="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6 text-white">
+              <div class="min-w-0">
+                <h3 class="truncate text-xl font-semibold md:text-2xl">
+                  {{ destinationName(destination) }}
+                </h3>
+                @if (destination.subDescription ?? destination.description) {
+                  <p class="mt-2 line-clamp-2 text-sm leading-6 text-white/75">
+                    {{ destination.subDescription ?? destination.description }}
+                  </p>
+                }
+              </div>
+              <span class="grid size-11 shrink-0 place-items-center rounded-full border border-white/40 bg-white/15 text-xl backdrop-blur-sm transition group-hover:border-primary group-hover:bg-primary">
+                <i class="mdi mdi-arrow-right rtl:rotate-180" aria-hidden="true"></i>
+              </span>
+            </div>
+          </a>
+        } @empty {
+          <div class="col-span-full rounded-3xl border border-dashed border-slate-300 px-6 py-12 text-center text-slate-500 dark:border-slate-700">
+            <i class="mdi mdi-map-marker-question-outline text-5xl text-slate-300" aria-hidden="true"></i>
+            <p class="mt-3">{{ 'noDestinationsFound' | translate }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
