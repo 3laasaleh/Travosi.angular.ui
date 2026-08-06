@@ -1,12 +1,7 @@
 <div>
-    @if (tour) {
+    
     <h5 class="text-2xl font-semibold">{{ title }}</h5>
     <p class="flex items-center text-slate-400 font-medium mt-2"><i data-feather="map-pin" class="size-4 me-1"></i> {{ destinationName }}</p>
-    } @else {
-    <h5 class="text-2xl font-semibold">New Zealand’s South Island brims with majestic</h5>
-    <p class="flex items-center text-slate-400 font-medium mt-2"><i data-feather="map-pin" class="size-4 me-1"></i> New Zealand</p>
-
-    }
 
     <ul class="list-none">
         <li class="inline-flex items-center me-5 mt-5">
@@ -14,14 +9,12 @@
 
             <div class="ms-3">
                 <p class="font-medium">{{ 'duration' | translate }}</p>
-                @if (tour) {
+              
                 <span class="text-slate-400 font-medium text-sm">
                     {{ durationDays }} {{ 'days' | translate }}
                     @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }
                 </span>
-                } @else {
-                <span class="text-slate-400 font-medium text-sm">2 day</span>
-                }
+              
             </div>
         </li>
 
@@ -64,12 +57,9 @@
 
     <div class="mt-6">
         <h5 class="text-lg font-semibold">{{ 'tourDescriptions' | translate }}:</h5>
-        @if (tour) {
+   
         <p class="whitespace-pre-line text-slate-400 mt-6">{{ description }}</p>
-        } @else {
-        <p class="text-slate-400 mt-6">The most well-known dummy text is the 'Lorem Ipsum', which is said to have originated in the 16th century. Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin. It contains a series of real Latin words. This ancient dummy text is also incomprehensible, but it imitates the rhythm of most European languages in Latin script.</p>
-        <p class="text-slate-400 mt-3">The advantage of its Latin origin and the relative meaninglessness of Lorum Ipsum is that the text does not attract attention to itself or distract the viewer's attention from the layout.</p>
-        }
+       
     </div>
 
     @if (itinerarySteps.length) {
@@ -128,29 +118,80 @@
         </ol>
     </div>
     }
+<!-- Tour Highlights -->
+<div class="mt-10">
+    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
+        <i class="mdi mdi-map-marker-star text-amber-500 text-3xl"></i>
+        {{ 'tourHighlights' | translate }}
+    </h5>
 
-    <div class="mt-6">
-        <h5 class="text-lg font-semibold">Questions & Answers:</h5>
+    <div class="grid grid-cols-1 gap-4">
+        @for (item of tour.highlights; track item.id) {
+            <div
+                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
 
-        <div id="accordion-collapseone" data-accordion="collapse" class="mt-6">
-            @for (item of datas; track item.id) {
-                <div class="mt-4 relative shadow dark:shadow-gray-800 rounded-md overflow-hidden">
-                    <h2 class="text-base font-semibold">
-                        <button type="button" (click)="handleclick(item.id)" [class.bg-gray-50]="item.id === activeIndex" [class.dark:bg-slate-800]="item.id === activeIndex" [class.text-primary]="item.id === activeIndex" class="flex justify-between items-center p-5 w-full font-medium text-start">
-                            <span>{{ item.title }}</span>
-                            <svg data-accordion-icon [class.rotate-180]="item.id === activeIndex" class="size-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </h2>
-                    <div [class.hidden]="item.id !== activeIndex">
-                        <div class="p-5">
-                            <p class="text-slate-400 dark:text-gray-400">{{ item.desc }}</p>
-                        </div>
-                    </div>
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/20">
+                    <i class="mdi mdi-star-circle text-2xl"></i>
                 </div>
-            }
-        </div>
-    </div>
+                <span class="text-base font-medium text-slate-700 group-hover:text-amber-600 dark:text-slate-200">
+                    {{ item.value }}
+                </span>
 
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Tour Includes -->
+<div class="mt-10">
+    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
+        <i class="mdi mdi-check-decagram text-emerald-600 text-3xl"></i>
+        {{ 'tourIncludes' | translate }}
+    </h5>
+
+    <div class="grid grid-cols-1 gap-4">
+        @for (item of tour.includes; track item.id) {
+            <div
+                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20">
+                    <i class="mdi mdi-check-circle text-2xl"></i>
+                </div>
+
+                <span class="text-base font-medium text-slate-700 group-hover:text-emerald-600 dark:text-slate-200">
+                    {{ item.value }}
+                </span>
+
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Tour Excludes -->
+<div class="mt-10">
+    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
+        <i class="mdi mdi-close-octagon text-rose-600 text-3xl"></i>
+        {{ 'tourExcludes' | translate }}
+    </h5>
+
+    <div class="grid grid-cols-1 gap-4">
+        @for (item of tour.excludes; track item.id) {
+            <div
+                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-500/20">
+                    <i class="mdi mdi-close-circle text-2xl"></i>
+                </div>
+
+                <span class="text-base font-medium text-slate-700 group-hover:text-rose-600 dark:text-slate-200">
+                    {{ item.value }}
+                </span>
+
+            </div>
+        }
+    </div>
+</div>
 </div>

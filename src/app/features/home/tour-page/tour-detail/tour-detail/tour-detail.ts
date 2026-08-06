@@ -8,7 +8,6 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
 import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
-import { datas } from '../../../../../data/data';
 
 @Component({
   selector: 'app-tour-detail',
@@ -19,7 +18,6 @@ import { datas } from '../../../../../data/data';
 export class TourDetail implements AfterViewInit {
   @Input() tour: any = null;
 
-  datas = datas;
   activeIndex = 1;
 
   get title(): string {

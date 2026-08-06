@@ -494,7 +494,7 @@
     ,"cancellationPolicy": "سياسة الإلغاء"
     ,"freeCancellation": "إلغاء مجاني"
     ,"positiveValueRequired": "أدخل قيمة أكبر من صفر."
-    ,"nonNegativeValueRequired": "أدخل صفرًا أو قيمة موجبة."
+    ,"valueShouldBeMoreThanZero": "أدخل صفرًا أو قيمة موجبة."
     ,"durationHoursRange": "يجب أن تكون الساعات بين 0 و23."
     ,"validUrlRequired": "أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://."
     ,"pageSize": "حجم الصفحة"

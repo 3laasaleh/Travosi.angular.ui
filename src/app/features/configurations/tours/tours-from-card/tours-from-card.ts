@@ -216,6 +216,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   saveTourDetails(): void {
     if (this.isSaving || !this.validateDetailsStep()) return;
+    debugger;
+      if (this.tourForm.pristine) {
+      this.savedTourId = this.currentTourId;;
+      this.completedStep = Math.max(this.completedStep, 1);
+      this.activeStep = 2;
+    return;
+  }
 
     const existingId = this.currentTourId;
     const isCreating = !existingId;
@@ -703,7 +710,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       pricePerPerson: 0,
       pricePerChild: 0,
       currencyId: this.defaultCurrencyId,
-      durationDays: 0,
+      durationDays: 1,
       durationHours: 0,
       maxSeats: 1,
       startDate: '',
@@ -747,7 +754,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       }),
       durationDays: new FormControl(0, {
         nonNullable: true,
-        validators: [Validators.required, Validators.min(0)],
+        validators: [Validators.required, Validators.min(1)],
       }),
       durationHours: new FormControl(0, {
         nonNullable: true,

@@ -1,22 +1,29 @@
 @if (screenLoaderVisible) {
-  <div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status" aria-live="assertive" [attr.aria-label]="screenLoaderMessage | translate">
-    <div class="flex min-w-64 flex-col items-center rounded-3xl border border-white/15 bg-white px-8 py-7 text-center shadow-2xl">
-      <span class="relative grid h-16 w-16 place-items-center">
-        <span class="absolute inset-0 animate-spin rounded-full border-4 border-slate-200 border-t-rose-600"></span>
-        <i class="mdi text-2xl text-rose-600" [class.mdi-file-document-edit-outline]="apiLoadingMessage === 'savingTourDetails'" [class.mdi-image-multiple-outline]="apiLoadingMessage === 'uploadingTourImages' || deletingImageIndex !== null" [class.mdi-map-marker-path]="apiLoadingMessage === 'savingTourItinerary'"></i>
-      </span>
-      <p class="mt-5 font-semibold text-slate-800">{{ screenLoaderMessage | translate }}</p>
-      <p class="mt-1 text-xs text-slate-500">{{ 'pleaseWaitForRequest' | translate }}</p>
-    </div>
+<div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status"
+  aria-live="assertive" [attr.aria-label]="screenLoaderMessage | translate">
+  <div
+    class="flex min-w-64 flex-col items-center rounded-3xl border border-white/15 bg-white px-8 py-7 text-center shadow-2xl">
+    <span class="relative grid h-16 w-16 place-items-center">
+      <span class="absolute inset-0 animate-spin rounded-full border-4 border-slate-200 border-t-rose-600"></span>
+      <i class="mdi text-2xl text-rose-600"
+        [class.mdi-file-document-edit-outline]="apiLoadingMessage === 'savingTourDetails'"
+        [class.mdi-image-multiple-outline]="apiLoadingMessage === 'uploadingTourImages' || deletingImageIndex !== null"
+        [class.mdi-map-marker-path]="apiLoadingMessage === 'savingTourItinerary'"></i>
+    </span>
+    <p class="mt-5 font-semibold text-slate-800">{{ screenLoaderMessage | translate }}</p>
+    <p class="mt-1 text-xs text-slate-500">{{ 'pleaseWaitForRequest' | translate }}</p>
   </div>
+</div>
 }
 
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 md:p-6">
   @if (errorMessage) {
-    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
+  <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage |
+    translate }}</div>
   }
   @if (successMessage) {
-    <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div>
+  <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
+    successMessage | translate }}</div>
   }
 
   <div class="mb-6">
@@ -24,311 +31,582 @@
     <p class="mt-1 text-sm text-slate-500">{{ 'tourStepperHint' | translate }}</p>
   </div>
 
-  <nav class="mb-7 grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2" [attr.aria-label]="'tourCreationSteps' | translate">
+  <nav class="mb-7 grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2"
+    [attr.aria-label]="'tourCreationSteps' | translate">
     @for (step of formSteps; track step.id) {
-      <div class="relative flex min-w-0 items-center gap-2 rounded-xl px-2 py-3 transition md:px-4"
-        [class.bg-primary]="activeStep === step.id"
-        [class.text-white]="activeStep === step.id"
-        [class.text-primary]="activeStep !== step.id && completedStep >= step.id"
-        [class.text-slate-400]="activeStep !== step.id && completedStep < step.id">
-        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm"
-          [class.border-white]="activeStep === step.id"
-          [class.bg-white]="activeStep === step.id"
-          [class.text-primary]="activeStep === step.id"
-          [class.border-primary]="activeStep !== step.id && completedStep >= step.id"
-          [class.bg-slate-50]="activeStep !== step.id"
-          [class.border-slate-200]="activeStep !== step.id && completedStep < step.id">
-          @if (completedStep >= step.id && activeStep !== step.id) {
-            <i class="mdi mdi-check"></i>
-          } @else {
-            <i class="mdi {{ step.icon }}"></i>
-          }
-        </span>
-        <span class="min-w-0">
-          <span class="block text-[10px] font-semibold uppercase tracking-wider opacity-70">{{ 'step' | translate }} {{ step.id }}</span>
-          <span class="hidden truncate text-sm font-semibold sm:block">{{ step.label | translate }}</span>
-        </span>
-      </div>
+    <div class="relative flex min-w-0 items-center gap-2 rounded-xl px-2 py-3 transition md:px-4"
+      [class.bg-primary]="activeStep === step.id" [class.text-white]="activeStep === step.id"
+      [class.text-primary]="activeStep !== step.id && completedStep >= step.id"
+      [class.text-slate-400]="activeStep !== step.id && completedStep < step.id">
+      <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm"
+        [class.border-white]="activeStep === step.id" [class.bg-white]="activeStep === step.id"
+        [class.text-primary]="activeStep === step.id"
+        [class.border-primary]="activeStep !== step.id && completedStep >= step.id"
+        [class.bg-slate-50]="activeStep !== step.id"
+        [class.border-slate-200]="activeStep !== step.id && completedStep < step.id">
+        @if (completedStep >= step.id && activeStep !== step.id) {
+        <i class="mdi mdi-check"></i>
+        } @else {
+        <i class="mdi {{ step.icon }}"></i>
+        }
+      </span>
+      <span class="min-w-0">
+        <span class="block text-[10px] font-semibold uppercase tracking-wider opacity-70">{{ 'step' | translate }} {{
+          step.id }}</span>
+        <span class="hidden truncate text-sm font-semibold sm:block">{{ step.label | translate }}</span>
+      </span>
+    </div>
     }
   </nav>
 
   <form [formGroup]="tourForm" (ngSubmit)="saveCurrentStep()">
     @if (activeStep === 1) {
-      <section class="space-y-5">
-        <div class="rounded-2xl border border-slate-200 bg-white p-5">
-          <div class="mb-5 flex items-start gap-3">
-            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-file-document-edit-outline"></i></span>
-            <div><h3 class="font-semibold">{{ 'tourDetailsStep' | translate }}</h3><p class="mt-1 text-xs text-slate-500">{{ 'detailsStepHint' | translate }}</p></div>
+    <section class="space-y-5">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        <div class="mb-5 flex items-start gap-3">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i
+              class="mdi mdi-file-document-edit-outline"></i></span>
+          <div>
+            <h3 class="font-semibold">{{ 'tourDetailsStep' | translate }}</h3>
+            <p class="mt-1 text-xs text-slate-500">{{ 'detailsStepHint' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label>
+            <input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('required')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }
+            @if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('pattern')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label>
+            <input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('required')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> }
+            @if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('pattern')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
           </div>
 
-          <div class="grid gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label>
-              <input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
-              @if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }
-              @if (tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label>
-              <input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />
-              @if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> }
-              @if (tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-            </div>
-
-            <div>
-              <label class="mb-2 block text-sm font-medium" id="tourDestinationLabel">{{ 'destination' | translate }}</label>
-              <div class="relative" (click)="$event.stopPropagation()" (keydown.escape)="closeDestinationMenu()">
-                <button type="button"
-                  class="flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-3 py-2 text-start disabled:cursor-not-allowed disabled:opacity-60"
-                  [disabled]="destinationsLoading"
-                  [attr.aria-expanded]="destinationMenuOpen"
-                  aria-haspopup="listbox"
-                  aria-labelledby="tourDestinationLabel"
-                  aria-controls="tourDestinationOptions"
-                  (click)="toggleDestinationMenu($event)">
-                  @if (destinationsLoading) {
-                    <span class="flex items-center gap-2 text-slate-500"><i class="mdi mdi-loading mdi-spin"></i>{{ 'loadingDestinations' | translate }}</span>
-                  } @else if (selectedDestination) {
-                    <span class="truncate">{{ destinationLabel(selectedDestination) }}</span>
-                  } @else {
-                    <span class="text-slate-500">{{ 'selectDestination' | translate }}</span>
-                  }
-                  <i class="mdi text-lg text-slate-500" [class.mdi-chevron-down]="!destinationMenuOpen" [class.mdi-chevron-up]="destinationMenuOpen"></i>
-                </button>
-                @if (destinationMenuOpen) {
-                  <div class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
-                    <div class="border-b border-slate-100 p-2">
-                      <div class="relative">
-                        <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="search" class="w-full rounded-xl border border-slate-200 py-2 pe-3 ps-9 text-sm outline-none focus:border-primary"
-                          [value]="destinationSearchTerm" [placeholder]="'searchDestinations' | translate"
-                          (input)="updateDestinationSearch($event)" />
-                      </div>
-                    </div>
-                    <div id="tourDestinationOptions" class="max-h-56 overflow-y-auto p-2" role="listbox">
-                      @for (destination of filteredDestinations; track destination.id) {
-                        <button type="button" class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-start text-sm hover:bg-primary/5 hover:text-primary"
-                          [class.bg-primary-50]="tourForm.controls.destinationId.value === destination.id"
-                          [class.text-primary]="tourForm.controls.destinationId.value === destination.id"
-                          (click)="selectDestination(destination)">
-                          <span class="truncate">{{ destinationLabel(destination) }}</span>
-                          @if (tourForm.controls.destinationId.value === destination.id) { <i class="mdi mdi-check"></i> }
-                        </button>
-                      } @empty {
-                        <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (destinations.length ? 'noMatchingDestinations' : 'noDestinationsFound') | translate }}</p>
-                      }
-                    </div>
-                  </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium" id="tourDestinationLabel">{{ 'destination' | translate
+              }}</label>
+            <div class="relative" (click)="$event.stopPropagation()" (keydown.escape)="closeDestinationMenu()">
+              <button type="button"
+                class="flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-3 py-2 text-start disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="destinationsLoading" [attr.aria-expanded]="destinationMenuOpen" aria-haspopup="listbox"
+                aria-labelledby="tourDestinationLabel" aria-controls="tourDestinationOptions"
+                (click)="toggleDestinationMenu($event)">
+                @if (destinationsLoading) {
+                <span class="flex items-center gap-2 text-slate-500"><i class="mdi mdi-loading mdi-spin"></i>{{
+                  'loadingDestinations' | translate }}</span>
+                } @else if (selectedDestination) {
+                <span class="truncate">{{ destinationLabel(selectedDestination) }}</span>
+                } @else {
+                <span class="text-slate-500">{{ 'selectDestination' | translate }}</span>
                 }
+                <i class="mdi text-lg text-slate-500" [class.mdi-chevron-down]="!destinationMenuOpen"
+                  [class.mdi-chevron-up]="destinationMenuOpen"></i>
+              </button>
+              @if (destinationMenuOpen) {
+              <div
+                class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+                <div class="border-b border-slate-100 p-2">
+                  <div class="relative">
+                    <i
+                      class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="search"
+                      class="w-full rounded-xl border border-slate-200 py-2 pe-3 ps-9 text-sm outline-none focus:border-primary"
+                      [value]="destinationSearchTerm" [placeholder]="'searchDestinations' | translate"
+                      (input)="updateDestinationSearch($event)" />
+                  </div>
+                </div>
+                <div id="tourDestinationOptions" class="max-h-56 overflow-y-auto p-2" role="listbox">
+                  @for (destination of filteredDestinations; track destination.id) {
+                  <button type="button"
+                    class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-start text-sm hover:bg-primary/5 hover:text-primary"
+                    [class.bg-primary-50]="tourForm.controls.destinationId.value === destination.id"
+                    [class.text-primary]="tourForm.controls.destinationId.value === destination.id"
+                    (click)="selectDestination(destination)">
+                    <span class="truncate">{{ destinationLabel(destination) }}</span>
+                    @if (tourForm.controls.destinationId.value === destination.id) { <i class="mdi mdi-check"></i> }
+                  </button>
+                  } @empty {
+                  <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (destinations.length ?
+                    'noMatchingDestinations' : 'noDestinationsFound') | translate }}</p>
+                  }
+                </div>
               </div>
-              @if (tourForm.controls.destinationId.touched && tourForm.controls.destinationId.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }
+              }
             </div>
-
-            <!-- <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border bg-white px-3 py-2">@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div> -->
-            <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }}</label><div class="relative"><span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input formControlName="pricePerPerson" type="text" appNumbersOnly class="w-full rounded-2xl border py-2 pe-3 ps-12" /></div>@if (tourForm.controls.pricePerPerson.touched && tourForm.controls.pricePerPerson.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p> }</div>
-            <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerChild' | translate }}</label><div class="relative"><span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input formControlName="pricePerChild" type="text" appNumbersOnly class="w-full rounded-2xl border py-2 pe-3 ps-12" /></div>@if (tourForm.controls.pricePerChild.touched && tourForm.controls.pricePerChild.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p> }</div>
-            <div><label class="mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p> }</div>
-            <div><label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label><input formControlName="durationDays" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.durationDays.touched && tourForm.controls.durationDays.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p> }</div>
-            <div><label class="mb-2 block text-sm font-medium">{{ 'durationHours' | translate }}</label><input formControlName="durationHours" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.durationHours.touched && tourForm.controls.durationHours.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p> }</div>
-
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}</label>
-              <div class="group relative">
-                <i class="mdi mdi-calendar-start pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
-                <input #startDatePicker formControlName="startDate" type="date" [attr.max]="tourForm.controls.endDate.value || null"
-                  class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
-                <button type="button" class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary" (click)="startDatePicker.showPicker()" [attr.aria-label]="'startDate' | translate"><i class="mdi mdi-calendar-month-outline"></i></button>
-              </div>
-              @if (tourForm.controls.startDate.touched && tourForm.controls.startDate.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'startDateRequired' | translate }}</p> }
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}</label>
-              <div class="group relative">
-                <i class="mdi mdi-calendar-end pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
-                <input #endDatePicker formControlName="endDate" type="date" [attr.min]="tourForm.controls.startDate.value || null"
-                  class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
-                <button type="button" class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary" (click)="endDatePicker.showPicker()" [attr.aria-label]="'endDate' | translate"><i class="mdi mdi-calendar-month-outline"></i></button>
-              </div>
-              @if (tourForm.controls.endDate.touched && tourForm.controls.endDate.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'endDateRequired' | translate }}</p> }
-              @if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) { <p class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p> }
-            </div>
+            @if (tourForm.controls.destinationId.touched && tourForm.controls.destinationId.invalid) { <p
+              class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }
           </div>
 
-          <div class="mt-4 grid gap-4">
-            <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="description" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
-            <div><label class="mb-2 block text-sm font-medium">{{ 'fullDescription' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="fullDescription" rows="4" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+          <!-- <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border bg-white px-3 py-2">@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div> -->
+          <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }}</label>
+            <div class="relative"><span
+                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+                formControlName="pricePerPerson" type="text" appNumbersOnly
+                class="w-full rounded-2xl border py-2 pe-3 ps-12" /></div>@if (tourForm.controls.pricePerPerson.touched
+            && tourForm.controls.pricePerPerson.invalid) { <p class="mt-1 text-xs text-red-600">{{
+              'positiveValueRequired' | translate }}</p> }
+          </div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerChild' | translate }}</label>
+            <div class="relative"><span
+                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+                formControlName="pricePerChild" type="text" appNumbersOnly
+                class="w-full rounded-2xl border py-2 pe-3 ps-12" /></div>@if (tourForm.controls.pricePerChild.touched
+            && tourForm.controls.pricePerChild.invalid) { <p class="mt-1 text-xs text-red-600">{{
+              'nonNegativeValueRequired' | translate }}</p> }
+          </div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input
+              formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />@if
+            (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) { <p
+              class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p> }</div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label>
+            <input formControlName="durationDays" type="text" appNumbersOnly
+              class="w-full rounded-2xl border px-3 py-2" />
+      @if (tourForm.controls.durationDays.touched) {
+
+  @if (tourForm.controls.durationDays.hasError('required')) {
+    <p class="mt-1 text-xs text-red-600">
+      {{ 'fieldRequired' | translate }}
+    </p>
+  }
+
+  @if (tourForm.controls.durationDays.hasError('min')) {
+    <p class="mt-1 text-xs text-red-600">
+      {{ 'positiveValueRequired' | translate }}
+    </p>
+  }
+
+}
+            
+          </div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'durationHours' | translate }}</label><input
+              formControlName="durationHours" type="text" appNumbersOnly
+              class="w-full rounded-2xl border px-3 py-2" />@if (tourForm.controls.durationHours.touched &&
+            tourForm.controls.durationHours.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' |
+              translate }}</p> }</div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}</label>
+            <div class="group relative">
+              <i
+                class="mdi mdi-calendar-start pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
+              <input #startDatePicker formControlName="startDate" type="date"
+                [attr.max]="tourForm.controls.endDate.value || null"
+                class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
+              <button type="button"
+                class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary"
+                (click)="startDatePicker.showPicker()" [attr.aria-label]="'startDate' | translate"><i
+                  class="mdi mdi-calendar-month-outline"></i></button>
+            </div>
+            @if (tourForm.controls.startDate.touched && tourForm.controls.startDate.invalid) { <p
+              class="mt-1 text-xs text-red-600">{{ 'startDateRequired' | translate }}</p> }
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}</label>
+            <div class="group relative">
+              <i
+                class="mdi mdi-calendar-end pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
+              <input #endDatePicker formControlName="endDate" type="date"
+                [attr.min]="tourForm.controls.startDate.value || null"
+                class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
+              <button type="button"
+                class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary"
+                (click)="endDatePicker.showPicker()" [attr.aria-label]="'endDate' | translate"><i
+                  class="mdi mdi-calendar-month-outline"></i></button>
+            </div>
+            @if (tourForm.controls.endDate.touched && tourForm.controls.endDate.hasError('required')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'endDateRequired' | translate }}</p> }
+            @if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) { <p
+              class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p> }
           </div>
         </div>
 
-        <div class="grid gap-4 xl:grid-cols-3">
-          <section class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-xl bg-amber-100 text-amber-600"><i class="mdi mdi-star-outline"></i></span><h3 class="text-sm font-semibold">{{ 'tourHighlights' | translate }}</h3></div>
-              <button type="button" class="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-100" (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button>
-            </div>
-            <div class="space-y-2">
-              @for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) {
-                <div [formGroup]="itemGroup">
-                  <div class="flex items-center gap-2"><input formControlName="value" type="text" [placeholder]="'highlightPlaceholder' | translate" class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50" (click)="removeHighlight(index)" [attr.aria-label]="'remove' | translate"><i class="mdi mdi-close"></i></button></div>
-                  @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
-                </div>
-              } @empty { <p class="rounded-xl border border-dashed border-amber-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">{{ 'noHighlightsAdded' | translate }}</p> }
-            </div>
-          </section>
-
-          <section class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-xl bg-emerald-100 text-emerald-600"><i class="mdi mdi-check-circle-outline"></i></span><h3 class="text-sm font-semibold">{{ 'tourIncludes' | translate }}</h3></div>
-              <button type="button" class="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100" (click)="addInclude()"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button>
-            </div>
-            <div class="space-y-2">
-              @for (itemGroup of includesArray.controls; track itemGroup; let index = $index) {
-                <div [formGroup]="itemGroup">
-                  <div class="flex items-center gap-2"><input formControlName="value" type="text" [placeholder]="'includeValuePlaceholder' | translate" class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50" (click)="removeInclude(index)" [attr.aria-label]="'remove' | translate"><i class="mdi mdi-close"></i></button></div>
-                  @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
-                </div>
-              } @empty { <p class="rounded-xl border border-dashed border-emerald-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">{{ 'noTourIncludesAdded' | translate }}</p> }
-            </div>
-          </section>
-
-          <section class="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-xl bg-rose-100 text-rose-600"><i class="mdi mdi-close-circle-outline"></i></span><h3 class="text-sm font-semibold">{{ 'tourExcludes' | translate }}</h3></div>
-              <button type="button" class="rounded-full border border-rose-300 bg-white px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100" (click)="addExclude()"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button>
-            </div>
-            <div class="space-y-2">
-              @for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) {
-                <div [formGroup]="itemGroup">
-                  <div class="flex items-center gap-2"><input formControlName="value" type="text" [placeholder]="'excludeValuePlaceholder' | translate" class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-100" (click)="removeExclude(index)" [attr.aria-label]="'remove' | translate"><i class="mdi mdi-close"></i></button></div>
-                  @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
-                </div>
-              } @empty { <p class="rounded-xl border border-dashed border-rose-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">{{ 'noTourExcludesAdded' | translate }}</p> }
-            </div>
-          </section>
+        <div class="mt-4 grid gap-4">
+          <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span
+                class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
+              formControlName="description" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+          <div><label class="mb-2 block text-sm font-medium">{{ 'fullDescription' | translate }} <span
+                class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
+              formControlName="fullDescription" rows="4" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
         </div>
+      </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-          <div><label class="mb-2 block text-sm font-medium">{{ 'cancellationPolicy' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="cancellationPolicy" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
-          <div class="mt-4"><label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isFreeCancelation" type="checkbox" />{{ 'freeCancellation' | translate }}</label></div>
-        </div>
-      </section>
+      <div class="grid gap-4 xl:grid-cols-3">
+        <section class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2"><span
+                class="grid h-8 w-8 place-items-center rounded-xl bg-amber-100 text-amber-600"><i
+                  class="mdi mdi-star-outline"></i></span>
+              <h3 class="text-sm font-semibold">{{ 'tourHighlights' | translate }}</h3>
+            </div>
+            <button type="button"
+              class="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-100"
+              (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button>
+          </div>
+          <div class="space-y-2">
+            @for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) {
+            <div [formGroup]="itemGroup">
+              <div class="flex items-center gap-2"><input formControlName="value" type="text"
+                  [placeholder]="'highlightPlaceholder' | translate"
+                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+                  (click)="removeHighlight(index)" [attr.aria-label]="'remove' | translate"><i
+                    class="mdi mdi-close"></i></button></div>
+              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p
+                class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
+            </div>
+            } @empty { <p
+              class="rounded-xl border border-dashed border-amber-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">
+              {{ 'noHighlightsAdded' | translate }}</p> }
+          </div>
+        </section>
+
+        <section class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2"><span
+                class="grid h-8 w-8 place-items-center rounded-xl bg-emerald-100 text-emerald-600"><i
+                  class="mdi mdi-check-circle-outline"></i></span>
+              <h3 class="text-sm font-semibold">{{ 'tourIncludes' | translate }}</h3>
+            </div>
+            <button type="button"
+              class="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
+              (click)="addInclude()"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button>
+          </div>
+          <div class="space-y-2">
+            @for (itemGroup of includesArray.controls; track itemGroup; let index = $index) {
+            <div [formGroup]="itemGroup">
+              <div class="flex items-center gap-2"><input formControlName="value" type="text"
+                  [placeholder]="'includeValuePlaceholder' | translate"
+                  class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><button
+                  type="button"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+                  (click)="removeInclude(index)" [attr.aria-label]="'remove' | translate"><i
+                    class="mdi mdi-close"></i></button></div>
+              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p
+                class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
+            </div>
+            } @empty { <p
+              class="rounded-xl border border-dashed border-emerald-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">
+              {{ 'noTourIncludesAdded' | translate }}</p> }
+          </div>
+        </section>
+
+        <section class="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2"><span
+                class="grid h-8 w-8 place-items-center rounded-xl bg-rose-100 text-rose-600"><i
+                  class="mdi mdi-close-circle-outline"></i></span>
+              <h3 class="text-sm font-semibold">{{ 'tourExcludes' | translate }}</h3>
+            </div>
+            <button type="button"
+              class="rounded-full border border-rose-300 bg-white px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100"
+              (click)="addExclude()"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button>
+          </div>
+          <div class="space-y-2">
+            @for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) {
+            <div [formGroup]="itemGroup">
+              <div class="flex items-center gap-2"><input formControlName="value" type="text"
+                  [placeholder]="'excludeValuePlaceholder' | translate"
+                  class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><button type="button"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-100"
+                  (click)="removeExclude(index)" [attr.aria-label]="'remove' | translate"><i
+                    class="mdi mdi-close"></i></button></div>
+              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p
+                class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
+            </div>
+            } @empty { <p
+              class="rounded-xl border border-dashed border-rose-200 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">
+              {{ 'noTourExcludesAdded' | translate }}</p> }
+          </div>
+        </section>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-4">
+        <div><label class="mb-2 block text-sm font-medium">{{ 'cancellationPolicy' | translate }} <span
+              class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
+            formControlName="cancellationPolicy" rows="3" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+        <div class="mt-4"><label class="flex items-center gap-2 text-sm font-medium"><input
+              formControlName="isFreeCancelation" type="checkbox" />{{ 'freeCancellation' | translate }}</label></div>
+      </div>
+    </section>
     }
 
     @if (activeStep === 2) {
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
-        <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
-          <div class="flex items-start gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-image-multiple-outline"></i></span><div><h3 class="font-semibold">{{ 'tourImagesStep' | translate }}</h3><p class="mt-1 text-xs text-slate-500">{{ 'imagesStepHint' | translate }}</p></div></div>
-          @if (currentTourId) { <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"><i class="mdi mdi-check-circle me-1"></i>{{ 'savedTourNumber' | translate }} #{{ currentTourId }}</span> }
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
+      <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div class="flex items-start gap-3"><span
+            class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i
+              class="mdi mdi-image-multiple-outline"></i></span>
+          <div>
+            <h3 class="font-semibold">{{ 'tourImagesStep' | translate }}</h3>
+            <p class="mt-1 text-xs text-slate-500">{{ 'imagesStepHint' | translate }}</p>
+          </div>
         </div>
+        @if (currentTourId) { <span
+          class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"><i
+            class="mdi mdi-check-circle me-1"></i>{{ 'savedTourNumber' | translate }} #{{ currentTourId }}</span> }
+      </div>
 
-        <div class="rounded-2xl border border-dashed border-slate-300 p-4">
-          <div class="mb-2 flex items-center justify-between"><label for="tourImages" class="text-sm font-medium">{{ 'tourImages' | translate }}</label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{ maxImages }}</span></div>
-          <label for="tourImages" class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-9 text-center transition hover:border-primary hover:bg-primary/5"
-            [class.cursor-not-allowed]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null"
-            [class.opacity-60]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null">
-            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary"><i class="mdi mdi-cloud-upload-outline"></i></span>
-            <span class="mt-3 text-sm font-semibold text-primary">{{ 'chooseImages' | translate }}</span>
-            <span class="mt-1 text-xs text-slate-500">{{ 'tourImageRules' | translate }}</span>
-          </label>
-          <input id="tourImages" type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" [disabled]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null" (change)="onImagesSelected($event)" />
-          @if (imageValidationMessage) { <p class="mt-2 text-xs font-medium text-red-600" role="alert">{{ imageValidationMessage | translate }}</p> }
-          @if (tourForm.controls.images.touched && tourForm.controls.images.invalid) { <p class="mt-2 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p> }
+      <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+        <div class="mb-2 flex items-center justify-between"><label for="tourImages" class="text-sm font-medium">{{
+            'tourImages' | translate }}</label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{
+            maxImages }}</span></div>
+        <label for="tourImages"
+          class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-9 text-center transition hover:border-primary hover:bg-primary/5"
+          [class.cursor-not-allowed]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null"
+          [class.opacity-60]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null">
+          <span class="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary"><i
+              class="mdi mdi-cloud-upload-outline"></i></span>
+          <span class="mt-3 text-sm font-semibold text-primary">{{ 'chooseImages' | translate }}</span>
+          <span class="mt-1 text-xs text-slate-500">{{ 'tourImageRules' | translate }}</span>
+        </label>
+        <input id="tourImages" type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only"
+          [disabled]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null"
+          (change)="onImagesSelected($event)" />
+        @if (imageValidationMessage) { <p class="mt-2 text-xs font-medium text-red-600" role="alert">{{
+          imageValidationMessage | translate }}</p> }
+        @if (tourForm.controls.images.touched && tourForm.controls.images.invalid) { <p
+          class="mt-2 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p> }
 
-          @if (imageUploads.length) {
-            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-              @for (image of imageUploads; track image.url; let index = $index) {
-                <div class="relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
-                  <img [src]="getImageUrl(image.url)" [alt]="image.name" class="aspect-[3/2] w-full object-cover" />
-                  <button type="button" class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="deletingImageIndex !== null || isSaving" (click)="removeImage(index)"><i class="mdi" [class.mdi-loading]="deletingImageIndex === index" [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"></i></button>
-                  @if (index === 0) { <span class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{ 'cover' | translate }}</span> }
-                </div>
-              }
-            </div>
+        @if (imageUploads.length) {
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          @for (image of imageUploads; track image.url; let index = $index) {
+          <div class="relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+            <img [src]="getImageUrl(image.url)" [alt]="image.name" class="aspect-[3/2] w-full object-cover" />
+            <button type="button"
+              class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="deletingImageIndex !== null || isSaving" (click)="removeImage(index)"><i class="mdi"
+                [class.mdi-loading]="deletingImageIndex === index" [class.mdi-spin]="deletingImageIndex === index"
+                [class.mdi-close]="deletingImageIndex !== index"></i></button>
+            @if (index === 0) { <span
+              class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
+              'cover' | translate }}</span> }
+          </div>
           }
         </div>
-        <p class="mt-3 flex items-start gap-2 text-xs text-slate-500"><i class="mdi mdi-information-outline mt-0.5 text-primary"></i>{{ 'imagesUploadStepHint' | translate }}</p>
-      </section>
+        }
+      </div>
+      <p class="mt-3 flex items-start gap-2 text-xs text-slate-500"><i
+          class="mdi mdi-information-outline mt-0.5 text-primary"></i>{{ 'imagesUploadStepHint' | translate }}</p>
+    </section>
     }
 
     @if (activeStep === 3) {
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-start gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-rose-100 text-xl text-rose-600"><i class="mdi mdi-map-marker-path"></i></span><div><h3 class="font-semibold">{{ 'tourItineraryStep' | translate }}</h3><p class="mt-1 text-xs text-slate-500">{{ 'itineraryStepHint' | translate }}</p></div></div>
-          <button type="button" [disabled]="!!itineraryDraft" class="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent" (click)="openItineraryStepEditor()"><i class="mdi mdi-plus"></i> {{ 'addStep' | translate }}</button>
-        </div>
-
-        <div class="grid gap-4 xl:grid-cols-2">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <h3 class="mb-3 font-semibold">{{ (itineraryDraftIsChild ? 'childStepDetails' : 'stepDetails') | translate }}</h3>
-            @if (itineraryDraft) {
-              <div [formGroup]="itineraryDraft" class="space-y-3">
-                <div class="grid gap-3 md:grid-cols-2">
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'dayNumber' | translate }}</label><input formControlName="dayNumber" type="text" appNumbersOnly inputmode="numeric" class="w-full rounded-2xl border px-3 py-2" />@if (itineraryDraft.controls['dayNumber'].touched && itineraryDraft.controls['dayNumber'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'dayNumberPositive' | translate }}</p> }</div>
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'stepTitle' | translate }}</label><input formControlName="title" type="text" maxlength="200" [placeholder]="'stepTitlePlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2" />@if (itineraryDraft.controls['title'].touched && itineraryDraft.controls['title'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'stepTitleRequired' | translate }}</p> }@if (itineraryDraft.controls['title'].touched && itineraryDraft.controls['title'].hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'stepTitleMaxLength' | translate }}</p> }</div>
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'itineraryValue' | translate }}</label><input formControlName="value" type="text" [placeholder]="'itineraryValuePlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2" /></div>
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'startTime' | translate }}</label><select formControlName="startTime" class="w-full rounded-2xl border px-3 py-2"><option [ngValue]="null">--:--</option>@for (timeOption of itineraryTimeOptions; track timeOption) { <option [value]="timeOption">{{ timeOption }}</option> }</select>@if (itineraryDraft.controls['startTime'].touched && itineraryDraft.controls['startTime'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimesRequired' | translate }}</p> } @else if (itineraryDraft.controls['startTime'].hasError('invalidQuarterHourTime')) { <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimeQuarterHour' | translate }}</p> }</div>
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'endTime' | translate }}</label><select formControlName="endTime" class="w-full rounded-2xl border px-3 py-2"><option [ngValue]="null">--:--</option>@for (timeOption of itineraryTimeOptions; track timeOption) { <option [value]="timeOption">{{ timeOption }}</option> }</select>@if (itineraryDraft.controls['endTime'].touched && itineraryDraft.controls['endTime'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimesRequired' | translate }}</p> } @else if (itineraryDraft.controls['endTime'].hasError('invalidQuarterHourTime')) { <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimeQuarterHour' | translate }}</p> }@if ((itineraryDraft.controls['startTime'].touched || itineraryDraft.controls['endTime'].touched) && itineraryDraft.hasError('invalidItineraryTimeRange')) { <p class="mt-1 text-xs text-red-600">{{ 'endTimeAfterStart' | translate }}</p> }</div>
-                </div>
-                @if (itineraryDraft.hasError('itineraryTimeOverlap')) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600"><i class="mdi mdi-clock-alert-outline me-1"></i>{{ 'itineraryTimeConflict' | translate }}</p> }
-                <div><label class="mb-1 block text-xs font-medium">{{ 'description' | translate }}</label><textarea formControlName="description" rows="3" maxlength="2000" [placeholder]="'stepDescriptionPlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (itineraryDraft.controls['description'].touched && itineraryDraft.controls['description'].hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'stepDescriptionMaxLength' | translate }}</p> }</div>
-                <div class="flex gap-2"><button type="button" [disabled]="itineraryDraft.invalid" class="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-rose-600" (click)="saveItineraryStep()"><i class="mdi mdi-content-save-outline"></i> {{ 'saveStep' | translate }}</button><button type="button" class="rounded-full border px-4 py-2 text-xs font-semibold" (click)="cancelItineraryStep()">{{ 'cancel' | translate }}</button></div>
-              </div>
-            } @else {
-              <div class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-200 bg-white px-5 text-center text-slate-400"><div><i class="mdi mdi-map-marker-path text-4xl"></i><p class="mt-2 text-sm">{{ 'clickAddStepToStart' | translate }}</p></div></div>
-            }
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-start gap-3"><span
+            class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-rose-100 text-xl text-rose-600"><i
+              class="mdi mdi-map-marker-path"></i></span>
+          <div>
+            <h3 class="font-semibold">{{ 'tourItineraryStep' | translate }}</h3>
+            <p class="mt-1 text-xs text-slate-500">{{ 'itineraryStepHint' | translate }}</p>
           </div>
+        </div>
+        <button type="button" [disabled]="!!itineraryDraft"
+          class="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
+          (click)="openItineraryStepEditor()"><i class="mdi mdi-plus"></i> {{ 'addStep' | translate }}</button>
+      </div>
 
-          <div class="rounded-2xl border border-slate-200 p-4">
-            <h3 class="mb-3 font-semibold">{{ 'itinerarySteps' | translate }}</h3>
-            <div class="max-h-[70vh] overflow-y-auto pe-1">
-              <ol class="relative space-y-7 before:absolute before:bottom-4 before:start-4 before:top-4 before:w-0.5 before:bg-rose-200">
-                @for (stepGroup of itineraryArray.controls; track stepGroup; let stepIndex = $index) {
-                  <li class="relative ps-11">
-                    <span class="absolute start-0 top-0 z-10 grid h-8 w-8 place-items-center rounded-full border-4 border-white bg-rose-600 text-xs font-bold text-white shadow-sm">{{ stepIndex + 1 }}</span>
-                    <article class="pb-1">
-                      <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-600">{{ 'journeyStep' | translate }} {{ stepIndex + 1 }} · {{ 'day' | translate }} {{ stepGroup.controls['dayNumber'].value }}</p><h4 class="mt-1 font-semibold">{{ stepGroup.controls['title'].value }}</h4>@if (stepGroup.controls['value'].value) { <p class="mt-1 text-xs font-medium text-rose-600"><i class="mdi mdi-map-marker-outline me-1"></i>{{ stepGroup.controls['value'].value }}</p> }</div><div class="flex gap-1"><button type="button" [disabled]="!!itineraryDraft" class="rounded-full border border-emerald-200 px-2.5 py-1 text-xs text-emerald-600 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent" (click)="openItineraryChildEditor(stepGroup)"><i class="mdi mdi-plus"></i> {{ 'addChild' | translate }}</button><button type="button" [disabled]="!!itineraryDraft" class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60" (click)="editItineraryStep(itineraryArray, stepIndex, false)"><i class="mdi mdi-pencil-outline"></i></button><button type="button" [disabled]="!!itineraryDraft" class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60" (click)="removeItineraryStep(itineraryArray, stepIndex)"><i class="mdi mdi-close"></i></button></div></div>
-                      @if (stepGroup.controls['startTime'].value || stepGroup.controls['endTime'].value) { <p class="mt-2 text-xs text-slate-500"><i class="mdi mdi-clock-outline text-rose-600"></i> {{ stepGroup.controls['startTime'].value || '--:--' }} - {{ stepGroup.controls['endTime'].value || '--:--' }}</p> }
-                      @if (stepGroup.controls['description'].value) { <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ stepGroup.controls['description'].value }}</p> }
-                      @if (itineraryChildrenArray(stepGroup); as children) {
-                        @if (children.length) {
-                          <ol class="relative mt-4 space-y-4 before:absolute before:bottom-2 before:start-1.5 before:top-2 before:w-px before:bg-emerald-200">
-                            @for (childGroup of children.controls; track childGroup; let childIndex = $index) {
-                              <li class="relative ps-7"><span class="absolute start-0 top-1.5 z-10 h-3 w-3 rounded-full border-[3px] border-emerald-500 bg-white"></span><div class="flex items-start justify-between gap-2"><div><p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-600">{{ 'childStep' | translate }} {{ childIndex + 1 }} · {{ 'day' | translate }} {{ childGroup.controls['dayNumber'].value }}</p><h5 class="mt-1 font-medium">{{ childGroup.controls['title'].value }}</h5></div><div class="flex gap-1"><button type="button" [disabled]="!!itineraryDraft" class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60" (click)="editItineraryStep(children, childIndex, true)"><i class="mdi mdi-pencil-outline"></i></button><button type="button" [disabled]="!!itineraryDraft" class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60" (click)="removeItineraryStep(children, childIndex)"><i class="mdi mdi-close"></i></button></div></div>@if (childGroup.controls['value'].value) { <p class="mt-1 text-xs font-medium text-emerald-600"><i class="mdi mdi-map-marker-outline me-1"></i>{{ childGroup.controls['value'].value }}</p> }@if (childGroup.controls['startTime'].value || childGroup.controls['endTime'].value) { <p class="mt-1 text-xs text-slate-500"><i class="mdi mdi-clock-outline text-emerald-600"></i> {{ childGroup.controls['startTime'].value || '--:--' }} - {{ childGroup.controls['endTime'].value || '--:--' }}</p> }@if (childGroup.controls['description'].value) { <p class="mt-1 text-sm leading-6 text-slate-600">{{ childGroup.controls['description'].value }}</p> }</li>
-                            }
-                          </ol>
-                        }
-                      }
-                    </article>
-                  </li>
-                } @empty {
-                  <li class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-200 px-5 text-center text-sm text-slate-400">{{ 'noItineraryAdded' | translate }}</li>
-                }
-              </ol>
+      <div class="grid gap-4 xl:grid-cols-2">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="mb-3 font-semibold">{{ (itineraryDraftIsChild ? 'childStepDetails' : 'stepDetails') | translate }}
+          </h3>
+          @if (itineraryDraft) {
+          <div [formGroup]="itineraryDraft" class="space-y-3">
+            <div class="grid gap-3 md:grid-cols-2">
+              <div><label class="mb-1 block text-xs font-medium">{{ 'dayNumber' | translate }}</label><input
+                  formControlName="dayNumber" type="text" appNumbersOnly inputmode="numeric"
+                  class="w-full rounded-2xl border px-3 py-2" />@if (itineraryDraft.controls['dayNumber'].touched &&
+                itineraryDraft.controls['dayNumber'].invalid) { <p class="mt-1 text-xs text-red-600">{{
+                  'dayNumberPositive' | translate }}</p> }</div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'stepTitle' | translate }}</label><input
+                  formControlName="title" type="text" maxlength="200" [placeholder]="'stepTitlePlaceholder' | translate"
+                  class="w-full rounded-2xl border px-3 py-2" />@if (itineraryDraft.controls['title'].touched &&
+                itineraryDraft.controls['title'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
+                  'stepTitleRequired' | translate }}</p> }@if (itineraryDraft.controls['title'].touched &&
+                itineraryDraft.controls['title'].hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
+                  'stepTitleMaxLength' | translate }}</p> }</div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'itineraryValue' | translate }}</label><input
+                  formControlName="value" type="text" [placeholder]="'itineraryValuePlaceholder' | translate"
+                  class="w-full rounded-2xl border px-3 py-2" /></div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'startTime' | translate }}</label><select
+                  formControlName="startTime" class="w-full rounded-2xl border px-3 py-2">
+                  <option [ngValue]="null">--:--</option>@for (timeOption of itineraryTimeOptions; track timeOption) {
+                  <option [value]="timeOption">{{ timeOption }}</option> }
+                </select>@if (itineraryDraft.controls['startTime'].touched &&
+                itineraryDraft.controls['startTime'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
+                  'itineraryTimesRequired' | translate }}</p> } @else if
+                (itineraryDraft.controls['startTime'].hasError('invalidQuarterHourTime')) { <p
+                  class="mt-1 text-xs text-red-600">{{ 'itineraryTimeQuarterHour' | translate }}</p> }</div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'endTime' | translate }}</label><select
+                  formControlName="endTime" class="w-full rounded-2xl border px-3 py-2">
+                  <option [ngValue]="null">--:--</option>@for (timeOption of itineraryTimeOptions; track timeOption) {
+                  <option [value]="timeOption">{{ timeOption }}</option> }
+                </select>@if (itineraryDraft.controls['endTime'].touched &&
+                itineraryDraft.controls['endTime'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
+                  'itineraryTimesRequired' | translate }}</p> } @else if
+                (itineraryDraft.controls['endTime'].hasError('invalidQuarterHourTime')) { <p
+                  class="mt-1 text-xs text-red-600">{{ 'itineraryTimeQuarterHour' | translate }}</p> }@if
+                ((itineraryDraft.controls['startTime'].touched || itineraryDraft.controls['endTime'].touched) &&
+                itineraryDraft.hasError('invalidItineraryTimeRange')) { <p class="mt-1 text-xs text-red-600">{{
+                  'endTimeAfterStart' | translate }}</p> }</div>
+            </div>
+            @if (itineraryDraft.hasError('itineraryTimeOverlap')) { <p
+              class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600"><i
+                class="mdi mdi-clock-alert-outline me-1"></i>{{ 'itineraryTimeConflict' | translate }}</p> }
+            <div><label class="mb-1 block text-xs font-medium">{{ 'description' | translate }}</label><textarea
+                formControlName="description" rows="3" maxlength="2000"
+                [placeholder]="'stepDescriptionPlaceholder' | translate"
+                class="w-full rounded-2xl border px-3 py-2"></textarea>@if
+              (itineraryDraft.controls['description'].touched &&
+              itineraryDraft.controls['description'].hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
+                'stepDescriptionMaxLength' | translate }}</p> }</div>
+            <div class="flex gap-2"><button type="button" [disabled]="itineraryDraft.invalid"
+                class="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-rose-600"
+                (click)="saveItineraryStep()"><i class="mdi mdi-content-save-outline"></i> {{ 'saveStep' | translate
+                }}</button><button type="button" class="rounded-full border px-4 py-2 text-xs font-semibold"
+                (click)="cancelItineraryStep()">{{ 'cancel' | translate }}</button></div>
+          </div>
+          } @else {
+          <div
+            class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-200 bg-white px-5 text-center text-slate-400">
+            <div><i class="mdi mdi-map-marker-path text-4xl"></i>
+              <p class="mt-2 text-sm">{{ 'clickAddStepToStart' | translate }}</p>
             </div>
           </div>
+          }
         </div>
-        <label class="mt-5 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium"><input formControlName="isActive" type="checkbox" />{{ 'activeTour' | translate }}</label>
-      </section>
+
+        <div class="rounded-2xl border border-slate-200 p-4">
+          <h3 class="mb-3 font-semibold">{{ 'itinerarySteps' | translate }}</h3>
+          <div class="max-h-[70vh] overflow-y-auto pe-1">
+            <ol
+              class="relative space-y-7 before:absolute before:bottom-4 before:start-4 before:top-4 before:w-0.5 before:bg-rose-200">
+              @for (stepGroup of itineraryArray.controls; track stepGroup; let stepIndex = $index) {
+              <li class="relative ps-11">
+                <span
+                  class="absolute start-0 top-0 z-10 grid h-8 w-8 place-items-center rounded-full border-4 border-white bg-rose-600 text-xs font-bold text-white shadow-sm">{{
+                  stepIndex + 1 }}</span>
+                <article class="pb-1">
+                  <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-600">{{ 'journeyStep' |
+                        translate }} {{ stepIndex + 1 }} · {{ 'day' | translate }} {{
+                        stepGroup.controls['dayNumber'].value }}</p>
+                      <h4 class="mt-1 font-semibold">{{ stepGroup.controls['title'].value }}</h4>@if
+                      (stepGroup.controls['value'].value) { <p class="mt-1 text-xs font-medium text-rose-600"><i
+                          class="mdi mdi-map-marker-outline me-1"></i>{{ stepGroup.controls['value'].value }}</p> }
+                    </div>
+                    <div class="flex gap-1"><button type="button" [disabled]="!!itineraryDraft"
+                        class="rounded-full border border-emerald-200 px-2.5 py-1 text-xs text-emerald-600 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
+                        (click)="openItineraryChildEditor(stepGroup)"><i class="mdi mdi-plus"></i> {{ 'addChild' |
+                        translate }}</button><button type="button" [disabled]="!!itineraryDraft"
+                        class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60"
+                        (click)="editItineraryStep(itineraryArray, stepIndex, false)"><i
+                          class="mdi mdi-pencil-outline"></i></button><button type="button"
+                        [disabled]="!!itineraryDraft"
+                        class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+                        (click)="removeItineraryStep(itineraryArray, stepIndex)"><i class="mdi mdi-close"></i></button>
+                    </div>
+                  </div>
+                  @if (stepGroup.controls['startTime'].value || stepGroup.controls['endTime'].value) { <p
+                    class="mt-2 text-xs text-slate-500"><i class="mdi mdi-clock-outline text-rose-600"></i> {{
+                    stepGroup.controls['startTime'].value || '--:--' }} - {{ stepGroup.controls['endTime'].value ||
+                    '--:--' }}</p> }
+                  @if (stepGroup.controls['description'].value) { <p
+                    class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{
+                    stepGroup.controls['description'].value }}</p> }
+                  @if (itineraryChildrenArray(stepGroup); as children) {
+                  @if (children.length) {
+                  <ol
+                    class="relative mt-4 space-y-4 before:absolute before:bottom-2 before:start-1.5 before:top-2 before:w-px before:bg-emerald-200">
+                    @for (childGroup of children.controls; track childGroup; let childIndex = $index) {
+                    <li class="relative ps-7"><span
+                        class="absolute start-0 top-1.5 z-10 h-3 w-3 rounded-full border-[3px] border-emerald-500 bg-white"></span>
+                      <div class="flex items-start justify-between gap-2">
+                        <div>
+                          <p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-600">{{ 'childStep'
+                            | translate }} {{ childIndex + 1 }} · {{ 'day' | translate }} {{
+                            childGroup.controls['dayNumber'].value }}</p>
+                          <h5 class="mt-1 font-medium">{{ childGroup.controls['title'].value }}</h5>
+                        </div>
+                        <div class="flex gap-1"><button type="button" [disabled]="!!itineraryDraft"
+                            class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60"
+                            (click)="editItineraryStep(children, childIndex, true)"><i
+                              class="mdi mdi-pencil-outline"></i></button><button type="button"
+                            [disabled]="!!itineraryDraft"
+                            class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+                            (click)="removeItineraryStep(children, childIndex)"><i class="mdi mdi-close"></i></button>
+                        </div>
+                      </div>@if (childGroup.controls['value'].value) { <p
+                        class="mt-1 text-xs font-medium text-emerald-600"><i
+                          class="mdi mdi-map-marker-outline me-1"></i>{{ childGroup.controls['value'].value }}</p> }@if
+                      (childGroup.controls['startTime'].value || childGroup.controls['endTime'].value) { <p
+                        class="mt-1 text-xs text-slate-500"><i class="mdi mdi-clock-outline text-emerald-600"></i> {{
+                        childGroup.controls['startTime'].value || '--:--' }} - {{ childGroup.controls['endTime'].value
+                        || '--:--' }}</p> }@if (childGroup.controls['description'].value) { <p
+                        class="mt-1 text-sm leading-6 text-slate-600">{{ childGroup.controls['description'].value }}</p>
+                      }
+                    </li>
+                    }
+                  </ol>
+                  }
+                  }
+                </article>
+              </li>
+              } @empty {
+              <li
+                class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-200 px-5 text-center text-sm text-slate-400">
+                {{ 'noItineraryAdded' | translate }}</li>
+              }
+            </ol>
+          </div>
+        </div>
+      </div>
+      <label
+        class="mt-5 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium"><input
+          formControlName="isActive" type="checkbox" />{{ 'activeTour' | translate }}</label>
+    </section>
     }
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
       <div>
         @if (activeStep === 2) {
-          <button type="button" [disabled]="isSaving || deletingImageIndex !== null" class="inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-white" (click)="previousStep()"><i class="mdi mdi-arrow-left rtl:rotate-180"></i>{{ 'previous' | translate }}</button>
+        <button type="button" [disabled]="isSaving || deletingImageIndex !== null"
+          class="inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-white"
+          (click)="previousStep()"><i class="mdi mdi-arrow-left rtl:rotate-180"></i>{{ 'previous' | translate
+          }}</button>
         }
       </div>
       <div class="flex gap-3">
-        <button type="button" [disabled]="isSaving || deletingImageIndex !== null" class="rounded-full border bg-white px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-white" (click)="cancelEdit()">{{ 'close' | translate }}</button>
+        <button type="button" [disabled]="isSaving || deletingImageIndex !== null"
+          class="rounded-full border bg-white px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-white"
+          (click)="cancelEdit()">{{ 'close' | translate }}</button>
         @if (activeStep === 1) {
-          <button type="submit" [disabled]="isSaving || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
-            @if (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <span>{{ 'saveDetailsAndContinue' | translate }}</span><i class="mdi mdi-arrow-right rtl:rotate-180"></i> }
-          </button>
+        <button type="submit" [disabled]="isSaving || destinationsLoading"
+          class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+          @if (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else {
+          <span>{{ 'saveDetailsAndContinue' | translate }}</span><i class="mdi mdi-arrow-right rtl:rotate-180"></i> }
+        </button>
         } @else if (activeStep === 2) {
-          <button type="submit" [disabled]="isSaving || deletingImageIndex !== null" class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <span>{{ 'saveImagesAndContinue' | translate }}</span><i class="mdi mdi-arrow-right rtl:rotate-180"></i> }</button>
+        <button type="submit" [disabled]="isSaving || deletingImageIndex !== null"
+          class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if
+          (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else {
+          <span>{{ 'saveImagesAndContinue' | translate }}</span><i class="mdi mdi-arrow-right rtl:rotate-180"></i>
+          }</button>
         } @else {
-          <button type="submit" [disabled]="isSaving || deletingImageIndex !== null || !!itineraryDraft" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
-            @if (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <i class="mdi mdi-check-circle-outline"></i><span>{{ 'saveItineraryAndFinish' | translate }}</span> }
-          </button>
+        <button type="submit" [disabled]="isSaving || deletingImageIndex !== null || !!itineraryDraft"
+          class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+          @if (isSaving) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <i
+            class="mdi mdi-check-circle-outline"></i><span>{{ 'saveItineraryAndFinish' | translate }}</span> }
+        </button>
         }
       </div>
     </div>
