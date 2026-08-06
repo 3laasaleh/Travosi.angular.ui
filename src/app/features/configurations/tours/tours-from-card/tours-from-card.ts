@@ -216,7 +216,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   saveTourDetails(): void {
     if (this.isSaving || !this.validateDetailsStep()) return;
-    debugger;
+   
       if (this.tourForm.pristine) {
       this.savedTourId = this.currentTourId;;
       this.completedStep = Math.max(this.completedStep, 1);

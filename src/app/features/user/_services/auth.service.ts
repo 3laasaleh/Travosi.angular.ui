@@ -95,7 +95,7 @@ readonly profileImageUrl = computed(() => {
     return this.http.post(environment.baseUrl + 'Account/login', user).pipe(
       map((res: any) => {
         if (res.isSuccess) {
-          debugger;
+         
           const { token, ...userData } = res.data;
           this._coockiesService.set('userSignedIn', JSON.stringify(userData), 1, '/');
           this._coockiesService.set('token', token, 1, '/');

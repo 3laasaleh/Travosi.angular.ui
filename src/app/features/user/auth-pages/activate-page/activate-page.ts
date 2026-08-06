@@ -47,7 +47,7 @@ export class ActivatePage implements OnInit {
         { headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }) },
       ).subscribe({
         next:(res1 ) => {
-          debugger;
+         
           const res=res1 as IGenericResponse<string>
           this.isLoading = false;
           if(res.isSuccess&&res.data)

@@ -55,7 +55,7 @@ export class Global_Interceptor implements HttpInterceptor {
           if (!isResponseModel)
             return;
           let response: IGenericResponse<any> = evt.body;
-          debugger;
+         
           if (!response?.isSuccess && response?.message != "" &&response.statusCode!=500)
             this.toaster.addToaster(MessageStatusEnum.Error,  response.message);
 
