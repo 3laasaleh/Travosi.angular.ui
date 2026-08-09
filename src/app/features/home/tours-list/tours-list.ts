@@ -37,7 +37,7 @@ export class HomeToursList implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly pageSizeOptions = [8, 12, 24];
+  readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
 
   tours: any[] = [];
@@ -45,7 +45,7 @@ export class HomeToursList implements OnInit {
   errorMessage = '';
   paginationInfo: PaginationInfo = {
     page: 1,
-    pageSize: 12,
+    pageSize: 10,
     totalCount: 0,
     totalPages: 1,
   };

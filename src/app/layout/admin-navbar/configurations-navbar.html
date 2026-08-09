@@ -132,7 +132,7 @@
               }
             </div>
             <div class="p-2">
-              <a routerLink="/user-profile" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="menuitem">
+              <a routerLink="/user-booking" (click)="closeMenus()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800" role="menuitem">
                 <i data-feather="user" class="size-4"></i>
                 {{ 'myProfile' | translate }}
               </a>
@@ -202,7 +202,7 @@
             <div class="min-w-0"><p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</p><p class="truncate text-xs text-slate-500">{{ userEmail }}</p></div>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <a routerLink="/user-profile" (click)="closeMenus()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"><i data-feather="user" class="size-4"></i>{{ 'myProfile' | translate }}</a>
+            <a routerLink="/user-booking" (click)="closeMenus()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"><i data-feather="user" class="size-4"></i>{{ 'myProfile' | translate }}</a>
             <button type="button" (click)="logout()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300"><i data-feather="log-out" class="size-4"></i>{{ 'signOut' | translate }}</button>
           </div>
           <a routerLink="/home" (click)="closeMenus()" class="mt-2 flex items-center justify-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-white"><i data-feather="external-link" class="size-4"></i>{{ 'viewWebsite' | translate }}</a>

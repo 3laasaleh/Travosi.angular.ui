@@ -1,13 +1,13 @@
-<section class="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+<section class="min-h-screen py-12 flex items-center relative overflow-hidden zoom-image">
     <div class="absolute inset-0 image-wrap z-1 bg-no-repeat bg-center bg-cover"
         [style.background-image]="'url(' + bg + ')'"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black z-2" id="particles-snow"></div>
     <div class="container relative z-3">
         <div class="flex justify-center">
             <div
-                class="max-w-[800px] h-[98vh] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+                class="max-w-[900px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
                 <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
-                <h5 class="my-2 text-xl font-semibold">{{ 'signup' | translate }}</h5>
+                <h5 class="my-2 text-xl font-semibold">{{ 'createAccount' | translate }}</h5>
                 @if (errorMessage) { <div
                     class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{
                     errorMessage | translate }}</div> }
@@ -77,6 +77,72 @@
                             @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('email')) {
                             <p class="mt-1 text-sm text-red-600">{{ 'emailInvalid' | translate }}</p>
                             }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="dateOfBirth">{{ 'dateOfBirth' | translate }}</label>
+                            <input id="dateOfBirth" type="date" formControlName="dateOfBirth" [max]="maxBirthDate"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
+                                [class.border-red-500]="signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid">
+                            @if (signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'dateOfBirthRequired' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="nationalityId">{{ 'nationality' | translate }}</label>
+                            <select id="nationalityId" formControlName="nationalityId"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
+                                [class.border-red-500]="signupForm.controls.nationalityId.touched && signupForm.controls.nationalityId.invalid">
+                                <option [ngValue]="null">{{ (countriesLoading ? 'loading' : 'selectNationality') | translate }}</option>
+                                @for (country of countries; track country.id) {
+                                <option [ngValue]="country.id">{{ country.nameEng }}</option>
+                                }
+                            </select>
+                            @if (signupForm.controls.nationalityId.touched && signupForm.controls.nationalityId.invalid) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'nationalityRequired' | translate }}</p>
+                            }
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="gender">{{ 'gender' | translate }}</label>
+                            <select id="gender" formControlName="gender"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0">
+                                @for (gender of genders; track gender.value) {
+                                <option [ngValue]="gender.value">{{ gender.label | translate }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="customerType">{{ 'customerType' | translate }}</label>
+                            <select id="customerType" formControlName="customerType"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0">
+                                @for (type of customerTypes; track type.value) {
+                                <option [ngValue]="type.value">{{ type.label | translate }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        @if (signupForm.controls.customerType.value === customerTypeEnum.Company) {
+                        <div class="mb-1">
+                            <label class="font-semibold" for="companyName">{{ 'companyName' | translate }}</label>
+                            <input id="companyName" type="text" formControlName="companyName"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
+                                [class.border-red-500]="signupForm.controls.companyName.touched && signupForm.controls.companyName.invalid">
+                            @if (signupForm.controls.companyName.touched && signupForm.controls.companyName.invalid) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'companyNameRequired' | translate }}</p>
+                            }
+                        </div>
+                        }
+
+                        <div class="mb-1">
+                            <label class="font-semibold" for="passportNumber">{{ 'passportNumber' | translate }}
+                                <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
+                            </label>
+                            <input id="passportNumber" type="text" formControlName="passportNumber"
+                                class="mt-3 w-full py-2 px-3 h-10 uppercase bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
+                                [class.border-red-500]="signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.invalid">
                         </div>
 
                         <div class="mb-1">
@@ -154,7 +220,7 @@
                                 <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
                                 <span>{{ 'submitting' | translate }}</span>
                                 } @else {
-                                {{ 'submit' | translate }}
+                                {{ 'createAccount' | translate }}
                                 }
                             </button>
                         </div>

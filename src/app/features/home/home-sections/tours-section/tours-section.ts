@@ -6,18 +6,30 @@ import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { apiCurrencyLabel, apiPrice } from '../../../../core/utils/api-price.util';
-
+import { PaginationModel } from '../../../../core/models/pagination.model';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+export interface TourHomeDTO {
+  id: number;
+  coverImageUrl: number;
+  titleAr: string;
+  titleEng: string;
+  destinationName: string;
+  description: string;
+  fullDescription: string;
+  
+}
 @Component({
   selector: 'app-tours-section',
   imports: [RouterLink, TranslatePipe, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tours-section.html',
 })
+
 export class ToursSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  tours: any[] = [];
+  tours: TourHomeDTO[] = [];
   isLoading = false;
   hasError = false;
 
@@ -28,7 +40,7 @@ export class ToursSection implements OnInit {
   loadTours(): void {
     this.isLoading = true;
     this.hasError = false;
-    this.apiService.getUnauthntecated('Tours?page=1&pageSize=8').pipe(
+    this.apiService.getUnauthntecated('tours/GetHomePage').pipe(
       catchError(() => {
         this.hasError = true;
         return of(null);
@@ -37,14 +49,10 @@ export class ToursSection implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: any) => {
-      if (response === null) {
-        this.tours = [];
-        return;
-      }
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
-      this.tours = Array.isArray(rows) ? rows.slice(0, 8) : [];
+    ).subscribe((response: IGenericResponse<PaginationModel<TourHomeDTO>>) => {
+     var res= response?.data;
+ 
+      this.tours = Array.isArray(res?.data ) ? res.data : [];
     });
   }
 
@@ -57,9 +65,6 @@ export class ToursSection implements OnInit {
   }
 
   imageUrl(item: any): string {
-    const image = Array.isArray(item?.images) ? item.images[0] : null;
-    const url = image?.imageUrl ?? image?.url ?? item?.imageUrl ?? '';
-    if (!url) return 'assets/images/bg/3.jpg';
-    return url.startsWith('http') ? url : environment.imageUrl + url;
+   return  item?.coverImageUrl || 'assets/images/bg/3.jpg';
   }
 }

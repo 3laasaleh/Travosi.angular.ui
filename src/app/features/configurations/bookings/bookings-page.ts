@@ -16,7 +16,6 @@ export class Bookings {
   private readonly authService = inject(AuthService);
 
   viewMode: 'table' | 'grid' = 'table';
-  showForm = false;
   selectedBooking: any = null;
   refreshToken = 0;
 
@@ -24,18 +23,13 @@ export class Bookings {
     return this.authService.getCurrentUserRole() === 'Admin';
   }
 
-  toggleForm(): void {
-    this.showForm = !this.showForm;
-    if (!this.showForm) this.selectedBooking = null;
-  }
-
   selectBookingForEdit(booking: any): void {
     this.selectedBooking = booking;
-    this.showForm = true;
   }
 
   clearSelectedBooking(): void {
     this.selectedBooking = null;
+    this.refreshToken++;
   }
 
   handleBookingSaved(): void {

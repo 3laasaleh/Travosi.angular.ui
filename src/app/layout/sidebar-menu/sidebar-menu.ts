@@ -19,7 +19,7 @@ interface SidebarMenuItem {
 export class SidebarMenu {
   private authService = inject(AuthService);
   activeMenu = '';
-  collapsed = true;
+  collapsed = false;
 
   readonly menuItems: SidebarMenuItem[] = [
     { label: 'destinations', path: '/configurations/destinations', icon: 'mdi-map-marker-outline' },

@@ -32,6 +32,13 @@ export class BookingsFromCard implements OnInit, OnChanges {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  assignmentSucceeded = false;
+
+  get selectedAgentName(): string {
+    const selectedId = Number(this.bookingForm.controls.agentId.value);
+    const agent = this.agents.find((item) => Number(item.id) === selectedId);
+    return agent ? `${agent.firstName ?? ''} ${agent.lastName ?? ''}`.trim() : '';
+  }
 
   constructor(
     private apiService: ApiService,
@@ -91,8 +98,12 @@ export class BookingsFromCard implements OnInit, OnChanges {
           return;
         }
         this.successMessage = res?.message || 'bookingAssigned';
-        this.bookingSaved.emit();
+        this.assignmentSucceeded = true;
       });
+  }
+
+  closeAfterSuccess(): void {
+    this.bookingSaved.emit();
   }
 
   cancelEdit(): void {
@@ -107,6 +118,8 @@ export class BookingsFromCard implements OnInit, OnChanges {
 
   private resetForm(emitCancel: boolean): void {
     this.bookingForm.reset({ agentId: null });
+    this.assignmentSucceeded = false;
+    this.successMessage = '';
     if (emitCancel) this.editCancelled.emit();
   }
 
