@@ -10,7 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, of, switchMap, throwError } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 
@@ -118,7 +118,10 @@ export class QuotationsList implements OnInit, OnChanges {
     this.errorMessage = '';
     this.sendMessage = '';
 
-    this.apiService.patchFile(`Quotations/${id}/Send`, {}).pipe(
+    this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
+      switchMap((response: any) => response?.isSuccess === false
+        ? throwError(() => new Error(response?.message || 'quotationSendError'))
+        : this.apiService.getFile(`Quotations/${id}/Pdf`)),
       catchError(() => {
         this.errorMessage = 'quotationSendError';
         return of(null);
@@ -137,21 +140,10 @@ export class QuotationsList implements OnInit, OnChanges {
         anchor.click();
         URL.revokeObjectURL(url);
         this.sendMessage = 'quotationPdfDownloaded';
+        this.loadQuotations();
         return;
       }
-
-      // The documented endpoint returns GenericResponse<bool>. In that case the
-      // quotation was sent/generated server-side but there is no PDF body to save.
-      blob.text().then((text) => {
-        try {
-          const response = JSON.parse(text);
-          this.sendMessage = response?.message ?? 'quotationSent';
-          if (response?.isSuccess === false) this.errorMessage = response.message;
-        } catch {
-          this.sendMessage = 'quotationSent';
-        }
-        this.cdr.markForCheck();
-      });
+      this.errorMessage = 'quotationPdfInvalid';
     });
   }
 }

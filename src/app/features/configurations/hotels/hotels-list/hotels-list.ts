@@ -38,6 +38,7 @@ export class HotelsList implements OnInit, OnChanges {
   hotels: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
@@ -130,7 +131,7 @@ export class HotelsList implements OnInit, OnChanges {
     if (!result.isConfirmed) return;
 
     this.statusUpdatingId = Number(hotel.id);
-    this.apiService.put(`Hotels/${hotel.id}/ChangeStatus`, {}).pipe(
+    this.apiService.patch(`Hotels/${hotel.id}/ChangeStatus`, {}).pipe(
       catchError(() => {
         Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') });
         return of({ statusToggleFailed: true });
@@ -157,5 +158,16 @@ export class HotelsList implements OnInit, OnChanges {
 
   stars(count: number): number[] {
     return Array.from({ length: Number(count) || 0 });
+  }
+
+  async deleteHotel(hotel: any): Promise<void> {
+    if (this.deletingId !== null) return;
+    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', reverseButtons: true });
+    if (!result.isConfirmed) return;
+    this.deletingId = Number(hotel.id);
+    this.apiService.deleteRequest(`Hotels/${hotel.id}`).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of(null); }),
+      finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => { if (response?.isSuccess === false || response === null) return; this.loadHotels(); });
   }
 }

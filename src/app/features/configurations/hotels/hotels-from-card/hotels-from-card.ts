@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -23,6 +24,7 @@ export interface HotelDTO {
   email?: string;
   website?: string;
   isActive: boolean;
+  destinationId: number;
 }
 
 @Component({
@@ -32,7 +34,7 @@ export interface HotelDTO {
   templateUrl: './hotels-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HotelsFromCard implements OnChanges {
+export class HotelsFromCard implements OnInit, OnChanges {
   @Input() selectedHotel: HotelDTO | null = null;
   @Output() hotelSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -42,11 +44,23 @@ export class HotelsFromCard implements OnChanges {
   errorMessage = '';
   successMessage = '';
   readonly starOptions = [1, 2, 3, 4, 5];
+  destinations: any[] = [];
 
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  ngOnInit(): void {
+    this.apiService.get('Destinations?page=1&pageSize=500').pipe(
+      catchError(() => of(null)),
+      finalize(() => this.cdr.markForCheck()),
+    ).subscribe((response: any) => {
+      const page = response?.data ?? response;
+      const rows = page?.data ?? page?.items ?? page?.destinations ?? page;
+      this.destinations = (Array.isArray(rows) ? rows : []).filter((item) => item?.isActive !== false);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['selectedHotel']) return;
@@ -64,6 +78,7 @@ export class HotelsFromCard implements OnChanges {
     const payload: any = {
       name: form.name.trim(),
       starRating: Number(form.starRating),
+      destinationId: Number(form.destinationId),
       address: form.address.trim(),
       description: form.description.trim(),
       phoneNumber: form.phoneNumber.trim(),
@@ -110,6 +125,7 @@ export class HotelsFromCard implements OnChanges {
     this.hotelForm.setValue({
       name: hotel.name ?? '',
       starRating: hotel.starRating ?? 1,
+      destinationId: hotel.destinationId ?? null,
       address: hotel.address ?? '',
       description: hotel.description ?? '',
       phoneNumber: hotel.phoneNumber ?? '',
@@ -123,6 +139,7 @@ export class HotelsFromCard implements OnChanges {
     this.hotelForm.reset({
       name: '',
       starRating: 1,
+      destinationId: null,
       address: '',
       description: '',
       phoneNumber: '',
@@ -140,6 +157,7 @@ export class HotelsFromCard implements OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1), Validators.max(5)],
       }),
+      destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       address: new FormControl('', { nonNullable: true }),
       description: new FormControl('', { nonNullable: true }),
       phoneNumber: new FormControl('', { nonNullable: true }),

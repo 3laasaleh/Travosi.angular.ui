@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   effect,
   ElementRef,
   HostListener,
@@ -14,10 +15,11 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
 import { catchError, finalize, of } from 'rxjs';
+import { timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/apiservice.service';
 import { TaskNotificationsService } from '../../core/services/task-notifications.service';
 import { LanguageService } from '../../core/services/language.service';
-import { TaskStatusEnum } from '../../features/configurations/tasks/task-status.enum';
 import { AuthService } from '../../features/user/_services/auth.service';
 
 @Component({
@@ -32,6 +34,7 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly taskNotifications = inject(TaskNotificationsService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly languageService = inject(LanguageService);
 
   constructor() {
@@ -47,31 +50,53 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   languageMenuOpen = false;
   switchingLanguage: string | null = null;
   agentTasks: any[] = [];
-  readonly taskStatusEnum = TaskStatusEnum;
 
   get isAgent(): boolean {
     return this.authService.getCurrentUserRole() === 'Agent';
   }
 
   get pendingTasksCount(): number {
-    return this.agentTasks.filter((task) => {
-      const status = Number(task.status);
-      return status === TaskStatusEnum.Pending || status === TaskStatusEnum.Returned;
-    }).length;
+    return this.agentTasks.filter((notification) => notification?.isRead !== true).length;
   }
 
-  ngOnInit(): void {}
+  get roleTranslationKey(): string {
+    return this.isAgent ? 'agent' : 'administrator';
+  }
+
+  ngOnInit(): void {
+    if (this.isAgent) {
+      timer(0, 30000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAgentTasks());
+    }
+  }
 
   loadAgentTasks(): void {
-    this.apiService.get('Tasks/GetAgentTasks?page=1&pageSize=50').pipe(
+    this.apiService.get('Notifications/Mine?unreadOnly=false').pipe(
       catchError(() => of(null)),
       finalize(() => this.cdr.markForCheck()),
     ).subscribe((response: any) => {
       if (response === null) return;
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.tasks ?? pageData;
+      const rows = response?.data ?? response;
       this.agentTasks = Array.isArray(rows) ? rows : [];
     });
+  }
+
+  markNotificationAsRead(notification: any): void {
+    this.notificationsOpen = false;
+    if (notification?.isRead === true || !notification?.id) return;
+    notification.isRead = true;
+    this.apiService.patch(`Notifications/${notification.id}/Read`, {}).pipe(
+      catchError(() => of(null)),
+      finalize(() => this.cdr.markForCheck()),
+    ).subscribe();
+  }
+
+  markAllNotificationsAsRead(): void {
+    if (!this.pendingTasksCount) return;
+    this.agentTasks.forEach((notification) => notification.isRead = true);
+    this.apiService.patch('Notifications/ReadAll', {}).pipe(
+      catchError(() => of(null)),
+      finalize(() => this.cdr.markForCheck()),
+    ).subscribe();
   }
 
   toggleNotifications(event: MouseEvent): void {

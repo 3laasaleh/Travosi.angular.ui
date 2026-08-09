@@ -39,6 +39,7 @@ export class AirlinesList implements OnInit, OnChanges {
   airlines: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
@@ -166,5 +167,16 @@ export class AirlinesList implements OnInit, OnChanges {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  async deleteAirline(airline: any): Promise<void> {
+    if (this.deletingId !== null) return;
+    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', reverseButtons: true });
+    if (!result.isConfirmed) return;
+    this.deletingId = Number(airline.id);
+    this.apiService.deleteRequest(`Airlines/${airline.id}`).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of(null); }),
+      finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => { if (response?.isSuccess === false || response === null) return; this.loadAirlines(); });
   }
 }

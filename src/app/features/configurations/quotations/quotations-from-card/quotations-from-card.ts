@@ -14,6 +14,7 @@ import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { environment } from '../../../../../environments/environment';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -21,6 +22,7 @@ export enum QuotationStatusEnum {
   Accepted,
   Rejected,
   Expired,
+  Cancelled,
 }
 
 export interface QuotationDTO {
@@ -70,7 +72,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     { id: 1, code: 'EGP', symbol: 'EGP', labelKey: 'currencyEgp' },
   ];
   packages: any[] = [];
+  tours: any[] = [];
   selectedPackageIds = new Set<number>();
+  selectedTourIds = new Set<number>();
   isLoading = false;
   optionsLoading = false;
   errorMessage = '';
@@ -95,15 +99,23 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return this.packages.filter((pkg) => this.selectedPackageIds.has(Number(pkg.id)));
   }
 
+  get selectedTours(): any[] {
+    return this.tours.filter((tour) => this.selectedTourIds.has(Number(tour.id)));
+  }
+
+  get travelerCount(): number {
+    const form = this.quotationForm.controls;
+    return form.adults.value + form.children.value + form.infants.value;
+  }
+
   get subTotal(): number {
-    return this.selectedPackages.reduce((sum, pkg) => sum + this.packagePrice(pkg), 0);
+    return this.selectedPackages.reduce((sum, pkg) => sum + this.catalogTotal(pkg), 0)
+      + this.selectedTours.reduce((sum, tour) => sum + this.catalogTotal(tour), 0);
   }
 
   get totalCost(): number {
-    return this.selectedPackages.reduce(
-      (sum, pkg) => sum + Number(pkg.costPrice ?? pkg.cost ?? pkg.price ?? 0),
-      0,
-    );
+    return [...this.selectedPackages, ...this.selectedTours].reduce(
+      (sum, item) => sum + Number(item.costPrice ?? item.cost ?? 0), 0);
   }
 
   get tax(): number {
@@ -112,8 +124,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   get totalAmount(): number {
-    return (Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax)
-      * this.quotationForm.controls.exchangeRate.value;
+    return Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax;
   }
 
   isPackageSelected(id: number): boolean {
@@ -126,15 +137,72 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     else this.selectedPackageIds.delete(id);
   }
 
+  isTourSelected(id: number): boolean {
+    return this.selectedTourIds.has(Number(id));
+  }
+
+  toggleTour(tour: any, checked: boolean): void {
+    const id = Number(tour.id);
+    if (checked) this.selectedTourIds.add(id);
+    else this.selectedTourIds.delete(id);
+  }
+
   packagePrice(pkg: any): number {
-    return Number(pkg.price ?? pkg.totalAmount ?? 0);
+    return Number(pkg.pricePerPerson ?? pkg.price ?? pkg.totalAmount ?? 0);
+  }
+
+  childPrice(item: any): number {
+    return Number(item.pricePerChild ?? 0);
+  }
+
+  catalogTotal(item: any): number {
+    return this.packagePrice(item) * this.quotationForm.controls.adults.value
+      + this.childPrice(item) * this.quotationForm.controls.children.value;
+  }
+
+  itemName(item: any): string {
+    return item?.nameEng ?? item?.titleEng ?? item?.title ?? item?.name ?? '';
+  }
+
+  thumbnail(item: any): string {
+    const image = item?.images?.[0];
+    const raw = image?.imageUrl ?? image?.url ?? item?.coverImageUrl ?? item?.imageUrl ?? '';
+    if (!raw || /^(blob:|data:|https?:\/\/)/i.test(raw)) return raw;
+    const path = String(raw).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  private buildQuotationItems(): any[] {
+    const items: any[] = [];
+    let sortOrder = 1;
+    const addCatalogItem = (item: any, itemType: number, reference: 'packageId' | 'tourId') => {
+      const base = {
+        itemType,
+        description: this.itemName(item),
+        costPrice: Number(item.costPrice ?? item.cost ?? 0),
+        discount: 0,
+        sortOrder: sortOrder++,
+        [reference]: Number(item.id),
+      };
+      const adults = this.quotationForm.controls.adults.value;
+      const children = this.quotationForm.controls.children.value;
+      if (adults > 0) items.push({ ...base, description: `${base.description} - Adults`, quantity: adults, sellingPrice: this.packagePrice(item) });
+      if (children > 0 && this.childPrice(item) > 0) items.push({ ...base, description: `${base.description} - Children`, quantity: children, sellingPrice: this.childPrice(item), sortOrder: sortOrder++ });
+    };
+    this.selectedPackages.forEach((item) => addCatalogItem(item, 1, 'packageId'));
+    this.selectedTours.forEach((item) => addCatalogItem(item, 2, 'tourId'));
+    return items;
   }
 
   saveQuotation(): void {
     if (this.isLoading) return;
-    if (this.quotationForm.invalid || !this.selectedPackageIds.size) {
+    if (this.quotationForm.controls.discount.value > this.subTotal) {
+      this.errorMessage = 'discountExceedsSubtotal';
+      return;
+    }
+    if (this.quotationForm.invalid || (!this.selectedPackageIds.size && !this.selectedTourIds.size)) {
       this.quotationForm.markAllAsTouched();
-      if (!this.selectedPackageIds.size) this.errorMessage = 'selectAtLeastOnePackage';
+      if (!this.selectedPackageIds.size && !this.selectedTourIds.size) this.errorMessage = 'selectAtLeastOneTravelItem';
       return;
     }
 
@@ -158,13 +226,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       status: form.status,
       validUntil: form.validUntil,
       notes: form.notes.trim() || null,
-      items: this.selectedPackages.map((pkg) => ({
-        packageId: Number(pkg.id),
-        quantity: 1,
-        unitPrice: this.packagePrice(pkg),
-        costPrice: Number(pkg.costPrice ?? pkg.cost ?? pkg.price ?? 0),
-        totalAmount: this.packagePrice(pkg),
-      })),
+      items: this.buildQuotationItems(),
     };
     if (this.selectedQuotation?.id) payload.id = this.selectedQuotation.id;
 
@@ -205,13 +267,15 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     forkJoin({
       customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => of([]))),
       packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => of([]))),
+      tours: this.apiService.get('Tours?page=1&pageSize=100').pipe(catchError(() => of([]))),
     }).pipe(finalize(() => {
       this.optionsLoading = false;
       this.cdr.markForCheck();
-    })).subscribe(({ customers, packages }) => {
+    })).subscribe(({ customers, packages, tours }) => {
       this.customers = this.rows(customers, 'customers');
       this.packages = this.rows(packages, 'packages');
-      if (this.selectedQuotation) this.selectQuotationPackages(this.selectedQuotation.items);
+      this.tours = this.rows(tours, 'tours');
+      if (this.selectedQuotation) this.selectQuotationItems(this.selectedQuotation.items);
     });
   }
 
@@ -232,17 +296,21 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       validUntil: quotation.validUntil ?? '',
       notes: quotation.notes ?? '',
     });
-    this.selectQuotationPackages(quotation.items);
+    this.selectQuotationItems(quotation.items);
   }
 
-  private selectQuotationPackages(items: any[] | undefined): void {
+  private selectQuotationItems(items: any[] | undefined): void {
     this.selectedPackageIds = new Set(
       (items ?? []).map((item) => Number(item.packageId ?? item.package?.id ?? item.id)),
+    );
+    this.selectedTourIds = new Set(
+      (items ?? []).filter((item) => item.tourId).map((item) => Number(item.tourId)),
     );
   }
 
   private resetForm(emitCancel: boolean): void {
     this.selectedPackageIds.clear();
+    this.selectedTourIds.clear();
     this.quotationForm.reset({
       quotationNo: '',
       customerId: '',
@@ -270,7 +338,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private createForm() {
     return new FormGroup({
-      quotationNo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      quotationNo: new FormControl('', { nonNullable: true }),
       customerId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
       currencyId: new FormControl<number | ''>(this.currencies[0].id, {
         nonNullable: true,

@@ -22,6 +22,8 @@ export interface TaskDTO {
   agentId: string;
   dueDate?: string;
   status: TaskStatusEnum;
+  taskType: number;
+  priority: number;
 }
 
 @Component({
@@ -42,6 +44,16 @@ export class TasksFromCard implements OnInit, OnChanges {
   errorMessage = '';
   successMessage = '';
   readonly taskStatusOptions = TASK_STATUS_OPTIONS;
+  readonly taskTypeOptions = [
+    { value: 1, labelKey: 'taskTypeFollowUpCustomer' }, { value: 2, labelKey: 'taskTypePrepareQuotation' },
+    { value: 3, labelKey: 'taskTypeConfirmBooking' }, { value: 4, labelKey: 'taskTypeCollectPayment' },
+    { value: 5, labelKey: 'taskTypeDocumentRequest' }, { value: 6, labelKey: 'taskTypeCustomerSupport' },
+    { value: 7, labelKey: 'taskTypeGeneral' },
+  ];
+  readonly priorityOptions = [
+    { value: 1, labelKey: 'priorityLow' }, { value: 2, labelKey: 'priorityMedium' },
+    { value: 3, labelKey: 'priorityHigh' }, { value: 4, labelKey: 'priorityUrgent' },
+  ];
 
   constructor(
     private apiService: ApiService,
@@ -82,6 +94,8 @@ export class TasksFromCard implements OnInit, OnChanges {
       agentId: form.agentId,
       dueDate: form.dueDate || null,
       status: Number(form.status),
+      taskType: Number(form.taskType),
+      priority: Number(form.priority),
     };
     if (this.selectedTask?.id) payload.id = this.selectedTask.id;
 
@@ -125,6 +139,8 @@ export class TasksFromCard implements OnInit, OnChanges {
       agentId: task.agentId ?? null,
       dueDate: task.dueDate ? task.dueDate.substring(0, 10) : '',
       status: task.status ?? TaskStatusEnum.Pending,
+      taskType: task.taskType ?? 7,
+      priority: task.priority ?? 2,
     });
   }
 
@@ -135,6 +151,8 @@ export class TasksFromCard implements OnInit, OnChanges {
       agentId: null,
       dueDate: '',
       status: TaskStatusEnum.Pending,
+      taskType: 7,
+      priority: 2,
     });
     if (emitCancel) this.editCancelled.emit();
   }
@@ -146,6 +164,8 @@ export class TasksFromCard implements OnInit, OnChanges {
       agentId: new FormControl<string | null>(null, { validators: [Validators.required] }),
       dueDate: new FormControl('', { nonNullable: true }),
       status: new FormControl(TaskStatusEnum.Pending, { nonNullable: true, validators: [Validators.required] }),
+      taskType: new FormControl(7, { nonNullable: true, validators: [Validators.required] }),
+      priority: new FormControl(2, { nonNullable: true, validators: [Validators.required] }),
     });
   }
 }

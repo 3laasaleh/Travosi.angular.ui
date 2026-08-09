@@ -63,6 +63,7 @@
           <td class="px-4 py-3">
             <div class="flex gap-2">
               <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white cursor-pointer" (click)="editRequested.emit(item)"><i class="mdi mdi-pencil-outline"></i></button>
+              @if (item.isActive === false) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 hover:bg-rose-600 hover:text-white" (click)="deleteHotel(item)"><i class="mdi mdi-delete-outline"></i></button> }
             </div>
           </td>
         </tr> } @empty { <tr>
@@ -83,6 +84,8 @@
         <p class="mt-2 text-sm">{{ item.description }}</p>
         <div class="mt-4 flex gap-2">
           <button type="button" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(item)">{{ 'edit' | translate }}</button>
+          <button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold" [class.border-emerald-300]="item.isActive === false" [class.text-emerald-600]="item.isActive === false" [class.border-rose-300]="item.isActive !== false" [class.text-rose-600]="item.isActive !== false" (click)="toggleHotelStatus(item)">{{ (item.isActive === false ? 'activate' : 'deactivate') | translate }}</button>
+          @if (item.isActive === false) { <button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600" (click)="deleteHotel(item)">{{ 'delete' | translate }}</button> }
         </div>
       </div>
     </article> } @empty { <p class="text-sm text-slate-500">{{ 'noHotelsFound' | translate }}</p> }</div>

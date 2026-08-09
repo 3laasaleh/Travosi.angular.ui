@@ -56,6 +56,7 @@
           <td class="px-4 py-3">
             <div class="flex gap-2">
               @if (item.isActive === false) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white cursor-pointer" (click)="editRequested.emit(item)"><i class="mdi mdi-pencil-outline"></i></button> }
+              @if (item.isActive === false) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 hover:bg-rose-600 hover:text-white" (click)="deleteAirline(item)"><i class="mdi mdi-delete-outline"></i></button> }
             </div>
           </td>
         </tr> } @empty { <tr>
@@ -78,6 +79,7 @@
         <div class="mt-4 flex items-center justify-between gap-2">
           <button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false" [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate" class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60" [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false" (click)="toggleAirlineStatus(item)">@if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white"></i> } @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }</button>
           @if (item.isActive === false) { <button type="button" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(item)">{{ 'edit' | translate }}</button> }
+          @if (item.isActive === false) { <button type="button" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600" (click)="deleteAirline(item)">{{ 'delete' | translate }}</button> }
         </div>
       </div>
     </article> } @empty { <p class="text-sm text-slate-500">{{ 'noAirlinesFound' | translate }}</p> }</div>

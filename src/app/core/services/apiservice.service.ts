@@ -106,6 +106,13 @@ export class ApiService {
     });
   }
 
+  getFile(url: string): Observable<Blob> {
+    return this.http.get(environment.baseUrl + url, {
+      headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken(), Accept: "application/pdf" }),
+      responseType: 'blob',
+    });
+  }
+
   delete(url: string, id: any): Observable<any> {
     return this.http.delete<any>(environment.baseUrl + url + "/" + id,
       { headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }) });
