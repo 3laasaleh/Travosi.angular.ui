@@ -654,14 +654,15 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ? tour.images
       : (tour?.coverImageUrl ?? tour?.imageUrl ? [{
           imageUrl: tour.coverImageUrl ?? tour.imageUrl,
-          imageName: 'Tour cover',
+          imageName: this.translate.instant('tourCover'),
         }] : []);
     this.imageUploads = tourImages
       .slice(0, this.maxImages)
       .map((image: any, index: number) => ({
         id: this.toOptionalId(image?.id ?? image?.tourImageId) ?? undefined,
         url: this.imageUrl(image),
-        name: image?.imageName ?? image?.name ?? `Tour image ${index + 1}`,
+        name: image?.imageName ?? image?.name
+          ?? this.translate.instant('tourImageNumber', { number: index + 1 }),
         existing: true,
         uploaded: true,
       }))

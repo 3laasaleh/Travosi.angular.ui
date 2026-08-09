@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { PackagesFromCard } from './packages-from-card/packages-from-card';
 import { PackagesList } from './packages-list/packages-list';
@@ -14,6 +14,7 @@ import { PackagesList } from './packages-list/packages-list';
   styleUrl: './packages-page.scss',
 })
 export class Packages {
+  private readonly translate = inject(TranslateService);
   viewMode: 'table' | 'grid' = 'grid';
   showForm = false;
   selectedPackage: any = null;
@@ -94,7 +95,8 @@ export class Packages {
         .filter(Boolean)
         .join(', ');
     }
-    return travelPackage?.destination?.nameEng ?? travelPackage?.destinationName ?? `Destination #${travelPackage?.destinationId ?? '-'}`;
+    return travelPackage?.destination?.nameEng ?? travelPackage?.destinationName
+      ?? this.translate.instant('destinationNumber', { id: travelPackage?.destinationId ?? '-' });
   }
 
   getImages(travelPackage: any): any[] {

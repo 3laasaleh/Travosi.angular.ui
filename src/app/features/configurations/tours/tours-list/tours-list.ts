@@ -165,14 +165,14 @@ export class ToursList implements OnInit, OnChanges {
     return (
       tour?.destination?.nameEng ??
       tour?.destinationName ??
-      `Destination #${tour?.destinationId}`
+      this.translate.instant('destinationNumber', { id: tour?.destinationId ?? '-' })
     );
   }
 
   tourDuration(tour: any): string {
     const days = Number(tour?.durationDays ?? 0);
     const hours = Number(tour?.durationhours ?? tour?.durationHours ?? 0);
-    return `${days}d ${hours}h`;
+    return this.translate.instant('durationDaysHours', { days, hours });
   }
 
   tourPrice(tour: any): string {

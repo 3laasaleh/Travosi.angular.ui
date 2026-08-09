@@ -22,7 +22,7 @@
                             <input id="firstName" type="text" formControlName="firstName"
                                 class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('firstName')?.touched && signupForm.get('firstName')?.invalid"
-                                placeholder="Harry">
+                                [placeholder]="'firstNamePlaceholder' | translate">
                             @if (signupForm.get('firstName')?.touched &&
                             signupForm.get('firstName')?.hasError('required')) {
                             <p class="mt-1 text-sm text-red-600">{{ 'firstNameRequired' | translate }}</p>
@@ -38,7 +38,7 @@
                             <input id="lastName" type="text" formControlName="lastName"
                                 class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('lastName')?.touched && signupForm.get('lastName')?.invalid"
-                                placeholder="Harry">
+                                [placeholder]="'lastNamePlaceholder' | translate">
                             @if (signupForm.get('lastName')?.touched &&
                             signupForm.get('lastName')?.hasError('required')) {
                             <p class="mt-1 text-sm text-red-600">{{ 'lastNameRequired' | translate }}</p>
@@ -56,7 +56,7 @@
                             <input id="mobile" type="tel" formControlName="mobile"
                                 class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('mobile')?.touched && signupForm.get('mobile')?.invalid"
-                                placeholder="+20101060737">
+                                [placeholder]="'mobilePlaceholder' | translate">
                             @if (signupForm.get('mobile')?.touched && signupForm.get('mobile')?.hasError('required')) {
                             <p class="mt-1 text-sm text-red-600">{{ 'mobileRequired' | translate }}</p>
                             }
@@ -70,7 +70,7 @@
                             <input id="email" type="email" formControlName="email"
                                 class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('email')?.touched && signupForm.get('email')?.invalid"
-                                placeholder="name@example.com">
+                                [placeholder]="'emailPlaceholder' | translate">
                             @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('required')) {
                             <p class="mt-1 text-sm text-red-600">{{ 'emailRequired' | translate }}</p>
                             }

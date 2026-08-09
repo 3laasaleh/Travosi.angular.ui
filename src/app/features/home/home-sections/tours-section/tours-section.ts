@@ -65,6 +65,6 @@ export class ToursSection implements OnInit {
   }
 
   imageUrl(item: any): string {
-   return  item?.coverImageUrl || 'assets/images/bg/3.jpg';
+   return  item?.coverImageUrl ? (environment.imageUrl+item?.coverImageUrl) : 'assets/images/bg/3.jpg';
   }
 }

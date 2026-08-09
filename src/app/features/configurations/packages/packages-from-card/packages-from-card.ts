@@ -480,7 +480,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const images = Array.isArray(item?.images) ? item.images : [];
     this.imageUploads = images.slice(0, this.maxImages).map((image: any, index: number) => ({
       id: this.toOptionalId(image?.id ?? image?.packageImageId) ?? undefined,
-      url: this.resolveImageUrl(image), name: image?.imageName ?? `Package image ${index + 1}`,
+      url: this.resolveImageUrl(image),
+      name: image?.imageName ?? this.translate.instant('packageImageNumber', { number: index + 1 }),
       existing: true, uploaded: true,
     })).filter((image: PackageImageUpload) => !!image.url);
     this.savedPackageId = this.toOptionalId(item?.id ?? item?.packageId);

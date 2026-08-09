@@ -206,7 +206,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
     this.revokeNewLogoUrl();
     const logoUrl = airline.logoUrl ?? '';
     this.logoUpload = logoUrl
-      ? { url: logoUrl, name: 'Airline logo', existing: true }
+      ? { url: logoUrl, name: this.translate.instant('airlineLogo'), existing: true }
       : null;
     this.airlineForm.setValue({
       name: airline.name ?? '',

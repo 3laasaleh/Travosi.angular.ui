@@ -229,7 +229,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       .map((image: any, index: number) => ({
         id: image.id,
         url: this.imageUrl(image),
-        name: image?.imageName ?? image?.name ?? `Destination image ${index + 1}`,
+        name: image?.imageName ?? image?.name
+          ?? this.translate.instant('destinationImageNumber', { number: index + 1 }),
         existing: true,
       }))
       .filter((image: DestinationImageUpload) => !!image.url);

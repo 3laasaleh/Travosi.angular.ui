@@ -7,6 +7,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { AuthService } from '../_services/auth.service';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface UserBookingItem {
   id: number;
@@ -24,7 +25,7 @@ interface UserBookingItem {
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule, HomeNavbar, AccountTab, FooterOne],
+  imports: [CommonModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })
@@ -74,7 +75,7 @@ export class UserBooking implements OnInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.errorMessage = 'Unable to load your bookings. Please try again later.';
+        this.errorMessage = 'userBookingsLoadError';
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -83,6 +84,16 @@ export class UserBooking implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  bookingStatusKey(statusName: string): string {
+    const keys: Record<string, string> = {
+      pending: 'bookingStatusPending',
+      confirmed: 'bookingStatusConfirmed',
+      cancelled: 'bookingStatusCancelled',
+      completed: 'bookingStatusCompleted',
+    };
+    return keys[(statusName ?? '').toLowerCase()] ?? statusName;
   }
 
   prevPage(): void {

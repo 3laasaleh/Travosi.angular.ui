@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-signup-success',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './signup-success.html',
 })
@@ -11,24 +12,23 @@ export class SignupSuccess implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   year = new Date().getFullYear();
-  title = 'Success';
-  message = 'Your account has been created. Please check your email to activate your account.';
-  buttonText = 'Continue';
+  title = 'success';
+  message = 'accountCreatedActivationRequired';
+  buttonText = 'continue';
   redirectLink = '/';
 
   ngOnInit(): void {
     const status = this.route.snapshot.queryParamMap.get('status');
 
     if (status === 'activated') {
-      this.title = 'Activated';
-      this.message = 'Your account has been activated successfully. You can now sign in.';
-      this.buttonText = 'Sign in';
+      this.title = 'activated';
+      this.message = 'accountActivatedSignin';
+      this.buttonText = 'signin';
       this.redirectLink = '/login';
     } else if (status === 'registered') {
-      this.title = 'Success';
-      this.message =
-        'Your account has been created. Please check your email to activate your account.';
-      this.buttonText = 'Continue';
+      this.title = 'success';
+      this.message = 'accountCreatedActivationRequired';
+      this.buttonText = 'continue';
       this.redirectLink = '/';
     }
   }

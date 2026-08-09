@@ -6,22 +6,22 @@
     <div class="flex justify-center">
       <div class="max-w-[600px] h-[60vh] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
         <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
-        <h5 class="my-4 text-xl font-semibold">Activate Your Account</h5>
+        <h5 class="my-4 text-xl font-semibold">{{ 'activateAccount' | translate }}</h5>
 
         @if (isLoading) {
-          <div class="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">Activating your account, please wait...</div>
+          <div class="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">{{ 'activationInProgress' | translate }}</div>
         }
 
         @if (errorMessage && !isLoading) {
-          <div class="mt-4 rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+          <div class="mt-4 rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage | translate }}</div>
           <div class="mt-4 text-center">
-            <a routerLink="/signup" class="text-primary font-semibold">Return to signup</a>
+            <a routerLink="/signup" class="text-primary font-semibold">{{ 'returnToSignup' | translate }}</a>
           </div>
         }
 
         @if (!isLoading && !errorMessage) {
           <div class="mt-4 rounded border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-            Your account is activated. Redirecting...
+            {{ 'accountActivatedRedirecting' | translate }}
           </div>
         }
       </div>

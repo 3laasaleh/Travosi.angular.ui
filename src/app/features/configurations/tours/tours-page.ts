@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { ToursFromCard } from './tours-from-card/tours-from-card';
 import { ToursList } from './tours-list/tours-list';
@@ -15,6 +15,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
   styleUrl: './tours-page.scss',
 })
 export class Tours {
+  private readonly translate = inject(TranslateService);
   readonly currencies = [
     { id: 2, code: 'USD' },
     { id: 1, code: 'EGP' },
@@ -76,14 +77,14 @@ export class Tours {
     return (
       tour?.destination?.nameEng ??
       tour?.destinationName ??
-      `Destination #${tour?.destinationId}`
+      this.translate.instant('destinationNumber', { id: tour?.destinationId ?? '-' })
     );
   }
 
   tourDuration(tour: any): string {
     const days = Number(tour?.durationDays ?? 0);
     const hours = Number(tour?.durationhours ?? tour?.durationHours ?? 0);
-    return `${days}d ${hours}h`;
+    return this.translate.instant('durationDaysHours', { days, hours });
   }
 
   tourPrice(tour: any): string {

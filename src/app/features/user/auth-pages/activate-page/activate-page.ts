@@ -2,10 +2,11 @@ import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef }
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-activate-page',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './activate-page.html',
 })
@@ -28,7 +29,7 @@ export class ActivatePage implements OnInit {
 
     if (!email || !token) {
       this.isLoading = false;
-      this.errorMessage = 'Activation link is invalid or incomplete.';
+      this.errorMessage = 'activationLinkInvalid';
       return;
     }
 
@@ -60,7 +61,7 @@ export class ActivatePage implements OnInit {
         error: (error) => {
           this.isLoading = false;
           this.errorMessage =
-            error?.error?.message || error?.message || 'Activation failed. Please try again.';
+            error?.error?.message || error?.message || 'activationFailed';
         },
       });
   }

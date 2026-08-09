@@ -1,24 +1,23 @@
-<section class="relative h-screen flex justify-center items-center bg-slate-50 dark:bg-slate-800">
+<section class="relative flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-800">
     <div class="container relative">
-        <div class="md:flex justify-center">
+        <div class="flex justify-center">
             <div class="lg:w-2/5">
-                <div class="relative overflow-hidden rounded-md bg-white dark:bg-slate-900 shadow dark:shadow-gray-800">
-                    <div class="px-6 py-12 bg-emerald-600 text-center">
-                        <i class="mdi mdi-check-circle text-white text-6xl"></i>
-                        <h5 class="text-white text-xl tracking-wide uppercase font-semibold mt-2">Success</h5>
+                <div class="relative overflow-hidden rounded-md bg-white shadow dark:bg-slate-900 dark:shadow-gray-800">
+                    <div class="bg-emerald-600 px-6 py-12 text-center">
+                        <i class="mdi mdi-check-circle text-6xl text-white"></i>
+                        <h5 class="mt-2 text-xl font-semibold uppercase tracking-wide text-white">{{ 'success' | translate }}</h5>
                     </div>
 
                     <div class="px-6 py-12 text-center">
-                        <p class="text-black font-semibold text-xl dark:text-white">{{ title }}</p>
-                        <p class="text-slate-400 mt-4">{{ message }}</p>
-
+                        <p class="text-xl font-semibold text-black dark:text-white">{{ title | translate }}</p>
+                        <p class="mt-4 text-slate-400">{{ message | translate }}</p>
                         <div class="mt-6">
-                            <a [routerLink]="redirectLink" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ buttonText }}</a>
+                            <a [routerLink]="redirectLink" class="inline-block rounded-md bg-primary px-5 py-2 text-center text-base tracking-wide text-white duration-500">{{ buttonText | translate }}</a>
                         </div>
                     </div>
 
-                    <div class="text-center p-6 border-t border-gray-100 dark:border-gray-700">
-                        <p class="mb-0 text-slate-400">© {{ year }} Sea World. Developed by <i class="mdi mdi-heart text-primary-600"></i>  <a href="https://shreethemes.in/" target="_blank" class="text-reset">All</a>.</p>
+                    <div class="border-t border-gray-100 p-6 text-center dark:border-gray-700">
+                        <p class="mb-0 text-slate-400">&copy; {{ year }} Sea World Holidays. {{ 'allRightsReserved' | translate }}</p>
                     </div>
                 </div>
             </div>

@@ -145,16 +145,16 @@ export class SignupPage implements OnInit, AfterViewInit {
     ).subscribe({
       next: (res: IGenericResponse<string>) => {
         if(res.isSuccess){
-        this.successMessage =res.data?? 'Sign up compeleted successfully.';
+        this.successMessage = res.data ?? 'signupCompleted';
         this.router.navigateByUrl('/login');
         }
         else{
-        this.errorMessage =res.message?? 'Failed to signup please try agian!';
+        this.errorMessage = res.message ?? 'signupFailed';
         }
       },
       error: (error) => {
         this.errorMessage =
-          error?.error?.message || error?.message || 'Registration failed. Please try again.';
+          error?.error?.message || error?.message || 'registrationFailed';
       },
     });
   }
