@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { TranslatePipe } from '@ngx-translate/core';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-activate-page',
@@ -17,7 +18,7 @@ export class ActivatePage implements OnInit {
   private readonly cdr=inject(ChangeDetectorRef);
   bg = 'assets/images/bg/6.jpg';
   logo = 'assets/images/main-logo.png';
-  apiUrl = 'https://localhost:44382/api/Account/Activate';
+  readonly apiUrl = `${environment.baseUrl}Account/Activate`;
   isLoading = true;
   errorMessage = '';
   email = '';
@@ -56,7 +57,7 @@ export class ActivatePage implements OnInit {
         else{
           this.errorMessage=res.message;
         }
-        this.cdr.markForCheck
+        this.cdr.markForCheck();
         },
         error: (error) => {
           this.isLoading = false;

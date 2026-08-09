@@ -54,7 +54,6 @@ export class SignupPage implements OnInit, AfterViewInit {
 
   bg = 'assets/images/bg/6.jpg';
   logo = 'assets/images/main-logo.png';
-  apiUrl = 'https://localhost:44382/api/Account/Registeration';
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
