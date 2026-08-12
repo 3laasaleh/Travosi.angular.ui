@@ -69,7 +69,7 @@ export class TourDetail {
   }
 
   get price(): number {
-    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price);
+    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price, this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
   }
 
   get currencySymbol(): string {

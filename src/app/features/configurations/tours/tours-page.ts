@@ -16,7 +16,7 @@ import { TourDetail } from '../../home/tour-page/tour-detail/tour-detail/tour-de
 })
 export class Tours {
   private readonly translate = inject(TranslateService);
-  viewMode: 'table' | 'grid' = 'grid';
+  viewMode: 'table' | 'grid' = 'table';
   showForm = false;
   selectedTour: any = null;
   previewTour: any = null;

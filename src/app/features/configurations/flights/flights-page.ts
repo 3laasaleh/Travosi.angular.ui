@@ -29,10 +29,12 @@ export class Flights {
 
   clearSelectedFlight(): void {
     this.selectedFlight = null;
+    this.showForm = false;
   }
 
   handleFlightSaved(): void {
     this.selectedFlight = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

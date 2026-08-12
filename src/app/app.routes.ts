@@ -108,6 +108,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/configurations/quotations/quotations-page').then((m) => m.Quotations),
       },
       {
+        path: 'invoices',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/invoices/invoices-page').then((m) => m.Invoices),
+      },
+      {
+        path: 'vouchers',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/vouchers/vouchers-page').then((m) => m.Vouchers),
+      },
+      {
         path: 'bookings',
         canActivate: [adminGuard],
         loadComponent: () =>

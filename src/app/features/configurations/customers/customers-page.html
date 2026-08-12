@@ -11,8 +11,9 @@
     <div class="grid grid-cols-1 gap-6">
       @if (showForm) {
         <app-customers-from-card [selectedCustomer]="selectedCustomer" (customerSaved)="handleCustomerSaved()" (editCancelled)="clearSelectedCustomer()" />
+      } @else {
+        <app-configurations-customers-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectCustomerForEdit($event)" />
       }
-      <app-configurations-customers-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectCustomerForEdit($event)" />
     </div>
   </div>
 </section>

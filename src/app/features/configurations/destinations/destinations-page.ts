@@ -33,10 +33,12 @@ export class Destinations {
 
   clearSelectedDestination(): void {
     this.selectedDestination = null;
+    this.showForm = false;
   }
 
   handleDestinationSaved(): void {
     this.selectedDestination = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 

@@ -35,7 +35,7 @@ export class DestinationsMenu {
     const path = raw.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
-  tourPrice(tour: any): number { return apiPrice(tour?.pricePerPerson); }
+  tourPrice(tour: any): number { return apiPrice(tour?.pricePerPerson, tour?.currencyId ?? 2); }
   tourCurrency(tour: any): string { return apiCurrencyLabel(tour?.currencyId ?? 2); }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
   get cities(): any[] { return this.selectedDestination?.cities ?? []; }

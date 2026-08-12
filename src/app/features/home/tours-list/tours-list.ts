@@ -113,7 +113,7 @@ export class HomeToursList implements OnInit {
   }
 
   price(tour: any): number {
-    return apiPrice(tour?.pricePerPerson ?? tour?.price);
+    return apiPrice(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   currencyLabel(tour: any): string {

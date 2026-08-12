@@ -29,10 +29,12 @@ export class Hotels {
 
   clearSelectedHotel(): void {
     this.selectedHotel = null;
+    this.showForm = false;
   }
 
   handleHotelSaved(): void {
     this.selectedHotel = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

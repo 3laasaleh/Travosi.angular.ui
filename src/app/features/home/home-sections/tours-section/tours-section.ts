@@ -57,7 +57,7 @@ export class ToursSection implements OnInit {
   }
 
   price(item: any): number {
-    return apiPrice(item?.pricePerPerson ?? item?.price);
+    return apiPrice(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   currencyLabel(item: any): string {

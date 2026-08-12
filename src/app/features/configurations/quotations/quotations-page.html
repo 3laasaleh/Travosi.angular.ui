@@ -9,11 +9,12 @@
         <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-rose-200 bg-rose-50 text-xl text-rose-600 transition hover:bg-rose-600 hover:text-white" [attr.title]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate" (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'"><i class="mdi" [class.mdi-view-grid-outline]="viewMode === 'table'" [class.mdi-table]="viewMode === 'grid'"></i></button>
       </div>
     </header>
-    <div [class]="showForm ? 'grid gap-6 xl:grid-cols-[0.95fr_1.05fr]' : 'grid gap-6 grid-cols-1'">
+    <div class="grid grid-cols-1 gap-6">
       @if (showForm) {
         <app-quotations-from-card [selectedQuotation]="selectedQuotation" (quotationSaved)="handleQuotationSaved()" (editCancelled)="clearSelectedQuotation()" />
+      } @else {
+        <app-configurations-quotations-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectQuotationForEdit($event)" />
       }
-      <app-configurations-quotations-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectQuotationForEdit($event)" />
     </div>
   </div>
 </section>

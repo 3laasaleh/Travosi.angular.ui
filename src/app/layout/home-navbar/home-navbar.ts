@@ -8,6 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
@@ -18,10 +19,11 @@ import { SearchBox } from './search-box/search-box';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../core/services/apiservice.service';
 import { AuthService } from '../../features/user/_services/auth.service';
+import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, DestinationsMenu, PackagesMenu, SearchBox],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DecimalPipe, DestinationsMenu, PackagesMenu, SearchBox],
   templateUrl: './home-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,10 +33,12 @@ export class HomeNavbar implements AfterViewInit {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly languageService = inject(LanguageService);
+  readonly currencyService = inject(CurrencyService);
 
   accountMenuOpen = false;
   mobileMenuOpen = false;
   languageMenuOpen = false;
+  currencyMenuOpen = false;
   switchingLanguage: string | null = null;
   mobileDestinationsOpen = false;
   mobileNavigationLoading = false;
@@ -48,6 +52,7 @@ export class HomeNavbar implements AfterViewInit {
     event.stopPropagation();
     this.languageMenuOpen = !this.languageMenuOpen;
     this.accountMenuOpen = false;
+    this.currencyMenuOpen = false;
     this.refreshIcons();
   }
 
@@ -111,6 +116,19 @@ export class HomeNavbar implements AfterViewInit {
     this.refreshIcons();
   }
 
+  toggleCurrencyMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.currencyMenuOpen = !this.currencyMenuOpen;
+    this.languageMenuOpen = false;
+    this.accountMenuOpen = false;
+  }
+
+  switchCurrency(code: string): void {
+    this.currencyMenuOpen = false;
+    this.mobileMenuOpen = false;
+    this.currencyService.selectCurrency(code);
+  }
+
   toggleMobileDestinations(): void {
     this.mobileDestinationsOpen = !this.mobileDestinationsOpen;
     if (this.mobileDestinationsOpen && !this.mobileDestinations.length) this.loadMobileNavigation();
@@ -124,6 +142,7 @@ export class HomeNavbar implements AfterViewInit {
     this.accountMenuOpen = false;
     this.mobileMenuOpen = false;
     this.languageMenuOpen = false;
+    this.currencyMenuOpen = false;
     this.mobileDestinationsOpen = false;
   }
 
@@ -137,6 +156,7 @@ export class HomeNavbar implements AfterViewInit {
     if (!this.elementRef.nativeElement.contains(event.target as Node)) {
       this.accountMenuOpen = false;
       this.languageMenuOpen = false;
+      this.currencyMenuOpen = false;
     }
   }
 

@@ -95,7 +95,7 @@ export class HomePackagePage implements OnInit {
   }
 
   get price(): number {
-    return apiPrice(this.travelPackage?.pricePerPerson ?? this.travelPackage?.price);
+    return apiPrice(this.travelPackage?.pricePerPerson ?? this.travelPackage?.price, this.travelPackage?.currencyId ?? this.travelPackage?.currency?.id ?? 2);
   }
 
   get currencySymbol(): string {

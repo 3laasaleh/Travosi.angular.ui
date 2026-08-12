@@ -66,11 +66,11 @@ export class TourBookingCard {
   }
 
   get pricePerPerson(): number {
-    return apiPrice(this.product?.pricePerPerson ?? this.product?.price);
+    return apiPrice(this.product?.pricePerPerson ?? this.product?.price, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get pricePerChild(): number {
-    return apiPrice(this.product?.pricePerChild);
+    return apiPrice(this.product?.pricePerChild, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get seatsAvailable(): number {

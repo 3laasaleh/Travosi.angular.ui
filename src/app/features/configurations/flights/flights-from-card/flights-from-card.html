@@ -8,9 +8,60 @@
       <div><label class="mb-2 block text-sm font-medium">{{ 'airline' | translate }}</label><select formControlName="airlineId" class="w-full rounded-2xl border border-slate-300 px-3 py-2"><option [ngValue]="null" disabled>{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }</select>@if (flightForm.get('airlineId')?.touched && flightForm.get('airlineId')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p> }</div>
     </div>
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'departureAirport' | translate }}</label><input formControlName="departureAirport" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('departureAirport')?.touched && flightForm.get('departureAirport')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureAirportRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'arrivalAirport' | translate }}</label><input formControlName="arrivalAirport" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('arrivalAirport')?.touched && flightForm.get('arrivalAirport')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalAirportRequired' | translate }}</p> }</div>
+      <div class="relative">
+        <label for="departureAirport" class="mb-2 block text-sm font-medium">{{ 'departureAirport' | translate }}</label>
+        <div class="relative">
+          <i class="mdi mdi-airplane-takeoff pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
+          <input id="departureAirport" formControlName="departureAirport" type="search" autocomplete="off" role="combobox"
+            [attr.aria-expanded]="departureAirportOpen" aria-controls="departure-airport-results"
+            [placeholder]="'searchAirportPlaceholder' | translate"
+            class="w-full rounded-2xl border border-slate-300 py-2 pe-10 ps-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+            (focus)="openAirportResults('departure')" (blur)="closeAirportResultsLater('departure')" />
+          @if (departureAirportLoading) { <i class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
+        </div>
+        @if (departureAirportOpen && flightForm.controls.departureAirport.value.trim().length >= 2) {
+          <div id="departure-airport-results" role="listbox" class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+            @for (airport of departureAirports; track airport.placeId) {
+              <button type="button" role="option" class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5" (mousedown)="$event.preventDefault()" (click)="selectAirport('departure', airport)">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-lg text-primary"><i class="mdi mdi-airport"></i></span>
+                <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span class="mt-0.5 block truncate text-xs text-slate-500">{{ airport.description }}</span></span>
+              </button>
+            } @empty {
+              @if (!departureAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (departureAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
+            }
+            <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span translate="no">Google Maps</span></p>
+          </div>
+        }
+        @if (flightForm.controls.departureAirport.touched && flightForm.controls.departureAirport.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureAirportRequired' | translate }}</p> }
+      </div>
+      <div class="relative">
+        <label for="arrivalAirport" class="mb-2 block text-sm font-medium">{{ 'arrivalAirport' | translate }}</label>
+        <div class="relative">
+          <i class="mdi mdi-airplane-landing pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
+          <input id="arrivalAirport" formControlName="arrivalAirport" type="search" autocomplete="off" role="combobox"
+            [attr.aria-expanded]="arrivalAirportOpen" aria-controls="arrival-airport-results"
+            [placeholder]="'searchAirportPlaceholder' | translate"
+            class="w-full rounded-2xl border border-slate-300 py-2 pe-10 ps-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+            (focus)="openAirportResults('arrival')" (blur)="closeAirportResultsLater('arrival')" />
+          @if (arrivalAirportLoading) { <i class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
+        </div>
+        @if (arrivalAirportOpen && flightForm.controls.arrivalAirport.value.trim().length >= 2) {
+          <div id="arrival-airport-results" role="listbox" class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+            @for (airport of arrivalAirports; track airport.placeId) {
+              <button type="button" role="option" class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5" (mousedown)="$event.preventDefault()" (click)="selectAirport('arrival', airport)">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-lg text-primary"><i class="mdi mdi-airport"></i></span>
+                <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span class="mt-0.5 block truncate text-xs text-slate-500">{{ airport.description }}</span></span>
+              </button>
+            } @empty {
+              @if (!arrivalAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (arrivalAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
+            }
+            <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span translate="no">Google Maps</span></p>
+          </div>
+        }
+        @if (flightForm.controls.arrivalAirport.touched && flightForm.controls.arrivalAirport.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalAirportRequired' | translate }}</p> }
+      </div>
     </div>
+    @if ((flightForm.controls.departureAirport.touched || flightForm.controls.arrivalAirport.touched) && flightForm.hasError('sameAirport')) { <p class="-mt-2 text-xs text-red-600">{{ 'departureArrivalDifferent' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'departureTime' | translate }}</label><app-date-picker formControlName="departureTime" id="flight-departure-time" [includeTime]="true" [ariaLabel]="'departureTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if (flightForm.get('departureTime')?.touched && flightForm.get('departureTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureTimeRequired' | translate }}</p> }</div>
       <div><label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label><app-date-picker formControlName="arrivalTime" id="flight-arrival-time" [includeTime]="true" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if (flightForm.get('arrivalTime')?.touched && flightForm.get('arrivalTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p> }</div>

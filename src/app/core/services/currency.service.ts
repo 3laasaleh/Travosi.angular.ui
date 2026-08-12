@@ -6,117 +6,100 @@ import { ApiService } from './apiservice.service';
 export interface CurrencyOption {
   id: number;
   code: string;
+  name: string;
   symbol: string;
-  labelKey: string;
 }
 
-export const CURRENCY_OPTIONS: CurrencyOption[] = [
-  { id: 2, code: 'USD', symbol: '$', labelKey: 'currencyUsd' },
-  { id: 1, code: 'EGP', symbol: 'E£', labelKey: 'currencyEgp' },
+const FALLBACK_CURRENCIES: CurrencyOption[] = [
+  { id: 2, code: 'USD', name: 'US Dollar', symbol: '$' },
+  { id: 1, code: 'EGP', name: 'Egyptian Pound', symbol: 'EGP' },
 ];
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CurrencyService {
-  readonly options = CURRENCY_OPTIONS;
-  currentCurrency = signal<CurrencyOption>(this.resolveInitialCurrency());
-  readonly usdToEgpRate = signal<number | null>(null);
+  readonly options = signal<CurrencyOption[]>(FALLBACK_CURRENCIES);
+  readonly currentCurrency = signal<CurrencyOption>(this.resolveSaved(FALLBACK_CURRENCIES));
+  readonly usdToEgpRate = signal<number | null>(this.cachedRate());
   readonly rateDate = signal<string | null>(null);
+  readonly rateProvider = signal<string | null>(null);
+  readonly isLoading = signal(false);
   readonly isRateLoading = signal(false);
+  private readonly currencyCookie = 'currency';
+  private readonly rateCookie = 'usdToEgpRate';
 
-  private readonly rateCookieName = 'usdToEgpRate';
-
-  constructor(
-    private cookieService: CookieService,
-    private apiService: ApiService,
-  ) {
-    this.currentCurrency.set(this.resolveInitialCurrency());
-    this.usdToEgpRate.set(this.resolveCachedRate());
-    this.loadExchangeRate();
+  constructor(private cookies: CookieService, private api: ApiService) {
+    this.loadCurrencies();
+    if (this.currentCurrency().code === 'EGP' && this.usdToEgpRate() === null) {
+      this.loadExchangeRate(() => window.location.reload());
+    }
   }
 
-  setCurrency(code: string): void {
-    const option = this.options.find((currency) => currency.code === code) ?? this.options[0];
-    this.cookieService.set('currency', option.code, {
-      path: '/',
-      sameSite: 'Strict',
+  loadCurrencies(): void {
+    if (this.isLoading()) return;
+    this.isLoading.set(true);
+    this.api.getUnauthntecated('Currencies').pipe(
+      catchError(() => of(null)),
+      finalize(() => this.isLoading.set(false)),
+    ).subscribe((response: any) => {
+      const payload = response?.data ?? response;
+      const rows = Array.isArray(payload) ? payload : payload?.data ?? [];
+      const currencies = rows.map((row: any) => this.mapCurrency(row)).filter((row: CurrencyOption | null): row is CurrencyOption => !!row);
+      if (!currencies.length) return;
+      this.options.set(currencies);
+      this.currentCurrency.set(this.resolveSaved(currencies));
+      if (this.currentCurrency().code === 'EGP' && this.usdToEgpRate() === null) {
+        this.loadExchangeRate(() => window.location.reload());
+      }
     });
-    this.currentCurrency.set(option);
-    if (option.code === 'EGP' && this.usdToEgpRate() === null) this.loadExchangeRate();
   }
 
-  convertPrice(amount: unknown, sourceCurrency: unknown = 'USD'): number {
-    const value = Number(amount ?? 0);
-    if (!Number.isFinite(value)) return 0;
-
-    const source = this.resolveCurrency(sourceCurrency);
-    const target = this.currentCurrency();
-    if (source.code === target.code) return value;
-
-    const rate = this.usdToEgpRate();
-    if (!rate || rate <= 0) return value;
-
-    const converted = source.code === 'USD' && target.code === 'EGP'
-      ? value * rate
-      : source.code === 'EGP' && target.code === 'USD'
-        ? value / rate
-        : value;
-    return Math.round((converted + Number.EPSILON) * 100) / 100;
+  selectCurrency(code: string): void {
+    const selected = this.options().find(x => x.code === code);
+    if (!selected || selected.code === this.currentCurrency().code) return;
+    this.cookies.set(this.currencyCookie, selected.code, { path: '/', sameSite: 'Strict', expires: 365 });
+    this.currentCurrency.set(selected);
+    if (selected.code === 'EGP') {
+      this.loadExchangeRate(() => window.location.reload());
+      return;
+    }
+    window.location.reload();
   }
 
-  displaySymbol(sourceCurrency: unknown = 'USD'): string {
-    const source = this.resolveCurrency(sourceCurrency);
-    const target = this.currentCurrency();
-    const canConvert = source.code === target.code || Number(this.usdToEgpRate()) > 0;
-    return canConvert ? target.symbol : source.symbol;
-  }
-
-  loadExchangeRate(): void {
+  loadExchangeRate(done?: () => void): void {
     if (this.isRateLoading()) return;
-
     this.isRateLoading.set(true);
-    this.apiService.getUnauthntecated('Currencies/exchange-rate?from=USD&to=EGP').pipe(
+    this.api.getUnauthntecated('Currencies/exchange-rate?from=USD&to=EGP').pipe(
       catchError(() => of(null)),
       finalize(() => this.isRateLoading.set(false)),
     ).subscribe((response: any) => {
       const data = response?.data ?? response;
       const rate = Number(data?.rate);
       if (!Number.isFinite(rate) || rate <= 0) return;
-
       this.usdToEgpRate.set(rate);
-      this.rateDate.set(data?.rateDate ?? data?.date ?? null);
-      this.cookieService.set(this.rateCookieName, String(rate), {
-        path: '/',
-        sameSite: 'Strict',
-        expires: 1,
-      });
+      this.rateDate.set(data?.rateDate ?? null);
+      this.rateProvider.set(data?.provider ?? null);
+      this.cookies.set(this.rateCookie, String(rate), { path: '/', sameSite: 'Strict', expires: 1 });
+      done?.();
     });
   }
 
-  private resolveInitialCurrency(): CurrencyOption {
-    const saved = this.cookieService?.get?.('currency');
-    return CURRENCY_OPTIONS.find((currency) => currency.code === saved) ?? CURRENCY_OPTIONS[0];
+  private mapCurrency(row: any): CurrencyOption | null {
+    const id = Number(row?.id);
+    const name = String(row?.name ?? '').trim();
+    const sign = String(row?.sign ?? '').trim();
+    const normalized = `${name} ${sign}`.toUpperCase();
+    const code = normalized.includes('EGP') || normalized.includes('EGYPT') ? 'EGP'
+      : normalized.includes('USD') || sign === '$' ? 'USD' : sign.toUpperCase();
+    return id > 0 && code ? { id, code, name: name || code, symbol: code === 'EGP' ? 'EGP' : sign || code } : null;
   }
 
-  private resolveCachedRate(): number | null {
-    const rate = Number(this.cookieService?.get?.(this.rateCookieName));
+  private resolveSaved(options: CurrencyOption[]): CurrencyOption {
+    const code = this.cookies.get(this.currencyCookie).toUpperCase();
+    return options.find(x => x.code === code) ?? options.find(x => x.code === 'USD') ?? options[0];
+  }
+
+  private cachedRate(): number | null {
+    const rate = Number(this.cookies.get(this.rateCookie));
     return Number.isFinite(rate) && rate > 0 ? rate : null;
-  }
-
-  private resolveCurrency(value: unknown): CurrencyOption {
-    if (value && typeof value === 'object') {
-      const currency = value as Record<string, unknown>;
-      value = currency['currencyId'] ?? currency['id'] ?? currency['code'] ?? currency['symbol'] ?? currency['sign'];
-    }
-
-    if (typeof value === 'number' || /^\d+$/.test(String(value ?? ''))) {
-      const id = Number(value);
-      return this.options.find((currency) => currency.id === id) ?? this.options[0];
-    }
-
-    const code = String(value ?? 'USD').trim().toUpperCase();
-    return this.options.find((currency) => currency.code === code || currency.symbol.toUpperCase() === code)
-      ?? this.options[0];
   }
 }

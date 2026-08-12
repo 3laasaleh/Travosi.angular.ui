@@ -29,10 +29,12 @@ export class Quotations {
 
   clearSelectedQuotation(): void {
     this.selectedQuotation = null;
+    this.showForm = false;
   }
 
   handleQuotationSaved(): void {
     this.selectedQuotation = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

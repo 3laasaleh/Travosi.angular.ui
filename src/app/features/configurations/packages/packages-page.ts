@@ -15,7 +15,7 @@ import { PackagesList } from './packages-list/packages-list';
 })
 export class Packages {
   private readonly translate = inject(TranslateService);
-  viewMode: 'table' | 'grid' = 'grid';
+  viewMode: 'table' | 'grid' = 'table';
   showForm = false;
   selectedPackage: any = null;
   previewPackage: any = null;

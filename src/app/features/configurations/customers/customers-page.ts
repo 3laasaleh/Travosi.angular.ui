@@ -29,10 +29,12 @@ export class Customers {
 
   clearSelectedCustomer(): void {
     this.selectedCustomer = null;
+    this.showForm = false;
   }
 
   handleCustomerSaved(): void {
     this.selectedCustomer = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

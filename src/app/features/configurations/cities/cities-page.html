@@ -17,11 +17,12 @@
       </div>
     </header>
 
-    <div [class]="showForm ? 'grid gap-6 xl:grid-cols-[0.95fr_1.05fr]' : 'grid gap-6 grid-cols-1'">
+    <div class="grid grid-cols-1 gap-6">
       @if (showForm) {
         <app-cities-from-card [selectedCity]="selectedCity" (citySaved)="handleCitySaved()" (editCancelled)="clearSelectedCity()" />
+      } @else {
+        <app-configurations-cities-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectCityForEdit($event)" />
       }
-      <app-configurations-cities-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectCityForEdit($event)" />
     </div>
   </div>
 </section>

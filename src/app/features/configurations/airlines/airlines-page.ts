@@ -30,10 +30,12 @@ export class Airlines {
 
   clearSelectedAirline(): void {
     this.selectedAirline = null;
+    this.showForm = false;
   }
 
   handleAirlineSaved(): void {
     this.selectedAirline = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

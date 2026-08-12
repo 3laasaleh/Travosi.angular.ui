@@ -37,10 +37,12 @@ export class Tasks {
 
   clearSelectedTask(): void {
     this.selectedTask = null;
+    this.showForm = false;
   }
 
   handleTaskSaved(): void {
     this.selectedTask = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }

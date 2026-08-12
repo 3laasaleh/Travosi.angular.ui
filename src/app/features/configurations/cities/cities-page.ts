@@ -29,10 +29,12 @@ export class Cities {
 
   clearSelectedCity(): void {
     this.selectedCity = null;
+    this.showForm = false;
   }
 
   handleCitySaved(): void {
     this.selectedCity = null;
+    this.showForm = false;
     this.refreshToken++;
   }
 }
