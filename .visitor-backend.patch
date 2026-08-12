@@ -240,3 +240,10 @@ diff --git a/TravelAgency.InfraStructure/Persistence/TravelAgencyContext.cs b/Tr
 +            });
 +
              modelBuilder.AddUsersSeed();
+
+
+
+
+
+
+this is back end path :C:\Users\157337\source\repos\3laasaleh\TravelAgency.BackEnd , i need you to update destination to has list of cities , and each city has its own tours , and when user open destination home page when select a destination when you open it it should display max 10 citits in something like slider or carssosul create both and i will choose one , on click to city and open it to display it should divid the page or create a side div also slider or carrosoul and display max top tours or top tours , aslo the menu in topnvabar should be like mege menu destinaions => cities=>tours=>, create all need components and update backend entities , then check why quotion when try to creae one not open the form and create one
