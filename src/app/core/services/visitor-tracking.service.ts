@@ -7,7 +7,7 @@ import { ApiService } from './apiservice.service';
 export class VisitorTrackingService {
   private readonly apiService = inject(ApiService);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly storageKey = 'seeWorldVisitorId';
+  private readonly storageKey = 'seaworldVisitorId';
   private trackingRequest?: Observable<number | null>;
 
   track(): Observable<number | null> {
