@@ -27,6 +27,18 @@
   </div>
 
   <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="bookNow()">
+    @if (hasAvailableDateRange) {
+      <div class="mb-4 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3" role="note">
+        <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+          <i class="mdi mdi-calendar-range text-lg" aria-hidden="true"></i>
+          {{ 'availableBookingDates' | translate }}
+        </p>
+        <p class="mt-1.5 text-sm font-semibold text-slate-700">
+          {{ 'availableBookingDateRange' | translate:{ from: availableDateFrom, to: availableDateTo } }}
+        </p>
+      </div>
+    }
+
     <div class="mb-4 grid grid-cols-2 gap-3">
       <div>
         <label for="bookingDateFrom" class="text-sm font-semibold">{{ 'dateFrom' | translate }}</label>
@@ -39,7 +51,7 @@
           [ariaLabel]="'dateFrom' | translate"
           class="mt-2 block"
           [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary-400 dark:border-gray-800  '" />
-        @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.invalid) {
+        @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">{{ 'dateFromRequired' | translate }}</p>
         }
       </div>
@@ -68,13 +80,15 @@
         <label for="adults" class="text-sm font-semibold">{{ 'adults' | translate }}</label>
         <input id="adults" type="number" min="1" step="1" formControlName="adults"
           class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800  " />
-        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.invalid) { <p class="mt-1 text-xs text-red-500">{{ 'atLeastOneAdult' | translate }}</p> }
+        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'atLeastOneAdult' | translate }}</p> }
+        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
       </div>
       <div>
         <label for="children" class="text-sm font-semibold">{{ 'children' | translate }}</label>
         <input id="children" type="number" min="0" step="1" formControlName="children"
           class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800  " />
-        @if (bookingForm.controls.children.touched && bookingForm.controls.children.invalid) { <p class="mt-1 text-xs text-red-500">{{ 'childrenCannotBeNegative' | translate }}</p> }
+        @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'childrenCannotBeNegative' | translate }}</p> }
+        @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
       </div>
     </div>
 

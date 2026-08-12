@@ -56,8 +56,8 @@ export class TourBookingCard {
   bookingForm = new FormGroup({
     dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     dateTo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    adults: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
-    children: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
+    adults: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)] }),
+    children: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.pattern(/^\d+$/)] }),
     specialRequests: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
   }, { validators: TourBookingCard.dateRangeValidator });
 
@@ -113,6 +113,18 @@ export class TourBookingCard {
     return this.bookingForm.controls.dateFrom.value || this.minTravelDate;
   }
 
+  get hasAvailableDateRange(): boolean {
+    return Boolean(this.minTravelDate && this.maxTravelDate);
+  }
+
+  get availableDateFrom(): string {
+    return this.formatDisplayDate(this.minTravelDate);
+  }
+
+  get availableDateTo(): string {
+    return this.formatDisplayDate(this.maxTravelDate);
+  }
+
   goToLogin(): void {
     this.router.navigate(['/login'], {
       queryParams: { returnUrl: this.router.url },
@@ -137,12 +149,21 @@ export class TourBookingCard {
       return;
     }
 
+    const form = this.bookingForm.getRawValue();
+    if (
+      form.dateFrom < this.minTravelDate ||
+      Boolean(this.maxTravelDate && form.dateTo > this.maxTravelDate!)
+    ) {
+      this.errorMessage = 'bookingDateOutsideAvailability';
+      this.showToast('error', this.errorMessage);
+      return;
+    }
+
     if (this.hasSeatLimit && this.guests > this.seatsAvailable) {
       this.errorMessage = 'bookingSeatsExceeded';
       return;
     }
 
-    const form = this.bookingForm.getRawValue();
     const productId = Number(this.product?.id ?? this.product?.tourId ?? this.product?.packageId);
     if (!Number.isInteger(productId) || productId <= 0) {
       this.errorMessage = 'bookingCreateError';
@@ -166,8 +187,8 @@ export class TourBookingCard {
     this.successMessage = '';
     this.apiService.post('Bookings', payload).pipe(
       catchError((error) => {
-        this.errorMessage = 'bookingCreateError';
-        this.showToast('error', error?.error?.message || this.errorMessage);
+        this.errorMessage = this.bookingErrorMessage(error?.error?.message);
+        this.showToast('error', this.errorMessage);
         return of(null);
       }),
       finalize(() => {
@@ -177,7 +198,7 @@ export class TourBookingCard {
     ).subscribe((response: any) => {
       if (response === null) return;
       if (response?.isSuccess === false) {
-        this.errorMessage = response?.message || 'bookingCreateError';
+        this.errorMessage = this.bookingErrorMessage(response?.message);
         this.showToast('error', this.errorMessage);
         return;
       }
@@ -206,6 +227,25 @@ export class TourBookingCard {
     }
     const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
     return match?.[1] ?? '';
+  }
+
+  private formatDisplayDate(value: string | null): string {
+    if (!value) return '';
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar') ? 'ar-EG' : 'en-GB';
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(date);
+  }
+
+  private bookingErrorMessage(message: unknown): string {
+    const value = typeof message === 'string' ? message : '';
+    return /already has a booking|already have a booking|same dates/i.test(value)
+      ? 'duplicateBookingDates'
+      : value || 'bookingCreateError';
   }
 
   private showToast(icon: 'success' | 'error', message: string): void {

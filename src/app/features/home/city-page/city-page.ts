@@ -39,7 +39,15 @@ export class CityPage implements OnInit {
 
   cityName(): string { return this.isArabic ? this.city?.nameAr ?? this.city?.nameEng ?? '' : this.city?.nameEng ?? this.city?.nameAr ?? ''; }
   destinationName(): string { return this.isArabic ? this.destination?.nameAr ?? this.destination?.nameEng ?? '' : this.destination?.nameEng ?? this.destination?.nameAr ?? ''; }
-  cityImage(): string { return this.imageUrl(this.city?.coverImageUrl ?? this.city?.imageUrl ?? this.destination?.images?.[0]); }
+  cityImage(): string {
+    return this.imageUrl(
+      this.destination?.coverImageUrl ??
+      this.destination?.imageUrl ??
+      this.destination?.images?.[0] ??
+      this.city?.coverImageUrl ??
+      this.city?.imageUrl,
+    );
+  }
   imageUrl(source: any): string { const raw = typeof source === 'string' ? source : source?.imageUrl ?? source?.url ?? ''; return !raw ? 'assets/images/bg/3.jpg' : /^(blob:|data:|https?:\/\/)/i.test(raw) ? raw : `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`; }
   tourImage(tour: any): string { return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl); }
   tourTitle(tour: any): string { return this.isArabic ? tour?.titleAr ?? tour?.titleEng ?? '' : tour?.titleEng ?? tour?.titleAr ?? ''; }

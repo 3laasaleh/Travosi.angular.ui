@@ -71,18 +71,27 @@ export class HomePackagePage implements OnInit {
     return Array.isArray(this.travelPackage?.includes) ? this.travelPackage.includes : [];
   }
 
+  get includedItems(): any[] {
+    return this.includes.filter((item) => item?.isIncluded !== false);
+  }
+
+  get excludedItems(): any[] {
+    const excludes = Array.isArray(this.travelPackage?.excludes) ? this.travelPackage.excludes : [];
+    return excludes.length ? excludes : this.includes.filter((item) => item?.isIncluded === false);
+  }
+
   get tours(): any[] {
     return Array.isArray(this.travelPackage?.tours) ? this.travelPackage.tours : [];
   }
 
   get destinationId(): number | null {
-    const id = this.travelPackage?.destinationId ?? this.travelPackage?.destination?.id;
+    const id = this.travelPackage?.destinationId ?? this.travelPackage?.destination?.id ?? this.travelPackage?.destinations?.[0]?.destinationId;
     const parsed = Number(id);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
   get destinationName(): string {
-    return this.travelPackage?.destinationName ?? this.travelPackage?.destination?.nameEng ?? this.travelPackage?.destination?.name ?? '';
+    return this.travelPackage?.destinationName ?? this.travelPackage?.destination?.nameEng ?? this.travelPackage?.destination?.name ?? this.travelPackage?.destinations?.[0]?.destinationName ?? '';
   }
 
   get price(): number {
@@ -97,6 +106,14 @@ export class HomePackagePage implements OnInit {
     const days = this.travelPackage?.durationDays ?? this.travelPackage?.days;
     const duration = this.travelPackage?.duration;
     return days ? `${days}` : (duration ? String(duration) : '-');
+  }
+
+  get durationHours(): number {
+    return Number(this.travelPackage?.durationHours ?? 0);
+  }
+
+  get groupSize(): number {
+    return Number(this.travelPackage?.maxCapacity ?? this.travelPackage?.maxSeats ?? 0);
   }
 
   ngOnInit(): void {
@@ -128,7 +145,7 @@ export class HomePackagePage implements OnInit {
   }
 
   itemText(item: any): string {
-    return typeof item === 'string' ? item : (item?.text ?? item?.title ?? item?.name ?? '');
+    return typeof item === 'string' ? item : (item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
   }
 
   tourTitle(tour: any): string {

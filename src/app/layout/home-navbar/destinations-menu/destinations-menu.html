@@ -1,15 +1,105 @@
-<div class="relative">
-  <button type="button" class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800" aria-haspopup="menu" [attr.aria-expanded]="menuOpen" (click)="toggleMenu($event)">{{ 'destinations' | translate }}<i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"></i></button>
+<div class="relative" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()" (focusin)="openMenu()">
+  <button
+    type="button"
+    class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+    aria-haspopup="true"
+    aria-controls="destinations-hover-menu"
+    [attr.aria-expanded]="menuOpen"
+    (click)="toggleMenu($event)">
+    {{ 'destinations' | translate }}
+    <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen" aria-hidden="true"></i>
+  </button>
+
   @if (menuOpen) {
-    <div class="absolute left-0 mt-2 w-[min(92vw,920px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 " role="menu">
-      @if (isLoading) { <div class="grid gap-5 p-5 md:grid-cols-3">@for (column of [1,2,3]; track column) { <div class="space-y-3">@for (line of [1,2,3,4]; track line) { <div class="h-9 animate-pulse rounded-xl bg-slate-100 "></div> }</div> }</div> }
-      @else {
-        <div class="grid md:grid-cols-3">
-          <section class="border-b border-slate-100 p-4 md:border-b-0 md:border-e dark:border-slate-800"><p class="mb-3 px-2 text-xs font-bold uppercase tracking-[.18em] text-primary">{{ 'destinations' | translate }}</p><div class="max-h-80 space-y-1 overflow-y-auto">@for (destination of destinations; track destination.id) { <button type="button" (mouseenter)="selectDestination(destination)" (focus)="selectDestination(destination)" (click)="selectDestination(destination)" class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-start text-sm font-semibold transition hover:bg-primary/5 hover:text-primary" [class.bg-primary-50]="selectedDestination?.id === destination.id" [class.text-primary]="selectedDestination?.id === destination.id"><span class="truncate"><i class="mdi mdi-map-marker-outline me-2"></i>{{ destinationName(destination) }}</span><i class="mdi mdi-chevron-right rtl:rotate-180"></i></button> } @empty { <p class="p-3 text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p> }</div><a routerLink="/destinations" (click)="closeMenu()" class="mt-3 block rounded-xl bg-slate-50 px-3 py-2 text-center text-sm font-semibold text-primary hover:bg-primary hover:text-white ">{{ 'viewAllDestinations' | translate }}</a></section>
-          <section class="border-b border-slate-100 p-4 md:border-b-0 md:border-e dark:border-slate-800"><p class="mb-3 px-2 text-xs font-bold uppercase tracking-[.18em] text-primary">{{ 'cities' | translate }}</p><div class="max-h-80 space-y-1 overflow-y-auto">@for (city of cities; track city.id) { <button type="button" (mouseenter)="selectCity(city)" (focus)="selectCity(city)" (click)="selectCity(city)" class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-start text-sm font-semibold transition hover:bg-primary/5 hover:text-primary" [class.bg-primary-50]="selectedCity?.id === city.id" [class.text-primary]="selectedCity?.id === city.id"><span class="truncate"><i class="mdi mdi-city-variant-outline me-2"></i>{{ cityName(city) }}</span><i class="mdi mdi-chevron-right rtl:rotate-180"></i></button> } @empty { <p class="p-3 text-sm text-slate-500">{{ 'noCitiesForDestination' | translate }}</p> }</div></section>
-          <section class="p-4"><p class="mb-3 px-2 text-xs font-bold uppercase tracking-[.18em] text-primary">{{ 'topTours' | translate }}</p><div class="max-h-80 space-y-1 overflow-y-auto">@for (tour of tours; track tour.id) { <a [routerLink]="['/tours', tour.id]" (click)="closeMenu()" class="block rounded-xl px-3 py-2.5 transition hover:bg-primary/5"><p class="line-clamp-1 text-sm font-semibold hover:text-primary">{{ tourName(tour) }}</p><p class="mt-1 text-xs text-primary">{{ tour.pricePerPerson | number:'1.0-2' }}</p></a> } @empty { <p class="p-3 text-sm text-slate-500">{{ 'noToursForCity' | translate }}</p> }</div>@if (selectedDestination && selectedCity) { <a [routerLink]="['/destinations', selectedDestination.id, 'cities', selectedCity.id]" (click)="closeMenu()" class="mt-3 block rounded-xl bg-primary px-3 py-2 text-center text-sm font-semibold text-white hover:bg-primary/90">{{ 'exploreCity' | translate }}</a> }</section>
-        </div>
-      }
+    <div
+      id="destinations-hover-menu"
+      class="absolute right-0 top-full z-[60] pt-2 rtl:left-0 rtl:right-auto"
+      role="menu"
+      (mouseenter)="cancelClose()"
+      (mouseleave)="scheduleClose()">
+
+      <div class="relative w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+        @if (isLoading) {
+          <div class="space-y-2 p-2">
+            @for (item of [1,2,3,4,5]; track item) { <div class="h-11 animate-pulse rounded-xl bg-slate-100"></div> }
+          </div>
+        } @else if (loadFailed) {
+          <div class="p-5 text-center">
+            <i class="mdi mdi-cloud-alert-outline text-3xl text-rose-400" aria-hidden="true"></i>
+            <p class="mt-2 text-sm text-slate-500">{{ 'destinationsLoadError' | translate }}</p>
+            <button type="button" class="mt-3 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-white" (click)="retry()">{{ 'retry' | translate }}</button>
+          </div>
+        } @else {
+          <p class="px-3 pb-2 pt-1 text-xs font-bold uppercase tracking-[.18em] text-primary">{{ 'destinations' | translate }}</p>
+
+          @for (destination of destinations; track destination.id) {
+            <a
+              [routerLink]="['/destinations', destination.id]"
+              role="menuitem"
+              class="group flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary focus:bg-primary-50 focus:text-primary focus:outline-none"
+              [class.bg-primary-50]="selectedDestination?.id === destination.id"
+              [class.text-primary]="selectedDestination?.id === destination.id"
+              (mouseenter)="selectDestination(destination)"
+              (focus)="selectDestination(destination)"
+              (click)="closeMenu()">
+              <span class="min-w-0 truncate"><i class="mdi mdi-map-marker-outline me-2" aria-hidden="true"></i>{{ destinationName(destination) }}</span>
+              <i class="mdi mdi-chevron-left text-lg rtl:rotate-180" aria-hidden="true"></i>
+            </a>
+          } @empty {
+            <p class="p-4 text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p>
+          }
+
+          <a routerLink="/destinations" (click)="closeMenu()" class="mt-2 block border-t border-slate-100 px-3 pt-3 text-center text-sm font-semibold text-primary hover:underline">{{ 'viewAllDestinations' | translate }}</a>
+
+          @if (selectedDestination) {
+            <div class="absolute right-full top-0 hidden pe-2 lg:block rtl:left-full rtl:right-auto rtl:pe-0 rtl:ps-2">
+              <div class="relative w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                <div class="max-h-80 overflow-y-auto py-1">
+                  @for (city of cities; track city.id) {
+                    <a
+                      [routerLink]="['/destinations', selectedDestination.id, 'cities', city.id]"
+                      role="menuitem"
+                      class="group flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary focus:bg-primary-50 focus:text-primary focus:outline-none"
+                      [class.bg-primary-50]="selectedCity?.id === city.id"
+                      [class.text-primary]="selectedCity?.id === city.id"
+                      (mouseenter)="selectCity(city)"
+                      (focus)="selectCity(city)"
+                      (click)="closeMenu()">
+                      <span class="min-w-0 truncate"><i class="mdi mdi-city-variant-outline me-2" aria-hidden="true"></i>{{ cityName(city) }}</span>
+                      <i class="mdi mdi-chevron-left text-lg rtl:rotate-180" aria-hidden="true"></i>
+                    </a>
+                  } @empty {
+                    <p class="p-4 text-sm text-slate-500">{{ 'noCitiesForDestination' | translate }}</p>
+                  }
+                </div>
+
+                @if (selectedCity) {
+                  <div class="absolute right-full top-0 pe-2 rtl:left-full rtl:right-auto rtl:pe-0 rtl:ps-2">
+                    <div class="w-80 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                      <div class="max-h-96 space-y-1 overflow-y-auto py-1">
+                        @for (tour of tours; track tour.id) {
+                          <a [routerLink]="['/tours', tour.id]" role="menuitem" (click)="closeMenu()" class="group flex gap-3 rounded-xl p-2 transition hover:bg-primary-50 focus:bg-primary-50 focus:outline-none">
+                            <img [src]="tourImage(tour)" [alt]="tourName(tour)" class="h-14 w-16 shrink-0 rounded-lg object-cover" />
+                            <span class="min-w-0 py-0.5">
+                              <span class="line-clamp-2 text-sm font-semibold leading-5 text-slate-700 group-hover:text-primary">{{ tourName(tour) }}</span>
+                              <span class="mt-1 block text-xs font-bold text-primary">{{ tourCurrency(tour) }} {{ tourPrice(tour) | number:'1.0-2' }}</span>
+                            </span>
+                          </a>
+                        } @empty {
+                          <div class="p-5 text-center text-sm text-slate-500">
+                            <i class="mdi mdi-map-search-outline text-3xl text-slate-300" aria-hidden="true"></i>
+                            <p class="mt-2">{{ 'noToursForCity' | translate }}</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
     </div>
   }
 </div>
