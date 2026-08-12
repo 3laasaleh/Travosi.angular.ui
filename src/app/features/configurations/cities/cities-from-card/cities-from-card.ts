@@ -21,6 +21,9 @@ export interface CityDTO {
   countryId: number;
   countryNameEng?: string;
   countryNameAr?: string;
+  destinationId?: number | null;
+  destinationNameEng?: string;
+  destinationNameAr?: string;
   isActive: boolean;
 }
 
@@ -38,8 +41,10 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
   cityForm = this.createForm();
   countries: any[] = [];
+  destinations: any[] = [];
   isLoading = false;
   countriesLoading = false;
+  destinationsLoading = false;
   errorMessage = '';
   successMessage = '';
 
@@ -50,6 +55,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadCountries();
+    this.loadDestinations();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,6 +76,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
       countryId: Number(form.countryId),
+      destinationId: Number(form.destinationId),
     };
     if (this.selectedCity?.id) payload.id = this.selectedCity.id;
 
@@ -124,16 +131,36 @@ export class CitiesFromCard implements OnInit, OnChanges {
     });
   }
 
+  private loadDestinations(): void {
+    this.destinationsLoading = true;
+    this.apiService.get('Destinations/GetAll?page=1&pageSize=500').pipe(
+      catchError(() => {
+        this.errorMessage = 'destinationsLoadError';
+        return of(null);
+      }),
+      finalize(() => {
+        this.destinationsLoading = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      const pageData = response?.data ?? response;
+      const rows = pageData?.data ?? pageData?.items ?? pageData?.destinations ?? pageData;
+      this.destinations = (Array.isArray(rows) ? rows : []).filter((destination) => destination?.isActive !== false);
+    });
+  }
+
   private populateForm(city: CityDTO): void {
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '',
       nameAr: city.nameAr ?? '',
       countryId: city.countryId ?? null,
+      destinationId: city.destinationId ?? null,
     });
   }
 
   private resetForm(emitCancel: boolean): void {
-    this.cityForm.reset({ nameEng: '', nameAr: '', countryId: null });
+    this.cityForm.reset({ nameEng: '', nameAr: '', countryId: null, destinationId: null });
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -148,6 +175,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
         validators: [Validators.required, Validators.maxLength(150)],
       }),
       countryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
+      destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
     });
   }
 }

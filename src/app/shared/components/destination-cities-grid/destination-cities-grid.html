@@ -1,0 +1,8 @@
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+  @for (city of cities; track city.id) {
+    <a [routerLink]="['/destinations', destinationId, 'cities', city.id]" class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+      <img [src]="cityImage(city)" [alt]="cityName(city)" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
+      <div class="p-4"><h3 class="font-semibold group-hover:text-primary">{{ cityName(city) }}</h3>@if (city.nameAr) { <p dir="rtl" class="mt-1 text-xs text-slate-500">{{ city.nameAr }}</p> }</div>
+    </a>
+  }
+</div>

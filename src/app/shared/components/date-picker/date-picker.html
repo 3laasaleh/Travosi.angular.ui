@@ -1,0 +1,26 @@
+<div class="relative">
+  <input
+    #picker="bsDatepicker"
+    type="text"
+    bsDatepicker
+    [bsValue]="selectedDate"
+    [bsConfig]="pickerConfig"
+    [minDate]="minDate"
+    [maxDate]="maxDate"
+    [isDisabled]="isDisabled"
+    [attr.id]="id || null"
+    [attr.aria-label]="ariaLabel || placeholder || 'Date'"
+    [placeholder]="placeholder"
+    (bsValueChange)="selectDate($event)"
+    (blur)="markTouched()"
+    class="w-full pe-11 outline-none transition"
+    [ngClass]="inputClass" />
+  <button
+    type="button"
+    class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+    [disabled]="isDisabled"
+    [attr.aria-label]="ariaLabel || placeholder || 'Date'"
+    (click)="openCalendar($event, picker)">
+    <i class="mdi text-lg" [ngClass]="icon"></i>
+  </button>
+</div>

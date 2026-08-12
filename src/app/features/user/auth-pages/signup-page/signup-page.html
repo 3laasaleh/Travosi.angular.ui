@@ -81,9 +81,16 @@
 
                         <div class="mb-1">
                             <label class="font-semibold" for="dateOfBirth">{{ 'dateOfBirth' | translate }}</label>
-                            <input id="dateOfBirth" type="date" formControlName="dateOfBirth" [max]="maxBirthDate"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
-                                [class.border-red-500]="signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid">
+                            <app-date-picker
+                                id="dateOfBirth"
+                                formControlName="dateOfBirth"
+                                [max]="maxBirthDate"
+                                [placeholder]="'dateOfBirth' | translate"
+                                [ariaLabel]="'dateOfBirth' | translate"
+                                class="mt-3 block"
+                                [inputClass]="signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid
+                                    ? 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200 border-red-500'
+                                    : 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200'" />
                             @if (signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid) {
                             <p class="mt-1 text-sm text-red-600">{{ 'dateOfBirthRequired' | translate }}</p>
                             }

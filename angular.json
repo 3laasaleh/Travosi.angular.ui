@@ -40,6 +40,7 @@
             "styles": [
               "node_modules/tiny-slider/dist/tiny-slider.css",
               "node_modules/swiper/swiper-bundle.min.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/assets/libs/@mdi/font/css/materialdesignicons.min.css",
               "src/assets/css/tailwind.css",
               "src/styles.scss"

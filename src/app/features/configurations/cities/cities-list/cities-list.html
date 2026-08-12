@@ -9,12 +9,12 @@
   @if (isLoading) {
     @if (viewMode === 'table') {
       <div class="overflow-hidden rounded-2xl border border-slate-200">
-        <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
-          @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+        <div class="grid grid-cols-[1fr_1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
+          @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
         </div>
         @for (row of [1,2,3,4,5]; track row) {
-          <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
-            @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+          <div class="grid grid-cols-[1fr_1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
+            @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
           </div>
         }
       </div>
@@ -37,6 +37,7 @@
             <th class="px-4 py-3">{{ 'englishName' | translate }}</th>
             <th class="px-4 py-3">{{ 'arabicName' | translate }}</th>
             <th class="px-4 py-3">{{ 'country' | translate }}</th>
+            <th class="px-4 py-3">{{ 'destination' | translate }}</th>
             <th class="px-4 py-3">{{ 'status' | translate }}</th>
             <th class="px-4 py-3">{{ 'actions' | translate }}</th>
           </tr>
@@ -51,6 +52,10 @@
                 <span class="text-xs text-slate-500" dir="rtl">{{ city.countryNameAr }}</span>
               </td>
               <td class="px-4 py-3">
+                <span class="block">{{ city.destinationNameEng || '—' }}</span>
+                @if (city.destinationNameAr) { <span class="text-xs text-slate-500" dir="rtl">{{ city.destinationNameAr }}</span> }
+              </td>
+              <td class="px-4 py-3">
                 <button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="city.isActive !== false" [attr.aria-label]="(city.isActive === false ? 'activate' : 'deactivate') | translate" class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60" [class.bg-emerald-500]="city.isActive !== false" [class.bg-slate-300]="city.isActive === false" (click)="toggleCityStatus(city)">
                   @if (statusUpdatingId === city.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white" aria-hidden="true"></i> }
                   @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200" [class.translate-x-6]="city.isActive !== false" [class.translate-x-1]="city.isActive === false"></span> }
@@ -63,7 +68,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
+            <tr><td colspan="6" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
           }
         </tbody>
       </table>
@@ -83,6 +88,9 @@
             <div class="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-sm">
               <span class="font-medium">{{ 'country' | translate }}:</span>
               {{ city.countryNameEng }} — {{ city.countryNameAr }}
+            </div>
+            <div class="mt-2 rounded-xl bg-primary/5 px-3 py-2 text-sm text-slate-700">
+              <span class="font-medium">{{ 'destination' | translate }}:</span> {{ city.destinationNameEng || '—' }}
             </div>
             <div class="mt-4 flex gap-2">
               <button type="button" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(city)">{{ 'edit' | translate }}</button>

@@ -145,6 +145,17 @@
               class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }
           </div>
 
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'city' | translate }}</label>
+            <select formControlName="cityId" [disabled]="!tourForm.controls.destinationId.value || citiesLoading" class="w-full rounded-2xl border bg-white px-3 py-2 disabled:cursor-not-allowed disabled:bg-slate-100">
+              <option value="">{{ (citiesLoading ? 'loadingCities' : 'selectCity') | translate }}</option>
+              @for (city of cities; track city.id) {
+                <option [ngValue]="city.id">{{ city.nameEng }} — {{ city.nameAr }}</option>
+              }
+            </select>
+            @if (tourForm.controls.cityId.touched && tourForm.controls.cityId.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'cityRequired' | translate }}</p> }
+          </div>
+
           <!-- <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border bg-white px-3 py-2">@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div> -->
           <div><label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }}</label>
             <div class="relative"><span
@@ -197,13 +208,9 @@
             <div class="group relative">
               <i
                 class="mdi mdi-calendar-start pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
-              <input #startDatePicker formControlName="startDate" type="date"
-                [attr.max]="tourForm.controls.endDate.value || null"
-                class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
-              <button type="button"
-                class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary"
-                (click)="startDatePicker.showPicker()" [attr.aria-label]="'startDate' | translate"><i
-                  class="mdi mdi-calendar-month-outline"></i></button>
+              <app-date-picker formControlName="startDate" id="tour-start-date"
+                [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
+                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
             </div>
             @if (tourForm.controls.startDate.touched && tourForm.controls.startDate.invalid) { <p
               class="mt-1 text-xs text-red-600">{{ 'startDateRequired' | translate }}</p> }
@@ -213,13 +220,9 @@
             <div class="group relative">
               <i
                 class="mdi mdi-calendar-end pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
-              <input #endDatePicker formControlName="endDate" type="date"
-                [attr.min]="tourForm.controls.startDate.value || null"
-                class="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:opacity-0" />
-              <button type="button"
-                class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-primary/10 hover:text-primary"
-                (click)="endDatePicker.showPicker()" [attr.aria-label]="'endDate' | translate"><i
-                  class="mdi mdi-calendar-month-outline"></i></button>
+              <app-date-picker formControlName="endDate" id="tour-end-date"
+                [min]="tourForm.controls.startDate.value || null" [ariaLabel]="'endDate' | translate"
+                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
             </div>
             @if (tourForm.controls.endDate.touched && tourForm.controls.endDate.hasError('required')) { <p
               class="mt-1 text-xs text-red-600">{{ 'endDateRequired' | translate }}</p> }

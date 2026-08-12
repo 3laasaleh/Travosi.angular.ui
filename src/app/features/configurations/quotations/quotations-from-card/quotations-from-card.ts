@@ -9,12 +9,13 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -51,7 +52,7 @@ export interface QuotationDTO {
 @Component({
   selector: 'app-quotations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe],
+  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe, DatePicker],
   templateUrl: './quotations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,6 +78,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   selectedTourIds = new Set<number>();
   isLoading = false;
   optionsLoading = false;
+  optionsLoadError = false;
   errorMessage = '';
   successMessage = '';
 
@@ -126,6 +128,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   get totalAmount(): number {
     return Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax;
   }
+
+  get today(): string { return new Date().toISOString().slice(0, 10); }
 
   isPackageSelected(id: number): boolean {
     return this.selectedPackageIds.has(Number(id));
@@ -238,8 +242,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       : this.apiService.post('Quotations', payload);
 
     request$.pipe(
-      catchError(() => {
-        this.errorMessage = 'quotationSaveError';
+      catchError((error) => {
+        this.errorMessage = error?.error?.message ?? 'quotationSaveError';
         return of(null);
       }),
       finalize(() => {
@@ -264,10 +268,11 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private loadOptions(): void {
     this.optionsLoading = true;
+    this.optionsLoadError = false;
     forkJoin({
-      customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => of([]))),
-      packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => of([]))),
-      tours: this.apiService.get('Tours?page=1&pageSize=100').pipe(catchError(() => of([]))),
+      customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
+      packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
+      tours: this.apiService.get('Tours?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
     }).pipe(finalize(() => {
       this.optionsLoading = false;
       this.cdr.markForCheck();
@@ -278,6 +283,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       if (this.selectedQuotation) this.selectQuotationItems(this.selectedQuotation.items);
     });
   }
+
+  retryOptions(): void { this.loadOptions(); }
 
   private populateForm(quotation: QuotationDTO): void {
     this.quotationForm.setValue({
@@ -301,7 +308,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private selectQuotationItems(items: any[] | undefined): void {
     this.selectedPackageIds = new Set(
-      (items ?? []).map((item) => Number(item.packageId ?? item.package?.id ?? item.id)),
+      (items ?? []).filter((item) => item.packageId ?? item.package?.id)
+        .map((item) => Number(item.packageId ?? item.package?.id)),
     );
     this.selectedTourIds = new Set(
       (items ?? []).filter((item) => item.tourId).map((item) => Number(item.tourId)),
@@ -355,6 +363,15 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       status: new FormControl(QuotationStatusEnum.Draft, { nonNullable: true, validators: [Validators.required] }),
       validUntil: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       notes: new FormControl('', { nonNullable: true }),
-    });
+    }, { validators: this.quotationDatesValidator });
+  }
+
+  private quotationDatesValidator(control: AbstractControl): ValidationErrors | null {
+    const start = String(control.get('travelStartDate')?.value ?? '');
+    const end = String(control.get('travelEndDate')?.value ?? '');
+    const validUntil = String(control.get('validUntil')?.value ?? '');
+    if (start && end && end < start) return { invalidTravelDateRange: true };
+    if (start && validUntil && validUntil > start) return { invalidValidityDate: true };
+    return null;
   }
 }

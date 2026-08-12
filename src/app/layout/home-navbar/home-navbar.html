@@ -1,11 +1,10 @@
 <header
-  class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+  class="sticky top-0 z-50 border-b border-slate-200 bg-white">
   <div class="mx-auto flex h-16 max-w-[1600px] items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 lg:gap-6 lg:px-8">
     <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
-      <img src="./assets/images/main-logo.png" class="h-10 w-auto shrink-0 sm:h-12" [alt]="'seaworldHolidaysLogo' | translate">
+      <img src="./assets/images/main-logo.png" class="h-12 w-auto shrink-0 sm:h-14" [alt]="'seaworldHolidaysLogo' | translate">
       <span class=" sm:block">
         <span class="block text-lg font-bold leading-tight text-slate-900 dark:text-white">Sea World Holidays</span>
-        <span class="hidden text-xs font-medium uppercase tracking-[0.2em] text-logo-blue sm:block">{{ 'travelAgency' | translate }}</span>
       </span>
     </a>
 
@@ -18,10 +17,7 @@
       <!-- <app-tours-menu /> -->
       <app-packages-menu />
 
-      <!-- <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary dark:bg-primary/10"
-        class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800">
-        Contact Us
-      </a> -->
+
     </nav>
 
     <div class="hidden h-8 w-px bg-slate-200 lg:block dark:bg-slate-800"></div>
@@ -151,6 +147,34 @@
         </div>
 
         <div class="grid gap-1 sm:grid-cols-2">
+          <div class="sm:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800">
+            <button type="button" (click)="toggleMobileDestinations()" class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300"><span class="flex items-center gap-3"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ 'destinations' | translate }}</span><i class="mdi" [class.mdi-chevron-down]="!mobileDestinationsOpen" [class.mdi-chevron-up]="mobileDestinationsOpen"></i></button>
+            @if (mobileDestinationsOpen) {
+              <div class="border-t border-slate-100 p-3 dark:border-slate-800">
+                @if (mobileNavigationLoading) {
+                  <div class="h-16 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800"></div>
+                } @else {
+                  <div class="space-y-3">
+                    @for (destination of mobileDestinations; track destination.id) {
+                      <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-900">
+                        <a [routerLink]="['/destinations', destination.id]" (click)="closeMenus()" class="font-semibold text-primary">{{ mobileDestinationName(destination) }}</a>
+                        <div class="mt-2 space-y-2">
+                          @for (city of destination.cities ?? []; track city.id) {
+                            <div>
+                              <a [routerLink]="['/destinations', destination.id, 'cities', city.id]" (click)="closeMenus()" class="text-sm font-medium text-slate-700 dark:text-slate-200"><i class="mdi mdi-city-variant-outline me-1 text-primary"></i>{{ mobileCityName(city) }}</a>
+                              <div class="ms-5 mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                                @for (tour of city.tours ?? []; track tour.id) { <a [routerLink]="['/tours', tour.id]" (click)="closeMenus()" class="text-xs text-slate-500 hover:text-primary">{{ mobileTourName(tour) }}</a> }
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
           <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
             <i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i>

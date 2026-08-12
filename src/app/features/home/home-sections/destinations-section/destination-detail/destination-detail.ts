@@ -17,11 +17,13 @@ import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.
 import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../../shared/components/image-viewer-modal/image-viewer-modal';
+import { DestinationCitiesCarousel } from '../../../../../shared/components/destination-cities-carousel/destination-cities-carousel';
+import { DestinationCitiesGrid } from '../../../../../shared/components/destination-cities-grid/destination-cities-grid';
 
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel, DestinationCitiesGrid],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,6 +35,8 @@ export class HomeDestinationDetail implements OnInit {
 
   destination: any = null;
   tours: any[] = [];
+  cities: any[] = [];
+  cityViewMode: 'carousel' | 'grid' = 'carousel';
   isLoading = true;
   errorMessage = '';
   selectedImageIndex = 0;
@@ -62,6 +66,7 @@ export class HomeDestinationDetail implements OnInit {
         if (!Number.isFinite(destinationId) || destinationId <= 0) {
           this.destination = null;
           this.tours = [];
+          this.cities = [];
           this.isLoading = false;
           this.errorMessage = 'destinationNotFound';
           this.cdr.markForCheck();
@@ -142,11 +147,16 @@ export class HomeDestinationDetail implements OnInit {
     );
   }
 
+  setCityViewMode(viewMode: 'carousel' | 'grid'): void {
+    this.cityViewMode = viewMode;
+  }
+
   private loadDestination(destinationId: number): void {
     this.isLoading = true;
     this.errorMessage = '';
     this.destination = null;
     this.tours = [];
+    this.cities = [];
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
 
@@ -154,6 +164,9 @@ export class HomeDestinationDetail implements OnInit {
       destination: this.destinationRequest(destinationId),
       tours: this.apiService
         .getUnauthntecated(`Tours?page=1&pageSize=100&destinationId=${destinationId}`)
+        .pipe(catchError(() => of(null))),
+      cities: this.apiService
+        .getUnauthntecated(`Cities?destinationId=${destinationId}&page=1&pageSize=10`)
         .pipe(catchError(() => of(null))),
     })
       .pipe(
@@ -163,7 +176,7 @@ export class HomeDestinationDetail implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ destination, tours }) => {
+      .subscribe(({ destination, tours, cities }) => {
         this.destination = destination;
         if (!destination) {
           this.errorMessage = 'destinationNotFound';
@@ -182,6 +195,7 @@ export class HomeDestinationDetail implements OnInit {
           : apiTours;
 
         this.tours = matchingTours.length ? matchingTours : nestedTours;
+        this.cities = this.extractCollection(cities, ['cities']).slice(0, 10);
       });
   }
 

@@ -17,6 +17,7 @@ import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { createEmptyTourItinerary, readTourItinerary, TourItineraryItem } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import {
@@ -39,7 +40,7 @@ type PackageFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-packages-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
   templateUrl: './packages-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

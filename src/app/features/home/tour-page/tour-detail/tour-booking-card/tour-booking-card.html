@@ -30,16 +30,30 @@
     <div class="mb-4 grid grid-cols-2 gap-3">
       <div>
         <label for="bookingDateFrom" class="text-sm font-semibold">{{ 'dateFrom' | translate }}</label>
-        <input id="bookingDateFrom" type="date" formControlName="dateFrom" [min]="minTravelDate" [attr.max]="maxTravelDate"
-          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        <app-date-picker
+          id="bookingDateFrom"
+          formControlName="dateFrom"
+          [min]="minTravelDate"
+          [max]="maxTravelDate"
+          [placeholder]="'dateFrom' | translate"
+          [ariaLabel]="'dateFrom' | translate"
+          class="mt-2 block"
+          [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200'" />
         @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.invalid) {
           <p class="mt-1 text-xs text-red-500">{{ 'dateFromRequired' | translate }}</p>
         }
       </div>
       <div>
         <label for="bookingDateTo" class="text-sm font-semibold">{{ 'dateTo' | translate }}</label>
-        <input id="bookingDateTo" type="date" formControlName="dateTo" [min]="minDateTo" [attr.max]="maxTravelDate"
-          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200" />
+        <app-date-picker
+          id="bookingDateTo"
+          formControlName="dateTo"
+          [min]="minDateTo"
+          [max]="maxTravelDate"
+          [placeholder]="'dateTo' | translate"
+          [ariaLabel]="'dateTo' | translate"
+          class="mt-2 block"
+          [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary-400 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200'" />
         @if (bookingForm.controls.dateTo.touched && bookingForm.controls.dateTo.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">{{ 'dateToRequired' | translate }}</p>
         }

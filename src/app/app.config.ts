@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
@@ -11,6 +12,7 @@ import { authSessionInterceptor } from './core/interceptors/auth-session.interce
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideAnimationsAsync(),
     provideHttpClient(withXhr(), withInterceptors([authSessionInterceptor])),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
     JwtHelperService,

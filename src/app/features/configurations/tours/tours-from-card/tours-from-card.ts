@@ -25,6 +25,7 @@ import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 import {
   createEmptyTourItinerary,
@@ -55,7 +56,7 @@ type TourFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective],
+  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -87,8 +88,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     { id: 3, label: 'tourItineraryStep', icon: 'mdi-map-marker-path' },
   ] as const;
   destinations: any[] = [];
+  cities: any[] = [];
   imageUploads: TourImageUpload[] = [];
   destinationsLoading = false;
+  citiesLoading = false;
   destinationMenuOpen = false;
   destinationSearchTerm = '';
   isSaving = false;
@@ -110,6 +113,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return this.currencies[0].id;
   }
   private itineraryClientSequence = 0;
+  private citiesRequestSequence = 0;
 
   constructor(
     private adminService: AdminService,
@@ -147,6 +151,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (!Number.isInteger(destinationId) || destinationId <= 0) return null;
 
     return this.destinations.find((destination) => Number(destination.id) === destinationId) ?? null;
+  }
+
+  get selectedCity(): any | null {
+    const selectedId = this.tourForm.controls.cityId.value;
+    if (selectedId === '') return null;
+    const cityId = Number(selectedId);
+    if (!Number.isInteger(cityId) || cityId <= 0) return null;
+    return this.cities.find((city) => Number(city.id) === cityId) ?? null;
   }
 
   get highlightsArray(): FormArray<FormGroup> {
@@ -199,6 +211,37 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return { ...destination, id };
         })
         .filter((destination) => Number.isFinite(destination.id));
+    });
+  }
+
+  loadCities(destinationId: number, selectedCityId?: number): void {
+    const requestSequence = ++this.citiesRequestSequence;
+    if (!destinationId) {
+      this.cities = [];
+      this.tourForm.controls.cityId.setValue('');
+      return;
+    }
+    this.citiesLoading = true;
+    this.apiLoadingMessage = '';
+    this.adminService.getCitiesByDestination(destinationId, 1, 500).pipe(
+      catchError(() => {
+        if (requestSequence !== this.citiesRequestSequence) return of(null);
+        this.errorMessage = 'citiesLoadError';
+        return of(null);
+      }),
+      finalize(() => {
+        if (requestSequence !== this.citiesRequestSequence) return;
+        this.citiesLoading = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (requestSequence !== this.citiesRequestSequence) return;
+      const rows = this.extractCollection(response, ['cities']);
+      this.cities = rows.filter((city) => city?.isActive !== false)
+        .map((city) => ({ ...city, id: Number(city?.id ?? city?.cityId) }))
+        .filter((city) => Number.isFinite(city.id));
+      const preferredId = Number(selectedCityId ?? this.tourForm.controls.cityId.value);
+      this.tourForm.controls.cityId.setValue(this.cities.some((city) => city.id === preferredId) ? preferredId : '');
     });
   }
 
@@ -625,6 +668,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.tourForm.controls.destinationId.setValue(destinationId);
     this.tourForm.controls.destinationId.markAsDirty();
     this.tourForm.controls.destinationId.markAsTouched();
+    this.tourForm.controls.cityId.setValue('');
+    this.loadCities(destinationId);
     this.destinationMenuOpen = false;
     this.destinationSearchTerm = '';
   }
@@ -671,6 +716,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       titleEng: tour.titleEng ?? tour.title ?? '',
       titleAr: tour.titleAr ?? '',
       destinationId: tour.destinationId ?? '',
+      cityId: tour.cityId ?? '',
       description: tour.description ?? tour.overview ?? '',
       fullDescription: tour.fullDescription ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
@@ -690,12 +736,17 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.setExcludes(tour.excludes ?? []);
     this.setItinerary(tour.itinerary ?? tour.itineraries ?? []);
     this.syncImagesControl();
+    const destinationId = Number(tour.destinationId);
+    if (destinationId) this.loadCities(destinationId, Number(tour.cityId));
     this.closeDestinationMenu();
   }
 
   private resetForm(emitCancel: boolean): void {
     this.closeItineraryEditor();
     this.closeDestinationMenu();
+    this.citiesRequestSequence++;
+    this.cities = [];
+    this.citiesLoading = false;
     this.revokeNewImageUrls();
     this.activeStep = 1;
     this.completedStep = 0;
@@ -706,6 +757,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       titleEng: '',
       titleAr: '',
       destinationId: '',
+      cityId: '',
       description: '',
       fullDescription: '',
       pricePerPerson: 0,
@@ -739,6 +791,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/)],
       }),
       destinationId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
+      cityId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
       description: new FormControl('', { nonNullable: true }),
       fullDescription: new FormControl('', { nonNullable: true }),
       pricePerPerson: new FormControl(0, {
@@ -871,6 +924,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.titleEng,
       this.tourForm.controls.titleAr,
       this.tourForm.controls.destinationId,
+      this.tourForm.controls.cityId,
       this.tourForm.controls.pricePerPerson,
       this.tourForm.controls.pricePerChild,
       this.tourForm.controls.currencyId,
@@ -897,6 +951,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       TitleEng: form.titleEng.trim(),
       TitleAr: form.titleAr.trim(),
       DestinationId: Number(form.destinationId),
+      CityId: Number(form.cityId),
       Description: form.description.trim() || null,
       FullDescription: form.fullDescription.trim() || null,
       PricePerPerson: Number(form.pricePerPerson),

@@ -18,6 +18,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'destinations/:destinationId/cities/:cityId',
+    loadComponent: () =>
+      import('./features/home/city-page/city-page').then((m) => m.CityPage),
+  },
+  {
     path: 'destinations/:id',
     loadComponent: () =>
       import('./features/home/home-sections/destinations-section/destination-detail/destination-detail').then(

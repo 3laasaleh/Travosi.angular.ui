@@ -62,62 +62,7 @@
        
     </div>
 
-    @if (itinerarySteps.length) {
-    <div class="mt-6">
-        <h5 class="text-lg font-semibold flex items-center"><i class="mdi mdi-map-marker-path text-primary me-2 text-xl"></i>{{ 'itinerary' | translate }}:</h5>
 
-        <ol class="mt-6 relative border-s-2 border-primary/20 dark:border-primary/30 ms-4">
-            @for (step of itinerarySteps; track step; let stepIndex = $index) {
-            <li class="mb-8 ms-6 last:mb-0">
-                <span class="absolute flex items-center justify-center size-8 bg-primary text-white text-sm font-semibold rounded-full -start-4 ring-4 ring-white dark:ring-slate-900">
-                    {{ stepIndex + 1 }}
-                </span>
-
-                <div class="p-4 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <h6 class="font-semibold">{{ step.title }}</h6>
-                        @if (itineraryTime(step)) {
-                        <span class="text-xs font-medium text-primary bg-primary/10 rounded-full py-1 px-3">
-                            <i class="mdi mdi-clock-outline me-1"></i>{{ itineraryTime(step) }}
-                        </span>
-                        }
-                    </div>
-                    @if (step.value) {
-                    <p class="text-slate-500 dark:text-slate-300 text-sm font-medium mt-1"><i class="mdi mdi-map-marker-outline text-primary me-1"></i>{{ step.value }}</p>
-                    }
-                    @if (step.description) {
-                    <p class="text-slate-400 text-sm mt-2 whitespace-pre-line">{{ step.description }}</p>
-                    }
-
-                    @if (itineraryChildren(step).length) {
-                    <ul class="mt-4 space-y-3 border-s border-gray-100 dark:border-gray-800 ps-4">
-                        @for (child of itineraryChildren(step); track child) {
-                        <li>
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <p class="font-medium text-sm flex items-center">
-                                    <i class="mdi mdi-subdirectory-arrow-right text-primary me-2"></i>
-                                    {{ child.title }}
-                                </p>
-                                @if (itineraryTime(child)) {
-                                <span class="text-xs text-slate-400"><i class="mdi mdi-clock-outline me-1"></i>{{ itineraryTime(child) }}</span>
-                                }
-                            </div>
-                            @if (child.value) {
-                            <p class="text-slate-500 dark:text-slate-300 text-xs font-medium mt-1 ms-6"><i class="mdi mdi-map-marker-outline text-primary me-1"></i>{{ child.value }}</p>
-                            }
-                            @if (child.description) {
-                            <p class="text-slate-400 text-xs mt-1 ms-4 whitespace-pre-line">{{ child.description }}</p>
-                            }
-                        </li>
-                        }
-                    </ul>
-                    }
-                </div>
-            </li>
-            }
-        </ol>
-    </div>
-    }
 <!-- Tour Highlights -->
 <div class="mt-10">
     <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">

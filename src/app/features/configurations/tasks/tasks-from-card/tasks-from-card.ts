@@ -13,6 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TASK_STATUS_OPTIONS, TaskStatusEnum } from '../task-status.enum';
 
 export interface TaskDTO {
@@ -29,7 +30,7 @@ export interface TaskDTO {
 @Component({
   selector: 'app-tasks-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DatePicker],
   templateUrl: './tasks-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -18,6 +18,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { AuthService } from '../../../user/_services/auth.service';
 import { CustomerTypeEnum } from '../customer-type.enum';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 enum GenderEnum { Male = 0, Female = 1 }
 enum TravelerTypeEnum { Adult = 1, Child = 2, Infant = 3 }
@@ -51,7 +52,7 @@ export interface CustomerDTO {
 @Component({
   selector: 'app-customers-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DatePicker],
   templateUrl: './customers-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

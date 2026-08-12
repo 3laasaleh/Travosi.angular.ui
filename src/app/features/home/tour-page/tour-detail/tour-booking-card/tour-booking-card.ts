@@ -21,12 +21,13 @@ import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/apiservice.service';
 import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
 import { AuthService } from '../../../../user/_services/auth.service';
+import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
 
 
 @Component({
   selector: 'app-tour-booking-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe],
+  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe, DatePicker],
   templateUrl: './tour-booking-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

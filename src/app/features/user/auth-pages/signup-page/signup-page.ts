@@ -8,6 +8,7 @@ import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CustomerTypeEnum } from '../../../configurations/customers/customer-type.enum';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 interface RegistrationPayload {
   firstName: string;
@@ -26,7 +27,7 @@ interface RegistrationPayload {
 
 @Component({
   selector: 'app-signup-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, DatePicker],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './signup-page.html',
 })

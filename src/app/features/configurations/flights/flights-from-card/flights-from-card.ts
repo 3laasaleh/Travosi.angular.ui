@@ -14,6 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { FLIGHT_CLASS_OPTIONS, FlightClassEnum } from '../flight-class.enum';
 
 export interface FlightDTO {
@@ -32,7 +33,7 @@ export interface FlightDTO {
 @Component({
   selector: 'app-flights-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective],
+  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
   templateUrl: './flights-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

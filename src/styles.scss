@@ -42,3 +42,96 @@ button:disabled:hover,
 input,textarea,select {
   background-color: #fff;
 }
+
+/* ngx-bootstrap datepicker: retain Sea World's rounded Tailwind visual language. */
+bs-datepicker-container {
+  z-index: 9999 !important;
+}
+
+.seaworld-datepicker.bs-datepicker {
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(15 23 42 / 0.14), 0 8px 10px -6px rgb(15 23 42 / 0.08);
+  font-family: var(--font-dm, "DM Sans", sans-serif);
+}
+
+.seaworld-datepicker .bs-datepicker-container {
+  padding: 0;
+}
+
+.seaworld-datepicker .bs-datepicker-head {
+  background: linear-gradient(135deg, #0ca7d8, #1ec2f2);
+  border-radius: 0;
+}
+
+.seaworld-datepicker .bs-datepicker-head button.current,
+.seaworld-datepicker .bs-datepicker-head button:hover {
+  background-color: rgb(255 255 255 / 0.16);
+}
+
+.seaworld-datepicker .bs-datepicker-body {
+  border: 0;
+  border-radius: 0;
+}
+
+.seaworld-datepicker .bs-datepicker-body table td:not(.disabled):not(.week) span:not(.disabled):not(.is-other-month):hover,
+.seaworld-datepicker .bs-datepicker-body table td span.is-highlighted:not(.disabled):not(.selected) {
+  background-color: #d7f7ff;
+  color: #0b86af;
+}
+
+.seaworld-datepicker .bs-datepicker-body table td span.selected,
+.seaworld-datepicker .bs-datepicker-body table td.selected span,
+.seaworld-datepicker .bs-datepicker-body table td span[class*=select-]::after,
+.seaworld-datepicker .bs-datepicker-body table td[class*=select-] span::after {
+  background-color: #1ec2f2;
+}
+
+.seaworld-datepicker .bs-datepicker-body table.days td.active:not(.select-start):not(.disabled)::before,
+.seaworld-datepicker .bs-datepicker-body table.days td.in-range:not(.select-start):not(.disabled)::before,
+.seaworld-datepicker .bs-datepicker-body table.days span.active:not(.select-start):not(.disabled)::before,
+.seaworld-datepicker .bs-datepicker-body table.days span.in-range:not(.select-start):not(.disabled)::before {
+  background: #d7f7ff;
+}
+
+.seaworld-datepicker .bs-datepicker-buttons {
+  border-color: #e2e8f0;
+  padding: 0.625rem 0.75rem;
+}
+
+.seaworld-datepicker .bs-datepicker-buttons .btn {
+  border-radius: 9999px;
+  background: #eefcff;
+  color: #0b86af;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.seaworld-datepicker .bs-datepicker-buttons .btn:hover {
+  background: #d7f7ff;
+}
+
+.seaworld-datepicker .bs-timepicker-in-datepicker-container {
+  border-top: 1px solid #e2e8f0;
+}
+
+.seaworld-datepicker .bs-timepicker-controls button {
+  background-color: #d7f7ff;
+  color: #0b86af;
+}
+
+.seaworld-datepicker .bs-timepicker-controls button:hover {
+  background-color: #b3efff;
+}
+
+.dark .seaworld-datepicker.bs-datepicker,
+.dark .seaworld-datepicker .bs-datepicker-body {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dark .seaworld-datepicker .bs-datepicker-body table td,
+.dark .seaworld-datepicker .bs-datepicker-body table th {
+  color: #cbd5e1;
+}

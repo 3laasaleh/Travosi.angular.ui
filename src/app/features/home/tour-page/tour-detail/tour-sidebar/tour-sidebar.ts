@@ -2,10 +2,11 @@ import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
 
 @Component({
   selector: 'app-tour-sidebar',
-  imports: [FormsModule, TranslatePipe],
+  imports: [FormsModule, TranslatePipe, DatePicker],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-sidebar.html',
 })

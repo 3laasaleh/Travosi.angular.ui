@@ -3,7 +3,13 @@
         <div>
             <label class="font-semibold">{{ 'date' | translate }}:</label>
             <div class="relative mt-2">
-                <input type="date" name="date" [(ngModel)]="date" class="w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="'selectYourDate' | translate">
+                <app-date-picker
+                    [(ngModel)]="date"
+                    name="date"
+                    [placeholder]="'selectYourDate' | translate"
+                    [ariaLabel]="'selectYourDate' | translate"
+                    class="block"
+                    [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:ring-0 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200'" />
             </div>
         </div>
 

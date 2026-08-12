@@ -79,6 +79,17 @@ export class AdminService {
     });
   }
 
+  getCitiesByDestination(destinationId: number, page = 1, pageSize = 100): Observable<any> {
+    const params = new HttpParams()
+      .set('destinationId', destinationId)
+      .set('page', page)
+      .set('pageSize', pageSize);
+    return this.http.get(`${environment.baseUrl}Cities/GetAll`, {
+      headers: this.getHeaders(),
+      params,
+    });
+  }
+
   addPackageImages(payload: FormData): Observable<any> {
     return this.http.post(`${environment.baseUrl}Packages/AddImages`, payload, {
       headers: this.getHeaders(),
