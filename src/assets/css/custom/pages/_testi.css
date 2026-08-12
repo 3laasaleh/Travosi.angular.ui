@@ -15,7 +15,7 @@
 .tns-controls {
     button[data-controls="prev"],
     button[data-controls="next"] {
-        @apply absolute top-2/4 -translate-y-2/4 text-base w-8 h-8 rounded-full bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-0 transition-all duration-500 ease-in-out z-10 shadow-md dark:shadow-gray-700;
+        @apply absolute top-2/4 -translate-y-2/4 text-base w-8 h-8 rounded-full bg-white  text-slate-900  border-0 transition-all duration-500 ease-in-out z-10 shadow-md dark:shadow-gray-700;
 
         &:hover {
             @apply bg-primary text-white;

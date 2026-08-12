@@ -5,7 +5,7 @@
         <button
           type="button"
           aria-label="Previous page"
-          class="inline-flex size-[40px] items-center justify-center rounded-s-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800 dark:bg-slate-900 dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex size-[40px] items-center justify-center rounded-s-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800  dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
           [disabled]="normalizedCurrentPage === 1"
           (click)="goToPage(normalizedCurrentPage - 1)"
         >
@@ -17,7 +17,7 @@
         <li>
           @if (page === 'ellipsis') {
             <span
-              class="inline-flex size-[40px] items-center justify-center border border-gray-100 bg-white text-slate-400 dark:border-gray-800 dark:bg-slate-900"
+              class="inline-flex size-[40px] items-center justify-center border border-gray-100 bg-white text-slate-400 dark:border-gray-800 "
               aria-hidden="true"
             >…</span>
           } @else {
@@ -35,7 +35,7 @@
               [class.enabled:hover:bg-primary]="page !== normalizedCurrentPage"
               [class.enabled:hover:text-white]="page !== normalizedCurrentPage"
               [class.dark:border-gray-800]="page !== normalizedCurrentPage"
-              [class.dark:bg-slate-900]="page !== normalizedCurrentPage"
+              [class.]="page !== normalizedCurrentPage"
               [class.dark:enabled:hover:border-primary]="page !== normalizedCurrentPage"
               [class.dark:enabled:hover:bg-primary]="page !== normalizedCurrentPage"
               [attr.aria-current]="page === normalizedCurrentPage ? 'page' : null"
@@ -50,7 +50,7 @@
         <button
           type="button"
           aria-label="Next page"
-          class="inline-flex size-[40px] items-center justify-center rounded-e-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800 dark:bg-slate-900 dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex size-[40px] items-center justify-center rounded-e-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800  dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
           [disabled]="normalizedCurrentPage === normalizedTotalPages"
           (click)="goToPage(normalizedCurrentPage + 1)"
         >

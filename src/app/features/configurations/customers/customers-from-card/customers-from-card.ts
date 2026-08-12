@@ -29,7 +29,6 @@ interface TravelerDTO {
   lastName: string;
   passportNumber: string;
   dateOfBirth?: string | null;
-  nationalityId: number;
   gender: GenderEnum;
   travelerType: TravelerTypeEnum;
   relationship?: string;
@@ -82,7 +81,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
   @Output() editCancelled = new EventEmitter<void>();
 
   customerForm = this.createForm();
-  countries: any[] = [];
   agents: any[] = [];
   isLoading = false;
   errorMessage = '';
@@ -151,7 +149,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
       mobile: form.mobile.trim(),
       passportNumber: form.passportNumber.trim(),
       dateOfBirth: form.dateOfBirth,
-      nationalityId: Number(form.nationalityId),
       gender: Number(form.gender),
       customerType: Number(form.customerType),
       companyName: form.customerType === CustomerTypeEnum.Company ? form.companyName.trim() : null,
@@ -161,7 +158,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
         lastName: traveler.lastName.trim(),
         passportNumber: traveler.passportNumber.trim(),
         dateOfBirth: traveler.dateOfBirth,
-        nationalityId: Number(traveler.nationalityId),
         gender: Number(traveler.gender),
         travelerType: Number(traveler.travelerType),
         relationship: traveler.relationship.trim(),
@@ -201,13 +197,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
   }
 
   private loadLookups(): void {
-    this.apiService.getUnauthntecated('Countries/GetAll?page=1&pageSize=500').pipe(catchError(() => of(null)))
-      .subscribe((response: any) => {
-        const page = response?.data ?? response;
-        const rows = page?.data ?? page?.items ?? page;
-        this.countries = (Array.isArray(rows) ? rows : []).filter((country) => country?.isActive !== false);
-        this.cdr.markForCheck();
-      });
     if (this.isAdmin) {
       this.apiService.get('Account/GetAgents').pipe(catchError(() => of(null))).subscribe((response: any) => {
         const rows = response?.data ?? response;
@@ -227,7 +216,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
       mobile: customer.mobile ?? '',
       passportNumber: primary?.passportNumber ?? '',
       dateOfBirth: this.toDateInput(primary?.dateOfBirth),
-      nationalityId: primary?.nationalityId ?? null,
       gender: primary?.gender ?? GenderEnum.Male,
       customerType: customer.customerType ?? CustomerTypeEnum.Individual,
       companyName: customer.companyName ?? '',
@@ -240,7 +228,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
         lastName: traveler.lastName,
         passportNumber: traveler.passportNumber,
         dateOfBirth: this.toDateInput(traveler.dateOfBirth),
-        nationalityId: traveler.nationalityId,
         gender: traveler.gender,
         travelerType: traveler.travelerType,
         relationship: traveler.relationship ?? '',
@@ -278,7 +265,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
   private resetForm(emitCancel: boolean, keepMessage = false): void {
     this.customerForm.reset({
       firstName: '', lastName: '', email: '', mobile: '', passportNumber: '', dateOfBirth: '',
-      nationalityId: null, gender: GenderEnum.Male, customerType: CustomerTypeEnum.Individual,
+      gender: GenderEnum.Male, customerType: CustomerTypeEnum.Individual,
       companyName: '', agentId: null,
     }, { emitEvent: false });
     this.travelers.clear();
@@ -297,7 +284,6 @@ export class CustomersFromCard implements OnInit, OnChanges {
       mobile: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^\+?[0-9 ()-]{7,20}$/)] }),
       passportNumber: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(20)] }),
       dateOfBirth: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      nationalityId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       gender: new FormControl(GenderEnum.Male, { nonNullable: true, validators: [Validators.required] }),
       customerType: new FormControl(CustomerTypeEnum.Individual, { nonNullable: true, validators: [Validators.required] }),
       companyName: new FormControl('', { nonNullable: true }),
@@ -308,14 +294,13 @@ export class CustomersFromCard implements OnInit, OnChanges {
 
   private createTravelerForm(value: Partial<{
     firstName: string; lastName: string; passportNumber: string; dateOfBirth: string;
-    nationalityId: number | null; gender: GenderEnum; travelerType: TravelerTypeEnum; relationship: string;
+    gender: GenderEnum; travelerType: TravelerTypeEnum; relationship: string;
   }> = {}) {
     return new FormGroup({
       firstName: new FormControl(value.firstName ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
       lastName: new FormControl(value.lastName ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
       passportNumber: new FormControl(value.passportNumber ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(20)] }),
       dateOfBirth: new FormControl(value.dateOfBirth ?? '', { nonNullable: true, validators: [Validators.required] }),
-      nationalityId: new FormControl<number | null>(value.nationalityId ?? null, { validators: [Validators.required] }),
       gender: new FormControl(value.gender ?? GenderEnum.Male, { nonNullable: true, validators: [Validators.required] }),
       travelerType: new FormControl(value.travelerType ?? TravelerTypeEnum.Adult, { nonNullable: true, validators: [Validators.required] }),
       relationship: new FormControl(value.relationship ?? 'Companion', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),

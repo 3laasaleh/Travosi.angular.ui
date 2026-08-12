@@ -17,7 +17,7 @@
         @for (item of teamData; track item.id) {
             <div class="lg:col-span-3 md:col-span-6">
                 <div class="group text-center">
-                    <div class="relative inline-flex mx-auto h-52 w-52 items-center justify-center overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <div class="relative inline-flex mx-auto h-52 w-52 items-center justify-center overflow-hidden rounded-full bg-slate-100 ">
                         @if (hasProfileImage(item)) {
                             <img [src]="item.image" class="h-full w-full object-cover" [alt]="item.name" (error)="showAvatarIcon(item.id)">
                         } @else {

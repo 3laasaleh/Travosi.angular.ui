@@ -9,12 +9,12 @@
   @if (isLoading) {
     @if (viewMode === 'table') {
       <div class="overflow-hidden rounded-2xl border border-slate-200">
-        <div class="grid grid-cols-[1fr_1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
-          @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+        <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
+          @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
         </div>
         @for (row of [1,2,3,4,5]; track row) {
-          <div class="grid grid-cols-[1fr_1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
-            @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+          <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
+            @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
           </div>
         }
       </div>
@@ -36,7 +36,6 @@
           <tr>
             <th class="px-4 py-3">{{ 'englishName' | translate }}</th>
             <th class="px-4 py-3">{{ 'arabicName' | translate }}</th>
-            <th class="px-4 py-3">{{ 'country' | translate }}</th>
             <th class="px-4 py-3">{{ 'destination' | translate }}</th>
             <th class="px-4 py-3">{{ 'status' | translate }}</th>
             <th class="px-4 py-3">{{ 'actions' | translate }}</th>
@@ -47,10 +46,6 @@
             <tr class="border-t border-slate-200 hover:bg-slate-50">
               <td class="px-4 py-3 font-semibold">{{ city.nameEng }}</td>
               <td class="px-4 py-3" dir="rtl">{{ city.nameAr }}</td>
-              <td class="px-4 py-3">
-                <span class="block">{{ city.countryNameEng }}</span>
-                <span class="text-xs text-slate-500" dir="rtl">{{ city.countryNameAr }}</span>
-              </td>
               <td class="px-4 py-3">
                 <span class="block">{{ city.destinationNameEng || '—' }}</span>
                 @if (city.destinationNameAr) { <span class="text-xs text-slate-500" dir="rtl">{{ city.destinationNameAr }}</span> }
@@ -68,7 +63,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
+            <tr><td colspan="5" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
           }
         </tbody>
       </table>
@@ -85,11 +80,7 @@
               </div>
               <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class.bg-emerald-50]="city.isActive !== false" [class.text-emerald-600]="city.isActive !== false" [class.bg-slate-100]="city.isActive === false" [class.text-slate-500]="city.isActive === false">{{ (city.isActive !== false ? 'active' : 'inactive') | translate }}</span>
             </div>
-            <div class="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-sm">
-              <span class="font-medium">{{ 'country' | translate }}:</span>
-              {{ city.countryNameEng }} — {{ city.countryNameAr }}
-            </div>
-            <div class="mt-2 rounded-xl bg-primary/5 px-3 py-2 text-sm text-slate-700">
+            <div class="mt-3 rounded-xl bg-primary/5 px-3 py-2 text-sm text-slate-700">
               <span class="font-medium">{{ 'destination' | translate }}:</span> {{ city.destinationNameEng || '—' }}
             </div>
             <div class="mt-4 flex gap-2">

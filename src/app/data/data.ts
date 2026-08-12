@@ -49,18 +49,18 @@ export const starts = [
 ];
 
 export const packageData = [
-    { image: listing(1), country: 'Dubai', city: 'Cuba Sailing Adventure', discount: '10% Off', price: '$ 58 / Day' },
-    { image: listing(2), country: 'Italy', city: 'Tour in New York', discount: '', price: '$ 58 / Day' },
-    { image: listing(3), country: 'Maldivas', city: 'Discover Greece', discount: '', price: '$ 58 / Day' },
-    { image: listing(4), country: 'USA', city: 'Museum of Modern Art', discount: '', price: '$ 58 / Day' },
-    { image: listing(5), country: 'Bali', city: 'Peek Mountain View', discount: '', price: '$ 58 / Day' },
-    { image: listing(6), country: 'Bangkok', city: 'Hot Baloon Journey', discount: '25% Off', price: '$ 58 / Day' },
-    { image: listing(7), country: 'Singapore', city: 'Orca Camp Kayaking Trip', discount: '', price: '$ 58 / Day' },
-    { image: listing(8), country: 'Thailand', city: 'Caño Cristales River Trip', discount: '20% Off', price: '$ 58 / Day' },
-    { image: listing(9), country: 'Pattaya', city: 'Osa Peninsula to Dominical', discount: '', price: '$ 58 / Day' },
-    { image: listing(10), country: 'Lakshadweep', city: 'History of The Emporer', discount: '', price: '$ 58 / Day' },
-    { image: listing(11), country: 'Paris', city: 'Wildness of Paris', discount: '', price: '$ 58 / Day' },
-    { image: listing(12), country: 'London', city: 'The Hills and Mountains', discount: '', price: '$ 58 / Day' },
+    { image: listing(1), destination: 'Dubai', city: 'Cuba Sailing Adventure', discount: '10% Off', price: '$ 58 / Day' },
+    { image: listing(2), destination: 'Italy', city: 'Tour in New York', discount: '', price: '$ 58 / Day' },
+    { image: listing(3), destination: 'Maldivas', city: 'Discover Greece', discount: '', price: '$ 58 / Day' },
+    { image: listing(4), destination: 'USA', city: 'Museum of Modern Art', discount: '', price: '$ 58 / Day' },
+    { image: listing(5), destination: 'Bali', city: 'Peek Mountain View', discount: '', price: '$ 58 / Day' },
+    { image: listing(6), destination: 'Bangkok', city: 'Hot Baloon Journey', discount: '25% Off', price: '$ 58 / Day' },
+    { image: listing(7), destination: 'Singapore', city: 'Orca Camp Kayaking Trip', discount: '', price: '$ 58 / Day' },
+    { image: listing(8), destination: 'Thailand', city: 'Caño Cristales River Trip', discount: '20% Off', price: '$ 58 / Day' },
+    { image: listing(9), destination: 'Pattaya', city: 'Osa Peninsula to Dominical', discount: '', price: '$ 58 / Day' },
+    { image: listing(10), destination: 'Lakshadweep', city: 'History of The Emporer', discount: '', price: '$ 58 / Day' },
+    { image: listing(11), destination: 'Paris', city: 'Wildness of Paris', discount: '', price: '$ 58 / Day' },
+    { image: listing(12), destination: 'London', city: 'The Hills and Mountains', discount: '', price: '$ 58 / Day' },
 ];
 
 export const blogData = [

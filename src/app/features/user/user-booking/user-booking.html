@@ -11,16 +11,16 @@
             </div>
 
             <div class="lg:w-3/4 md:w-2/3 md:px-3 mt-6 md:mt-0">
-                <div class="rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-900 shadow dark:shadow-gray-800 p-6">
+                <div class="rounded-md border border-gray-100 dark:border-gray-700 bg-white  shadow dark:shadow-gray-800 p-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h5 class="text-xl font-semibold text-slate-900 dark:text-white">{{ 'myBookings' | translate }}</h5>
+                            <h5 class="text-xl font-semibold text-slate-900 ">{{ 'myBookings' | translate }}</h5>
                             <p class="text-slate-400 mt-1">{{ 'bookingHistoryDescription' | translate }}</p>
                         </div>
 
-                        <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center gap-3 text-sm text-slate-500 ">
                             <label for="pageSize" class="font-medium">{{ 'rows' | translate }}:</label>
-                            <select id="pageSize" class="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2" (change)="onPageSizeChange($event)">
+                            <select id="pageSize" class="rounded-md border border-gray-200 dark:border-gray-700 bg-white  text-slate-900  px-3 py-2" (change)="onPageSizeChange($event)">
                                 @for (size of pageSizes; track size) {
                                     <option [value]="size" [selected]="size === pageSize">{{ size }}</option>
                                 }
@@ -32,7 +32,7 @@
                         @if (isLoading) {
                             <div class="overflow-x-auto" aria-busy="true" [attr.aria-label]="'loadingBookings' | translate">
                                 <div class="min-w-[900px]">
-                                    <div class="grid grid-cols-8 gap-4 bg-slate-50 px-4 py-3 dark:bg-slate-950">
+                                    <div class="grid grid-cols-8 gap-4 bg-slate-50 px-4 py-3 ">
                                         @for (column of [1, 2, 3, 4, 5, 6, 7, 8]; track column) {
                                             <div class="h-4 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700"></div>
                                         }
@@ -47,13 +47,13 @@
                                 </div>
                             </div>
                         } @else if (errorMessage) {
-                            <div class="p-8 text-center text-red-600 dark:text-red-400">{{ errorMessage | translate }}</div>
+                            <div class="p-8 text-center text-red-600 ">{{ errorMessage | translate }}</div>
                         } @else if (bookings.length === 0) {
-                            <div class="p-8 text-center text-slate-500 dark:text-slate-400">{{ 'noBookingsFound' | translate }}</div>
+                            <div class="p-8 text-center text-slate-500 ">{{ 'noBookingsFound' | translate }}</div>
                         } @else {
                             <div class="overflow-x-auto">
-                                <table class="min-w-full text-left text-sm text-slate-600 dark:text-slate-300">
-                                    <thead class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200">
+                                <table class="min-w-full text-left text-sm text-slate-600 ">
+                                    <thead class="bg-slate-50  text-slate-700 ">
                                         <tr>
                                             <th class="px-4 py-3 font-medium">{{ 'bookingId' | translate }}</th>
                                             <th class="px-4 py-3 font-medium">{{ 'tourOrPackage' | translate }}</th>
@@ -67,14 +67,14 @@
                                     <tbody>
                                         @for (booking of pagedBookings; track $index) {
                                             <tr class="border-t border-gray-100 dark:border-gray-800 hover:bg-slate-50 dark:hover:bg-slate-950">
-                                                <td class="px-4 py-4 font-medium text-slate-800 dark:text-white">#{{ booking.id }}</td>
+                                                <td class="px-4 py-4 font-medium text-slate-800 ">#{{ booking.id }}</td>
                                                 <td class="px-4 py-4">{{ booking.tourTitle ?? booking.packageName ?? '-' }}</td>
                                                 <td class="px-4 py-4">{{ booking.createdDate | date: 'mediumDate' }}</td>
                                                 <td class="px-4 py-4">{{ booking.dateFrom | date: 'mediumDate' }} - {{ booking.dateTo | date: 'mediumDate' }}</td>
                                                 <td class="px-4 py-4">{{ booking.numberOfTravelers }}</td>
                                                 <td class="px-4 py-4">${{ booking.totalPrice | number: '1.0-2' }} @if (booking.cancellationFeeAmount > 0) { <span class="block text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</span> }</td>
                                                 <td class="px-4 py-4">
-                                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" [class]="booking.statusName === 'Confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : booking.statusName === 'Pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : booking.statusName === 'Cancelled' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'">{{ bookingStatusKey(booking.statusName) | translate }}</span>
+                                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" [class]="booking.statusName === 'Confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : booking.statusName === 'Pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : booking.statusName === 'Cancelled' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700  '">{{ bookingStatusKey(booking.statusName) | translate }}</span>
                                                 </td>
                                             </tr>
                                         }
@@ -83,11 +83,11 @@
                             </div>
 
                             <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'showingBookings' | translate: { shown: pagedBookings.length, total: bookings.length } }}</p>
+                                <p class="text-sm text-slate-500 ">{{ 'showingBookings' | translate: { shown: pagedBookings.length, total: bookings.length } }}</p>
                                 <div class="flex items-center gap-2">
-                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200" [disabled]="page === 1" (click)="prevPage()">{{ 'previous' | translate }}</button>
-                                    <span class="text-sm text-slate-500 dark:text-slate-400">{{ 'pageOf' | translate: { page: page, total: totalPages } }}</span>
-                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200" [disabled]="page >= totalPages" (click)="nextPage()">{{ 'next' | translate }}</button>
+                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700  " [disabled]="page === 1" (click)="prevPage()">{{ 'previous' | translate }}</button>
+                                    <span class="text-sm text-slate-500 ">{{ 'pageOf' | translate: { page: page, total: totalPages } }}</span>
+                                    <button type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary hover:text-white dark:border-slate-700  " [disabled]="page >= totalPages" (click)="nextPage()">{{ 'next' | translate }}</button>
                                 </div>
                             </div>
                         }

@@ -22,12 +22,6 @@ export class Quotations {
     if (!this.showForm) this.selectedQuotation = null;
   }
 
-  openCreateForm(): void {
-    debugger;
-    this.selectedQuotation = null;
-    this.showForm = true;
-  }
-
   selectQuotationForEdit(quotation: any): void {
     this.selectedQuotation = quotation;
     this.showForm = true;
@@ -39,7 +33,6 @@ export class Quotations {
 
   handleQuotationSaved(): void {
     this.selectedQuotation = null;
-    this.showForm = false;
     this.refreshToken++;
   }
 }

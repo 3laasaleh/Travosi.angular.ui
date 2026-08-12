@@ -88,11 +88,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/configurations/flights/flights-page').then((m) => m.Flights),
       },
       {
-        path: 'countries',
-        canActivate: [adminGuard],
-        loadComponent: () => import('./features/configurations/countries/countries-page').then((m) => m.Countries),
-      },
-      {
         path: 'cities',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configurations/cities/cities-page').then((m) => m.Cities),

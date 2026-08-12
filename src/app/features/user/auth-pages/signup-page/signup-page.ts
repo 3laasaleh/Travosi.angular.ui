@@ -1,13 +1,11 @@
-import { AfterViewInit, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { AuthService } from '../../_services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
-import { catchError, finalize, of } from 'rxjs';
-import { ApiService } from '../../../../core/services/apiservice.service';
-import { CustomerTypeEnum } from '../../../configurations/customers/customer-type.enum';
+import { finalize } from 'rxjs';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 interface RegistrationPayload {
@@ -18,11 +16,8 @@ interface RegistrationPayload {
   password: string;
   confirmPassword: string;
   dateOfBirth: string;
-  nationalityId: number;
   gender: number;
-  customerType: CustomerTypeEnum;
-  companyName: string | null;
-  passportNumber: string | null;
+  passportNumber: string;
 }
 
 @Component({
@@ -31,27 +26,17 @@ interface RegistrationPayload {
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './signup-page.html',
 })
-export class SignupPage implements OnInit, AfterViewInit {
+export class SignupPage implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly apiService = inject(ApiService);
 
-  readonly customerTypeEnum = CustomerTypeEnum;
-  readonly customerTypes = [
-    { value: CustomerTypeEnum.Individual, label: 'individual' },
-    { value: CustomerTypeEnum.Couple, label: 'couple' },
-    { value: CustomerTypeEnum.Family, label: 'family' },
-    { value: CustomerTypeEnum.Company, label: 'company' },
-  ];
   readonly genders = [
     { value: 0, label: 'male' },
     { value: 1, label: 'female' },
   ];
   readonly maxBirthDate = new Date().toISOString().slice(0, 10);
-  countries: any[] = [];
-  countriesLoading = false;
 
   bg = 'assets/images/bg/6.jpg';
   logo = 'assets/images/main-logo.png';
@@ -76,11 +61,8 @@ export class SignupPage implements OnInit, AfterViewInit {
       mobile: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s-]{7,15}$/)]],
       email: ['', [Validators.required, Validators.email]],
       dateOfBirth: ['', Validators.required],
-      nationalityId: [null as number | null, Validators.required],
       gender: [0, Validators.required],
-      customerType: [CustomerTypeEnum.Individual, Validators.required],
-      companyName: [''],
-      passportNumber: ['', Validators.maxLength(20)],
+      passportNumber: ['', [Validators.required, Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       acceptTerms: [false, Validators.requiredTrue],
@@ -89,20 +71,6 @@ export class SignupPage implements OnInit, AfterViewInit {
       validators: this.passwordMatchValidator,
     },
   );
-
-  ngOnInit(): void {
-    this.loadCountries();
-    this.signupForm.controls.customerType.valueChanges.subscribe((type) => {
-      const companyName = this.signupForm.controls.companyName;
-      if (type === CustomerTypeEnum.Company) companyName.setValidators([Validators.required, Validators.maxLength(200)]);
-      else {
-        companyName.clearValidators();
-        companyName.setValue('');
-      }
-      companyName.updateValueAndValidity();
-      this.cdr.markForCheck();
-    });
-  }
 
   ngAfterViewInit(): void {
     feather.replace();
@@ -126,13 +94,8 @@ export class SignupPage implements OnInit, AfterViewInit {
       password: this.signupForm.get('password')?.value ?? '',
       confirmPassword: this.signupForm.get('confirmPassword')?.value ?? '',
       dateOfBirth: this.signupForm.controls.dateOfBirth.value,
-      nationalityId: Number(this.signupForm.controls.nationalityId.value),
       gender: Number(this.signupForm.controls.gender.value),
-      customerType: this.signupForm.controls.customerType.value,
-      companyName: this.signupForm.controls.customerType.value === CustomerTypeEnum.Company
-        ? this.signupForm.controls.companyName.value.trim()
-        : null,
-      passportNumber: this.signupForm.controls.passportNumber.value.trim() || null,
+      passportNumber: this.signupForm.controls.passportNumber.value.trim(),
     };
 
     this.isSubmitting = true;
@@ -156,24 +119,6 @@ export class SignupPage implements OnInit, AfterViewInit {
         this.errorMessage =
           error?.error?.message || error?.message || 'registrationFailed';
       },
-    });
-  }
-
-  private loadCountries(): void {
-    this.countriesLoading = true;
-    this.apiService.getUnauthntecated('Countries/GetAll?page=1&pageSize=500').pipe(
-      catchError(() => {
-        this.errorMessage = 'countriesLoadError';
-        return of(null);
-      }),
-      finalize(() => {
-        this.countriesLoading = false;
-        this.cdr.markForCheck();
-      }),
-    ).subscribe((response: any) => {
-      const page = response?.data ?? response;
-      const rows = page?.data ?? page?.items ?? page;
-      this.countries = (Array.isArray(rows) ? rows : []).filter((country) => country?.isActive !== false);
     });
   }
 

@@ -9,7 +9,7 @@
                             @for (item of datas; track item.id) {
                                 <div class="relative shadow dark:shadow-gray-800 rounded-md overflow-hidden mt-4">
                                     <h2 class="text-base font-semibold">
-                                        <button type="button" (click)="handleclick(item.id)" [class.bg-gray-50]="item.id === activeIndex" [class.dark:bg-slate-800]="item.id === activeIndex" [class.text-primary]="item.id === activeIndex" class="flex justify-between items-center p-5 w-full font-medium text-start">
+                                        <button type="button" (click)="handleclick(item.id)" [class.bg-gray-50]="item.id === activeIndex" [class.]="item.id === activeIndex" [class.text-primary]="item.id === activeIndex" class="flex justify-between items-center p-5 w-full font-medium text-start">
                                             <span>{{ item.title }}</span>
                                             <svg data-accordion-icon class="size-4 shrink-0" [class.rotate-180]="item.id === activeIndex" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -32,7 +32,7 @@
                             @for (item of datas2; track item.id) {
                                 <div class="relative shadow dark:shadow-gray-800 rounded-md overflow-hidden mt-4">
                                     <h2 class="text-base font-semibold">
-                                        <button type="button" (click)="handleclick2(item.id)" [class.bg-gray-50]="item.id === activeIndex2" [class.dark:bg-slate-800]="item.id === activeIndex2" [class.text-primary]="item.id === activeIndex2" class="flex justify-between items-center p-5 w-full font-medium text-start">
+                                        <button type="button" (click)="handleclick2(item.id)" [class.bg-gray-50]="item.id === activeIndex2" [class.]="item.id === activeIndex2" [class.text-primary]="item.id === activeIndex2" class="flex justify-between items-center p-5 w-full font-medium text-start">
                                             <span>{{ item.title }}</span>
                                             <svg data-accordion-icon class="size-4 shrink-0" [class.rotate-180]="item.id === activeIndex2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -56,7 +56,7 @@
                             @for (item of datas3; track item.id) {
                                 <div class="relative shadow dark:shadow-gray-800 rounded-md overflow-hidden mt-4">
                                     <h2 class="text-base font-semibold">
-                                        <button type="button" (click)="handleclick3(item.id)" [class.bg-gray-50]="item.id === activeIndex3" [class.dark:bg-slate-800]="item.id === activeIndex3" [class.text-primary]="item.id === activeIndex3" class="flex justify-between items-center p-5 w-full font-medium text-start">
+                                        <button type="button" (click)="handleclick3(item.id)" [class.bg-gray-50]="item.id === activeIndex3" [class.]="item.id === activeIndex3" [class.text-primary]="item.id === activeIndex3" class="flex justify-between items-center p-5 w-full font-medium text-start">
                                             <span>{{ item.title }}</span>
                                             <svg data-accordion-icon class="size-4 shrink-0" [class.rotate-180]="item.id === activeIndex3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -80,7 +80,7 @@
                             @for (item of datas4; track item.id) {
                                 <div class="relative shadow dark:shadow-gray-800 rounded-md overflow-hidden mt-4">
                                     <h2 class="text-base font-semibold">
-                                        <button type="button" (click)="handleclick4(item.id)" [class.bg-gray-50]="item.id === activeIndex4" [class.dark:bg-slate-800]="item.id === activeIndex4" [class.text-primary]="item.id === activeIndex4" class="flex justify-between items-center p-5 w-full font-medium text-start">
+                                        <button type="button" (click)="handleclick4(item.id)" [class.bg-gray-50]="item.id === activeIndex4" [class.]="item.id === activeIndex4" [class.text-primary]="item.id === activeIndex4" class="flex justify-between items-center p-5 w-full font-medium text-start">
                                             <span>{{ item.title }}</span>
                                             <svg data-accordion-icon class="size-4 shrink-0" [class.rotate-180]="item.id === activeIndex4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>

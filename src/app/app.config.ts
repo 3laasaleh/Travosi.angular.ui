@@ -8,12 +8,13 @@ import { routes } from './app.routes';
 import { provideTranslateService } from '@ngx-translate/core';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { authSessionInterceptor } from './core/interceptors/auth-session.interceptor';
+import { languageInterceptor } from './core/interceptors/language.Interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideAnimationsAsync(),
-    provideHttpClient(withXhr(), withInterceptors([authSessionInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([languageInterceptor, authSessionInterceptor])),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
     JwtHelperService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

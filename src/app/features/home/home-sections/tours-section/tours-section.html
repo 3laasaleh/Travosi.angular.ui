@@ -15,14 +15,14 @@
         }
       </div>
     } @else if (hasError) {
-      <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900">
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 ">
         <p class="text-slate-500">{{ 'toursLoadError' | translate }}</p>
         <button type="button" class="mt-5 rounded-full bg-primary px-5 py-2.5 font-semibold text-white" (click)="loadTours()">{{ 'showMore' | translate }}</button>
       </div>
     } @else {
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @for (item of tours; track item.id ?? $index) {
-          <a [routerLink]="['/tours', item.id ]" class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+          <a [routerLink]="['/tours', item.id ]" class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 ">
             <article class="flex w-full flex-col">
               <div class="relative overflow-hidden">
                 <img [src]="imageUrl(item)" [alt]="item.titleEng " loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />

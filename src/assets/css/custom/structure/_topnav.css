@@ -143,7 +143,7 @@
       > li {
         @apply ltr:float-left rtl:float-right block relative my-0 mx-[10px];
         > a {
-          @apply block text-slate-900 dark:text-white text-base bg-transparent font-medium tracking-[1px] leading-6 font-dm px-[15px];
+          @apply block text-slate-900  text-base bg-transparent font-medium tracking-[1px] leading-6 font-dm px-[15px];
           &:hover, 
           &:active {
             @apply text-primary;
@@ -178,11 +178,11 @@
       @apply ltr:float-right rtl:float-left;
     }
     &.scroll {
-      @apply bg-white dark:bg-slate-900 border-none shadow;
+      @apply bg-white  border-none shadow;
       .navigation-menu {
         > li {
           > a {
-            @apply text-slate-900 dark:text-white;
+            @apply text-slate-900 ;
           }
           > .menu-arrow {
             @apply border-t-transparent border-e-slate-900 dark:border-e-white border-b-slate-900 dark:border-b-white border-s-transparent;
@@ -212,12 +212,12 @@
       }
     }
     &.nav-sticky {
-      @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-gray-800;
+      @apply bg-white/80 /80 backdrop-blur-md shadow-sm dark:shadow-gray-800;
       .navigation-menu{
         &.nav-light {
           > li {
             > a {
-              @apply text-slate-900 dark:text-white;
+              @apply text-slate-900 ;
             }
             &.active {
               > a {
@@ -345,12 +345,12 @@
       > li {
         .submenu {
           transition: all 0.2s ease;
-          @apply absolute top-full start-0 z-[1000] py-[15px] px-0 list-none min-w-[180px] invisible opacity-0 mt-[10px] rounded-md bg-white dark:bg-slate-900 shadow-sm dark:shadow-gray-800;
+          @apply absolute top-full start-0 z-[1000] py-[15px] px-0 list-none min-w-[180px] invisible opacity-0 mt-[10px] rounded-md bg-white  shadow-sm dark:shadow-gray-800;
           li {
             @apply relative ms-0;
             a {
               transition: all 0.3s;
-              @apply block py-[10px] px-5 clear-both whitespace-nowrap text-[14px] tracking-[0.04em] font-normal text-slate-900 dark:text-white leading-[17px];
+              @apply block py-[10px] px-5 clear-both whitespace-nowrap text-[14px] tracking-[0.04em] font-normal text-slate-900  leading-[17px];
               &:hover {
                 @apply !text-primary dark:!text-primary;
               }
@@ -473,7 +473,7 @@
 
 @media (max-width: 991px) {
   #topnav {
-    @apply bg-white dark:bg-slate-900 shadow-sm dark:shadow-gray-800 min-h-[74px];
+    @apply bg-white  shadow-sm dark:shadow-gray-800 min-h-[74px];
     .logo {
       .l-dark {
         @apply !inline-block;
@@ -528,7 +528,7 @@
           }
         }
         > a {
-          @apply text-slate-900 dark:text-white py-[10px] px-[20px] after:absolute after:end-[15px];
+          @apply text-slate-900  py-[10px] px-[20px] after:absolute after:end-[15px];
         }
         > a:hover,
         .submenu li a:hover,
@@ -579,7 +579,7 @@
   }
   
   #navigation {
-    @apply absolute top-[74px] start-0 w-full  h-auto bg-white dark:bg-slate-900 overflow-auto;
+    @apply absolute top-[74px] start-0 w-full  h-auto bg-white  overflow-auto;
     &.open {
       @apply block overflow-y-auto;
     }

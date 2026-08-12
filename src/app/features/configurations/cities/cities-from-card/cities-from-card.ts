@@ -18,9 +18,6 @@ export interface CityDTO {
   id: number;
   nameEng: string;
   nameAr: string;
-  countryId: number;
-  countryNameEng?: string;
-  countryNameAr?: string;
   destinationId?: number | null;
   destinationNameEng?: string;
   destinationNameAr?: string;
@@ -40,10 +37,8 @@ export class CitiesFromCard implements OnInit, OnChanges {
   @Output() editCancelled = new EventEmitter<void>();
 
   cityForm = this.createForm();
-  countries: any[] = [];
   destinations: any[] = [];
   isLoading = false;
-  countriesLoading = false;
   destinationsLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -54,7 +49,6 @@ export class CitiesFromCard implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    this.loadCountries();
     this.loadDestinations();
   }
 
@@ -75,7 +69,6 @@ export class CitiesFromCard implements OnInit, OnChanges {
     const payload: any = {
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
-      countryId: Number(form.countryId),
       destinationId: Number(form.destinationId),
     };
     if (this.selectedCity?.id) payload.id = this.selectedCity.id;
@@ -112,25 +105,6 @@ export class CitiesFromCard implements OnInit, OnChanges {
     this.resetForm(true);
   }
 
-  private loadCountries(): void {
-    this.countriesLoading = true;
-    this.apiService.get('Countries/GetAll?page=1&pageSize=500').pipe(
-      catchError(() => {
-        this.errorMessage = 'countriesLoadError';
-        return of(null);
-      }),
-      finalize(() => {
-        this.countriesLoading = false;
-        this.cdr.markForCheck();
-      }),
-    ).subscribe((response: any) => {
-      if (response === null) return;
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.countries ?? pageData;
-      this.countries = Array.isArray(rows) ? rows : [];
-    });
-  }
-
   private loadDestinations(): void {
     this.destinationsLoading = true;
     this.apiService.get('Destinations/GetAll?page=1&pageSize=500').pipe(
@@ -154,13 +128,12 @@ export class CitiesFromCard implements OnInit, OnChanges {
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '',
       nameAr: city.nameAr ?? '',
-      countryId: city.countryId ?? null,
       destinationId: city.destinationId ?? null,
     });
   }
 
   private resetForm(emitCancel: boolean): void {
-    this.cityForm.reset({ nameEng: '', nameAr: '', countryId: null, destinationId: null });
+    this.cityForm.reset({ nameEng: '', nameAr: '', destinationId: null });
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -174,7 +147,6 @@ export class CitiesFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150)],
       }),
-      countryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
     });
   }

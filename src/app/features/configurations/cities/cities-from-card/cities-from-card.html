@@ -23,18 +23,6 @@
       }
     </div>
     <div>
-      <label class="mb-2 block text-sm font-medium">{{ 'country' | translate }}</label>
-      <select formControlName="countryId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
-        <option [ngValue]="null" disabled>{{ (countriesLoading ? 'loadingCountries' : 'selectCountry') | translate }}</option>
-        @for (country of countries; track country.id) {
-          <option [ngValue]="country.id">{{ country.nameEng }} — {{ country.nameAr }}</option>
-        }
-      </select>
-      @if (cityForm.controls.countryId.touched && cityForm.controls.countryId.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'countryRequired' | translate }}</p>
-      }
-    </div>
-    <div>
       <label class="mb-2 block text-sm font-medium">{{ 'destination' | translate }}</label>
       <select formControlName="destinationId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
         <option [ngValue]="null" disabled>{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') | translate }}</option>
@@ -47,7 +35,7 @@
       }
     </div>
     <div class="flex gap-3">
-      <button type="submit" [disabled]="cityForm.invalid || isLoading || countriesLoading || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedCity ? 'update' : 'add') | translate }} }</button>
+      <button type="submit" [disabled]="cityForm.invalid || isLoading || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedCity ? 'update' : 'add') | translate }} }</button>
       @if (selectedCity) {
         <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
       }

@@ -129,15 +129,12 @@
     "dateOfBirth": "Date of birth",
     "dateOfBirthRequired": "Date of birth is required.",
     "createAccount": "Create account",
-    "nationality": "Nationality",
-    "selectNationality": "Select nationality",
-    "nationalityRequired": "Nationality is required.",
     "gender": "Gender",
     "male": "Male",
     "female": "Female",
     "customerAgentNotificationHint": "The selected agent will receive a notification after saving.",
     "customerAutoAssignedToAgent": "This customer will be assigned to you automatically.",
-    "requiredTravelerFieldsHint": "All identity, contact, passport, birth date, and nationality fields are required.",
+    "requiredTravelerFieldsHint": "All identity, contact, passport, and birth date fields are required.",
     "companionTravelers": "Companion travelers",
     "companionTravelersHint": "Add the spouse, children, infants, babysitter, or other companions traveling with this customer.",
     "addSpouse": "Add spouse",
@@ -422,10 +419,8 @@
     ,"loadingPackages": "Loading packages"
     ,"quickAccessManagement": "Quick access to management sections."
     ,"Booking": "Booking"
-    ,"Countries": "Countries"
     ,"Cities": "Cities"
     ,"submitSignIn": "Signing in..."
-    ,"countries": "Countries"
     ,"cities": "Cities"
     ,"bookingsLoadError": "Bookings could not be loaded. Please try again."
     ,"total": "Total"
@@ -480,26 +475,7 @@
     ,"openAccountMenu": "Open account menu"
     ,"toggleAdminNavigation": "Toggle admin navigation"
     ,"airlineLogo": "Airline logo"
-    ,"country": "Country"
-    ,"manageCountryDetails": "Manage countries, bilingual names, and availability."
-    ,"hideAddCountry": "Hide add country"
-    ,"showAddCountry": "Show add country"
-    ,"editCountry": "Edit country"
-    ,"addCountry": "Add country"
-    ,"countryRecords": "Country records"
-    ,"loadingCountries": "Loading countries..."
-    ,"noCountriesFound": "No countries found."
-    ,"countriesLoadError": "Countries could not be loaded. Please try again."
-    ,"countrySaveError": "The country could not be saved."
-    ,"countryServiceUnavailable": "The country service is unavailable."
-    ,"countryCreated": "Country created successfully."
-    ,"countryUpdated": "Country updated successfully."
-    ,"selectCountry": "Select a country"
-    ,"countryRequired": "Country is required."
-    ,"confirmDeactivateCountry": "Are you sure you want to deactivate this country?"
-    ,"confirmActivateCountry": "Are you sure you want to activate this country?"
-    ,"countryStatusUpdated": "Country status updated successfully."
-    ,"manageCityDetails": "Manage cities and connect each city to its country."
+    ,"manageCityDetails": "Manage cities and connect each city to its destination."
     ,"hideAddCity": "Hide add city"
     ,"showAddCity": "Show add city"
     ,"editCity": "Edit city"
@@ -913,5 +889,14 @@
     "citiesLoadError": "Cities could not be loaded.",
     "quotationOptionsLoadError": "Customers, packages, or tours could not be loaded. Check your access and try again.",
     "quotationValidityBeforeTravel": "The quotation validity date must be on or before the travel start date.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "whatsappFloatingLabel": "Chat with Sea World Holidays on WhatsApp",
+    "leaveSiteTitle": "You are about to leave Sea World Holidays",
+    "leaveSiteMessage": "Before you go, our travel team would love to help you plan and book your next trip.",
+    "bookingContactPrompt": "For bookings and enquiries, call us on",
+    "thanksForVisiting": "Thanks for visiting Sea World Holidays. Have a wonderful time! 😊 :D",
+    "stayOnSite": "Stay on Sea World",
+    "continueBrowsing": "Continue browsing",
+    "leaveSite": "Leave website",
+    "items": "items"
 }

@@ -1,23 +1,14 @@
-import { Injectable, Injector } from '@angular/core';
-import {
-  HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { LanguageService } from '../services/language.service';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 
-@Injectable() 
-export class LanguageInterceptor implements HttpInterceptor {
-  constructor( private coockie: CookieService) {}
+export const languageInterceptor: HttpInterceptorFn = (request, next) => {
+  const storedLanguage = inject(CookieService).get('lang');
+  const language = storedLanguage.toLowerCase().startsWith('ar') ? 'ar' : 'en';
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const lang = this.coockie.get("lang")??"ar";
-    const cloned = req.clone({
-      setHeaders: {
-        'Accept-Language':lang
-      }
-    });
-
-    return next.handle(cloned);
-  }
-}
+  return next(request.clone({
+    setHeaders: {
+      'Accept-Language': language,
+    },
+  }));
+};

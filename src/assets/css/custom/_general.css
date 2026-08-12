@@ -3,7 +3,7 @@
 /*===============================*/
 
 body {
-    @apply font-dm text-base text-slate-900 dark:text-white;
+    @apply font-dm text-base text-slate-900 ;
 }
 
 .container {

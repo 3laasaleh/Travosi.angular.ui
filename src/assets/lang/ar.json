@@ -129,15 +129,12 @@
     "dateOfBirth": "تاريخ الميلاد",
     "dateOfBirthRequired": "تاريخ الميلاد مطلوب.",
     "createAccount": "إنشاء حساب",
-    "nationality": "الجنسية",
-    "selectNationality": "اختر الجنسية",
-    "nationalityRequired": "الجنسية مطلوبة.",
     "gender": "النوع",
     "male": "ذكر",
     "female": "أنثى",
     "customerAgentNotificationHint": "سيتلقى الوكيل المحدد إشعارًا بعد الحفظ.",
     "customerAutoAssignedToAgent": "سيتم تعيين هذا العميل إليك تلقائيًا.",
-    "requiredTravelerFieldsHint": "جميع بيانات الهوية والاتصال وجواز السفر وتاريخ الميلاد والجنسية مطلوبة.",
+    "requiredTravelerFieldsHint": "جميع بيانات الهوية والاتصال وجواز السفر وتاريخ الميلاد مطلوبة.",
     "companionTravelers": "المسافرون المرافقون",
     "companionTravelersHint": "أضف الزوج أو الزوجة والأطفال والرضع والمربية أو أي مرافقين آخرين.",
     "addSpouse": "إضافة زوج/زوجة",
@@ -423,9 +420,7 @@
     ,"loadingPackages": "جارٍ تحميل الباقات"
     ,"quickAccessManagement": "وصول سريع إلى أقسام الإدارة."
     ,"Booking": "الحجوزات"
-    ,"Countries": "الدول"
     ,"Cities": "المدن"
-    ,"countries": "الدول"
     ,"cities": "المدن"
     ,"bookingsLoadError": "تعذر تحميل الحجوزات. يرجى المحاولة مرة أخرى."
     ,"total": "الإجمالي"
@@ -480,26 +475,7 @@
     ,"openAccountMenu": "فتح قائمة الحساب"
     ,"toggleAdminNavigation": "تبديل قائمة تنقل الإدارة"
     ,"airlineLogo": "شعار شركة الطيران"
-    ,"country": "الدولة"
-    ,"manageCountryDetails": "إدارة الدول وأسمائها باللغتين وحالة إتاحتها."
-    ,"hideAddCountry": "إخفاء إضافة دولة"
-    ,"showAddCountry": "إظهار إضافة دولة"
-    ,"editCountry": "تعديل الدولة"
-    ,"addCountry": "إضافة دولة"
-    ,"countryRecords": "سجلات الدول"
-    ,"loadingCountries": "جارٍ تحميل الدول..."
-    ,"noCountriesFound": "لا توجد دول."
-    ,"countriesLoadError": "تعذر تحميل الدول. يرجى المحاولة مرة أخرى."
-    ,"countrySaveError": "تعذر حفظ الدولة."
-    ,"countryServiceUnavailable": "خدمة الدول غير متاحة."
-    ,"countryCreated": "تم إنشاء الدولة بنجاح."
-    ,"countryUpdated": "تم تحديث الدولة بنجاح."
-    ,"selectCountry": "اختر دولة"
-    ,"countryRequired": "الدولة مطلوبة."
-    ,"confirmDeactivateCountry": "هل أنت متأكد من إلغاء تفعيل هذه الدولة؟"
-    ,"confirmActivateCountry": "هل أنت متأكد من تفعيل هذه الدولة؟"
-    ,"countryStatusUpdated": "تم تحديث حالة الدولة بنجاح."
-    ,"manageCityDetails": "إدارة المدن وربط كل مدينة بالدولة التابعة لها."
+    ,"manageCityDetails": "إدارة المدن وربط كل مدينة بالوجهة التابعة لها."
     ,"hideAddCity": "إخفاء إضافة مدينة"
     ,"showAddCity": "إظهار إضافة مدينة"
     ,"editCity": "تعديل المدينة"
@@ -913,5 +889,14 @@
     "citiesLoadError": "تعذر تحميل المدن.",
     "quotationOptionsLoadError": "تعذر تحميل العملاء أو الباقات أو الجولات. تحقق من صلاحية الوصول ثم أعد المحاولة.",
     "quotationValidityBeforeTravel": "يجب أن يكون تاريخ صلاحية عرض السعر في أو قبل تاريخ بداية السفر.",
-    "retry": "إعادة المحاولة"
+    "retry": "إعادة المحاولة",
+    "whatsappFloatingLabel": "تواصل مع سي وورلد هوليدايز عبر واتساب",
+    "leaveSiteTitle": "أنت على وشك مغادرة سي وورلد هوليدايز",
+    "leaveSiteMessage": "قبل أن تغادر، يسعد فريق السفر لدينا مساعدتك في التخطيط لرحلتك القادمة وحجزها.",
+    "bookingContactPrompt": "للحجز والاستفسار اتصل بنا على",
+    "thanksForVisiting": "شكرًا لزيارة سي وورلد هوليدايز. نتمنى لك وقتًا رائعًا! 😊 :D",
+    "stayOnSite": "البقاء في سي وورلد",
+    "continueBrowsing": "متابعة التصفح",
+    "leaveSite": "مغادرة الموقع",
+    "items": "عناصر"
 }

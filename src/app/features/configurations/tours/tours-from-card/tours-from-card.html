@@ -206,8 +206,6 @@
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}</label>
             <div class="group relative">
-              <i
-                class="mdi mdi-calendar-start pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
               <app-date-picker formControlName="startDate" id="tour-start-date"
                 [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
                 inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
@@ -218,8 +216,6 @@
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}</label>
             <div class="group relative">
-              <i
-                class="mdi mdi-calendar-end pointer-events-none absolute start-4 top-1/2 z-10 -translate-y-1/2 text-xl text-primary"></i>
               <app-date-picker formControlName="endDate" id="tour-end-date"
                 [min]="tourForm.controls.startDate.value || null" [ariaLabel]="'endDate' | translate"
                 inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />

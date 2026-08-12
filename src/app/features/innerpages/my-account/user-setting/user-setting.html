@@ -12,7 +12,7 @@
                 </div>
 
                 <div class="lg:w-3/4 md:w-2/3 md:px-3 mt-6 md:mt-0">
-                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
+                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white ">
                         <h5 class="text-lg font-semibold mb-4">Personal Detail :</h5>
                         <form>
                             <div class="grid lg:grid-cols-2 grid-cols-1 gap-5">
@@ -21,7 +21,7 @@
                                         <label class="form-label font-medium">{{ item.name }}<span class="text-primary-600">{{ item.name2 }}</span></label>
                                         <div class="form-icon relative mt-2">
                                             <i [attr.data-feather]="item.icon" class="w-4 h-4 absolute top-3 start-4"></i>
-                                            <input type="text" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="item.placeholder" name="name" required="">
+                                            <input type="text" class="ps-12 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="item.placeholder" name="name" required="">
                                         </div>
                                     </div>
                                 }
@@ -32,7 +32,7 @@
                                     <label class="form-label font-medium">Description : </label>
                                     <div class="form-icon relative mt-2">
                                         <i data-feather="message-circle" class="w-4 h-4 absolute top-3 start-4"></i>
-                                        <textarea name="comments" id="comments" class="ps-11 w-full py-2 px-3 h-28 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Message :"></textarea>
+                                        <textarea name="comments" id="comments" class="ps-11 w-full py-2 px-3 h-28 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Message :"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                         </form>
                     </div>
 
-                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 mt-6">
+                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white  mt-6">
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5">
                             <div>
                                 <h5 class="text-lg font-semibold mb-4">Contact Info :</h5>
@@ -53,7 +53,7 @@
                                                 <label class="form-label font-medium">{{ item.name }}</label>
                                                 <div class="form-icon relative mt-2">
                                                     <i [attr.data-feather]="item.icon" class="w-4 h-4 absolute top-3 start-4"></i>
-                                                    <input name="number" type="number" class="ps-12 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="item.placeholder">
+                                                    <input name="number" type="number" class="ps-12 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" [placeholder]="item.placeholder">
                                                 </div>
                                             </div>
                                         }
@@ -72,7 +72,7 @@
                                                 <label class="form-label font-medium">{{ item.name }}</label>
                                                 <div class="form-icon relative mt-2">
                                                     <i [attr.data-feather]="item.icon" class="w-4 h-4 absolute top-3 start-4"></i>
-                                                    <input [type]="passwordVisibility[$index] ? 'text' : 'password'" class="ps-12 pe-12 w-full py-2 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="item.placeholder" required>
+                                                    <input [type]="passwordVisibility[$index] ? 'text' : 'password'" class="ps-12 pe-12 w-full py-2 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="item.placeholder" required>
                                                     <button type="button" (click)="togglePasswordVisibility($index)" class="absolute end-1 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="(passwordVisibility[$index] ? 'hidePassword' : 'showPassword') | translate" [attr.aria-pressed]="passwordVisibility[$index]"><i class="mdi text-xl" [class.mdi-eye-off-outline]="passwordVisibility[$index]" [class.mdi-eye-outline]="!passwordVisibility[$index]" aria-hidden="true"></i></button>
                                                 </div>
                                             </div>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 mt-6">
+                    <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white  mt-6">
                         <h5 class="text-lg font-semibold mb-5 text-primary-600">Delete Account :</h5>
 
                         <p class="text-slate-400 mb-4">Do you want to delete the account? Please press below "Delete" button</p>

@@ -1,25 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { ToursFromCard } from './tours-from-card/tours-from-card';
 import { ToursList } from './tours-list/tours-list';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
+import { TourDetail } from '../../home/tour-page/tour-detail/tour-detail/tour-detail';
 
 @Component({
   selector: 'app-tours',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, ToursFromCard, ToursList, ItineraryTimeline],
+  imports: [TranslatePipe, ToursFromCard, ToursList, ItineraryTimeline, TourDetail],
   templateUrl: './tours-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',
 })
 export class Tours {
   private readonly translate = inject(TranslateService);
-  readonly currencies = [
-    { id: 2, code: 'USD' },
-    { id: 1, code: 'EGP' },
-  ];
   viewMode: 'table' | 'grid' = 'grid';
   showForm = false;
   selectedTour: any = null;
@@ -81,26 +77,9 @@ export class Tours {
     );
   }
 
-  tourDuration(tour: any): string {
-    const days = Number(tour?.durationDays ?? 0);
-    const hours = Number(tour?.durationhours ?? tour?.durationHours ?? 0);
-    return this.translate.instant('durationDaysHours', { days, hours });
-  }
-
-  tourPrice(tour: any): string {
-    const currency = this.currencies.find((item) => item.id === Number(tour?.currencyId));
-    return `${tour?.pricePerPerson ?? tour?.price ?? 0} ${currency?.code ?? ''}`.trim();
-  }
-
   getItinerary(tour: any): any[] {
     const itinerary = tour?.itinerary ?? tour?.itineraries;
     return Array.isArray(itinerary) ? itinerary : [];
-  }
-
-  itineraryTime(item: any): string {
-    const startTime = this.formatTime(item?.startTime);
-    const endTime = this.formatTime(item?.endTime);
-    return [startTime, endTime].filter(Boolean).join(' - ');
   }
 
   getImages(tour: any): any[] {
@@ -131,11 +110,5 @@ export class Tours {
       .replace(/^\/+/, '')
       .replace(/^images\//i, '')
       .toLowerCase();
-  }
-
-  private formatTime(value: unknown): string {
-    if (typeof value !== 'string') return '';
-    const match = value.match(/^(\d{2}):(\d{2})/);
-    return match ? `${match[1]}:${match[2]}` : '';
   }
 }

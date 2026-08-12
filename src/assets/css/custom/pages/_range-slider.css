@@ -11,7 +11,7 @@
 
 		&::-webkit-slider-runnable-track {
 			animate: 0.2s;
-			@apply w-full h-1 cursor-pointer bg-slate-200 dark:bg-slate-800 rounded shadow-none border-0;
+			@apply w-full h-1 cursor-pointer bg-slate-200  rounded shadow-none border-0;
 		}
 
 		&::-webkit-slider-thumb {

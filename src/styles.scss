@@ -43,63 +43,7 @@ input,textarea,select {
   background-color: #fff;
 }
 
-/* Flatpickr datepicker: retain Sea World's rounded Tailwind visual language. */
-.seaworld-datepicker.flatpickr-calendar {
-  z-index: 9999;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgb(15 23 42 / 0.14), 0 8px 10px -6px rgb(15 23 42 / 0.08);
-  font-family: var(--font-dm, "DM Sans", sans-serif);
-}
-
-.seaworld-datepicker .flatpickr-months {
-  background: linear-gradient(135deg, #0ca7d8, #1ec2f2);
-  color: #fff;
-}
-
-.seaworld-datepicker .flatpickr-month,
-.seaworld-datepicker .flatpickr-current-month,
-.seaworld-datepicker .flatpickr-current-month .flatpickr-monthDropdown-months,
-.seaworld-datepicker .flatpickr-current-month input.cur-year,
-.seaworld-datepicker .flatpickr-prev-month,
-.seaworld-datepicker .flatpickr-next-month {
-  color: #fff;
-  fill: #fff;
-}
-
-.seaworld-datepicker .flatpickr-weekdays {
-  background: #eefcff;
-}
-
-.seaworld-datepicker .flatpickr-day:hover,
-.seaworld-datepicker .flatpickr-day:focus {
-  border-color: #d7f7ff;
-  background-color: #d7f7ff;
-  color: #0b86af;
-}
-
-.seaworld-datepicker .flatpickr-day.selected,
-.seaworld-datepicker .flatpickr-day.selected:hover,
-.seaworld-datepicker .flatpickr-day.startRange,
-.seaworld-datepicker .flatpickr-day.endRange {
-  border-color: #1ec2f2;
-  background-color: #1ec2f2;
-}
-
-.seaworld-datepicker .flatpickr-time {
-  border-top: 1px solid #e2e8f0;
-}
-
-.dark .seaworld-datepicker.flatpickr-calendar,
-.dark .seaworld-datepicker .flatpickr-days,
-.dark .seaworld-datepicker .flatpickr-time {
-  background: #0f172a;
-  border-color: #334155;
-}
-
-.dark .seaworld-datepicker .flatpickr-day,
-.dark .seaworld-datepicker .flatpickr-time input,
-.dark .seaworld-datepicker .flatpickr-time .flatpickr-am-pm {
-  color: #cbd5e1;
+/* Keep the Flowbite datepicker above cards, drawers, and configuration modals. */
+.datepicker-dropdown {
+  z-index: 9999 !important;
 }

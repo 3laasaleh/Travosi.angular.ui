@@ -44,10 +44,10 @@
 
   <main class="py-16 md:py-24">
     <div class="container">
-      <section class="mb-12">
+      <section>
         @if (images.length) {
-          <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
-            <div class="group relative overflow-hidden rounded-2xl bg-slate-100 shadow-sm">
+          <div class="mx-auto max-w-6xl">
+            <div class="group relative mx-auto overflow-hidden rounded-2xl bg-slate-100 shadow-sm">
               <img
                 [src]="imageUrl(images[selectedImageIndex])"
                 [alt]="title"
@@ -88,7 +88,7 @@
               }
             </div>
             @if (images.length > 1) {
-              <div class="flex gap-3 overflow-x-auto lg:max-h-[620px] lg:flex-col lg:overflow-y-auto">
+              <div class="mt-4 flex justify-center gap-3 overflow-x-auto pb-2">
                 @for (image of images; track $index; let index = $index) {
                   <button
                     type="button"
@@ -97,7 +97,7 @@
                     [class.border-transparent]="index !== selectedImageIndex"
                     (click)="selectImage(index)"
                   >
-                    <img [src]="imageUrl(image)" [alt]="title" class="h-28 w-44 object-cover lg:w-full" />
+                    <img [src]="imageUrl(image)" [alt]="title" class="h-24 w-36 object-cover sm:h-28 sm:w-44" />
                   </button>
                 }
               </div>

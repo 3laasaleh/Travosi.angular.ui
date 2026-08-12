@@ -38,7 +38,14 @@ export class LanguageService {
     this.translate.use(language);
     this.currentLanguage.set(language);
 
-    return this.http.post(environment.baseUrl + 'language/set', { language });
+    return this.http.post(
+      environment.baseUrl + 'language/set',
+      { language },
+      {
+        withCredentials: true,
+        headers: { 'Accept-Language': language },
+      },
+    );
   }
 
   private normalizeLanguage(language?: string): 'en' | 'ar' {
@@ -48,7 +55,7 @@ export class LanguageService {
   private saveLanguageCookie(language: 'en' | 'ar'): void {
     this.cookieService.set('lang', language, {
       path: '/',
-      sameSite: 'Strict'
+      sameSite: 'Lax'
     });
   }
 }

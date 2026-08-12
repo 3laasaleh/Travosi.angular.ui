@@ -4,7 +4,7 @@
     <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
       <img src="./assets/images/main-logo.png" class="h-12 w-auto shrink-0 sm:h-14" [alt]="'seaworldHolidaysLogo' | translate">
       <span class=" sm:block">
-        <span class="block text-lg font-bold leading-tight text-slate-900 dark:text-white">Sea World Holidays</span>
+        <span class="block text-lg font-bold leading-tight text-slate-900 ">Sea World Holidays</span>
       </span>
     </a>
 
@@ -20,13 +20,13 @@
 
     </nav>
 
-    <div class="hidden h-8 w-px bg-slate-200 lg:block dark:bg-slate-800"></div>
+    <div class="hidden h-8 w-px bg-slate-200 lg:block "></div>
 
     <div class="ms-auto flex items-center gap-2">
       <!-- Desktop language switcher -->
       <div class="relative hidden lg:block">
         <button type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 "
           [disabled]="switchingLanguage !== null"
           [attr.aria-label]="'language' | translate" aria-haspopup="menu" [attr.aria-expanded]="languageMenuOpen"
           (click)="toggleLanguageMenu($event)">
@@ -36,10 +36,10 @@
         </button>
 
         @if (languageMenuOpen) {
-        <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900" role="menu">
+        <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 " role="menu">
           <div class="p-2">
             <button type="button" (click)="switchLanguage('en')" [disabled]="switchingLanguage !== null"
-              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-300 dark:hover:bg-slate-800"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60  dark:hover:bg-slate-800"
               [class.bg-primary-50]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" role="menuitem">
               <i class="mdi mdi-alphabet-latin text-lg" aria-hidden="true"></i>
               <span class="flex-1 text-start">{{ 'languageEnglish' | translate }}</span>
@@ -47,7 +47,7 @@
               @else if (currentLanguage === 'en') { <i class="mdi mdi-check text-base" aria-hidden="true"></i> }
             </button>
             <button type="button" (click)="switchLanguage('ar')" [disabled]="switchingLanguage !== null"
-              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-300 dark:hover:bg-slate-800"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60  dark:hover:bg-slate-800"
               [class.bg-primary-50]="currentLanguage === 'ar'" [class.text-primary]="currentLanguage === 'ar'" role="menuitem">
               <i class="mdi mdi-abjad-arabic text-lg" aria-hidden="true"></i>
               <span class="flex-1 text-start">{{ 'languageArabic' | translate }}</span>
@@ -74,7 +74,7 @@
             </span>
           }
           <span class="hidden max-w-36 md:block">
-            <span class="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</span>
+            <span class="block truncate text-sm font-semibold text-slate-800 ">{{ userName }}</span>
           </span>
           <i data-feather="chevron-down" class="hidden size-4 text-slate-400 md:block"></i>
         </button>
@@ -92,12 +92,12 @@
 
         @if (accountMenuOpen) {
         <div
-          class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 "
           role="menu">
           @if (isLoggedIn) {
           <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
-            <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ userName }}</p>
-            <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userEmail }}</p>
+            <p class="truncate text-sm font-semibold text-slate-900 ">{{ userName }}</p>
+            <p class="truncate text-xs text-slate-500 ">{{ userEmail }}</p>
           </div>
            <div class="p-2">
           @if (canAccessConfigurations) {
@@ -140,7 +140,7 @@
   </div>
 
   @if (mobileMenuOpen) {
-    <nav class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 py-4 shadow-lg lg:hidden dark:border-slate-800 dark:bg-slate-950" [attr.aria-label]="'mobileNavigation' | translate">
+    <nav class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 py-4 shadow-lg lg:hidden dark:border-slate-800 " [attr.aria-label]="'mobileNavigation' | translate">
       <div class="mx-auto max-w-[1600px]">
         <div class="mb-4 md:hidden">
           <app-search-box />
@@ -148,20 +148,20 @@
 
         <div class="grid gap-1 sm:grid-cols-2">
           <div class="sm:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800">
-            <button type="button" (click)="toggleMobileDestinations()" class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300"><span class="flex items-center gap-3"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ 'destinations' | translate }}</span><i class="mdi" [class.mdi-chevron-down]="!mobileDestinationsOpen" [class.mdi-chevron-up]="mobileDestinationsOpen"></i></button>
+            <button type="button" (click)="toggleMobileDestinations()" class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 "><span class="flex items-center gap-3"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ 'destinations' | translate }}</span><i class="mdi" [class.mdi-chevron-down]="!mobileDestinationsOpen" [class.mdi-chevron-up]="mobileDestinationsOpen"></i></button>
             @if (mobileDestinationsOpen) {
               <div class="border-t border-slate-100 p-3 dark:border-slate-800">
                 @if (mobileNavigationLoading) {
-                  <div class="h-16 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800"></div>
+                  <div class="h-16 animate-pulse rounded-xl bg-slate-100 "></div>
                 } @else {
                   <div class="space-y-3">
                     @for (destination of mobileDestinations; track destination.id) {
-                      <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-900">
+                      <div class="rounded-xl bg-slate-50 p-3 ">
                         <a [routerLink]="['/destinations', destination.id]" (click)="closeMenus()" class="font-semibold text-primary">{{ mobileDestinationName(destination) }}</a>
                         <div class="mt-2 space-y-2">
                           @for (city of destination.cities ?? []; track city.id) {
                             <div>
-                              <a [routerLink]="['/destinations', destination.id, 'cities', city.id]" (click)="closeMenus()" class="text-sm font-medium text-slate-700 dark:text-slate-200"><i class="mdi mdi-city-variant-outline me-1 text-primary"></i>{{ mobileCityName(city) }}</a>
+                              <a [routerLink]="['/destinations', destination.id, 'cities', city.id]" (click)="closeMenus()" class="text-sm font-medium text-slate-700 "><i class="mdi mdi-city-variant-outline me-1 text-primary"></i>{{ mobileCityName(city) }}</a>
                               <div class="ms-5 mt-1 flex flex-wrap gap-x-3 gap-y-1">
                                 @for (tour of city.tours ?? []; track tour.id) { <a [routerLink]="['/tours', tour.id]" (click)="closeMenus()" class="text-xs text-slate-500 hover:text-primary">{{ mobileTourName(tour) }}</a> }
                               </div>
@@ -176,28 +176,28 @@
             }
           </div>
           <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
             <i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i>
             {{ 'destinations' | translate }}
           </a>
           <a routerLink="/tours" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
             <i class="mdi mdi-compass-outline text-xl" aria-hidden="true"></i>
             {{ 'tours' | translate }}
           </a>
           <a routerLink="/packages" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
             <i class="mdi mdi-package-variant-closed text-xl" aria-hidden="true"></i>
             {{ 'packages' | translate }}
           </a>
           <!-- <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
             <i class="mdi mdi-email-outline text-xl" aria-hidden="true"></i>
             Contact Us
           </a> -->
           @if (canAccessConfigurations) {
             <a routerLink="/configurations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-              class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800">
+              class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
               <i class="mdi mdi-cog-outline text-xl" aria-hidden="true"></i>
               {{ 'Configurations' | translate }}
             </a>
@@ -206,18 +206,18 @@
 
         <div class="mt-4 grid gap-4 border-t border-slate-200 pt-4 sm:grid-cols-2 dark:border-slate-800">
           <section>
-            <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 ">
               <i class="mdi mdi-web text-lg" aria-hidden="true"></i>
               {{ 'language' | translate }}
             </p>
-            <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5 dark:bg-slate-900">
+            <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5 ">
               <button type="button" (click)="switchLanguage('en')" [disabled]="switchingLanguage !== null"
-                class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-300"
+                class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:cursor-not-allowed disabled:opacity-60 "
                 [class.bg-white]="currentLanguage === 'en'" [class.text-primary]="currentLanguage === 'en'" [class.shadow-sm]="currentLanguage === 'en'">
                 {{ 'languageEnglish' | translate }}
               </button>
               <button type="button" (click)="switchLanguage('ar')" [disabled]="switchingLanguage !== null"
-                class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-300"
+                class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition disabled:cursor-not-allowed disabled:opacity-60 "
                 [class.bg-white]="currentLanguage === 'ar'" [class.text-primary]="currentLanguage === 'ar'" [class.shadow-sm]="currentLanguage === 'ar'">
                 {{ 'languageArabic' | translate }}
               </button>
@@ -233,18 +233,18 @@
                   <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">{{ userInitials }}</span>
                 }
                 <div class="min-w-0">
-                  <p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ userName }}</p>
+                  <p class="truncate text-sm font-semibold text-slate-800 ">{{ userName }}</p>
                   <p class="truncate text-xs text-slate-500">{{ userEmail }}</p>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
                 <a routerLink="/user-booking" (click)="closeMenus()"
-                  class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300">
+                  class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 ">
                   <i data-feather="user" class="size-4"></i>
                   {{ 'myProfile' | translate }}
                 </a>
                 <button type="button" (click)="logout()"
-                  class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300">
+                  class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 ">
                   <i data-feather="log-out" class="size-4"></i>
                   {{ 'signOut' | translate }}
                 </button>

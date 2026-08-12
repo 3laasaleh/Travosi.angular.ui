@@ -2,7 +2,7 @@
     <div class="container relative">
         <div class="md:flex justify-center">
             <div class="md:w-3/4">
-                <div class="p-6 bg-white dark:bg-slate-900 shadow dark:shadow-gray-800 rounded-md">
+                <div class="p-6 bg-white  shadow dark:shadow-gray-800 rounded-md">
                     <h5 class="text-xl font-semibold mb-4">Introduction :</h5>
                     <p class="text-slate-400">It seems that only fragments of the original text remain in the Lorem Ipsum texts used today. One may speculate that over the course of time certain letters were added or deleted at various positions within the text.</p>
 
@@ -28,7 +28,7 @@
                         @for (item of datas; track item.id) {
                             <div class="relative shadow dark:shadow-gray-800 rounded-md overflow-hidden mt-4">
                                 <h2 class="text-base font-semibold">
-                                    <button type="button" (click)="handleclick(item.id)" [class.bg-gray-50]="item.id === activeIndex" [class.dark:bg-slate-800]="item.id === activeIndex" [class.text-primary]="item.id === activeIndex" class="flex justify-between items-center p-5 w-full font-medium text-start">
+                                    <button type="button" (click)="handleclick(item.id)" [class.bg-gray-50]="item.id === activeIndex" [class.]="item.id === activeIndex" [class.text-primary]="item.id === activeIndex" class="flex justify-between items-center p-5 w-full font-medium text-start">
                                         <span>{{ item.title }}</span>
                                         <svg data-accordion-icon class="size-4 shrink-0" [class.rotate-180]="item.id === activeIndex" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>

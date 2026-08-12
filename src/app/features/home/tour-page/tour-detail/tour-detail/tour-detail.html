@@ -1,142 +1,116 @@
-<div>
-    
-    <h5 class="text-2xl font-semibold">{{ title }}</h5>
-    <p class="flex items-center text-slate-400 font-medium mt-2"><i data-feather="map-pin" class="size-4 me-1"></i> {{ destinationName }}</p>
-
-    <ul class="list-none">
-        <li class="inline-flex items-center me-5 mt-5">
-            <i data-feather="clock" class="size-6 stroke-[1.5] text-primary"></i>
-
-            <div class="ms-3">
-                <p class="font-medium">{{ 'duration' | translate }}</p>
-              
-                <span class="text-slate-400 font-medium text-sm">
-                    {{ durationDays }} {{ 'days' | translate }}
-                    @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }
-                </span>
-              
-            </div>
-        </li>
-
-        <li class="inline-flex items-center me-5 mt-5">
-            <i data-feather="activity" class="size-6 stroke-[1.5] text-primary"></i>
-
-            <div class="ms-3">
-                <p class="font-medium">{{ 'type' | translate }}</p>
-                <span class="text-slate-400 font-medium text-sm">{{ tour ? tourType : 'Adventure' }}</span>
-            </div>
-        </li>
-
-        <li class="inline-flex items-center me-5 mt-5">
-            <i data-feather="users" class="size-6 stroke-[1.5] text-primary"></i>
-
-            <div class="ms-3">
-                <p class="font-medium">{{ 'groupSize' | translate }}</p>
-                <span class="text-slate-400 font-medium text-sm">{{ tour ? groupSize : 50 }} {{ 'people' | translate }}</span>
-            </div>
-        </li>
-
-        <li class="inline-flex items-center me-5 mt-5">
-            <i data-feather="globe" class="size-6 stroke-[1.5] text-primary"></i>
-
-            <div class="ms-3">
-                <p class="font-medium">{{ 'languages' | translate }}</p>
-                <span class="text-slate-400 font-medium text-sm">{{ tour ? languages : 'English' }}</span>
-            </div>
-        </li>
-
-        <li class="inline-flex items-center me-5 mt-5">
-            <i data-feather="dollar-sign" class="size-6 stroke-[1.5] text-primary"></i>
-
-            <div class="ms-3">
-                <p class="font-medium">{{ tour ? currencySymbol : '$' }} {{ (tour ? price : 50) | number: '1.0-2' }} / {{ 'person' | translate }}</p>
-                <span class="text-slate-400 font-medium text-sm">{{ 'pricePerPerson' | translate }}</span>
-            </div>
-        </li>
-    </ul>
-
-    <div class="mt-6">
-        <h5 class="text-lg font-semibold">{{ 'tourDescriptions' | translate }}:</h5>
-   
-        <p class="whitespace-pre-line text-slate-400 mt-6">{{ description }}</p>
-       
-    </div>
-
-
-<!-- Tour Highlights -->
-<div class="mt-10">
-    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
-        <i class="mdi mdi-map-marker-star text-amber-500 text-3xl"></i>
-        {{ 'tourHighlights' | translate }}
-    </h5>
-
-    <div class="grid grid-cols-1 gap-4">
-        @for (item of tour.highlights; track item.id) {
-            <div
-                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
-
-                <div
-                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/20">
-                    <i class="mdi mdi-star-circle text-2xl"></i>
-                </div>
-                <span class="text-base font-medium text-slate-700 group-hover:text-amber-600 dark:text-slate-200">
-                    {{ item.value }}
-                </span>
-
-            </div>
+<div class="space-y-8">
+  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 ">
+    <div class="relative overflow-hidden bg-gradient-to-br from-cyan-50 via-white to-amber-50 p-6 sm:p-8 dark:from-cyan-950/40 dark:via-slate-900 dark:to-amber-950/20">
+      <div class="pointer-events-none absolute -end-16 -top-20 h-52 w-52 rounded-full bg-primary/10 blur-3xl"></div>
+      <div class="relative">
+        <span class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+          <i class="mdi mdi-compass-outline text-base"></i>{{ 'tour' | translate }}
+        </span>
+        <h2 class="mt-4 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl ">{{ title }}</h2>
+        @if (destinationName) {
+          <p class="mt-3 flex items-center gap-2 font-medium text-slate-500 ">
+            <i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}
+          </p>
         }
+      </div>
     </div>
-</div>
 
-<!-- Tour Includes -->
-<div class="mt-10">
-    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
-        <i class="mdi mdi-check-decagram text-emerald-600 text-3xl"></i>
-        {{ 'tourIncludes' | translate }}
-    </h5>
+    <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3 dark:divide-slate-800">
+      <div class="flex items-center gap-3 p-4 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-cyan-50 text-xl text-primary dark:bg-primary/10"><i class="mdi mdi-clock-outline"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ durationDays }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div>
+      </div>
+      <div class="flex items-center gap-3 p-4 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-xl text-violet-600 dark:bg-violet-500/10"><i class="mdi mdi-shape-outline"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'type' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ tourType }}</p></div>
+      </div>
+      <div class="flex items-center gap-3 p-4 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-50 text-xl text-blue-600 dark:bg-blue-500/10"><i class="mdi mdi-account-group-outline"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ groupSize }} {{ 'people' | translate }}</p></div>
+      </div>
+      <div class="flex items-center gap-3 p-4 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-xl text-amber-600 dark:bg-amber-500/10"><i class="mdi mdi-translate"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'languages' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ languages }}</p></div>
+      </div>
+      <div class="col-span-2 flex items-center gap-3 p-4 sm:col-span-2 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600 dark:bg-emerald-500/10"><i class="mdi mdi-wallet-outline"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-black text-primary">{{ currencySymbol }} {{ price | number: '1.0-2' }} <span class="text-xs font-semibold text-slate-400">/ {{ 'person' | translate }}</span></p></div>
+      </div>
+    </div>
+  </section>
 
-    <div class="grid grid-cols-1 gap-4">
-        @for (item of tour.includes; track item.id) {
-            <div
-                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+  @if (description) {
+    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 ">
+      <div class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-text-box-outline"></i></span>
+        <div><p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'tour' | translate }}</p><h2 class="mt-1 text-xl font-bold text-slate-900 ">{{ 'tourDescriptions' | translate }}</h2></div>
+      </div>
+      <p class="mt-5 whitespace-pre-line text-base leading-8 text-slate-600 ">{{ description }}</p>
+    </section>
+  }
 
-                <div
-                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20">
-                    <i class="mdi mdi-check-circle text-2xl"></i>
-                </div>
+  @if (highlightItems.length) {
+    <section class="relative overflow-hidden rounded-3xl border border-amber-200/70 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6 shadow-sm sm:p-8 dark:border-amber-500/20 dark:from-amber-950/30 dark:via-slate-900 dark:to-orange-950/20">
+      <div class="pointer-events-none absolute -end-12 -top-12 h-40 w-40 rounded-full bg-amber-300/20 blur-2xl"></div>
+      <div class="relative flex items-center gap-4">
+        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-500 text-2xl text-white shadow-lg shadow-amber-500/25"><i class="mdi mdi-star-four-points-outline"></i></span>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.22em] text-amber-600 dark:text-amber-400">{{ 'exploreNow' | translate }}</p>
+          <h2 class="mt-1 text-2xl font-bold text-slate-900 ">{{ 'tourHighlights' | translate }}</h2>
+        </div>
+      </div>
 
-                <span class="text-base font-medium text-slate-700 group-hover:text-emerald-600 dark:text-slate-200">
-                    {{ item.value }}
-                </span>
-
-            </div>
+      <div class="relative mt-6 grid gap-3 sm:grid-cols-2">
+        @for (item of highlightItems; track item.id ?? $index; let number = $index) {
+          <div class="flex items-start gap-3 rounded-2xl border border-amber-200/70 bg-white/80 p-4 backdrop-blur transition hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md dark:border-amber-500/15 /70">
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-amber-100 text-xs font-black text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">{{ number + 1 }}</span>
+            <p class="pt-1 text-sm font-semibold leading-6 text-slate-700 ">{{ itemValue(item) }}</p>
+          </div>
         }
-    </div>
-</div>
+      </div>
+    </section>
+  }
 
-<!-- Tour Excludes -->
-<div class="mt-10">
-    <h5 class="mb-5 flex items-center gap-2 text-2xl font-bold text-slate-800 dark:text-white">
-        <i class="mdi mdi-close-octagon text-rose-600 text-3xl"></i>
-        {{ 'tourExcludes' | translate }}
-    </h5>
+  @if (includedItems.length || excludedItems.length) {
+    <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 ">
+      <div class="border-b border-slate-100 bg-slate-50/80 px-6 py-5 sm:px-8 dark:border-slate-800 /40">
+        <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">{{ 'tour' | translate }}</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-900 ">{{ 'whatsIncludedExcluded' | translate }}</h2>
+      </div>
 
-    <div class="grid grid-cols-1 gap-4">
-        @for (item of tour.excludes; track item.id) {
-            <div
-                class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-400 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+      <div class="grid md:grid-cols-2 md:divide-x md:divide-slate-200 dark:md:divide-slate-800">
+        <div class="bg-gradient-to-b from-emerald-50/70 to-white p-6 sm:p-8 dark:from-emerald-950/20 dark:to-slate-900">
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-500 text-2xl text-white shadow-lg shadow-emerald-500/20"><i class="mdi mdi-check-bold"></i></span>
+            <div><h3 class="text-lg font-bold text-emerald-700 dark:text-emerald-400">{{ 'included' | translate }}</h3><p class="text-xs font-medium text-slate-400">{{ includedItems.length }} {{ 'items' | translate }}</p></div>
+          </div>
+          <ul class="mt-6 space-y-3">
+            @for (item of includedItems; track item.id ?? $index) {
+              <li class="flex items-start gap-3 text-sm font-medium leading-6 text-slate-700 ">
+                <i class="mdi mdi-check-circle mt-0.5 shrink-0 text-xl text-emerald-500"></i><span>{{ itemValue(item) }}</span>
+              </li>
+            } @empty {
+              <li class="text-sm text-slate-400">{{ 'noTourIncludesAdded' | translate }}</li>
+            }
+          </ul>
+        </div>
 
-                <div
-                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-500/20">
-                    <i class="mdi mdi-close-circle text-2xl"></i>
-                </div>
-
-                <span class="text-base font-medium text-slate-700 group-hover:text-rose-600 dark:text-slate-200">
-                    {{ item.value }}
-                </span>
-
-            </div>
-        }
-    </div>
-</div>
+        <div class="border-t border-slate-200 bg-gradient-to-b from-rose-50/70 to-white p-6 sm:p-8 md:border-t-0 dark:border-slate-800 dark:from-rose-950/20 dark:to-slate-900">
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-rose-500 text-2xl text-white shadow-lg shadow-rose-500/20"><i class="mdi mdi-close-thick"></i></span>
+            <div><h3 class="text-lg font-bold text-rose-700 dark:text-rose-400">{{ 'excluded' | translate }}</h3><p class="text-xs font-medium text-slate-400">{{ excludedItems.length }} {{ 'items' | translate }}</p></div>
+          </div>
+          <ul class="mt-6 space-y-3">
+            @for (item of excludedItems; track item.id ?? $index) {
+              <li class="flex items-start gap-3 text-sm font-medium leading-6 text-slate-700 ">
+                <i class="mdi mdi-close-circle mt-0.5 shrink-0 text-xl text-rose-500"></i><span>{{ itemValue(item) }}</span>
+              </li>
+            } @empty {
+              <li class="text-sm text-slate-400">{{ 'noTourExcludesAdded' | translate }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+  }
 </div>

@@ -31,7 +31,6 @@ export class SidebarMenu {
     { label: 'airlines', path: '/configurations/airlines', icon: 'mdi-airplane' },
     { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
     { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },
-    { label: 'countries', path: '/configurations/countries', icon: 'mdi-earth' },
     { label: 'cities', path: '/configurations/cities', icon: 'mdi-city-variant-outline' },
     { label: 'quotations', path: '/configurations/quotations', icon: 'mdi-file-document-outline' },
   ];

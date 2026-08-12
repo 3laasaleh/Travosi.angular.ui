@@ -1,34 +1,36 @@
-<div class="relative">
-  <input
-    #picker="mwlFlatpickr"
-    type="text"
-    mwlFlatpickr
-    [ngModel]="selectedDate"
-    [ngModelOptions]="{ standalone: true }"
-    [convertModelValue]="true"
-    [allowInput]="true"
-    [disableMobile]="true"
-    [enableTime]="includeTime"
-    [time24hr]="true"
-    [dateFormat]="includeTime ? 'Y-m-d H:i' : 'Y-m-d'"
-    [locale]="pickerLocale"
-    [minDate]="minDate ?? ''"
-    [maxDate]="maxDate ?? ''"
-    [disabled]="isDisabled"
-    [attr.id]="id || null"
-    [attr.aria-label]="ariaLabel || placeholder || 'Date'"
-    [placeholder]="placeholder"
-    (ngModelChange)="selectDate($event)"
-    (flatpickrReady)="configureCalendar($event)"
-    (blur)="markTouched()"
-    class="w-full pe-11 outline-none transition"
-    [ngClass]="inputClass" />
-  <button
-    type="button"
-    class="absolute end-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-xl text-slate-400 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
-    [disabled]="isDisabled"
-    [attr.aria-label]="ariaLabel || placeholder || 'Date'"
-    (click)="openCalendar($event, picker)">
-    <i class="mdi text-lg" [ngClass]="icon"></i>
-  </button>
+<div
+  class="grid gap-2"
+  [class.grid-cols-[minmax(0,1fr)_8rem]]="includeTime"
+  [attr.dir]="isArabic ? 'rtl' : 'ltr'">
+  <div class="relative">
+    <div class="pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center ps-3 text-slate-400">
+      <!-- <i class="mdi text-lg" [ngClass]="icon" aria-hidden="true"></i> -->
+    </div>
+    <input
+      #dateInput
+      type="text"
+      autocomplete="off"
+      style="padding-inline-start: 2.5rem"
+      class="block w-full rounded-xl border border-slate-300 bg-white py-2.5 ps-10 pe-3 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-700   dark:disabled:bg-slate-800"
+      [ngClass]="inputClass"
+      [disabled]="isDisabled"
+      [attr.id]="inputId"
+      [attr.aria-label]="ariaLabel || placeholder || 'Date'"
+      [placeholder]="placeholder"
+      (blur)="handleDateInputBlur()" />
+  </div>
+
+  @if (includeTime) {
+    <div class="relative">
+      <input
+        type="time"
+        class="block w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-700   dark:disabled:bg-slate-800"
+        [id]="timeInputId"
+        [value]="timeValue"
+        [disabled]="isDisabled"
+        [attr.aria-label]="ariaLabel || placeholder || 'Time'"
+        (input)="handleTimeChange($event)"
+        (blur)="handleTimeBlur()" />
+    </div>
+  }
 </div>

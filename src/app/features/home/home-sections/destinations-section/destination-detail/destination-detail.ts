@@ -1,8 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  OnDestroy,
   OnInit,
   inject,
 } from '@angular/core';
@@ -11,6 +13,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
+import Swiper from 'swiper';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { environment } from '../../../../../../environments/environment';
 import { ApiService } from '../../../../../core/services/apiservice.service';
 import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
@@ -18,16 +22,15 @@ import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../../../shared/components/destination-cities-carousel/destination-cities-carousel';
-import { DestinationCitiesGrid } from '../../../../../shared/components/destination-cities-grid/destination-cities-grid';
 
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel, DestinationCitiesGrid],
+  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeDestinationDetail implements OnInit {
+export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -36,11 +39,12 @@ export class HomeDestinationDetail implements OnInit {
   destination: any = null;
   tours: any[] = [];
   cities: any[] = [];
-  cityViewMode: 'carousel' | 'grid' = 'carousel';
   isLoading = true;
   errorMessage = '';
   selectedImageIndex = 0;
   imageViewerOpen = false;
+  private tourCarousel: Swiper | null = null;
+  private viewInitialized = false;
 
   get images(): any[] {
     if (Array.isArray(this.destination?.images) && this.destination.images.length) {
@@ -75,6 +79,15 @@ export class HomeDestinationDetail implements OnInit {
 
         this.loadDestination(destinationId);
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+    this.initializeTourCarousel();
+  }
+
+  ngOnDestroy(): void {
+    this.tourCarousel?.destroy(true, true);
   }
 
   imageUrl(source: any, fallback = 'assets/images/bg/2.jpg'): string {
@@ -147,11 +160,9 @@ export class HomeDestinationDetail implements OnInit {
     );
   }
 
-  setCityViewMode(viewMode: 'carousel' | 'grid'): void {
-    this.cityViewMode = viewMode;
-  }
-
   private loadDestination(destinationId: number): void {
+    this.tourCarousel?.destroy(true, true);
+    this.tourCarousel = null;
     this.isLoading = true;
     this.errorMessage = '';
     this.destination = null;
@@ -196,7 +207,42 @@ export class HomeDestinationDetail implements OnInit {
 
         this.tours = matchingTours.length ? matchingTours : nestedTours;
         this.cities = this.extractCollection(cities, ['cities']).slice(0, 10);
+        this.cdr.markForCheck();
+        setTimeout(() => this.initializeTourCarousel());
       });
+  }
+
+  private initializeTourCarousel(): void {
+    if (!this.viewInitialized) return;
+
+    this.tourCarousel?.destroy(true, true);
+    this.tourCarousel = null;
+
+    const carousel = document.querySelector('#destination-tours-carousel .swiper');
+    if (!carousel || !this.tours.length) return;
+
+    this.tourCarousel = new Swiper(carousel as HTMLElement, {
+      modules: [Autoplay, Navigation, Pagination],
+      slidesPerView: 1,
+      spaceBetween: 18,
+      watchOverflow: true,
+      loop: this.tours.length > 1,
+      autoplay: this.tours.length > 1
+        ? {
+            delay: 2000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }
+        : false,
+      navigation: {
+        nextEl: '#destination-tours-carousel .tours-next',
+        prevEl: '#destination-tours-carousel .tours-prev',
+      },
+      pagination: {
+        el: '#destination-tours-carousel .tours-pagination',
+        clickable: true,
+      },
+    });
   }
 
   private destinationRequest(destinationId: number): Observable<any> {

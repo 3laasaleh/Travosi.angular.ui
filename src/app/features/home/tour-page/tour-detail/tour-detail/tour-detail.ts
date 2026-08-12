@@ -1,12 +1,10 @@
 import { DecimalPipe } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import feather from 'feather-icons';
 import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
 
 @Component({
@@ -15,10 +13,8 @@ import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail.html',
 })
-export class TourDetail implements AfterViewInit {
+export class TourDetail {
   @Input() tour: any = null;
-
-  activeIndex = 1;
 
   get title(): string {
     return (
@@ -84,6 +80,29 @@ export class TourDetail implements AfterViewInit {
     return this.tour?.fullDescription ?? this.tour?.description ?? this.tour?.overview ?? '';
   }
 
+  get highlightItems(): any[] {
+    return Array.isArray(this.tour?.highlights) ? this.tour.highlights : [];
+  }
+
+  get includedItems(): any[] {
+    const items = Array.isArray(this.tour?.includes) ? this.tour.includes : [];
+    return items.filter((item: any) => item?.isIncluded !== false);
+  }
+
+  get excludedItems(): any[] {
+    const items = Array.isArray(this.tour?.excludes) ? this.tour.excludes : [];
+    if (items.length) return items;
+
+    const legacyItems = Array.isArray(this.tour?.includes) ? this.tour.includes : [];
+    return legacyItems.filter((item: any) => item?.isIncluded === false);
+  }
+
+  itemValue(item: any): string {
+    return typeof item === 'string'
+      ? item
+      : (item?.value ?? item?.text ?? item?.name ?? '');
+  }
+
   get itineraryItems(): any[] {
     const items = this.tour?.itinerary ?? this.tour?.itineraries ?? [];
     return Array.isArray(items) ? items : [];
@@ -112,11 +131,4 @@ export class TourDetail implements AfterViewInit {
     return [format(step?.startTime), format(step?.endTime)].filter(Boolean).join(' - ');
   }
 
-  ngAfterViewInit(): void {
-    feather.replace();
-  }
-
-  handleclick(id: number): void {
-    this.activeIndex = id;
-  }
 }

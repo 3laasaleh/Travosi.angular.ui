@@ -5,7 +5,7 @@
     <div class="container relative z-3">
         <div class="flex justify-center">
             <div
-                class="max-w-[900px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+                class="max-w-[900px] w-full m-auto p-6 bg-white  shadow-md dark:shadow-gray-700 rounded-md">
                 <a routerLink="/"><img [src]="logo" class="mx-auto custom-logo-h" alt=""></a>
                 <h5 class="my-2 text-xl font-semibold">{{ 'createAccount' | translate }}</h5>
                 @if (errorMessage) { <div
@@ -20,7 +20,7 @@
                         <div class="mb-1">
                             <label class="font-semibold" for="firstName">{{ 'firstName' | translate }}</label>
                             <input id="firstName" type="text" formControlName="firstName"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('firstName')?.touched && signupForm.get('firstName')?.invalid"
                                 [placeholder]="'firstNamePlaceholder' | translate">
                             @if (signupForm.get('firstName')?.touched &&
@@ -36,7 +36,7 @@
                         <div class="mb-1">
                             <label class="font-semibold" for="lastName">{{ 'lastName' | translate }}</label>
                             <input id="lastName" type="text" formControlName="lastName"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('lastName')?.touched && signupForm.get('lastName')?.invalid"
                                 [placeholder]="'lastNamePlaceholder' | translate">
                             @if (signupForm.get('lastName')?.touched &&
@@ -54,7 +54,7 @@
                         <div class="mb-1">
                             <label class="font-semibold" for="mobile">{{ 'mobile' | translate }}</label>
                             <input id="mobile" type="tel" formControlName="mobile"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('mobile')?.touched && signupForm.get('mobile')?.invalid"
                                 [placeholder]="'mobilePlaceholder' | translate">
                             @if (signupForm.get('mobile')?.touched && signupForm.get('mobile')?.hasError('required')) {
@@ -68,7 +68,7 @@
                         <div class="mb-1">
                             <label class="font-semibold" for="email">{{ 'email' | translate }}</label>
                             <input id="email" type="email" formControlName="email"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
+                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
                                 [class.border-red-500]="signupForm.get('email')?.touched && signupForm.get('email')?.invalid"
                                 [placeholder]="'emailPlaceholder' | translate">
                             @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('required')) {
@@ -89,32 +89,17 @@
                                 [ariaLabel]="'dateOfBirth' | translate"
                                 class="mt-3 block"
                                 [inputClass]="signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid
-                                    ? 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200 border-red-500'
-                                    : 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200'" />
+                                    ? 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800   border-red-500'
+                                    : 'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary focus:ring-0 dark:border-gray-800  '" />
                             @if (signupForm.controls.dateOfBirth.touched && signupForm.controls.dateOfBirth.invalid) {
                             <p class="mt-1 text-sm text-red-600">{{ 'dateOfBirthRequired' | translate }}</p>
                             }
                         </div>
 
                         <div class="mb-1">
-                            <label class="font-semibold" for="nationalityId">{{ 'nationality' | translate }}</label>
-                            <select id="nationalityId" formControlName="nationalityId"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
-                                [class.border-red-500]="signupForm.controls.nationalityId.touched && signupForm.controls.nationalityId.invalid">
-                                <option [ngValue]="null">{{ (countriesLoading ? 'loading' : 'selectNationality') | translate }}</option>
-                                @for (country of countries; track country.id) {
-                                <option [ngValue]="country.id">{{ country.nameEng }}</option>
-                                }
-                            </select>
-                            @if (signupForm.controls.nationalityId.touched && signupForm.controls.nationalityId.invalid) {
-                            <p class="mt-1 text-sm text-red-600">{{ 'nationalityRequired' | translate }}</p>
-                            }
-                        </div>
-
-                        <div class="mb-1">
                             <label class="font-semibold" for="gender">{{ 'gender' | translate }}</label>
                             <select id="gender" formControlName="gender"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0">
+                                class="mt-3 w-full py-2 px-3 h-10 bg-white   rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0">
                                 @for (gender of genders; track gender.value) {
                                 <option [ngValue]="gender.value">{{ gender.label | translate }}</option>
                                 }
@@ -122,34 +107,13 @@
                         </div>
 
                         <div class="mb-1">
-                            <label class="font-semibold" for="customerType">{{ 'customerType' | translate }}</label>
-                            <select id="customerType" formControlName="customerType"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-white dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0">
-                                @for (type of customerTypes; track type.value) {
-                                <option [ngValue]="type.value">{{ type.label | translate }}</option>
-                                }
-                            </select>
-                        </div>
-
-                        @if (signupForm.controls.customerType.value === customerTypeEnum.Company) {
-                        <div class="mb-1">
-                            <label class="font-semibold" for="companyName">{{ 'companyName' | translate }}</label>
-                            <input id="companyName" type="text" formControlName="companyName"
-                                class="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
-                                [class.border-red-500]="signupForm.controls.companyName.touched && signupForm.controls.companyName.invalid">
-                            @if (signupForm.controls.companyName.touched && signupForm.controls.companyName.invalid) {
-                            <p class="mt-1 text-sm text-red-600">{{ 'companyNameRequired' | translate }}</p>
-                            }
-                        </div>
-                        }
-
-                        <div class="mb-1">
-                            <label class="font-semibold" for="passportNumber">{{ 'passportNumber' | translate }}
-                                <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-                            </label>
+                            <label class="font-semibold" for="passportNumber">{{ 'passportNumber' | translate }}</label>
                             <input id="passportNumber" type="text" formControlName="passportNumber"
-                                class="mt-3 w-full py-2 px-3 h-10 uppercase bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
+                                class="mt-3 w-full py-2 px-3 h-10 uppercase bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
                                 [class.border-red-500]="signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.invalid">
+                            @if (signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.hasError('required')) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'passportNumberRequired' | translate }}</p>
+                            }
                         </div>
 
                         <div class="mb-1">
@@ -157,7 +121,7 @@
                             <div class="relative mt-3">
                                 <input id="password" [type]="showPassword ? 'text' : 'password'"
                                     formControlName="password"
-                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200"
+                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800  "
                                     [class.border-red-500]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
                                     [placeholder]="'password' | translate">
                                 <button type="button" (click)="togglePasswordVisibility()"
@@ -184,7 +148,7 @@
                             <div class="relative mt-3">
                                 <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'"
                                     formControlName="confirmPassword"
-                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200"
+                                    class="w-full h-10 rounded border border-gray-100 bg-transparent py-2 ps-3 pe-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-gray-800  "
                                     [class.border-red-500]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid"
                                     [placeholder]="'confirmPassword' | translate">
                                 <button type="button" (click)="toggleConfirmPasswordVisibility()"
@@ -234,7 +198,7 @@
 
                         <div class="text-center">
                             <span class="text-slate-400 me-2">{{ 'alreadyHave' | translate }}</span> <a
-                                routerLink="/login" class="text-black dark:text-white font-bold inline-block">{{
+                                routerLink="/login" class="text-black  font-bold inline-block">{{
                                 'signin' | translate }}</a>
                         </div>
                     </div>
