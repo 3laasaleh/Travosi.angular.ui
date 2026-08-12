@@ -1,3 +1,5 @@
+import { NgClass } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,26 +11,21 @@ import {
   forwardRef,
   inject,
 } from '@angular/core';
-import { NgClass } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {
-  BsDatepickerConfig,
-  BsDatepickerDirective,
-  BsDatepickerModule,
-  BsLocaleService,
-} from 'ngx-bootstrap/datepicker';
-import { arLocale, defineLocale } from 'ngx-bootstrap/chronos';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-defineLocale('ar', arLocale);
+import {
+  FlatpickrDirective,
+  provideFlatpickrDefaults,
+} from 'angularx-flatpickr';
+import { Arabic } from 'flatpickr/dist/l10n/ar';
 
 @Component({
   selector: 'app-date-picker',
   standalone: true,
-  imports: [BsDatepickerModule, NgClass],
+  imports: [FlatpickrDirective, FormsModule, NgClass],
   templateUrl: './date-picker.html',
   providers: [
+    provideFlatpickrDefaults(),
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => DatePicker),
@@ -41,7 +38,6 @@ export class DatePicker implements ControlValueAccessor, OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
-  private readonly localeService = inject(BsLocaleService);
 
   @Input() min: string | null = null;
   @Input() max: string | null = null;
@@ -54,7 +50,7 @@ export class DatePicker implements ControlValueAccessor, OnChanges {
 
   selectedDate: Date | undefined;
   isDisabled = false;
-  pickerConfig: Partial<BsDatepickerConfig> = {};
+  pickerLocale: object | string = 'default';
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
@@ -102,34 +98,23 @@ export class DatePicker implements ControlValueAccessor, OnChanges {
     this.onTouched();
   }
 
+  configureCalendar({ instance }: { instance: FlatpickrDirective['instance'] }): void {
+    instance.calendarContainer.classList.add('seaworld-datepicker');
+  }
+
   markTouched(): void {
     this.onTouched();
   }
 
-  openCalendar(event: MouseEvent, picker: BsDatepickerDirective): void {
+  openCalendar(event: MouseEvent, picker: FlatpickrDirective): void {
     event.preventDefault();
     event.stopPropagation();
-    if (!this.isDisabled) picker.show();
+    if (!this.isDisabled) picker.instance.open();
   }
 
   private updateLanguage(language: string | null | undefined): void {
     const isArabic = language?.toLowerCase().startsWith('ar') ?? false;
-    this.localeService.use(isArabic ? 'ar' : 'en');
-    this.pickerConfig = {
-      adaptivePosition: true,
-      containerClass: 'seaworld-datepicker',
-      dateInputFormat: this.includeTime ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD',
-      showWeekNumbers: false,
-      showTodayButton: !this.includeTime,
-      showClearButton: true,
-      todayButtonLabel: isArabic ? 'اليوم' : 'Today',
-      clearButtonLabel: isArabic ? 'مسح' : 'Clear',
-      todayPosition: 'left',
-      clearPosition: 'right',
-      withTimepicker: this.includeTime,
-      keepDatepickerOpened: this.includeTime,
-      returnFocusToInput: true,
-    };
+    this.pickerLocale = isArabic ? Arabic : 'default';
     this.cdr.markForCheck();
   }
 

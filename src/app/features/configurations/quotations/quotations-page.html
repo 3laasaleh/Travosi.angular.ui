@@ -3,7 +3,6 @@
     <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div><p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p><h1 class="mt-2 text-3xl font-semibold">{{ 'quotations' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageQuotationDetails' | translate }}</p></div>
       <div class="flex gap-3">
-        <a routerLink="/configurations" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium">{{ 'backToDashboard' | translate }}</a>
         @if (showForm) {
           <button type="button" class="inline-flex h-10 items-center gap-2 rounded-full border border-slate-300 px-4 text-sm font-semibold text-slate-600 transition hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600" [attr.title]="'hideAddQuotation' | translate" (click)="toggleForm()"><i class="mdi mdi-close"></i>{{ 'cancel' | translate }}</button>
         } @else {

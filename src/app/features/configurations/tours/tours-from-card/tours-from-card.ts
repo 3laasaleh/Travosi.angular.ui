@@ -49,6 +49,7 @@ interface TourImageUpload {
   name: string;
   existing: boolean;
   uploaded: boolean;
+  isCover: boolean;
 }
 
 type TourFormStep = 1 | 2 | 3;
@@ -350,6 +351,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
     const payload = new FormData();
     payload.append('TourId', String(this.currentTourId));
+    const coverImageIndex = pendingImages.findIndex((image) => image.isCover);
+    if (coverImageIndex >= 0) payload.append('CoverImageIndex', String(coverImageIndex));
     pendingImages.forEach((image) => payload.append('Images', image.file!, image.file!.name));
 
     this.isSaving = true;
@@ -374,7 +377,29 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         this.showApiToast('error', this.errorMessage);
         return;
       }
-      pendingImages.forEach((image) => image.uploaded = true);
+      const savedCoverUrl = String(response?.data?.coverImageUrl ?? '');
+      const returnedImages = Array.isArray(response?.data?.images) ? response.data.images : [];
+      if (returnedImages.length) {
+        this.revokeNewImageUrls();
+        this.imageUploads = returnedImages
+          .slice(0, this.maxImages)
+          .map((image: any, index: number) => ({
+            id: this.toOptionalId(image?.id ?? image?.tourImageId) ?? undefined,
+            url: this.imageUrl(image),
+            name: image?.imageName ?? image?.name
+              ?? this.translate.instant('tourImageNumber', { number: index + 1 }),
+            existing: true,
+            uploaded: true,
+            isCover: this.imageMatchesCover(image, savedCoverUrl),
+          }))
+          .filter((image: TourImageUpload) => !!image.url);
+        if (this.imageUploads.length && !this.imageUploads.some((image) => image.isCover)) {
+          this.imageUploads[0].isCover = true;
+        }
+        this.syncImagesControl();
+      } else {
+        pendingImages.forEach((image) => image.uploaded = true);
+      }
       this.successMessage = response?.message || 'tourImagesSaved';
       this.showApiToast('success', this.successMessage);
       this.completeImagesStep();
@@ -592,6 +617,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           name: normalized.name,
           existing: false,
           uploaded: false,
+          isCover: this.imageUploads.length === 0,
         });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError
@@ -622,6 +648,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
     const imageId = Number(image.id);
     if (image.existing && this.currentTourId && Number.isInteger(imageId) && imageId > 0) {
+      const removedWasCover = image.isCover;
       this.deletingImageIndex = index;
       this.adminService.deleteTourImage(imageId).pipe(
         catchError(() => {
@@ -640,6 +667,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return;
         }
         this.removeImageLocally(index);
+        if (removedWasCover) this.refreshTourImages();
         this.showImageDeletedToast();
       });
       return;
@@ -647,6 +675,42 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
     this.removeImageLocally(index);
     this.showImageDeletedToast();
+  }
+
+  setCoverImage(index: number): void {
+    if (this.isSaving || this.deletingImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    if (!image || image.isCover) return;
+
+    const tourId = this.currentTourId;
+    const imageId = Number(image.id);
+    if (image.existing && tourId && Number.isInteger(imageId) && imageId > 0) {
+      this.isSaving = true;
+      this.apiLoadingMessage = 'savingTourDetails';
+      this.adminService.setTourCoverImage(tourId, imageId).pipe(
+        catchError((error) => {
+          this.showApiToast('error', error?.error?.message || 'tourSaveError');
+          return of(null);
+        }),
+        finalize(() => {
+          this.isSaving = false;
+          this.apiLoadingMessage = '';
+          this.cdr.markForCheck();
+        }),
+      ).subscribe((response: any) => {
+        if (response === null || response?.isSuccess === false) {
+          if (response?.isSuccess === false) {
+            this.showApiToast('error', response?.message || 'tourSaveError');
+          }
+          return;
+        }
+        this.markCoverImage(index);
+        this.showApiToast('success', response?.message || 'tourCover');
+      });
+      return;
+    }
+
+    this.markCoverImage(index);
   }
 
   destinationLabel(destination: any): string {
@@ -695,13 +759,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.activeStep = 1;
     this.completedStep = 0;
     this.savedTourId = this.toOptionalId(tour?.id ?? tour?.tourId);
+    const coverImageUrl = String(tour?.coverImageUrl ?? '');
     const tourImages = Array.isArray(tour?.images) && tour.images.length
       ? tour.images
       : (tour?.coverImageUrl ?? tour?.imageUrl ? [{
           imageUrl: tour.coverImageUrl ?? tour.imageUrl,
           imageName: this.translate.instant('tourCover'),
         }] : []);
-    this.imageUploads = tourImages
+    const imageUploads = tourImages
       .slice(0, this.maxImages)
       .map((image: any, index: number) => ({
         id: this.toOptionalId(image?.id ?? image?.tourImageId) ?? undefined,
@@ -710,8 +775,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           ?? this.translate.instant('tourImageNumber', { number: index + 1 }),
         existing: true,
         uploaded: true,
+        isCover: this.imageMatchesCover(image, coverImageUrl),
       }))
       .filter((image: TourImageUpload) => !!image.url);
+    this.imageUploads = imageUploads;
+    if (this.imageUploads.length && !this.imageUploads.some((image) => image.isCover)) {
+      this.imageUploads[0].isCover = true;
+    }
     this.tourForm.patchValue({
       titleEng: tour.titleEng ?? tour.title ?? '',
       titleAr: tour.titleAr ?? '',
@@ -1040,8 +1110,34 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private removeImageLocally(index: number): void {
     const [removed] = this.imageUploads.splice(index, 1);
     if (removed?.file) URL.revokeObjectURL(removed.url);
+    if (removed?.isCover && this.imageUploads.length) {
+      this.imageUploads[0].isCover = true;
+    }
     this.syncImagesControl();
     this.cdr.markForCheck();
+  }
+
+  private markCoverImage(index: number): void {
+    this.imageUploads.forEach((item, itemIndex) => item.isCover = itemIndex === index);
+    this.cdr.markForCheck();
+  }
+
+  private refreshTourImages(): void {
+    const tourId = this.currentTourId;
+    if (!tourId) return;
+
+    this.adminService.getTours(1, 100).pipe(
+      catchError(() => of(null)),
+    ).subscribe((response: any) => {
+      const rows = this.extractCollection(response, ['tours']);
+      const tour = rows.find((item) => Number(item?.id ?? item?.tourId) === tourId);
+      const coverImageUrl = String(tour?.coverImageUrl ?? '');
+      if (!coverImageUrl) return;
+      const replacementIndex = this.imageUploads.findIndex((item) =>
+        this.normalizeImagePath(item.url) === this.normalizeImagePath(coverImageUrl),
+      );
+      if (replacementIndex >= 0) this.markCoverImage(replacementIndex);
+    });
   }
 
   private showImageDeletedToast(): void {
@@ -1072,6 +1168,22 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return typeof image === 'string'
       ? image
       : (image?.imageUrl ?? image?.url ?? image?.path ?? image?.imageName ?? '');
+  }
+
+  private imageMatchesCover(image: any, coverImageUrl: string): boolean {
+    if (!coverImageUrl) return false;
+    const imageUrl = this.imageUrl(image);
+    return this.normalizeImagePath(imageUrl) === this.normalizeImagePath(coverImageUrl);
+  }
+
+  private normalizeImagePath(url: string): string {
+    return String(url ?? '')
+      .trim()
+      .replace(/\\/g, '/')
+      .replace(/^https?:\/\/[^/]+\/images\//i, '')
+      .replace(/^\/+/, '')
+      .replace(/^images\//i, '')
+      .toLowerCase();
   }
 
   private revokeNewImageUrls(): void {

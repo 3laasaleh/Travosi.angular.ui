@@ -66,7 +66,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     .filter(([, value]) => typeof value === 'number')
     .map(([label, value]) => ({ label, value: value as number }));
 
-  quotationForm = this.createForm();
+  quotationForm :any;
   customers: any[] = [];
   readonly currencies = [
     { id: 2, code: 'USD', symbol: '$', labelKey: 'currencyUsd' },
@@ -85,14 +85,15 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+   this.quotationForm= this.createForm();
+  }
 
   ngOnInit(): void {
     this.loadOptions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['selectedQuotation']) return;
     if (this.selectedQuotation) this.populateForm(this.selectedQuotation);
     else this.resetForm(false);
   }
@@ -170,7 +171,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   thumbnail(item: any): string {
     const image = item?.images?.[0];
-    const raw = image?.imageUrl ?? image?.url ?? item?.coverImageUrl ?? item?.imageUrl ?? '';
+    const raw = item?.coverImageUrl ?? image?.imageUrl ?? image?.url ?? item?.imageUrl ?? '';
     if (!raw || /^(blob:|data:|https?:\/\/)/i.test(raw)) return raw;
     const path = String(raw).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;

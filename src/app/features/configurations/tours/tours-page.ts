@@ -104,9 +104,12 @@ export class Tours {
   }
 
   getImages(tour: any): any[] {
-    if (Array.isArray(tour?.images) && tour.images.length) return tour.images;
     const cover = tour?.coverImageUrl ?? tour?.imageUrl;
-    return cover ? [{ url: cover }] : [];
+    const images = Array.isArray(tour?.images) ? tour.images : [];
+    if (!cover) return images;
+    const coverIndex = images.findIndex((image: any) => this.imageMatchesCover(image, cover));
+    if (coverIndex < 0) return [{ url: cover }, ...images];
+    return [images[coverIndex], ...images.filter((_: any, index: number) => index !== coverIndex)];
   }
 
   imageUrl(image: any): string {
@@ -114,6 +117,20 @@ export class Tours {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  private imageMatchesCover(image: any, cover: string): boolean {
+    return this.normalizeImagePath(this.imageUrl(image)) === this.normalizeImagePath(cover);
+  }
+
+  private normalizeImagePath(url: string): string {
+    return String(url ?? '')
+      .trim()
+      .replace(/\\/g, '/')
+      .replace(/^https?:\/\/[^/]+\/images\//i, '')
+      .replace(/^\/+/, '')
+      .replace(/^images\//i, '')
+      .toLowerCase();
   }
 
   private formatTime(value: unknown): string {

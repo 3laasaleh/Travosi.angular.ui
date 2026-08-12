@@ -79,6 +79,15 @@ export class AdminService {
     });
   }
 
+  setTourCoverImage(tourId: number, imageId: number): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Tours/CoverImage`, {
+      TourId: tourId,
+      ImageId: imageId,
+    }, {
+      headers: this.getHeaders(),
+    });
+  }
+
   getCitiesByDestination(destinationId: number, page = 1, pageSize = 100): Observable<any> {
     const params = new HttpParams()
       .set('destinationId', destinationId)

@@ -384,11 +384,15 @@
           <div class="relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
             <img [src]="getImageUrl(image.url)" [alt]="image.name" class="aspect-[3/2] w-full object-cover" />
             <button type="button"
+              class="absolute start-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="image.isCover || deletingImageIndex !== null || isSaving" (click)="setCoverImage(index)"
+              [attr.aria-label]="'cover' | translate"><i class="mdi mdi-image-filter-center-focus-strong-outline"></i></button>
+            <button type="button"
               class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
               [disabled]="deletingImageIndex !== null || isSaving" (click)="removeImage(index)"><i class="mdi"
                 [class.mdi-loading]="deletingImageIndex === index" [class.mdi-spin]="deletingImageIndex === index"
                 [class.mdi-close]="deletingImageIndex !== index"></i></button>
-            @if (index === 0) { <span
+            @if (image.isCover) { <span
               class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
               'cover' | translate }}</span> }
           </div>

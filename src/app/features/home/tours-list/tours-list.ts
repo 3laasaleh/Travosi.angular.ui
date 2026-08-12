@@ -122,7 +122,7 @@ export class HomeToursList implements OnInit {
 
   imageUrl(tour: any): string {
     const image = Array.isArray(tour?.images) ? tour.images[0] : null;
-    const url = image?.imageUrl ?? image?.url ?? image?.path ?? tour?.coverImageUrl ?? tour?.imageUrl ?? '';
+    const url = tour?.coverImageUrl ?? image?.imageUrl ?? image?.url ?? image?.path ?? tour?.imageUrl ?? '';
     if (!url) return 'assets/images/bg/3.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');

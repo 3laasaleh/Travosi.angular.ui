@@ -120,7 +120,7 @@ export class HomeDestinationDetail implements OnInit {
   tourImage(tour: any): string {
     const image = Array.isArray(tour?.images) ? tour.images[0] : null;
     return this.imageUrl(
-      image ?? tour?.coverImageUrl ?? tour?.imageUrl,
+      tour?.coverImageUrl ?? image ?? tour?.imageUrl,
       'assets/images/bg/3.jpg',
     );
   }

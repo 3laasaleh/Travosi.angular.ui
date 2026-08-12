@@ -41,7 +41,7 @@ export class CityPage implements OnInit {
   destinationName(): string { return this.isArabic ? this.destination?.nameAr ?? this.destination?.nameEng ?? '' : this.destination?.nameEng ?? this.destination?.nameAr ?? ''; }
   cityImage(): string { return this.imageUrl(this.city?.coverImageUrl ?? this.city?.imageUrl ?? this.destination?.images?.[0]); }
   imageUrl(source: any): string { const raw = typeof source === 'string' ? source : source?.imageUrl ?? source?.url ?? ''; return !raw ? 'assets/images/bg/3.jpg' : /^(blob:|data:|https?:\/\/)/i.test(raw) ? raw : `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`; }
-  tourImage(tour: any): string { return this.imageUrl(tour?.images?.[0] ?? tour?.coverImageUrl ?? tour?.imageUrl); }
+  tourImage(tour: any): string { return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl); }
   tourTitle(tour: any): string { return this.isArabic ? tour?.titleAr ?? tour?.titleEng ?? '' : tour?.titleEng ?? tour?.titleAr ?? ''; }
   tourPrice(tour: any): number { return apiPrice(tour?.pricePerPerson ?? tour?.price); }
   currency(tour: any): string { return apiCurrencyLabel(tour?.currencyId ?? 2); }

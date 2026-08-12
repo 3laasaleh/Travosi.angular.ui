@@ -10,7 +10,7 @@ import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 export interface TourHomeDTO {
   id: number;
-  coverImageUrl: number;
+  coverImageUrl: string | null;
   titleAr: string;
   titleEng: string;
   destinationName: string;
@@ -65,6 +65,10 @@ export class ToursSection implements OnInit {
   }
 
   imageUrl(item: any): string {
-   return  item?.coverImageUrl ? (environment.imageUrl+item?.coverImageUrl) : 'assets/images/bg/3.jpg';
+    const url = item?.coverImageUrl ?? item?.imageUrl ?? '';
+    if (!url) return 'assets/images/bg/3.jpg';
+    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 }

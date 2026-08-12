@@ -1,17 +1,25 @@
 <div class="relative">
   <input
-    #picker="bsDatepicker"
+    #picker="mwlFlatpickr"
     type="text"
-    bsDatepicker
-    [bsValue]="selectedDate"
-    [bsConfig]="pickerConfig"
-    [minDate]="minDate"
-    [maxDate]="maxDate"
-    [isDisabled]="isDisabled"
+    mwlFlatpickr
+    [ngModel]="selectedDate"
+    [ngModelOptions]="{ standalone: true }"
+    [convertModelValue]="true"
+    [allowInput]="true"
+    [disableMobile]="true"
+    [enableTime]="includeTime"
+    [time24hr]="true"
+    [dateFormat]="includeTime ? 'Y-m-d H:i' : 'Y-m-d'"
+    [locale]="pickerLocale"
+    [minDate]="minDate ?? ''"
+    [maxDate]="maxDate ?? ''"
+    [disabled]="isDisabled"
     [attr.id]="id || null"
     [attr.aria-label]="ariaLabel || placeholder || 'Date'"
     [placeholder]="placeholder"
-    (bsValueChange)="selectDate($event)"
+    (ngModelChange)="selectDate($event)"
+    (flatpickrReady)="configureCalendar($event)"
     (blur)="markTouched()"
     class="w-full pe-11 outline-none transition"
     [ngClass]="inputClass" />

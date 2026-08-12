@@ -39,14 +39,16 @@ export class HomeTourPage implements OnInit {
   imageViewerOpen = false;
 
   get images(): any[] {
-    if (Array.isArray(this.tour?.images) && this.tour.images.length) return this.tour.images;
-
-    const fallback =
+    const cover =
       this.tour?.coverImageUrl ??
       this.tour?.imageUrl ??
       this.tour?.coverImage ??
       null;
-    return fallback ? [fallback] : [];
+    const gallery = Array.isArray(this.tour?.images) ? this.tour.images : [];
+    if (!cover) return gallery;
+    const coverIndex = gallery.findIndex((image: any) => this.imageMatchesCover(image, cover));
+    if (coverIndex < 0) return [cover, ...gallery];
+    return [gallery[coverIndex], ...gallery.filter((_: any, index: number) => index !== coverIndex)];
   }
 
   get destinationId(): number | null {
@@ -131,6 +133,20 @@ export class HomeTourPage implements OnInit {
     if (!url) return 'assets/images/bg/3.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
+  }
+
+  private imageMatchesCover(image: any, cover: string): boolean {
+    return this.normalizeImagePath(this.imageUrl(image)) === this.normalizeImagePath(cover);
+  }
+
+  private normalizeImagePath(url: string): string {
+    return String(url ?? '')
+      .trim()
+      .replace(/\\/g, '/')
+      .replace(/^https?:\/\/[^/]+\/images\//i, '')
+      .replace(/^\/+/, '')
+      .replace(/^images\//i, '')
+      .toLowerCase();
   }
 
   private loadTour(tourId: number): void {

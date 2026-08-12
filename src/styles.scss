@@ -43,12 +43,9 @@ input,textarea,select {
   background-color: #fff;
 }
 
-/* ngx-bootstrap datepicker: retain Sea World's rounded Tailwind visual language. */
-bs-datepicker-container {
-  z-index: 9999 !important;
-}
-
-.seaworld-datepicker.bs-datepicker {
+/* Flatpickr datepicker: retain Sea World's rounded Tailwind visual language. */
+.seaworld-datepicker.flatpickr-calendar {
+  z-index: 9999;
   overflow: hidden;
   border: 1px solid #e2e8f0;
   border-radius: 1rem;
@@ -56,82 +53,53 @@ bs-datepicker-container {
   font-family: var(--font-dm, "DM Sans", sans-serif);
 }
 
-.seaworld-datepicker .bs-datepicker-container {
-  padding: 0;
-}
-
-.seaworld-datepicker .bs-datepicker-head {
+.seaworld-datepicker .flatpickr-months {
   background: linear-gradient(135deg, #0ca7d8, #1ec2f2);
-  border-radius: 0;
+  color: #fff;
 }
 
-.seaworld-datepicker .bs-datepicker-head button.current,
-.seaworld-datepicker .bs-datepicker-head button:hover {
-  background-color: rgb(255 255 255 / 0.16);
+.seaworld-datepicker .flatpickr-month,
+.seaworld-datepicker .flatpickr-current-month,
+.seaworld-datepicker .flatpickr-current-month .flatpickr-monthDropdown-months,
+.seaworld-datepicker .flatpickr-current-month input.cur-year,
+.seaworld-datepicker .flatpickr-prev-month,
+.seaworld-datepicker .flatpickr-next-month {
+  color: #fff;
+  fill: #fff;
 }
 
-.seaworld-datepicker .bs-datepicker-body {
-  border: 0;
-  border-radius: 0;
+.seaworld-datepicker .flatpickr-weekdays {
+  background: #eefcff;
 }
 
-.seaworld-datepicker .bs-datepicker-body table td:not(.disabled):not(.week) span:not(.disabled):not(.is-other-month):hover,
-.seaworld-datepicker .bs-datepicker-body table td span.is-highlighted:not(.disabled):not(.selected) {
+.seaworld-datepicker .flatpickr-day:hover,
+.seaworld-datepicker .flatpickr-day:focus {
+  border-color: #d7f7ff;
   background-color: #d7f7ff;
   color: #0b86af;
 }
 
-.seaworld-datepicker .bs-datepicker-body table td span.selected,
-.seaworld-datepicker .bs-datepicker-body table td.selected span,
-.seaworld-datepicker .bs-datepicker-body table td span[class*=select-]::after,
-.seaworld-datepicker .bs-datepicker-body table td[class*=select-] span::after {
+.seaworld-datepicker .flatpickr-day.selected,
+.seaworld-datepicker .flatpickr-day.selected:hover,
+.seaworld-datepicker .flatpickr-day.startRange,
+.seaworld-datepicker .flatpickr-day.endRange {
+  border-color: #1ec2f2;
   background-color: #1ec2f2;
 }
 
-.seaworld-datepicker .bs-datepicker-body table.days td.active:not(.select-start):not(.disabled)::before,
-.seaworld-datepicker .bs-datepicker-body table.days td.in-range:not(.select-start):not(.disabled)::before,
-.seaworld-datepicker .bs-datepicker-body table.days span.active:not(.select-start):not(.disabled)::before,
-.seaworld-datepicker .bs-datepicker-body table.days span.in-range:not(.select-start):not(.disabled)::before {
-  background: #d7f7ff;
-}
-
-.seaworld-datepicker .bs-datepicker-buttons {
-  border-color: #e2e8f0;
-  padding: 0.625rem 0.75rem;
-}
-
-.seaworld-datepicker .bs-datepicker-buttons .btn {
-  border-radius: 9999px;
-  background: #eefcff;
-  color: #0b86af;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.seaworld-datepicker .bs-datepicker-buttons .btn:hover {
-  background: #d7f7ff;
-}
-
-.seaworld-datepicker .bs-timepicker-in-datepicker-container {
+.seaworld-datepicker .flatpickr-time {
   border-top: 1px solid #e2e8f0;
 }
 
-.seaworld-datepicker .bs-timepicker-controls button {
-  background-color: #d7f7ff;
-  color: #0b86af;
-}
-
-.seaworld-datepicker .bs-timepicker-controls button:hover {
-  background-color: #b3efff;
-}
-
-.dark .seaworld-datepicker.bs-datepicker,
-.dark .seaworld-datepicker .bs-datepicker-body {
+.dark .seaworld-datepicker.flatpickr-calendar,
+.dark .seaworld-datepicker .flatpickr-days,
+.dark .seaworld-datepicker .flatpickr-time {
   background: #0f172a;
   border-color: #334155;
 }
 
-.dark .seaworld-datepicker .bs-datepicker-body table td,
-.dark .seaworld-datepicker .bs-datepicker-body table th {
+.dark .seaworld-datepicker .flatpickr-day,
+.dark .seaworld-datepicker .flatpickr-time input,
+.dark .seaworld-datepicker .flatpickr-time .flatpickr-am-pm {
   color: #cbd5e1;
 }
