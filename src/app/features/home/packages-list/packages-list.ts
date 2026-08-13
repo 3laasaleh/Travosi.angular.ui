@@ -13,7 +13,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -35,6 +35,7 @@ interface PaginationInfo {
 export class HomePackagesList implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
 
@@ -141,11 +142,11 @@ export class HomePackagesList implements OnInit {
   }
 
   price(item: any): number {
-    return apiPrice(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.convert(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   currencySymbol(item: any): string {
-    return apiCurrencyLabel(item.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(item.currencyId ?? item?.currency?.id ?? 2);
   }
 
   imageUrl(item: any): string {

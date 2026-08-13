@@ -372,7 +372,7 @@
     ,"selectCurrency": "Select currency"
     ,"selectCustomer": "Select customer"
     ,"selectedPackages": "Selected Packages"
-    ,"sendAndDownloadPdf": "Send and Download PDF"
+    ,"sendAndDownloadPdf": "Download PDF"
     ,"submitting": "Submitting..."
     ,"subTotal": "Subtotal"
     ,"tax": "Tax"
@@ -905,7 +905,7 @@
     "leaveSiteTitle": "You are about to leave Sea World Holidays",
     "leaveSiteMessage": "Before you go, our travel team would love to help you plan and book your next trip.",
     "bookingContactPrompt": "For bookings and enquiries, call us on",
-    "thanksForVisiting": "Thanks for visiting Sea World Holidays. Have a wonderful time! 😊 :D",
+    "thanksForVisiting": "Thanks for visiting Sea World Holidays. Have a wonderful time! 😊",
     "stayOnSite": "Stay on Sea World",
     "continueBrowsing": "Continue browsing",
     "leaveSite": "Leave website",
@@ -926,8 +926,8 @@
     "service": "Service",
     "serviceDate": "Service date",
     "endDateOptional": "End date (optional)",
-    "voucherMinimalDetailsHelp": "The printed voucher contains the Sea World logo, date, customer name and customer number only, with the selected service heading.",
+    "voucherMinimalDetailsHelp": "The printed voucher contains the Sea World logo, date, customer name and customer number, with the selected voucher type heading.",
     "noVouchersFound": "No vouchers found.",
-    "invalidVoucherData": "Select a customer, service, and valid service dates.",
+    "invalidVoucherData": "Select a customer and voucher type.",
     "voucherSaveError": "The voucher could not be saved."
 }

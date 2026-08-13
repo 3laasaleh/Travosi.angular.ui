@@ -8,7 +8,7 @@ import { DestinationsList } from './destinations-list/destinations-list';
 @Component({
   selector: 'app-destinations',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DestinationsFromCard, DestinationsList],
+  imports: [ TranslatePipe, DestinationsFromCard, DestinationsList],
   templateUrl: './destinations-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './destinations-page.scss',

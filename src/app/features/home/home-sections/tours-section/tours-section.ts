@@ -5,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../../core/services/currency.service';
 import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 export interface TourHomeDTO {
@@ -28,6 +28,7 @@ export interface TourHomeDTO {
 export class ToursSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly currencyService = inject(CurrencyService);
 
   tours: TourHomeDTO[] = [];
   isLoading = false;
@@ -57,11 +58,11 @@ export class ToursSection implements OnInit {
   }
 
   price(item: any): number {
-    return apiPrice(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.convert(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   currencyLabel(item: any): string {
-    return apiCurrencyLabel(item?.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   imageUrl(item: any): string {

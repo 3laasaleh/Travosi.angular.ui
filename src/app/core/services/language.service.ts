@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,11 +11,17 @@ import { environment } from '../../../environments/environment';
 export class LanguageService {
   currentLanguage = signal<'en' | 'ar'>('en');
 
-  constructor(private http: HttpClient, private cookieService: CookieService, public translate: TranslateService) {
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    public translate: TranslateService,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
     translate.addLangs(['en', 'ar']);
     const lang = this.getCurrentLanguage();
     this.currentLanguage.set(lang);
     translate.use(lang);
+    this.applyDocumentLanguage(lang);
   }
 
   get isArbic() {
@@ -37,6 +44,7 @@ export class LanguageService {
     this.saveLanguageCookie(language);
     this.translate.use(language);
     this.currentLanguage.set(language);
+    this.applyDocumentLanguage(language);
 
     return this.http.post(
       environment.baseUrl + 'language/set',
@@ -57,5 +65,11 @@ export class LanguageService {
       path: '/',
       sameSite: 'Lax'
     });
+  }
+
+  private applyDocumentLanguage(language: 'en' | 'ar'): void {
+    const root = this.document.documentElement;
+    root.lang = language;
+    root.dir = language === 'ar' ? 'rtl' : 'ltr';
   }
 }

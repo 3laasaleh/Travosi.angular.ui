@@ -7,7 +7,7 @@ import { CitiesList } from './cities-list/cities-list';
 @Component({
   selector: 'app-cities',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, CitiesFromCard, CitiesList],
+  imports: [ TranslatePipe, CitiesFromCard, CitiesList],
   templateUrl: './cities-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

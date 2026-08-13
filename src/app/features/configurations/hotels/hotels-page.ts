@@ -7,7 +7,7 @@ import { HotelsList } from './hotels-list/hotels-list';
 @Component({
   selector: 'app-hotels',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HotelsFromCard, HotelsList],
+  imports: [ TranslatePipe, HotelsFromCard, HotelsList],
   templateUrl: './hotels-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

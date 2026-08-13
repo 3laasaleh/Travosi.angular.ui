@@ -8,7 +8,7 @@ import { PackagesList } from './packages-list/packages-list';
 @Component({
   selector: 'app-packages',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, PackagesFromCard, PackagesList],
+  imports: [ TranslatePipe, PackagesFromCard, PackagesList],
   templateUrl: './packages-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './packages-page.scss',

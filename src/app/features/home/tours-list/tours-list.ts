@@ -13,7 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -36,6 +36,7 @@ export class HomeToursList implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly currencyService = inject(CurrencyService);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
@@ -113,11 +114,11 @@ export class HomeToursList implements OnInit {
   }
 
   price(tour: any): number {
-    return apiPrice(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
+    return this.currencyService.convert(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   currencyLabel(tour: any): string {
-    return apiCurrencyLabel(tour?.currencyId ?? tour?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(tour?.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   imageUrl(tour: any): string {

@@ -8,7 +8,7 @@ import { BookingsList } from './bookings-list/bookings-list';
 @Component({
   selector: 'app-bookings',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, BookingsFromCard, BookingsList],
+  imports: [ TranslatePipe, BookingsFromCard, BookingsList],
   templateUrl: './bookings-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

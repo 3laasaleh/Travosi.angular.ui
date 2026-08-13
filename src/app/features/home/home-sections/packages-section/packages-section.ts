@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-packages-section',
@@ -17,6 +17,7 @@ export class PackagesSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
+  private readonly currencyService = inject(CurrencyService);
 
   packages: any[] = [];
   isLoading = false;
@@ -50,11 +51,11 @@ export class PackagesSection implements OnInit {
   }
 
   price(item: any): number {
-    return apiPrice(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.convert(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
   }
 
   currencyLabel(item: any): string {
-    return apiCurrencyLabel(item.currencyId ?? item?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(item.currencyId ?? item?.currency?.id ?? 2);
   }
 
   packageTitle(item: any): string {

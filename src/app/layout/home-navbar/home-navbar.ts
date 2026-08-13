@@ -43,6 +43,9 @@ export class HomeNavbar implements AfterViewInit {
   mobileDestinationsOpen = false;
   mobileNavigationLoading = false;
   mobileDestinations: any[] = [];
+  mobileDestinationMenuLevel: 'destinations' | 'cities' | 'tours' = 'destinations';
+  selectedMobileDestination: any = null;
+  selectedMobileCity: any = null;
 
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
@@ -111,6 +114,7 @@ export class HomeNavbar implements AfterViewInit {
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (!this.mobileMenuOpen) this.resetMobileDestinationMenu();
     this.accountMenuOpen = false;
     this.languageMenuOpen = false;
     this.refreshIcons();
@@ -131,7 +135,30 @@ export class HomeNavbar implements AfterViewInit {
 
   toggleMobileDestinations(): void {
     this.mobileDestinationsOpen = !this.mobileDestinationsOpen;
-    if (this.mobileDestinationsOpen && !this.mobileDestinations.length) this.loadMobileNavigation();
+    if (this.mobileDestinationsOpen) {
+      this.resetMobileDestinationMenu();
+      if (!this.mobileDestinations.length) this.loadMobileNavigation();
+    }
+  }
+
+  openMobileDestination(destination: any): void {
+    this.selectedMobileDestination = destination;
+    this.selectedMobileCity = null;
+    this.mobileDestinationMenuLevel = 'cities';
+  }
+
+  openMobileCity(city: any): void {
+    this.selectedMobileCity = city;
+    this.mobileDestinationMenuLevel = 'tours';
+  }
+
+  backMobileDestinationMenu(): void {
+    if (this.mobileDestinationMenuLevel === 'tours') {
+      this.selectedMobileCity = null;
+      this.mobileDestinationMenuLevel = 'cities';
+      return;
+    }
+    if (this.mobileDestinationMenuLevel === 'cities') this.resetMobileDestinationMenu();
   }
 
   mobileDestinationName(item: any): string { return this.currentLanguage === 'ar' ? item?.nameAr ?? item?.nameEng ?? '' : item?.nameEng ?? item?.nameAr ?? ''; }
@@ -144,6 +171,7 @@ export class HomeNavbar implements AfterViewInit {
     this.languageMenuOpen = false;
     this.currencyMenuOpen = false;
     this.mobileDestinationsOpen = false;
+    this.resetMobileDestinationMenu();
   }
 
   logout(): void {
@@ -174,5 +202,11 @@ export class HomeNavbar implements AfterViewInit {
       const rows = data?.data ?? data?.destinations ?? data;
       this.mobileDestinations = Array.isArray(rows) ? rows : [];
     });
+  }
+
+  private resetMobileDestinationMenu(): void {
+    this.mobileDestinationMenuLevel = 'destinations';
+    this.selectedMobileDestination = null;
+    this.selectedMobileCity = null;
   }
 }

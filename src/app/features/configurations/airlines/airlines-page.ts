@@ -7,7 +7,7 @@ import { AirlinesList } from './airlines-list/airlines-list';
 @Component({
   selector: 'app-airlines',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, AirlinesFromCard, AirlinesList],
+  imports: [ TranslatePipe, AirlinesFromCard, AirlinesList],
   templateUrl: './airlines-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

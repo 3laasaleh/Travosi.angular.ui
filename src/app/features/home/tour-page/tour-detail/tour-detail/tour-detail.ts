@@ -3,9 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  inject,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-tour-detail',
@@ -14,6 +15,7 @@ import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.
   templateUrl: './tour-detail.html',
 })
 export class TourDetail {
+  private readonly currencyService = inject(CurrencyService);
   @Input() tour: any = null;
 
   get title(): string {
@@ -69,11 +71,11 @@ export class TourDetail {
   }
 
   get price(): number {
-    return apiPrice(this.tour?.pricePerPerson ?? this.tour?.price, this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
+    return this.currencyService.convert(this.tour?.pricePerPerson ?? this.tour?.price, this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
   }
 
   get description(): string {

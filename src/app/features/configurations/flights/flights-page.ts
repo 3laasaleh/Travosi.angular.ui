@@ -7,7 +7,7 @@ import { FlightsList } from './flights-list/flights-list';
 @Component({
   selector: 'app-flights',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, FlightsFromCard, FlightsList],
+  imports: [ TranslatePipe, FlightsFromCard, FlightsList],
   templateUrl: './flights-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

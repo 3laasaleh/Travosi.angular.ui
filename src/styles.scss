@@ -47,3 +47,7 @@ input,textarea,select {
 .datepicker-dropdown {
   z-index: 9999 !important;
 }
+
+ select{
+  min-width: 50px !important;
+ }

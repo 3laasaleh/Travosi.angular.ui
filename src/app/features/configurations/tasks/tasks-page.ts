@@ -8,7 +8,7 @@ import { AuthService } from '../../user/_services/auth.service';
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, TasksFromCard, TasksList],
+  imports: [ TranslatePipe, TasksFromCard, TasksList],
   templateUrl: './tasks-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

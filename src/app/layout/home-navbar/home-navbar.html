@@ -4,7 +4,7 @@
     <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
       <img src="./assets/images/main-logo.png" class="h-12 w-auto shrink-0 sm:h-14" [alt]="'seaworldHolidaysLogo' | translate">
       <span class=" sm:block">
-        <span class="block text-lg font-bold leading-tight text-slate-900 ">Sea World Holidays</span>
+        <span class="block text-lg font-bold leading-tight text-primary ">Sea World Holidays</span>
       </span>
     </a>
 
@@ -24,16 +24,18 @@
 
     <div class="ms-auto flex items-center gap-2">
       <div class="relative hidden lg:block">
-        <button type="button" class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary" [disabled]="currencyService.isLoading() || currencyService.isRateLoading()" [attr.aria-label]="'currency' | translate" aria-haspopup="menu" [attr.aria-expanded]="currencyMenuOpen" (click)="toggleCurrencyMenu($event)">
-          @if (currencyService.isLoading() || currencyService.isRateLoading()) { <i class="mdi mdi-loading mdi-spin"></i> } @else { <i class="mdi mdi-cash-multiple"></i> }
-          <span>{{ currencyService.currentCurrency().code }}</span><i class="mdi" [class.mdi-chevron-down]="!currencyMenuOpen" [class.mdi-chevron-up]="currencyMenuOpen"></i>
+        <button type="button" class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60" [disabled]="currencyService.isLoading() || currencyService.isRateLoading()" [attr.aria-label]="'currency' | translate" aria-haspopup="menu" [attr.aria-expanded]="currencyMenuOpen" (click)="toggleCurrencyMenu($event)">
+          @if (currencyService.isLoading() || currencyService.isRateLoading()) { <i class="mdi mdi-loading mdi-spin text-base" aria-hidden="true"></i> } @else { <span class="text-base font-bold leading-none" aria-hidden="true">{{ currencyService.currentCurrency().symbol }}</span> }
+          <span class="uppercase">{{ currencyService.currentCurrency().code }}</span><i class="mdi text-base leading-none" [class.mdi-chevron-down]="!currencyMenuOpen" [class.mdi-chevron-up]="currencyMenuOpen"></i>
         </button>
         @if (currencyMenuOpen) {
-          <div class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-lg" role="menu">
+          <div class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg" role="menu">
+            <div class="p-2">
             @for (currency of currencyService.options(); track currency.id) {
-              <button type="button" class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition hover:bg-slate-50 hover:text-primary" [class.bg-primary-50]="currency.code === currencyService.currentCurrency().code" [class.text-primary]="currency.code === currencyService.currentCurrency().code" (click)="switchCurrency(currency.code)"><span class="grid h-8 w-10 place-items-center rounded-lg bg-slate-100 font-bold">{{ currency.symbol }}</span><span class="flex-1 text-start"><strong class="block">{{ currency.code }}</strong><small class="text-slate-500">{{ currency.name }}</small></span>@if (currency.code === currencyService.currentCurrency().code) { <i class="mdi mdi-check"></i> }</button>
+              <button type="button" class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60" [class.bg-primary-50]="currency.code === currencyService.currentCurrency().code" [class.text-primary]="currency.code === currencyService.currentCurrency().code" (click)="switchCurrency(currency.code)" role="menuitem"><span class="min-w-7 text-center text-lg font-bold leading-none" aria-hidden="true">{{ currency.symbol }}</span><span class="flex-1 text-start">{{ currency.name }}</span>@if (currency.code === currencyService.currentCurrency().code) { <i class="mdi mdi-check text-base" aria-label="Selected"></i> }</button>
             }
-            @if (currencyService.currentCurrency().code === 'EGP' && currencyService.usdToEgpRate()) { <p class="mx-2 mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">1 USD = {{ currencyService.usdToEgpRate() | number:'1.2-4' }} EGP<br>{{ currencyService.rateProvider() }}</p> }
+            </div>
+            @if (currencyService.currentCurrency().code === 'EGP' && currencyService.usdToEgpRate()) { <p class="mx-4 mb-3 border-t border-slate-100 pt-2 text-xs text-slate-500">1 USD = {{ currencyService.usdToEgpRate() | number:'1.2-4' }} EGP<br>{{ currencyService.rateProvider() }}</p> }
           </div>
         }
       </div>
@@ -167,33 +169,44 @@
               <div class="border-t border-slate-100 p-3 dark:border-slate-800">
                 @if (mobileNavigationLoading) {
                   <div class="h-16 animate-pulse rounded-xl bg-slate-100 "></div>
-                } @else {
-                  <div class="space-y-3">
+                } @else if (mobileDestinationMenuLevel === 'destinations') {
+                  <div class="space-y-1">
                     @for (destination of mobileDestinations; track destination.id) {
-                      <div class="rounded-xl bg-slate-50 p-3 ">
-                        <a [routerLink]="['/destinations', destination.id]" (click)="closeMenus()" class="font-semibold text-primary">{{ mobileDestinationName(destination) }}</a>
-                        <div class="mt-2 space-y-2">
-                          @for (city of destination.cities ?? []; track city.id) {
-                            <div>
-                              <a [routerLink]="['/destinations', destination.id, 'cities', city.id]" (click)="closeMenus()" class="text-sm font-medium text-slate-700 "><i class="mdi mdi-city-variant-outline me-1 text-primary"></i>{{ mobileCityName(city) }}</a>
-                              <div class="ms-5 mt-1 flex flex-wrap gap-x-3 gap-y-1">
-                                @for (tour of city.tours ?? []; track tour.id) { <a [routerLink]="['/tours', tour.id]" (click)="closeMenus()" class="text-xs text-slate-500 hover:text-primary">{{ mobileTourName(tour) }}</a> }
-                              </div>
-                            </div>
-                          }
-                        </div>
-                      </div>
+                      <button type="button" (click)="openMobileDestination(destination)" class="flex w-full items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-3 text-start text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary">
+                        <span><i class="mdi mdi-map-marker-outline me-2 text-primary"></i>{{ mobileDestinationName(destination) }}</span>
+                        <i class="mdi mdi-chevron-right text-lg rtl:rotate-180" aria-hidden="true"></i>
+                      </button>
+                    } @empty {
+                      <p class="p-3 text-sm text-slate-500">{{ 'noDestinationsFound' | translate }}</p>
+                    }
+                  </div>
+                } @else if (mobileDestinationMenuLevel === 'cities') {
+                  <button type="button" (click)="backMobileDestinationMenu()" class="mb-3 inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-primary hover:bg-primary-50"><i class="mdi mdi-arrow-left rtl:rotate-180" aria-hidden="true"></i>{{ 'back' | translate }}</button>
+                  <p class="mb-2 px-2 text-sm font-semibold text-slate-700">{{ mobileDestinationName(selectedMobileDestination) }}</p>
+                  <div class="space-y-1">
+                    @for (city of selectedMobileDestination?.cities ?? []; track city.id) {
+                      <button type="button" (click)="openMobileCity(city)" class="flex w-full items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-3 text-start text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary">
+                        <span><i class="mdi mdi-city-variant-outline me-2 text-primary"></i>{{ mobileCityName(city) }}</span>
+                        <i class="mdi mdi-chevron-right text-lg rtl:rotate-180" aria-hidden="true"></i>
+                      </button>
+                    } @empty {
+                      <p class="p-3 text-sm text-slate-500">{{ 'noCitiesForDestination' | translate }}</p>
+                    }
+                  </div>
+                } @else {
+                  <button type="button" (click)="backMobileDestinationMenu()" class="mb-3 inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-primary hover:bg-primary-50"><i class="mdi mdi-arrow-left rtl:rotate-180" aria-hidden="true"></i>{{ 'back' | translate }}</button>
+                  <p class="mb-2 px-2 text-sm font-semibold text-slate-700">{{ mobileCityName(selectedMobileCity) }}</p>
+                  <div class="space-y-1">
+                    @for (tour of selectedMobileCity?.tours ?? []; track tour.id) {
+                      <a [routerLink]="['/tours', tour.id]" (click)="closeMenus()" class="flex w-full items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary"><span><i class="mdi mdi-compass-outline me-2 text-primary"></i>{{ mobileTourName(tour) }}</span><i class="mdi mdi-chevron-right text-lg rtl:rotate-180" aria-hidden="true"></i></a>
+                    } @empty {
+                      <p class="p-3 text-sm text-slate-500">{{ 'noToursForCity' | translate }}</p>
                     }
                   </div>
                 }
               </div>
             }
           </div>
-          <a routerLink="/destinations" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
-            <i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i>
-            {{ 'destinations' | translate }}
-          </a>
           <a routerLink="/tours" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()"
             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800">
             <i class="mdi mdi-compass-outline text-xl" aria-hidden="true"></i>
@@ -221,7 +234,7 @@
         <div class="mt-4 grid gap-4 border-t border-slate-200 pt-4 sm:grid-cols-2 dark:border-slate-800">
           <section>
             <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"><i class="mdi mdi-cash-multiple text-lg"></i>{{ 'currency' | translate }}</p>
-            <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5">@for (currency of currencyService.options(); track currency.id) { <button type="button" class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600" [class.bg-white]="currency.code === currencyService.currentCurrency().code" [class.text-primary]="currency.code === currencyService.currentCurrency().code" [class.shadow-sm]="currency.code === currencyService.currentCurrency().code" (click)="switchCurrency(currency.code)">{{ currency.code }}</button> }</div>
+            <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5">@for (currency of currencyService.options(); track currency.id) { <button type="button" class="flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600" [class.bg-white]="currency.code === currencyService.currentCurrency().code" [class.text-primary]="currency.code === currencyService.currentCurrency().code" [class.shadow-sm]="currency.code === currencyService.currentCurrency().code" (click)="switchCurrency(currency.code)"><span class="grid h-6 min-w-6 place-items-center rounded-md bg-slate-200 px-1 text-xs font-bold" [class.bg-primary-100]="currency.code === currencyService.currentCurrency().code" aria-hidden="true">{{ currency.symbol }}</span><span>{{ currency.code }}</span>@if (currency.code === currencyService.currentCurrency().code) { <i class="mdi mdi-check-circle text-base" aria-label="Selected"></i> }</button> }</div>
           </section>
           <section>
             <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 ">

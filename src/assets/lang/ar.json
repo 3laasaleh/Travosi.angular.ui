@@ -372,7 +372,7 @@
     ,"selectCurrency": "اختر العملة"
     ,"selectCustomer": "اختر العميل"
     ,"selectedPackages": "الباقات المختارة"
-    ,"sendAndDownloadPdf": "إرسال وتنزيل PDF"
+    ,"sendAndDownloadPdf": "تنزيل PDF"
     ,"submit": "إرسال"
     ,"submitting": "جارٍ الإرسال..."
     ,"subTotal": "المجموع الفرعي"
@@ -926,8 +926,8 @@
     "service": "الخدمة",
     "serviceDate": "تاريخ الخدمة",
     "endDateOptional": "تاريخ الانتهاء (اختياري)",
-    "voucherMinimalDetailsHelp": "تحتوي القسيمة المطبوعة على شعار سي وورلد والتاريخ واسم العميل ورقمه فقط مع عنوان الخدمة المحددة.",
+    "voucherMinimalDetailsHelp": "تحتوي القسيمة المطبوعة على شعار سي وورلد والتاريخ واسم العميل ورقمه مع عنوان نوع القسيمة المحدد.",
     "noVouchersFound": "لا توجد قسائم.",
-    "invalidVoucherData": "اختر العميل والخدمة وتواريخ خدمة صحيحة.",
+    "invalidVoucherData": "اختر العميل ونوع القسيمة.",
     "voucherSaveError": "تعذر حفظ القسيمة."
 }

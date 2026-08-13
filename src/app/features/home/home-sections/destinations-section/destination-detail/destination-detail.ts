@@ -17,7 +17,7 @@ import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { environment } from '../../../../../../environments/environment';
 import { ApiService } from '../../../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../../../core/services/currency.service';
 import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../../shared/components/image-viewer-modal/image-viewer-modal';
@@ -35,6 +35,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly currencyService = inject(CurrencyService);
 
   destination: any = null;
   tours: any[] = [];
@@ -143,11 +144,11 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   tourPrice(tour: any): number {
-    return apiPrice(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
+    return this.currencyService.convert(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   tourCurrencySymbol(tour: any): string {
-    return apiCurrencyLabel(tour.currencyId ?? tour?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(tour.currencyId ?? tour?.currency?.id ?? 2);
   }
 
   tourDestinationName(tour: any): string {

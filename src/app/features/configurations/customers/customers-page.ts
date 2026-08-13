@@ -7,7 +7,7 @@ import { CustomersList } from './customers-list/customers-list';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, CustomersFromCard, CustomersList],
+  imports: [ TranslatePipe, CustomersFromCard, CustomersList],
   templateUrl: './customers-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

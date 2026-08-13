@@ -114,14 +114,20 @@ export class QuotationsList implements OnInit, OnChanges {
   sendQuotation(quotation: any): void {
     const id = Number(quotation.id);
     if (!id || this.sendingQuotationId !== null) return;
+    const isSent = Number(quotation.status) === 2;
     this.sendingQuotationId = id;
     this.errorMessage = '';
     this.sendMessage = '';
 
-    this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
-      switchMap((response: any) => response?.isSuccess === false
-        ? throwError(() => new Error(response?.message || 'quotationSendError'))
-        : this.apiService.getFile(`Quotations/${id}/Pdf`)),
+    const pdf$ = isSent
+      ? this.apiService.getFile(`Quotations/${id}/Pdf`)
+      : this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
+          switchMap((response: any) => response?.isSuccess === false
+            ? throwError(() => new Error(response?.message || 'quotationSendError'))
+            : this.apiService.getFile(`Quotations/${id}/Pdf`)),
+        );
+
+    pdf$.pipe(
       catchError(() => {
         this.errorMessage = 'quotationSendError';
         return of(null);
@@ -140,7 +146,7 @@ export class QuotationsList implements OnInit, OnChanges {
         anchor.click();
         URL.revokeObjectURL(url);
         this.sendMessage = 'quotationPdfDownloaded';
-        this.loadQuotations();
+        if (!isSent) this.loadQuotations();
         return;
       }
       this.errorMessage = 'quotationPdfInvalid';

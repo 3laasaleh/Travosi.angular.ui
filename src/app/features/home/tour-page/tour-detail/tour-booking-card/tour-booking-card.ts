@@ -19,7 +19,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/apiservice.service';
-import { apiCurrencyLabel, apiPrice } from '../../../../../core/utils/api-price.util';
+import { CurrencyService } from '../../../../../core/services/currency.service';
 import { AuthService } from '../../../../user/_services/auth.service';
 import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
 
@@ -37,6 +37,7 @@ export class TourBookingCard {
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
+  private readonly currencyService = inject(CurrencyService);
 
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
@@ -66,11 +67,11 @@ export class TourBookingCard {
   }
 
   get pricePerPerson(): number {
-    return apiPrice(this.product?.pricePerPerson ?? this.product?.price, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+    return this.currencyService.convert(this.product?.pricePerPerson ?? this.product?.price, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get pricePerChild(): number {
-    return apiPrice(this.product?.pricePerChild, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+    return this.currencyService.convert(this.product?.pricePerChild, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get seatsAvailable(): number {
@@ -96,7 +97,7 @@ export class TourBookingCard {
   }
 
   get currencySymbol(): string {
-    return apiCurrencyLabel(this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+    return this.currencyService.displayLabel(this.product?.currencyId ?? this.product?.currency?.id ?? 2);
   }
 
   get minTravelDate(): string {

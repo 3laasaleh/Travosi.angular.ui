@@ -13,7 +13,7 @@ export class Invoices implements OnInit {
   readonly currencies = [{ id: 2, sign: '$', code: 'USD' }, { id: 1, sign: 'EGP', code: 'EGP' }];
   form = new FormGroup({
     customerId: new FormControl<number | null>(null, Validators.required), currencyId: new FormControl(2, Validators.required),
-    invoiceDate: new FormControl('', Validators.required), dueDate: new FormControl('', Validators.required),
+    invoiceDate: new FormControl('', Validators.required),
     discount: new FormControl(0, [Validators.required, Validators.min(0)]), taxRate: new FormControl(0, [Validators.required, Validators.min(0)]),
     notes: new FormControl(''), items: new FormArray<FormGroup>([]),
   });
@@ -32,7 +32,7 @@ export class Invoices implements OnInit {
   serviceChanged(row: FormGroup): void { const source = this.serviceOptions(row).find(x => Number(x.id) === Number(row.controls['serviceId'].value)); row.patchValue({ description: this.name(source), unitPrice: Number(source?.pricePerPerson ?? 0) }); }
   lineTotal(row: FormGroup): number { return Math.max(0, Number(row.controls['quantity'].value) * Number(row.controls['unitPrice'].value) - Number(row.controls['discount'].value)); }
   save(): void {
-    if (this.form.invalid || !this.items.length || this.form.controls.dueDate.value! < this.form.controls.invoiceDate.value!) { this.form.markAllAsTouched(); this.errorMessage = 'invalidInvoiceData'; return; }
+    if (this.form.invalid || !this.items.length) { this.form.markAllAsTouched(); this.errorMessage = 'invalidInvoiceData'; return; }
     const value = this.form.getRawValue(); const payload: any = { ...value, id: this.selectedId, items: value.items.map((x: any, i: number) => ({ itemType: Number(x.itemType), description: x.description, quantity: Number(x.quantity), unitPrice: Number(x.unitPrice), discount: Number(x.discount), sortOrder: i + 1, packageId: Number(x.itemType) === 1 ? Number(x.serviceId) : null, tourId: Number(x.itemType) === 2 ? Number(x.serviceId) : null })) };
     this.isLoading = true; this.api[this.selectedId ? 'put' : 'post']('Invoices', payload).pipe(catchError(e => { this.errorMessage = e?.error?.message ?? 'invoiceSaveError'; return of(null); }), finalize(() => { this.isLoading = false; this.cdr.markForCheck(); })).subscribe(r => { if (r?.isSuccess === false) { this.errorMessage = r.message; return; } if (r) { this.showForm = false; this.reset(); this.load(); } });
   }
@@ -44,6 +44,6 @@ export class Invoices implements OnInit {
   private rows(r: any): any[] { const x = r?.data ?? r; return Array.isArray(x) ? x : (x?.data ?? x?.items ?? []); }
   name(x: any): string { return x?.nameEng ?? x?.titleEng ?? x?.name ?? ''; }
   customerName(x: any): string { return x?.companyName ?? `${x?.firstName ?? ''} ${x?.lastName ?? ''}`.trim(); }
-  private reset(): void { this.selectedId = 0; this.items.clear(); this.errorMessage = ''; this.form.reset({ currencyId: 2, discount: 0, taxRate: 0, customerId: null, invoiceDate: '', dueDate: '', notes: '' }); }
+  private reset(): void { this.selectedId = 0; this.items.clear(); this.errorMessage = ''; this.form.reset({ currencyId: 2, discount: 0, taxRate: 0, customerId: null, invoiceDate: '', notes: '' }); }
   private download(blob: Blob, name: string): void { const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url); }
 }

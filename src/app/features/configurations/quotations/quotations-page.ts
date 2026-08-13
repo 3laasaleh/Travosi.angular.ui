@@ -7,7 +7,7 @@ import { QuotationsList } from './quotations-list/quotations-list';
 @Component({
   selector: 'app-quotations',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, QuotationsFromCard, QuotationsList],
+  imports: [ TranslatePipe, QuotationsFromCard, QuotationsList],
   templateUrl: './quotations-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

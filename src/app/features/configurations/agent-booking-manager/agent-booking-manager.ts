@@ -6,7 +6,7 @@ import { BookingsList } from '../bookings/bookings-list/bookings-list';
 @Component({
   selector: 'app-agent-booking-manager',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, BookingsList],
+  imports: [ TranslatePipe, BookingsList],
   templateUrl: './agent-booking-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
