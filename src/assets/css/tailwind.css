@@ -56,7 +56,7 @@
    --color-primary-900: #82181a;
    --color-primary-950: #460809; */
 /* sea world */
-   --color-primary: #1ec2f2;
+   /* --color-primary: #1ec2f2;
 --color-primary-50:  #eefcff;
 --color-primary-100: #d7f7ff;
 --color-primary-200: #b3efff;
@@ -67,7 +67,21 @@
 --color-primary-700: #0b86af;
 --color-primary-800: #106d8d;
 --color-primary-900: #145a74;
---color-primary-950: #0c3a4c;
+--color-primary-950: #0c3a4c; */
+
+--color-primary: #0f9cff;
+
+--color-primary-50:  #eff9ff;
+--color-primary-100: #dff3ff;
+--color-primary-200: #b8e5ff;
+--color-primary-300: #80d0ff;
+--color-primary-400: #47b8ff;
+--color-primary-500: #0f9cff;
+--color-primary-600: #0d87dc;
+--color-primary-700: #0b70b8;
+--color-primary-800: #0b5c94;
+--color-primary-900: #0c4c78;
+--color-primary-950: #062f4b;
 
    /* Flowbite components use the Sea World brand palette. */
    --color-brand-softer: var(--color-primary-50);
