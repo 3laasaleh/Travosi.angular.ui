@@ -1,14 +1,256 @@
-<section class="min-h-screen bg-slate-50 px-4 text-slate-800"><div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-  <header class="mb-6 flex items-end justify-between"><div><p class="text-sm font-semibold uppercase tracking-[.3em] text-primary">CRM</p><h1 class="mt-2 text-3xl font-semibold">{{ 'invoices' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageInvoices' | translate }}</p></div><button class="grid h-11 w-11 place-items-center rounded-full border border-primary/40 text-xl text-primary hover:bg-primary hover:text-white" (click)="toggleForm()"><i class="mdi" [class.mdi-plus]="!showForm" [class.mdi-close]="showForm"></i></button></header>
-  @if (errorMessage) { <div class="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{{ errorMessage | translate }}</div> }
-  @if (showForm) {
-    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-6">
-      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"><label class="text-sm font-medium">{{ 'customer' | translate }}<select formControlName="customerId" class="mt-2 w-full rounded-xl border-slate-300"><option [ngValue]="null">{{ 'select' | translate }}</option>@for (x of customers; track x.id) { <option [value]="x.id">{{ customerName(x) }}</option> }</select></label><label class="text-sm font-medium">{{ 'currency' | translate }}<select formControlName="currencyId" class="mt-2 w-full rounded-xl border-slate-300">@for (x of currencies; track x.id) { <option [value]="x.id">{{ x.code }}</option> }</select></label><label class="text-sm font-medium">{{ 'invoiceDate' | translate }}<app-date-picker formControlName="invoiceDate" class="mt-2 block" /></label></div>
-      <div class="rounded-2xl border border-slate-200 p-4"><div class="mb-4 flex items-center justify-between"><h2 class="font-semibold">{{ 'invoiceItems' | translate }}</h2><div class="flex gap-2"><button type="button" class="rounded-full bg-primary px-3 py-1.5 text-sm text-white" (click)="addItem(2)">+ {{ 'tour' | translate }}</button><button type="button" class="rounded-full bg-slate-800 px-3 py-1.5 text-sm text-white" (click)="addItem(1)">+ {{ 'package' | translate }}</button></div></div><div formArrayName="items" class="space-y-3">@for (row of items.controls; track $index) { <div [formGroupName]="$index" class="grid items-end gap-3 rounded-xl bg-slate-50 p-3 md:grid-cols-[110px_2fr_80px_120px_120px_48px]"><label class="text-xs">{{ 'type' | translate }}<select formControlName="itemType" class="mt-1 w-full rounded-lg border-slate-300" (change)="serviceChanged(row)"><option [value]="2">{{ 'tour' | translate }}</option><option [value]="1">{{ 'package' | translate }}</option></select></label><label class="text-xs">{{ 'service' | translate }}<select formControlName="serviceId" class="mt-1 w-full rounded-lg border-slate-300" (change)="serviceChanged(row)"><option [ngValue]="null">{{ 'select' | translate }}</option>@for (x of serviceOptions(row); track x.id) { <option [value]="x.id">{{ name(x) }}</option> }</select></label><label class="text-xs">{{ 'quantity' | translate }}<input type="number" formControlName="quantity" class="mt-1 w-full rounded-lg border-slate-300"></label><label class="text-xs">{{ 'price' | translate }}<input type="number" formControlName="unitPrice" class="mt-1 w-full rounded-lg border-slate-300"></label><label class="text-xs">{{ 'total' | translate }}<span class="mt-1 block rounded-lg bg-white px-3 py-2 font-semibold">{{ lineTotal(row) | number:'1.2-2' }}</span></label><button type="button" class="mb-1 grid h-9 w-9 place-items-center rounded-full text-red-600 hover:bg-red-50" (click)="removeItem($index)"><i class="mdi mdi-delete-outline"></i></button></div> }</div></div>
-      <div class="grid gap-4 md:grid-cols-2"><div><label class="text-sm font-medium">{{ 'notes' | translate }}<textarea formControlName="notes" rows="4" class="mt-2 w-full rounded-xl border-slate-300"></textarea></label></div><div class="rounded-2xl bg-slate-900 p-5 text-white"><div class="flex justify-between"><span>{{ 'subTotal' | translate }}</span><strong>{{ subTotal | number:'1.2-2' }}</strong></div><div class="mt-3 grid grid-cols-2 gap-3"><label class="text-xs">{{ 'discount' | translate }}<input type="number" formControlName="discount" class="mt-1 w-full rounded-lg border-0 text-slate-900"></label><label class="text-xs">{{ 'taxRate' | translate }}<input type="number" formControlName="taxRate" class="mt-1 w-full rounded-lg border-0 text-slate-900"></label></div><div class="mt-4 flex justify-between border-t border-white/20 pt-4 text-xl"><span>{{ 'total' | translate }}</span><strong>{{ total | number:'1.2-2' }}</strong></div></div></div>
-      <div class="flex justify-end gap-3"><button type="button" class="rounded-full border px-5 py-2" (click)="toggleForm()">{{ 'cancel' | translate }}</button><button type="submit" [disabled]="isLoading" class="rounded-full bg-primary px-6 py-2 font-semibold text-white">{{ 'save' | translate }}</button></div>
-    </form>
-  } @else {
-    <div class="overflow-auto rounded-2xl border"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50"><tr><th class="p-3">{{ 'invoiceNo' | translate }}</th><th class="p-3">{{ 'customer' | translate }}</th><th class="p-3">{{ 'invoiceDate' | translate }}</th><th class="p-3">{{ 'total' | translate }}</th><th class="p-3">{{ 'actions' | translate }}</th></tr></thead><tbody>@for (x of invoices; track x.id) { <tr class="border-t"><td class="p-3 font-semibold">{{ x.invoiceNo }}</td><td class="p-3">{{ x.customerName }}</td><td class="p-3">{{ x.invoiceDate }}</td><td class="p-3">{{ x.currencySign }}{{ x.totalAmount | number:'1.2-2' }}</td><td class="p-3"><div class="flex gap-2"><button class="icon-btn text-amber-600" (click)="edit(x)"><i class="mdi mdi-pencil-outline"></i></button><button class="icon-btn text-primary" (click)="pdf(x)"><i class="mdi mdi-file-pdf-box"></i></button><button class="icon-btn text-red-600" (click)="delete(x)"><i class="mdi mdi-delete-outline"></i></button></div></td></tr> } @empty { <tr><td colspan="5" class="p-10 text-center text-slate-500">{{ 'noInvoicesFound' | translate }}</td></tr> }</tbody></table></div>
-  }
-</div></section>
+<section class="min-h-screen bg-slate-50 px-4 text-slate-800">
+  <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <header class="mb-6 flex items-end justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[.3em] text-primary">CRM</p>
+        <h1 class="mt-2 text-3xl font-semibold">{{ 'invoices' | translate }}</h1>
+        <p class="mt-2 text-sm text-slate-500">{{ 'manageInvoices' | translate }}</p>
+      </div>
+      <button
+        type="button"
+        class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-primary/40 text-xl text-primary hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="isSaving"
+        [attr.aria-label]="(showForm ? 'cancel' : 'createInvoice') | translate"
+        (click)="toggleForm()">
+        <i class="mdi" [class.mdi-plus]="!showForm" [class.mdi-close]="showForm" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <div role="alert" class="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        {{ errorMessage | translate }}
+      </div>
+    }
+
+    @if (showForm) {
+      @if (optionsLoadError) {
+        <div role="alert" class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          <span>{{ 'invoiceOptionsLoadError' | translate }}</span>
+          <button type="button" class="font-semibold underline" [disabled]="isOptionsLoading" (click)="loadOptions()">
+            {{ (isOptionsLoading ? 'loading' : 'retry') | translate }}
+          </button>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="save()" class="space-y-6">
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <label class="text-sm font-medium">
+            {{ 'customer' | translate }}
+            <select formControlName="customerId" class="mt-2 w-full rounded-xl border-slate-300" [disabled]="isOptionsLoading">
+              <option [ngValue]="null">{{ 'select' | translate }}</option>
+              @for (customer of customers; track customer.id) {
+                <option [ngValue]="customer.id">{{ customerName(customer) }}</option>
+              }
+            </select>
+            @if (form.controls.customerId.touched && form.controls.customerId.invalid) {
+              <small class="mt-1 block text-red-600">{{ 'customerRequired' | translate }}</small>
+            }
+          </label>
+
+          <label class="text-sm font-medium">
+            {{ 'currency' | translate }}
+            <select formControlName="currencyId" class="mt-2 w-full rounded-xl border-slate-300" [disabled]="isOptionsLoading">
+              @for (currency of currencies; track currency.id) {
+                <option [ngValue]="currency.id">{{ currencyLabel(currency) }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="text-sm font-medium">
+            {{ 'invoiceDate' | translate }}
+            <app-date-picker
+              formControlName="invoiceDate"
+              class="mt-2 block"
+              [ariaLabel]="'invoiceDate' | translate" />
+          </label>
+
+          <label class="text-sm font-medium">
+            {{ 'dueDate' | translate }}
+            <app-date-picker
+              formControlName="dueDate"
+              class="mt-2 block"
+              [min]="form.controls.invoiceDate.value || null"
+              [ariaLabel]="'dueDate' | translate" />
+            @if (form.hasError('invalidInvoiceDates') && form.controls.dueDate.touched) {
+              <small class="mt-1 block text-red-600">{{ 'invoiceDueDateInvalid' | translate }}</small>
+            }
+          </label>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 p-4">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 class="font-semibold">{{ 'invoiceItems' | translate }}</h2>
+            <div class="flex gap-2">
+              <button type="button" class="rounded-full bg-primary px-3 py-1.5 text-sm text-white disabled:opacity-50" [disabled]="isOptionsLoading" (click)="addItem(2)">
+                + {{ 'tour' | translate }}
+              </button>
+              <button type="button" class="rounded-full bg-slate-800 px-3 py-1.5 text-sm text-white disabled:opacity-50" [disabled]="isOptionsLoading" (click)="addItem(1)">
+                + {{ 'package' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <div formArrayName="items" class="space-y-3">
+            @for (row of items.controls; track row) {
+              <div [formGroupName]="$index" class="grid items-start gap-3 rounded-xl bg-slate-50 p-3 md:grid-cols-2 xl:grid-cols-[100px_minmax(180px,1.4fr)_minmax(180px,1.4fr)_90px_120px_120px_120px_44px]">
+                <label class="text-xs">
+                  {{ 'type' | translate }}
+                  <select formControlName="itemType" class="mt-1 w-full rounded-lg border-slate-300" (change)="itemTypeChanged(row)">
+                    <option [ngValue]="2">{{ 'tour' | translate }}</option>
+                    <option [ngValue]="1">{{ 'package' | translate }}</option>
+                  </select>
+                </label>
+
+                <label class="text-xs">
+                  {{ 'service' | translate }}
+                  <select formControlName="serviceId" class="mt-1 w-full rounded-lg border-slate-300" [disabled]="isOptionsLoading" (change)="serviceChanged(row)">
+                    <option [ngValue]="null">{{ 'select' | translate }}</option>
+                    @for (service of serviceOptions(row); track service.id) {
+                      <option [ngValue]="service.id">{{ name(service) }}</option>
+                    }
+                  </select>
+                  @if (row.controls.serviceId.touched && row.controls.serviceId.invalid) {
+                    <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
+                  }
+                </label>
+
+                <label class="text-xs">
+                  {{ 'description' | translate }}
+                  <input type="text" formControlName="description" class="mt-1 w-full rounded-lg border-slate-300" autocomplete="off">
+                  @if (row.controls.description.touched && row.controls.description.invalid) {
+                    <small class="mt-1 block text-red-600">{{ 'descriptionRequired' | translate }}</small>
+                  }
+                </label>
+
+                <label class="text-xs">
+                  {{ 'quantity' | translate }}
+                  <input type="number" formControlName="quantity" min="1" step="1" inputmode="numeric" class="mt-1 w-full rounded-lg border-slate-300">
+                </label>
+
+                <label class="text-xs">
+                  {{ 'unitPrice' | translate }}
+                  <input type="number" formControlName="unitPrice" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-slate-300">
+                </label>
+
+                <label class="text-xs">
+                  {{ 'lineDiscount' | translate }}
+                  <input type="number" formControlName="discount" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-slate-300">
+                  @if (lineDiscountInvalid(row)) {
+                    <small class="mt-1 block text-red-600">{{ 'lineDiscountExceedsTotal' | translate }}</small>
+                  }
+                </label>
+
+                <label class="text-xs">
+                  {{ 'lineTotal' | translate }}
+                  <span class="mt-1 block rounded-lg bg-white px-3 py-2 font-semibold">{{ selectedCurrencySign }}{{ lineTotal(row) | number:'1.2-2' }}</span>
+                </label>
+
+                <button type="button" class="mt-5 grid h-9 w-9 place-items-center rounded-full text-red-600 hover:bg-red-50" [attr.aria-label]="'removeInvoiceItem' | translate" (click)="removeItem($index)">
+                  <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+                </button>
+              </div>
+            } @empty {
+              <p class="rounded-xl bg-slate-50 p-6 text-center text-sm text-slate-500">{{ 'addInvoiceItemHint' | translate }}</p>
+            }
+          </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="text-sm font-medium">
+            {{ 'notes' | translate }}
+            <textarea formControlName="notes" rows="5" class="mt-2 w-full rounded-xl border-slate-300"></textarea>
+          </label>
+
+          <div class="rounded-2xl bg-slate-900 p-5 text-white">
+            <div class="flex justify-between">
+              <span>{{ 'subTotal' | translate }}</span>
+              <strong>{{ selectedCurrencySign }}{{ subTotal | number:'1.2-2' }}</strong>
+            </div>
+            <div class="mt-3 grid grid-cols-2 gap-3">
+              <label class="text-xs">
+                {{ 'discount' | translate }}
+                <input type="number" formControlName="discount" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-0 text-slate-900">
+                @if (invoiceDiscountInvalid) {
+                  <small class="mt-1 block text-red-300">{{ 'discountExceedsSubtotal' | translate }}</small>
+                }
+              </label>
+              <label class="text-xs">
+                {{ 'taxRate' | translate }} (%)
+                <input type="number" formControlName="taxRate" min="0" max="100" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-0 text-slate-900">
+                @if (form.controls.taxRate.touched && form.controls.taxRate.invalid) {
+                  <small class="mt-1 block text-red-300">{{ 'taxRateInvalid' | translate }}</small>
+                }
+              </label>
+            </div>
+            <div class="mt-4 flex justify-between border-t border-white/20 pt-3">
+              <span>{{ 'tax' | translate }}</span>
+              <strong>{{ selectedCurrencySign }}{{ tax | number:'1.2-2' }}</strong>
+            </div>
+            <div class="mt-3 flex justify-between text-xl">
+              <span>{{ 'total' | translate }}</span>
+              <strong>{{ selectedCurrencySign }}{{ total | number:'1.2-2' }}</strong>
+            </div>
+            <p class="mt-4 text-xs text-slate-300">{{ 'serverCalculatedTotalsHint' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button type="button" class="rounded-full border px-5 py-2 disabled:opacity-50" [disabled]="isSaving" (click)="toggleForm()">
+            {{ 'cancel' | translate }}
+          </button>
+          <button type="submit" class="rounded-full bg-primary px-6 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSaving || isOptionsLoading">
+            {{ (isSaving ? 'saving' : 'save') | translate }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <div class="overflow-auto rounded-2xl border">
+        <table class="min-w-full text-left text-sm">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="p-3">{{ 'invoiceNo' | translate }}</th>
+              <th class="p-3">{{ 'customer' | translate }}</th>
+              <th class="p-3">{{ 'invoiceDate' | translate }}</th>
+              <th class="p-3">{{ 'dueDate' | translate }}</th>
+              <th class="p-3">{{ 'total' | translate }}</th>
+              <th class="p-3">{{ 'actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isListLoading) {
+              <tr><td colspan="6" class="p-10 text-center text-slate-500">{{ 'loading' | translate }}</td></tr>
+            } @else {
+              @for (invoice of invoices; track invoice.id) {
+                <tr class="border-t">
+                  <td class="p-3 font-semibold">{{ invoice.invoiceNo }}</td>
+                  <td class="p-3">
+                    {{ invoice.customerName }}
+                    <small class="block text-slate-500">{{ invoice.customerNumber }}</small>
+                  </td>
+                  <td class="p-3">{{ invoice.invoiceDate }}</td>
+                  <td class="p-3">{{ invoice.dueDate }}</td>
+                  <td class="p-3">{{ invoice.currencySign }}{{ invoice.totalAmount | number:'1.2-2' }}</td>
+                  <td class="p-3">
+                    <div class="flex gap-2">
+                      <button type="button" class="icon-btn text-amber-600 disabled:opacity-40" [disabled]="isOptionsLoading || deletingId !== null || downloadingId !== null" [attr.aria-label]="'edit' | translate" (click)="edit(invoice)">
+                        <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>
+                      </button>
+                      <button type="button" class="icon-btn text-primary disabled:opacity-40" [disabled]="downloadingId !== null || deletingId !== null" [attr.aria-label]="'downloadPdf' | translate" (click)="pdf(invoice)">
+                        <i class="mdi" [class.mdi-loading]="downloadingId === invoice.id" [class.mdi-spin]="downloadingId === invoice.id" [class.mdi-file-pdf-box]="downloadingId !== invoice.id" aria-hidden="true"></i>
+                      </button>
+                      <button type="button" class="icon-btn text-red-600 disabled:opacity-40" [disabled]="deletingId !== null || downloadingId !== null" [attr.aria-label]="'delete' | translate" (click)="delete(invoice)">
+                        <i class="mdi" [class.mdi-loading]="deletingId === invoice.id" [class.mdi-spin]="deletingId === invoice.id" [class.mdi-delete-outline]="deletingId !== invoice.id" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="p-10 text-center text-slate-500">{{ 'noInvoicesFound' | translate }}</td></tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

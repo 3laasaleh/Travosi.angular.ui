@@ -12,8 +12,8 @@ import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
   templateUrl: './user-invoice.html',
 })
 export class UserInvoice implements AfterViewInit {
-  logoDark = 'assets/images/logo-dark.png';
-  logoLight = 'assets/images/logo-light.png';
+  logoDark = 'assets/images/main-logo.png';
+  logoLight = 'assets/images/main-logo.png';
 
   ngAfterViewInit(): void {
     feather.replace();
