@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,10 +6,11 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../../core/services/currency.service';
+import { formatHomePrice } from '../../../home-price.util';
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [TranslatePipe, DecimalPipe],
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail.html',
 })
@@ -70,12 +70,8 @@ export class TourDetail {
     return languages || '-';
   }
 
-  get price(): number {
-    return this.currencyService.convert(this.tour?.pricePerPerson ?? this.tour?.price, this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
-  }
-
-  get currencySymbol(): string {
-    return this.currencyService.displayLabel(this.tour?.currencyId ?? this.tour?.currency?.id ?? 2);
+  get formattedPrice(): string {
+    return formatHomePrice(this.currencyService, this.tour?.pricePerPerson ?? this.tour?.price, this.tour);
   }
 
   get description(): string {

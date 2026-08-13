@@ -79,6 +79,27 @@ export class AdminService {
     });
   }
 
+  getBlogs(page = 1, pageSize = 20): Observable<any> {
+    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    return this.http.get(`${environment.baseUrl}Blogs/GetAll`, { headers: this.getHeaders(), params });
+  }
+
+  createBlog(payload: FormData): Observable<any> {
+    return this.http.post(`${environment.baseUrl}Blogs`, payload, { headers: this.getHeaders() });
+  }
+
+  updateBlog(payload: FormData): Observable<any> {
+    return this.http.put(`${environment.baseUrl}Blogs`, payload, { headers: this.getHeaders() });
+  }
+
+  changeBlogStatus(id: number): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Blogs/${id}/ChangeStatus`, {}, { headers: this.getHeaders() });
+  }
+
+  deleteBlogImage(imageId: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Blogs/deleteImage/${imageId}`, { headers: this.getHeaders() });
+  }
+
   setTourCoverImage(tourId: number, imageId: number): Observable<any> {
     return this.http.patch(`${environment.baseUrl}Tours/CoverImage`, {
       TourId: tourId,

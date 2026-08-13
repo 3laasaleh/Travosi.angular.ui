@@ -17,6 +17,7 @@ import { FooterOne } from '../../layout/footer-one/footer-one';
 import { AgencyOne } from '../../shared/components/agency-one/agency-one';
 import { DestinationsSection } from './home-sections/destinations-section/destinations-section';
 import { PackagesSection } from './home-sections/packages-section/packages-section';
+import { BlogsSection } from './home-sections/blogs-section/blogs-section';
 import { ToursSection } from './home-sections/tours-section/tours-section';
 import { SelectedDate } from '../../shared/components/selected-date/selected-date';
 import { UsersOne } from '../../shared/components/users-one/users-one';
@@ -33,6 +34,7 @@ import { RouterLink } from '@angular/router';
     DestinationsSection,
     ToursSection,
     PackagesSection,
+    BlogsSection,
     TranslatePipe,
     RouterLink,
   ],

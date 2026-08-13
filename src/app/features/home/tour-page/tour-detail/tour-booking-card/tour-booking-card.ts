@@ -5,7 +5,6 @@ import {
   Input,
   inject,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import {
   AbstractControl,
   FormControl,
@@ -22,12 +21,13 @@ import { ApiService } from '../../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../../core/services/currency.service';
 import { AuthService } from '../../../../user/_services/auth.service';
 import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
+import { formatHomePrice } from '../../../home-price.util';
 
 
 @Component({
   selector: 'app-tour-booking-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe, DatePicker],
+  imports: [ReactiveFormsModule, TranslatePipe, DatePicker],
   templateUrl: './tour-booking-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -67,11 +67,11 @@ export class TourBookingCard {
   }
 
   get pricePerPerson(): number {
-    return this.currencyService.convert(this.product?.pricePerPerson ?? this.product?.price, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+    return this.rawPrice(this.product?.pricePerPerson ?? this.product?.price);
   }
 
   get pricePerChild(): number {
-    return this.currencyService.convert(this.product?.pricePerChild, this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+    return this.rawPrice(this.product?.pricePerChild);
   }
 
   get seatsAvailable(): number {
@@ -96,8 +96,16 @@ export class TourBookingCard {
     );
   }
 
-  get currencySymbol(): string {
-    return this.currencyService.displayLabel(this.product?.currencyId ?? this.product?.currency?.id ?? 2);
+  get formattedPricePerPerson(): string {
+    return formatHomePrice(this.currencyService, this.pricePerPerson, this.product);
+  }
+
+  get formattedPricePerChild(): string {
+    return formatHomePrice(this.currencyService, this.pricePerChild, this.product);
+  }
+
+  get formattedTotalAmount(): string {
+    return formatHomePrice(this.currencyService, this.totalAmount, this.product);
   }
 
   get minTravelDate(): string {
@@ -247,6 +255,11 @@ export class TourBookingCard {
     return /already has a booking|already have a booking|same dates/i.test(value)
       ? 'duplicateBookingDates'
       : value || 'bookingCreateError';
+  }
+
+  private rawPrice(value: unknown): number {
+    const price = Number(value ?? 0);
+    return Number.isFinite(price) ? price : 0;
   }
 
   private showToast(icon: 'success' | 'error', message: string): void {

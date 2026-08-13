@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
@@ -8,7 +7,7 @@ import { environment } from '../../../../environments/environment';
 import { CurrencyService } from '../../../core/services/currency.service';
 
 @Component({
-  selector: 'app-destinations-menu', standalone: true, imports: [RouterLink, TranslatePipe, DecimalPipe],
+  selector: 'app-destinations-menu', standalone: true, imports: [RouterLink, TranslatePipe],
   templateUrl: './destinations-menu.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DestinationsMenu {
@@ -36,8 +35,12 @@ export class DestinationsMenu {
     const path = raw.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
-  tourPrice(tour: any): number { return this.currencyService.convert(tour?.pricePerPerson, tour?.currencyId ?? 2); }
-  tourCurrency(tour: any): string { return this.currencyService.displayLabel(tour?.currencyId ?? 2); }
+  formattedTourPrice(tour: any): string {
+    return this.currencyService.formatPrice(
+      tour?.pricePerPerson,
+      tour?.currencyId ?? tour?.currency ?? 'USD',
+    );
+  }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
   get cities(): any[] { return this.selectedDestination?.cities ?? []; }
   get tours(): any[] { return this.selectedCity?.tours ?? []; }

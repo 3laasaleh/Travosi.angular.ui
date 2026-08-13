@@ -108,6 +108,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/configurations/quotations/quotations-page').then((m) => m.Quotations),
       },
       {
+        path: 'blogs',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/blogs/blogs-page').then((m) => m.Blogs),
+      },
+      {
         path: 'invoices',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configurations/invoices/invoices-page').then((m) => m.Invoices),
@@ -257,9 +262,12 @@ export const routes: Routes = [
   },
  
   {
+    path: 'blogs/:id',
+    loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
+  },
+  {
     path: 'blogs',
-    loadComponent: () =>
-      import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
+    loadComponent: () => import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
   },
   {
     path: 'blog-standard',
@@ -268,8 +276,7 @@ export const routes: Routes = [
   },
   {
     path: 'blog-detail',
-    loadComponent: () =>
-      import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
+    redirectTo: 'blogs',
   },
 
   { path: '**', redirectTo: 'home', pathMatch: 'full' },

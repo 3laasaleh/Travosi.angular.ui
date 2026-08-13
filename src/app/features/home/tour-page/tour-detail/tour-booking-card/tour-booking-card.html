@@ -16,12 +16,12 @@
   <div class="flex items-end justify-between">
     <div>
       <span class="text-sm font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
-      <p class="text-2xl font-semibold">{{ currencySymbol }}{{ pricePerPerson | number: '1.0-2' }}</p>
+      <p class="text-2xl font-semibold">{{ formattedPricePerPerson }}</p>
     </div>
     @if (pricePerChild > 0) {
       <div class="text-end">
         <span class="text-xs font-medium text-slate-400">{{ 'pricePerChild' | translate }}</span>
-        <p class="text-base font-semibold">{{ currencySymbol }}{{ pricePerChild | number: '1.0-2' }}</p>
+        <p class="text-base font-semibold">{{ formattedPricePerChild }}</p>
       </div>
     }
   </div>
@@ -108,7 +108,7 @@
 
     <div class="mb-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ">
       <span class="text-sm font-semibold">{{ 'total' | translate }} · {{ guests }} {{ 'travelers' | translate }}</span>
-      <span class="text-lg font-bold text-primary">{{ currencySymbol }}{{ totalAmount | number: '1.0-2' }}</span>
+      <span class="text-lg font-bold text-primary">{{ formattedTotalAmount }}</span>
     </div>
 
     @if (errorMessage) { <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }

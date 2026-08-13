@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
@@ -6,10 +5,11 @@ import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { formatHomePrice } from '../../home-price.util';
 
 @Component({
   selector: 'app-packages-section',
-  imports: [TranslatePipe, RouterLink, DecimalPipe],
+  imports: [TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './packages-section.html',
 })
@@ -50,12 +50,8 @@ export class PackagesSection implements OnInit {
     });
   }
 
-  price(item: any): number {
-    return this.currencyService.convert(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
-  }
-
-  currencyLabel(item: any): string {
-    return this.currencyService.displayLabel(item.currencyId ?? item?.currency?.id ?? 2);
+  formattedPrice(item: any): string {
+    return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 
   packageTitle(item: any): string {

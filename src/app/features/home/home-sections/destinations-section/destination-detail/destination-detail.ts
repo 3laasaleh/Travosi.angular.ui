@@ -8,7 +8,6 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -22,11 +21,12 @@ import { FooterOne } from '../../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../../../shared/components/destination-cities-carousel/destination-cities-carousel';
+import { formatHomePrice } from '../../../home-price.util';
 
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -143,12 +143,8 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     return tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '';
   }
 
-  tourPrice(tour: any): number {
-    return this.currencyService.convert(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
-  }
-
-  tourCurrencySymbol(tour: any): string {
-    return this.currencyService.displayLabel(tour.currencyId ?? tour?.currency?.id ?? 2);
+  formattedTourPrice(tour: any): string {
+    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
   }
 
   tourDestinationName(tour: any): string {

@@ -51,7 +51,7 @@
           <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3">
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ duration }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div></div>
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-account-group-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p></div></div>
-            <div class="col-span-2 flex items-center gap-3 p-4 sm:col-span-1 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-wallet-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-bold text-primary">{{ currencySymbol }} {{ price | number:'1.0-2' }}</p></div></div>
+            <div class="col-span-2 flex items-center gap-3 p-4 sm:col-span-1 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-wallet-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-bold text-primary">{{ formattedPrice }}</p></div></div>
           </div>
         </section>
 
@@ -96,7 +96,7 @@
           <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
             {{ 'packageSummary' | translate }}</p>
           <div class="mt-4 flex items-end gap-2">
-            <strong class="text-4xl">{{ currencySymbol }} {{ price | number: '1.0-2' }}</strong>
+            <strong class="text-4xl">{{ formattedPrice }}</strong>
             <span class="pb-1 text-sm text-white/55">/ {{ 'person' | translate }}</span>
           </div>
           <div class="my-6 h-px bg-white/10"></div>

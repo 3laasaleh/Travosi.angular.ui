@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -9,10 +8,11 @@ import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
+import { formatHomePrice } from '../home-price.util';
 
 @Component({
   selector: 'app-city-page', standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne],
   templateUrl: './city-page.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CityPage implements OnInit {
@@ -52,8 +52,7 @@ export class CityPage implements OnInit {
   imageUrl(source: any): string { const raw = typeof source === 'string' ? source : source?.imageUrl ?? source?.url ?? ''; return !raw ? 'assets/images/bg/3.jpg' : /^(blob:|data:|https?:\/\/)/i.test(raw) ? raw : `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`; }
   tourImage(tour: any): string { return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl); }
   tourTitle(tour: any): string { return this.isArabic ? tour?.titleAr ?? tour?.titleEng ?? '' : tour?.titleEng ?? tour?.titleAr ?? ''; }
-  tourPrice(tour: any): number { return this.currencyService.convert(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2); }
-  currency(tour: any): string { return this.currencyService.displayLabel(tour?.currencyId ?? 2); }
+  formattedTourPrice(tour: any): string { return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour); }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   private load(destinationId: number, cityId: number): void {

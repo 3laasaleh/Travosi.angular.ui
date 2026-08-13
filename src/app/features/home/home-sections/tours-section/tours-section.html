@@ -31,7 +31,7 @@
               <div class="flex flex-1 flex-col p-4">
                 <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.titleEng }}</h3>
                 @if (item.description ?? item.fullDescription) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ item.fullDescription ?? item.description }}</p> }
-                <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><strong class="text-lg text-primary">{{ currencyLabel(item) }} {{ price(item) | number: '1.0-2' }}</strong><i class="mdi mdi-arrow-right text-xl text-slate-400 transition group-hover:text-primary rtl:rotate-180"></i></div></div>
+                <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong><i class="mdi mdi-arrow-right text-xl text-slate-400 transition group-hover:text-primary rtl:rotate-180"></i></div></div>
               </div>
             </article>
           </a>

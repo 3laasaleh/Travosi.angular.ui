@@ -32,6 +32,7 @@ export class SidebarMenu {
     { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
     { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },
     { label: 'cities', path: '/configurations/cities', icon: 'mdi-city-variant-outline' },
+    { label: 'blogs', path: '/configurations/blogs', icon: 'mdi-post-outline' },
     { label: 'quotations', path: '/configurations/quotations', icon: 'mdi-file-document-outline' },
     { label: 'invoices', path: '/configurations/invoices', icon: 'mdi-receipt-text-outline' },
     { label: 'vouchers', path: '/configurations/vouchers', icon: 'mdi-ticket-confirmation-outline' },

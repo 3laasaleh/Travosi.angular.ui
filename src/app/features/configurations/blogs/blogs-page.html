@@ -1,0 +1,13 @@
+<section class="min-h-screen bg-slate-50 px-4 text-slate-800">
+  <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div><p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Admin</p><h1 class="mt-2 text-3xl font-semibold">Blogs</h1><p class="mt-2 text-sm text-slate-500">Create and publish travel news, guides, and stories.</p></div>
+      @if (!showForm) { <button type="button" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white" (click)="create()"><i class="mdi mdi-plus me-1"></i>Add blog</button> }
+    </header>
+    @if (showForm) {
+      <app-blogs-form-card [selectedBlog]="selectedBlog" (saved)="saved()" (cancelled)="closeForm()" />
+    } @else {
+      <app-blogs-list [refreshToken]="refreshToken" (editRequested)="edit($event)" />
+    }
+  </div>
+</section>

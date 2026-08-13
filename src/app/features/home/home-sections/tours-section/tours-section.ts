@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,19 +7,20 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { formatHomePrice } from '../../home-price.util';
 export interface TourHomeDTO {
   id: number;
   coverImageUrl: string | null;
   titleAr: string;
   titleEng: string;
   destinationName: string;
-  description: string;
-  fullDescription: string;
+  description?: string | null;
+  fullDescription?: string | null;
   
 }
 @Component({
   selector: 'app-tours-section',
-  imports: [RouterLink, TranslatePipe, DecimalPipe],
+  imports: [RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tours-section.html',
 })
@@ -57,12 +57,8 @@ export class ToursSection implements OnInit {
     });
   }
 
-  price(item: any): number {
-    return this.currencyService.convert(item?.pricePerPerson ?? item?.price, item?.currencyId ?? item?.currency?.id ?? 2);
-  }
-
-  currencyLabel(item: any): string {
-    return this.currencyService.displayLabel(item?.currencyId ?? item?.currency?.id ?? 2);
+  formattedPrice(item: any): string {
+    return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 
   imageUrl(item: any): string {

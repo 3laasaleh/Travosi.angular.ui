@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -17,6 +16,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
+import { formatHomePrice } from '../home-price.util';
 
 interface PaginationInfo {
   page: number;
@@ -28,7 +28,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-tours-list',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
   templateUrl: './tours-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -113,12 +113,8 @@ export class HomeToursList implements OnInit {
     return Number.isFinite(value) && value > 0 ? value : null;
   }
 
-  price(tour: any): number {
-    return this.currencyService.convert(tour?.pricePerPerson ?? tour?.price, tour?.currencyId ?? tour?.currency?.id ?? 2);
-  }
-
-  currencyLabel(tour: any): string {
-    return this.currencyService.displayLabel(tour?.currencyId ?? tour?.currency?.id ?? 2);
+  formattedPrice(tour: any): string {
+    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
   }
 
   imageUrl(tour: any): string {

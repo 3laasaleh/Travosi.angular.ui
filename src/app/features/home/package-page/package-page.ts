@@ -6,7 +6,6 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -18,11 +17,12 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
+import { formatHomePrice } from '../home-price.util';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DecimalPipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -95,12 +95,12 @@ export class HomePackagePage implements OnInit {
     return this.travelPackage?.destinationName ?? this.travelPackage?.destination?.nameEng ?? this.travelPackage?.destination?.name ?? this.travelPackage?.destinations?.[0]?.destinationName ?? '';
   }
 
-  get price(): number {
-    return this.currencyService.convert(this.travelPackage?.pricePerPerson ?? this.travelPackage?.price, this.travelPackage?.currencyId ?? this.travelPackage?.currency?.id ?? 2);
-  }
-
-  get currencySymbol(): string {
-    return this.currencyService.displayLabel(this.travelPackage.currencyId ?? this.travelPackage?.currency?.id ?? 2);
+  get formattedPrice(): string {
+    return formatHomePrice(
+      this.currencyService,
+      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
+      this.travelPackage,
+    );
   }
 
   get duration(): string {

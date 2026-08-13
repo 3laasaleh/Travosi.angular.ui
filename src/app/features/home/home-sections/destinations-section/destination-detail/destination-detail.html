@@ -174,7 +174,7 @@
                           }
                           <div class="mt-auto pt-5">
                             <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
-                              <strong class="text-lg text-primary">{{ tourCurrencySymbol(tour) }} {{ tourPrice(tour) | number: '1.0-2' }}</strong>
+                              <strong class="text-lg text-primary">{{ formattedTourPrice(tour) }}</strong>
                               <span class="text-sm font-semibold text-slate-900 transition group-hover:text-primary">
                                 {{ 'bookNow' | translate }} <i class="mdi mdi-calendar-check-outline ms-1"></i>
                               </span>
