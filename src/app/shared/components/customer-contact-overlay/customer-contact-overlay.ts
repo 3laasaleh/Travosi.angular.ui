@@ -23,36 +23,32 @@ export class CustomerContactOverlay {
   readonly isCustomerPage = signal(true);
   readonly modalOpen = signal(false);
 
-  private hasShownExitIntent = false;
 
   constructor() {
-    this.updateRoute(this.router.url);
-    this.router.events
-      .pipe(
-        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        takeUntilDestroyed(),
-      )
-      .subscribe((event) => this.updateRoute(event.urlAfterRedirects));
+    // this.updateRoute(this.router.url);
+    // this.router.events
+    //   .pipe(
+    //     filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+    //     takeUntilDestroyed(),
+    //   )
+    //   .subscribe((event) => 
+    //     this.updateRoute(event.urlAfterRedirects)
+    // );
   }
 
-  @HostListener('document:mouseout', ['$event'])
-  showHomeExitIntent(event: MouseEvent): void {
-    const isLeavingViewport = event.relatedTarget === null && event.clientY <= 8;
-    if (
-      !isLeavingViewport ||
-      !this.isCustomerPage() ||
-      this.modalOpen() ||
-      this.hasShownExitIntent
-    ) return;
+// @HostListener('window:beforeunload', ['$event'])
+// onPageHide(event: any) {
+//     if (!this.isCustomerPage() || this.modalOpen()) {
+//     return;
+//   }
 
-    this.hasShownExitIntent = true;
-    this.modalOpen.set(true);
-  }
+//   event.preventDefault();
+//   event.returnValue = '';
 
-  @HostListener('document:keydown.escape')
-  closeOnEscape(): void {
-    if (this.modalOpen()) this.closeModal();
-  }
+//     this.modalOpen.set(true);
+//   }
+
+
 
   closeModal(): void {
     this.modalOpen.set(false);
