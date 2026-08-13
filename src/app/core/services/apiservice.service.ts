@@ -3,12 +3,14 @@ import { firstValueFrom, Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import {
   HttpClient,
+  HttpContext,
   HttpHeaders
 } from "@angular/common/http";
 
 
 import { environment } from "../../../environments/environment";
 import { AuthService } from "../../features/user/_services/auth.service";
+import { IS_PUBLIC_API_REQUEST } from "../interceptors/public-api-context";
 
 @Injectable({
   providedIn: 'root',
@@ -26,13 +28,17 @@ export class ApiService {
 
   }
 
-  getUnauthntecated(url: string): Observable<any> {
+  getUnauthntecated<T = any>(url: string): Observable<T> {
 
-    return this.http.get<any[]>(environment.baseUrl + url);
+    return this.http.get<T>(environment.baseUrl + url, {
+      context: new HttpContext().set(IS_PUBLIC_API_REQUEST, true),
+    });
 
   }
-  postUnauthenticated(url: string, data: unknown): Observable<any> {
-    return this.http.post<any>(environment.baseUrl + url, data);
+  postUnauthenticated<T = any>(url: string, data: unknown): Observable<T> {
+    return this.http.post<T>(environment.baseUrl + url, data, {
+      context: new HttpContext().set(IS_PUBLIC_API_REQUEST, true),
+    });
   }
   get(url: string): Observable<any> {
     const bearer = 'Bearer ' + this.getToken(); // this.anyService.getToken();

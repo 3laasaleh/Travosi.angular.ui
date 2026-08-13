@@ -1,0 +1,48 @@
+import { HttpErrorResponse, } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../../features/user/_services/auth.service';
+import { IS_PUBLIC_API_REQUEST } from './public-api-context';
+export const authSessionInterceptor = (request, next) => {
+    if (request.context.get(IS_PUBLIC_API_REQUEST)) {
+        return next(request);
+    }
+    const authService = inject(AuthService);
+    const token = authService.getToken();
+    const currentUser = authService.getCurentUser();
+    const hasAuthentication = !!token || !!currentUser || request.headers.has('Authorization');
+    // A user cookie without its token is an invalid logged-in session.
+    if (currentUser && !token) {
+        authService.logout();
+        return throwError(() => new HttpErrorResponse({
+            status: 401,
+            statusText: 'Authentication session is missing',
+            url: request.url,
+        }));
+    }
+    if (token) {
+        let expired = true;
+        try {
+            expired = authService.isTokenExpired();
+        }
+        catch {
+            expired = true;
+        }
+        if (expired) {
+            authService.logout();
+            return throwError(() => new HttpErrorResponse({
+                status: 401,
+                statusText: 'Authentication token has expired',
+                url: request.url,
+            }));
+        }
+    }
+    return next(request).pipe(catchError((error) => {
+        if (error instanceof HttpErrorResponse &&
+            error.status === 401 &&
+            hasAuthentication) {
+            authService.logout();
+        }
+        return throwError(() => error);
+    }));
+};

@@ -5,8 +5,13 @@ import {
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../../features/user/_services/auth.service';
+import { IS_PUBLIC_API_REQUEST } from './public-api-context';
 
 export const authSessionInterceptor: HttpInterceptorFn = (request, next) => {
+  if (request.context.get(IS_PUBLIC_API_REQUEST)) {
+    return next(request);
+  }
+
   const authService = inject(AuthService);
   const token = authService.getToken();
   const currentUser = authService.getCurentUser();

@@ -18,6 +18,11 @@
     "blogStatusUpdated": "\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 \u0628\u0646\u062c\u0627\u062d.",
     "blogStatusUpdateError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629.",
     "noBlogsCreated": "\u0644\u0645 \u064a\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0623\u064a \u0645\u062f\u0648\u0646\u0627\u062a \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
+    "blogImages": "\u0635\u0648\u0631 \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
+    "blogImageRules": "JPG \u0623\u0648 PNG \u0623\u0648 WebP\u060c \u0648\u0628\u062d\u062f \u0623\u0642\u0635\u0649 5 \u0645\u064a\u062c\u0627\u0628\u0627\u064a\u062a",
+    "blogImageLimit": "\u0627\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0644\u0644\u0645\u062f\u0648\u0646\u0629 \u0647\u0648 5 \u0635\u0648\u0631.",
+    "blogImageNumber": "\u0635\u0648\u0631\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 {{number}}",
+    "processingImages": "\u062c\u0627\u0631\u064d \u0645\u0639\u0627\u0644\u062c\u0629 \u0627\u0644\u0635\u0648\u0631...",
     "delete": "حذف",
     "removeImage": "إزالة الصورة",
     "confirmImageDelete": "هل تريد حذف هذه الصورة؟",
@@ -764,6 +769,13 @@
     ,"newsletterDescription": "استقبل أفكار السفر وإلهام الوجهات وأحدث عروض العطلات عبر البريد الإلكتروني."
     ,"writeYourEmail": "أدخل بريدك الإلكتروني"
     ,"subscribe": "اشترك"
+    ,"subscribing": "جارٍ الاشتراك..."
+    ,"newsletterEmailRequired": "البريد الإلكتروني مطلوب."
+    ,"newsletterEmailInvalid": "أدخل عنوان بريد إلكتروني صالحًا."
+    ,"newsletterEmailTooLong": "يجب ألا يزيد البريد الإلكتروني عن 254 حرفًا."
+    ,"newsletterSubscribedSuccess": "شكرًا لاشتراكك في نشرتنا البريدية."
+    ,"newsletterAlreadySubscribed": "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا البريدية."
+    ,"newsletterSubscribeError": "تعذر إتمام اشتراكك. يرجى المحاولة مرة أخرى."
     ,"allRightsReserved": "جميع الحقوق محفوظة."
     ,"activateAccount": "تفعيل حسابك"
     ,"activationInProgress": "جارٍ تفعيل حسابك، يرجى الانتظار..."

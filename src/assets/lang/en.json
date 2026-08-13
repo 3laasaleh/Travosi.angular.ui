@@ -18,6 +18,11 @@
     "blogStatusUpdated": "Blog status updated successfully.",
     "blogStatusUpdateError": "Unable to update the blog status.",
     "noBlogsCreated": "No blogs have been created yet.",
+    "blogImages": "Blog images",
+    "blogImageRules": "JPG, PNG or WebP, maximum 5 MB",
+    "blogImageLimit": "A blog can have a maximum of 5 images.",
+    "blogImageNumber": "Blog image {{number}}",
+    "processingImages": "Processing images...",
     "delete": "Delete",
     "removeImage": "Remove image",
     "confirmImageDelete": "Delete this image?",
@@ -764,6 +769,13 @@
     ,"newsletterDescription": "Receive travel ideas, destination inspiration, and our latest holiday offers by email."
     ,"writeYourEmail": "Enter your email"
     ,"subscribe": "Subscribe"
+    ,"subscribing": "Subscribing..."
+    ,"newsletterEmailRequired": "Email is required."
+    ,"newsletterEmailInvalid": "Enter a valid email address."
+    ,"newsletterEmailTooLong": "Email must be 254 characters or fewer."
+    ,"newsletterSubscribedSuccess": "Thank you for subscribing to our newsletter."
+    ,"newsletterAlreadySubscribed": "This email is already subscribed to our newsletter."
+    ,"newsletterSubscribeError": "We could not complete your subscription. Please try again."
     ,"allRightsReserved": "All rights reserved."
     ,"activateAccount": "Activate your account"
     ,"activationInProgress": "Activating your account, please wait..."
