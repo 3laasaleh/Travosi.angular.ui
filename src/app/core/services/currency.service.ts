@@ -11,8 +11,8 @@ export interface CurrencyOption {
 }
 
 const FALLBACK_CURRENCIES: CurrencyOption[] = [
-  { id: 2, code: 'USD', name: 'US Dollar', symbol: '$' },
-  { id: 1, code: 'EGP', name: 'Egyptian Pound', symbol: 'EGP' },
+  { id: 2, code: 'USD', name: 'USD', symbol: '$' },
+  { id: 1, code: 'EGP', name: 'EGP', symbol: 'EGP' },
 ];
 
 @Injectable({ providedIn: 'root' })
