@@ -16,31 +16,58 @@
 
             <div class="lg:col-span-5 md:col-span-6">
                 <div class="lg:ms-5">
-                    <div class="bg-white  rounded-md shadow dark:shadow-gray-800 p-6">
-                        <h3 class="mb-6 text-2xl leading-normal font-semibold">Get in touch !</h3>
-                        <form>
-                            <div class="grid lg:grid-cols-12 grid-cols-1 gap-3">
-                                <div class="lg:col-span-6">
-                                    <label for="name" class="font-semibold">Your Name:</label>
-                                    <input name="name" id="name" type="text" class="mt-2 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Name :" required>
-                                </div>
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                        @if (submitMessage) {
+                            <div class="mb-4 rounded-2xl border px-4 py-3 text-sm"
+                                [class.border-emerald-200]="submitMessageKind === 'success'"
+                                [class.bg-emerald-50]="submitMessageKind === 'success'"
+                                [class.text-emerald-600]="submitMessageKind === 'success'"
+                                [class.border-red-200]="submitMessageKind === 'error'"
+                                [class.bg-red-50]="submitMessageKind === 'error'"
+                                [class.text-red-600]="submitMessageKind === 'error'"
+                                [attr.role]="submitMessageKind === 'error' ? 'alert' : 'status'" aria-live="polite">{{ submitMessage | translate }}</div>
+                        }
 
-                                <div class="lg:col-span-6">
-                                    <label for="email" class="font-semibold">Your Email:</label>
-                                    <input name="email" id="email" type="email" class="mt-2 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Email :" required>
+                        <h3 class="mb-4 text-xl font-semibold">{{ 'getInTouch' | translate }}</h3>
+                        <form class="space-y-4" [formGroup]="contactForm" (ngSubmit)="submitQuestion()" novalidate>
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div>
+                                    <label for="contactFirstName" class="mb-2 block text-sm font-medium">{{ 'firstName' | translate }}</label>
+                                    <input id="contactFirstName" formControlName="firstName" type="text" maxlength="100" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+                                    @if (contactForm.controls.firstName.touched && contactForm.controls.firstName.invalid) {
+                                        <p class="mt-1 text-xs text-red-600">{{ 'firstNameRequired' | translate }}</p>
+                                    }
                                 </div>
-
-                                <div class="lg:col-span-12">
-                                    <label for="subject" class="font-semibold">Your Question:</label>
-                                    <input name="subject" id="subject" class="mt-2 w-full py-2 px-3 h-10 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Subject :" required>
+                                <div>
+                                    <label for="contactLastName" class="mb-2 block text-sm font-medium">{{ 'lastName' | translate }}</label>
+                                    <input id="contactLastName" formControlName="lastName" type="text" maxlength="100" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+                                    @if (contactForm.controls.lastName.touched && contactForm.controls.lastName.invalid) {
+                                        <p class="mt-1 text-xs text-red-600">{{ 'lastNameRequired' | translate }}</p>
+                                    }
                                 </div>
-
-                                <div class="lg:col-span-12">
-                                    <label for="comments" class="font-semibold">Your Comment:</label>
-                                    <textarea name="comments" id="comments" class="mt-2 w-full py-2 px-3 h-28 bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:ring-0" placeholder="Message :"></textarea>
+                                <div>
+                                    <label for="contactNumber" class="mb-2 block text-sm font-medium">{{ 'contactNumber' | translate }}</label>
+                                    <input id="contactNumber" formControlName="contactNumber" type="tel" maxlength="30" dir="ltr" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+                                    @if (contactForm.controls.contactNumber.touched && contactForm.controls.contactNumber.invalid) {
+                                        <p class="mt-1 text-xs text-red-600">{{ (contactForm.controls.contactNumber.hasError('required') ? 'contactNumberRequired' : 'contactNumberInvalid') | translate }}</p>
+                                    }
+                                </div>
+                                <div>
+                                    <label for="contactEmail" class="mb-2 block text-sm font-medium">{{ 'email' | translate }}</label>
+                                    <input id="contactEmail" formControlName="email" type="email" maxlength="254" dir="ltr" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+                                    @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
+                                        <p class="mt-1 text-xs text-red-600">{{ (contactForm.controls.email.hasError('required') ? 'emailRequired' : 'emailInvalid') | translate }}</p>
+                                    }
                                 </div>
                             </div>
-                            <button type="submit" id="submit" name="send" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md mt-2">Send Message</button>
+                            <div>
+                                <label for="contactQuestion" class="mb-2 block text-sm font-medium">{{ 'question' | translate }}</label>
+                                <textarea id="contactQuestion" formControlName="question" rows="5" maxlength="2000" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+                                @if (contactForm.controls.question.touched && contactForm.controls.question.invalid) {
+                                    <p class="mt-1 text-xs text-red-600">{{ 'questionRequired' | translate }}</p>
+                                }
+                            </div>
+                            <button type="submit" [disabled]="isSubmitting" [attr.aria-busy]="isSubmitting" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isSubmitting) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'sending' | translate }}</span> } @else { {{ 'sendMessage' | translate }} }</button>
                         </form>
                     </div>
                 </div>

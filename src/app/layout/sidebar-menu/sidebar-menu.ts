@@ -36,6 +36,7 @@ export class SidebarMenu {
     { label: 'quotations', path: '/configurations/quotations', icon: 'mdi-file-document-outline' },
     { label: 'invoices', path: '/configurations/invoices', icon: 'mdi-receipt-text-outline' },
     { label: 'vouchers', path: '/configurations/vouchers', icon: 'mdi-ticket-confirmation-outline' },
+    { label: 'customerQuestions', path: '/configurations/contact-messages', icon: 'mdi-comment-question-outline' },
   ];
 
   toggleCollapsed(): void {

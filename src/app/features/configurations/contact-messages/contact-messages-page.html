@@ -1,0 +1,29 @@
+<section class="min-h-screen bg-slate-50 px-4 text-slate-800">
+  <div class="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'admin' | translate }}</p>
+        <h1 class="mt-2 text-3xl font-semibold">{{ 'customerQuestions' | translate }}</h1>
+        <p class="mt-2 text-sm text-slate-500">{{ 'manageCustomerQuestions' | translate }}</p>
+      </div>
+      <div class="flex gap-3">
+        <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-primary/40 bg-primary/5 text-xl text-primary transition hover:bg-primary hover:text-white" [attr.title]="'refresh' | translate" (click)="refresh()">
+          <i class="mdi mdi-refresh"></i>
+        </button>
+        <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-rose-200 bg-rose-50 text-xl text-rose-600 transition hover:bg-rose-600 hover:text-white" [attr.title]="(viewMode === 'table' ? 'switchToGrid' : 'switchToTable') | translate" (click)="viewMode = viewMode === 'table' ? 'grid' : 'table'">
+          <i class="mdi" [class.mdi-view-grid-outline]="viewMode === 'table'" [class.mdi-table]="viewMode === 'grid'"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="mb-6 flex flex-wrap gap-2">
+      @for (filter of readFilters; track filter) {
+        <button type="button" class="rounded-full border px-4 py-1.5 text-sm font-semibold transition" [class.border-primary]="readFilter === filter" [class.bg-primary]="readFilter === filter" [class.text-white]="readFilter === filter" [class.border-slate-300]="readFilter !== filter" [class.text-slate-600]="readFilter !== filter" (click)="setReadFilter(filter)">{{ ('contactMessagesFilter_' + filter) | translate }}</button>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+      <app-configurations-contact-messages-list [viewMode]="viewMode" [readFilter]="readFilter" [refreshToken]="refreshToken" />
+    </div>
+  </div>
+</section>
