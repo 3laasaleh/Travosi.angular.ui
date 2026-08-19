@@ -121,7 +121,7 @@
     "arrivalAirportRequired": "مطار الوصول مطلوب.",
     "searchAirportPlaceholder": "ابحث باسم المطار أو المدينة أو الرمز",
     "noAirportsFound": "لم يتم العثور على مطارات مطابقة.",
-    "airportSearchUnavailable": "البحث عن المطارات غير متاح مؤقتًا. تحقق من إعدادات Google Places.",
+    "airportSearchUnavailable": "البحث عن المطارات غير متاح مؤقتًا. يرجى المحاولة مرة أخرى.",
     "airportSelectionRequired": "اختر مطارًا من نتائج البحث.",
     "airportNameMaxLength": "يجب ألا يتجاوز اسم المطار 250 حرفًا.",
     "departureArrivalDifferent": "يجب أن يكون مطارا المغادرة والوصول مختلفين.",

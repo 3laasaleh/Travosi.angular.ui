@@ -121,7 +121,7 @@
     "arrivalAirportRequired": "Arrival airport is required.",
     "searchAirportPlaceholder": "Search airport, city, or code",
     "noAirportsFound": "No matching airports found.",
-    "airportSearchUnavailable": "Airport search is temporarily unavailable. Check the Google Places configuration.",
+    "airportSearchUnavailable": "Airport search is temporarily unavailable. Please try again.",
     "airportSelectionRequired": "Select an airport from the search results.",
     "airportNameMaxLength": "Airport name cannot exceed 250 characters.",
     "departureArrivalDifferent": "Departure and arrival airports must be different.",

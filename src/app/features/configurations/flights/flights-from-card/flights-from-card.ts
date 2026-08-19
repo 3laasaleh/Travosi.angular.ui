@@ -20,7 +20,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
@@ -43,6 +43,9 @@ export interface FlightDTO {
 
 type AirportField = 'departure' | 'arrival';
 
+const AIRPORT_RESULT_LIMIT = 20;
+const AIRPORT_MIN_QUERY_LENGTH = 2;
+
 @Component({
   selector: 'app-flights-from-card',
   standalone: true,
@@ -52,16 +55,12 @@ type AirportField = 'departure' | 'arrival';
 })
 export class FlightsFromCard implements OnInit, OnChanges {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly translate = inject(TranslateService);
   private readonly airportSearchService = inject(AirportSearchService);
-  private readonly airportSessions: Record<AirportField, { token: string; interactionId: number }> = {
-    departure: { token: '', interactionId: 0 },
-    arrival: { token: '', interactionId: 0 },
-  };
   private readonly airportFocused: Record<AirportField, boolean> = {
     departure: false,
     arrival: false,
   };
+  private allAirports: AirportSearchResult[] = [];
   @Input() selectedFlight: FlightDTO | null = null;
   @Output() flightSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -90,6 +89,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadAirlines();
+    this.loadAirports();
     this.configureAirportSearch('departure');
     this.configureAirportSearch('arrival');
   }
@@ -109,6 +109,16 @@ export class FlightsFromCard implements OnInit, OnChanges {
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.airlines ?? pageData;
       this.airlines = Array.isArray(rows) ? rows : [];
+    });
+  }
+
+  loadAirports(): void {
+    this.airportSearchService.loadAll().pipe(
+      catchError(() => of([] as AirportSearchResult[])),
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.cdr.markForCheck()),
+    ).subscribe((airports) => {
+      this.allAirports = airports;
     });
   }
 
@@ -167,21 +177,24 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
   selectAirport(field: AirportField, airport: AirportSearchResult): void {
     const control = this.airportControl(field);
-    const placeIdControl = this.airportPlaceIdControl(field);
-    control.setValue(airport.displayName, { emitEvent: false });
+    const codeControl = this.airportCodeControl(field);
+    control.setValue(airport.value, { emitEvent: false });
     control.markAsDirty();
-    placeIdControl.setValue(airport.placeId, { emitEvent: false });
-    placeIdControl.markAsDirty();
+    codeControl.setValue(airport.code, { emitEvent: false });
+    codeControl.markAsDirty();
     this.flightForm.updateValueAndValidity();
+    this.setAirportResults(field, []);
     this.setAirportActiveIndex(field, -1);
     this.closeAirportResults(field);
-    this.endAirportSearchSession(field);
+  }
+
+  airportLocation(airport: AirportSearchResult): string {
+    return [airport.city, airport.country].filter((part) => !!part).join(', ');
   }
 
   openAirportResults(field: AirportField): void {
     this.airportFocused[field] = true;
-    this.getAirportSessionToken(field);
-    const shouldOpen = this.airportControl(field).value.trim().length >= 2
+    const shouldOpen = this.airportQuery(field).length >= AIRPORT_MIN_QUERY_LENGTH
       && (this.airportResults(field).length > 0
         || this.airportLoading(field)
         || this.airportSearchFailed(field));
@@ -203,7 +216,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
     if (event.key === 'Escape') {
       event.preventDefault();
       this.closeAirportResults(field);
-      this.endAirportSearchSession(field);
       return;
     }
 
@@ -246,7 +258,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const airportControl = this.airportControl(field);
     return airportControl.touched
       && !!airportControl.value.trim()
-      && this.airportPlaceIdControl(field).hasError('required');
+      && this.airportCodeControl(field).hasError('required');
   }
 
   private populateForm(flight: FlightDTO): void {
@@ -256,9 +268,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       flightNumber: flight.flightNumber ?? '',
       airlineId: flight.airlineId ?? null,
       departureAirport,
-      departureAirportPlaceId: this.existingAirportReference(departureAirport),
+      departureAirportCode: this.existingAirportCode(departureAirport),
       arrivalAirport,
-      arrivalAirportPlaceId: this.existingAirportReference(arrivalAirport),
+      arrivalAirportCode: this.existingAirportCode(arrivalAirport),
       departureTime: this.toLocalInput(flight.departureTime),
       arrivalTime: this.toLocalInput(flight.arrivalTime),
       price: flight.price ?? 0,
@@ -278,9 +290,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       flightNumber: '',
       airlineId: null,
       departureAirport: '',
-      departureAirportPlaceId: '',
+      departureAirportCode: '',
       arrivalAirport: '',
-      arrivalAirportPlaceId: '',
+      arrivalAirportCode: '',
       departureTime: '',
       arrivalTime: '',
       price: 0,
@@ -298,50 +310,66 @@ export class FlightsFromCard implements OnInit, OnChanges {
       map((value) => value.trim()),
       distinctUntilChanged(),
       tap((query) => {
-        this.airportPlaceIdControl(field).setValue('', { emitEvent: false });
+        this.airportCodeControl(field).setValue('', { emitEvent: false });
         this.setAirportResults(field, []);
         this.setAirportActiveIndex(field, -1);
-        if (query.length < 2) this.endAirportSearchSession(field);
         this.setAirportState(field, {
-          loading: query.length >= 2,
+          loading: query.length >= AIRPORT_MIN_QUERY_LENGTH && this.allAirports.length === 0,
           failed: false,
-          open: this.airportFocused[field] && query.length >= 2,
+          open: this.airportFocused[field] && query.length >= AIRPORT_MIN_QUERY_LENGTH,
         });
         this.flightForm.updateValueAndValidity({ emitEvent: false });
         this.cdr.markForCheck();
       }),
-      debounceTime(300),
+      debounceTime(200),
       switchMap((query) => {
-        if (query.length < 2) {
-          return of({ results: [] as AirportSearchResult[], failed: false, interactionId: 0 });
+        if (query.length < AIRPORT_MIN_QUERY_LENGTH) {
+          return of({ results: [] as AirportSearchResult[], failed: false });
         }
-        const language = this.translate.currentLang?.() || 'en';
-        const session = this.getAirportSession(field);
-        return this.airportSearchService.search({
-          query,
-          language,
-          sessionToken: session.token,
-        }).pipe(
-          map((results) => ({ results, failed: false, interactionId: session.interactionId })),
-          catchError(() => of({
-            results: [] as AirportSearchResult[],
-            failed: true,
-            interactionId: session.interactionId,
-          })),
+        if (this.allAirports.length) {
+          return of({ results: this.filterAirports(query), failed: false });
+        }
+        return this.airportSearchService.search({ query, limit: AIRPORT_RESULT_LIMIT }).pipe(
+          map((results) => ({ results, failed: false })),
+          catchError(() => of({ results: [] as AirportSearchResult[], failed: true })),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ results, failed, interactionId }) => {
-      if (interactionId && this.airportSessions[field].interactionId !== interactionId) return;
+    ).subscribe(({ results, failed }) => {
       this.setAirportResults(field, results);
       this.setAirportActiveIndex(field, -1);
       this.setAirportState(field, {
         loading: false,
         failed,
-        open: this.airportFocused[field] && this.airportControl(field).value.trim().length >= 2,
+        open: this.airportFocused[field] && this.airportQuery(field).length >= AIRPORT_MIN_QUERY_LENGTH,
       });
       this.cdr.markForCheck();
     });
+  }
+
+  private filterAirports(query: string): AirportSearchResult[] {
+    const tokens = query.toLowerCase().split(/[\s,\-/()]+/).filter((token) => !!token);
+    if (!tokens.length) return [];
+    const term = tokens.join(' ');
+
+    return this.allAirports
+      .map((airport) => ({ airport, score: this.scoreAirport(airport, tokens, term) }))
+      .filter((match) => match.score < Number.MAX_SAFE_INTEGER)
+      .sort((left, right) => left.score - right.score
+        || left.airport.name.localeCompare(right.airport.name))
+      .slice(0, AIRPORT_RESULT_LIMIT)
+      .map((match) => match.airport);
+  }
+
+  private scoreAirport(airport: AirportSearchResult, tokens: string[], term: string): number {
+    const code = airport.code.toLowerCase();
+    if (code === term) return 0;
+    if (code.startsWith(term)) return 1;
+    if (airport.city.toLowerCase().startsWith(term)) return 2;
+    if (airport.name.toLowerCase().startsWith(term)) return 3;
+
+    const haystack = `${code} ${airport.icaoCode} ${airport.name} ${airport.city} ${airport.country}`.toLowerCase();
+    return tokens.every((token) => haystack.includes(token)) ? 4 : Number.MAX_SAFE_INTEGER;
   }
 
   private setAirportResults(field: AirportField, results: AirportSearchResult[]): void {
@@ -388,8 +416,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
     this.arrivalAirportActiveIndex = -1;
     this.airportFocused.departure = false;
     this.airportFocused.arrival = false;
-    this.endAirportSearchSession('departure');
-    this.endAirportSearchSession('arrival');
     this.cdr.markForCheck();
   }
 
@@ -399,10 +425,14 @@ export class FlightsFromCard implements OnInit, OnChanges {
       : this.flightForm.controls.arrivalAirport;
   }
 
-  private airportPlaceIdControl(field: AirportField) {
+  private airportCodeControl(field: AirportField) {
     return field === 'departure'
-      ? this.flightForm.controls.departureAirportPlaceId
-      : this.flightForm.controls.arrivalAirportPlaceId;
+      ? this.flightForm.controls.departureAirportCode
+      : this.flightForm.controls.arrivalAirportCode;
+  }
+
+  private airportQuery(field: AirportField): string {
+    return this.airportControl(field).value.trim();
   }
 
   private airportResults(field: AirportField): AirportSearchResult[] {
@@ -425,32 +455,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       : this.arrivalAirportSearchFailed;
   }
 
-  private getAirportSession(field: AirportField): { token: string; interactionId: number } {
-    const session = this.airportSessions[field];
-    if (!session.token) {
-      session.token = this.createSessionToken();
-      session.interactionId++;
-    }
-    return session;
-  }
-
-  private getAirportSessionToken(field: AirportField): string {
-    return this.getAirportSession(field).token;
-  }
-
-  private endAirportSearchSession(field: AirportField): void {
-    const session = this.airportSessions[field];
-    session.token = '';
-    session.interactionId++;
-  }
-
-  private createSessionToken(): string {
-    const cryptoApi = globalThis.crypto as Crypto & { randomUUID?: () => string };
-    if (typeof cryptoApi?.randomUUID === 'function') return cryptoApi.randomUUID();
-    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
-  }
-
-  private existingAirportReference(value: string): string {
+  private existingAirportCode(value: string): string {
+    const code = /^([A-Za-z]{3})\s*-\s*/.exec(value)?.[1];
+    if (code) return code.toUpperCase();
     return value ? `existing:${value.toLocaleLowerCase()}` : '';
   }
 
@@ -478,12 +485,12 @@ export class FlightsFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(250)],
       }),
-      departureAirportPlaceId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      departureAirportCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       arrivalAirport: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(250)],
       }),
-      arrivalAirportPlaceId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      arrivalAirportCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       departureTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
