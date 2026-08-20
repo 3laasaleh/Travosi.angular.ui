@@ -121,7 +121,7 @@
     "arrivalAirportRequired": "Arrival airport is required.",
     "searchAirportPlaceholder": "Search airport, city, or code",
     "noAirportsFound": "No matching airports found.",
-    "airportSearchUnavailable": "Airport search is temporarily unavailable. Check the Google Places configuration.",
+    "airportSearchUnavailable": "Airport search is temporarily unavailable. Please try again.",
     "airportSelectionRequired": "Select an airport from the search results.",
     "airportNameMaxLength": "Airport name cannot exceed 250 characters.",
     "departureArrivalDifferent": "Departure and arrival airports must be different.",
@@ -994,4 +994,31 @@
     "taxRateInvalid": "Tax rate must be between 0% and 100%.",
     "invoiceDueDateInvalid": "Due date must be on or after the invoice date.",
     "serverCalculatedTotalsHint": "Preview totals are estimates; the saved invoice totals are calculated by the server."
+    ,"viewDestinationDetails": "Explore the destination"
+    ,"getInTouch": "Get in touch"
+    ,"contactNumber": "Contact number"
+    ,"contactNumberRequired": "Contact number is required."
+    ,"contactNumberInvalid": "Enter a valid contact number."
+    ,"question": "Question"
+    ,"questionRequired": "Please write your question."
+    ,"sending": "Sending..."
+    ,"sendMessage": "Send message"
+    ,"contactQuestionSent": "Your question was sent successfully. Our team will contact you soon."
+    ,"contactQuestionSendError": "Your question could not be sent. Please try again."
+    ,"customerQuestions": "Customer questions"
+    ,"manageCustomerQuestions": "Review the questions customers sent from the contact page."
+    ,"contactMessagesLoadError": "The customer questions could not be loaded."
+    ,"contactMessageUpdateError": "Unable to update the customer question."
+    ,"contactMessageDeleteError": "Unable to delete the customer question."
+    ,"noContactMessagesFound": "No customer questions found."
+    ,"submittedAt": "Submitted at"
+    ,"read": "Read"
+    ,"unread": "Unread"
+    ,"markAsRead": "Mark as read"
+    ,"confirmDelete": "Confirm delete"
+    ,"confirmDeleteContactMessage": "Are you sure you want to delete this customer question?"
+    ,"refresh": "Refresh"
+    ,"contactMessagesFilter_all": "All"
+    ,"contactMessagesFilter_unread": "Unread"
+    ,"contactMessagesFilter_read": "Read"
 }

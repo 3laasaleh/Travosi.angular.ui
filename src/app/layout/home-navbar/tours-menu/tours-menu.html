@@ -1,34 +1,65 @@
-<div class="relative">
+<div [ngClass]="isMobile ? 'w-full' : 'relative'" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
   <button
+    id="tours-mega-menu-button"
     type="button"
-    class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
-    aria-haspopup="menu"
+    class="flex w-full items-center justify-between gap-1.5 border-b border-slate-200 px-3 py-2 font-medium text-slate-900 transition hover:bg-slate-50 hover:text-primary md:w-auto lg:border-0 lg:p-0 lg:px-4 lg:py-2.5 lg:text-sm lg:font-semibold lg:text-slate-600 lg:hover:bg-transparent lg:hover:text-primary"
+    aria-haspopup="true"
+    aria-controls="tours-mega-menu"
     [attr.aria-expanded]="menuOpen"
-    (click)="toggleMenu($event)"
-  >
-    {{ 'tours' | translate }}
-    <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"></i>
+    (click)="toggleMenu($event)">
+    <span class="flex items-center gap-2">
+      <i class="mdi mdi-compass-outline text-xl text-primary lg:hidden" aria-hidden="true"></i>
+      {{ 'tours' | translate }}
+    </span>
+    <svg class="h-4 w-4 shrink-0 transition-transform ms-1.5" [class.rotate-180]="menuOpen" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+    </svg>
   </button>
 
   @if (menuOpen) {
-    <div class="absolute left-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 " role="menu">
-      <div class="max-h-80 overflow-y-auto p-2">
-        @if (isLoading) {
-          @for (row of [1,2,3,4]; track row) {
-            <div class="mx-3 my-2 h-4 animate-pulse rounded-full bg-slate-200"></div>
-          }
-        } @else {
-          @for (item of tours; track item.id) {
-            <a [routerLink]="['/tours', item.id ?? item.tourId]" (click)="closeMenu()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800" role="menuitem">
-              <i class="mdi mdi-compass-outline text-primary"></i>
-              {{ item.nameEng ?? item.name }}
-            </a>
+    <div
+      id="tours-mega-menu"
+      class="mt-1 border-slate-200 bg-slate-50 shadow-sm border-y"
+      [ngClass]="{ 'fixed inset-x-0 top-20 z-50 max-h-[calc(100vh-6rem)] overflow-y-auto': !isMobile }"
+      (mouseenter)="cancelClose()"
+      (mouseleave)="scheduleClose()">
+
+      @if (isLoading) {
+        <div class="mx-auto grid max-w-screen-xl gap-4 px-4 py-5 sm:grid-cols-2 md:grid-cols-3 md:px-6 lg:grid-cols-4">
+          @for (item of [1,2,3,4,5,6,7,8]; track item) { <div class="h-20 animate-pulse rounded-lg bg-slate-200"></div> }
+        </div>
+      } @else if (loadFailed) {
+        <div class="mx-auto max-w-screen-xl px-4 py-8 text-center md:px-6">
+          <i class="mdi mdi-cloud-alert-outline text-3xl text-rose-400" aria-hidden="true"></i>
+          <p class="mt-2 text-sm text-slate-500">{{ 'toursLoadError' | translate }}</p>
+          <button type="button" class="mt-3 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-white" (click)="retry()">{{ 'retry' | translate }}</button>
+        </div>
+      } @else {
+        <ul class="mx-auto grid max-w-screen-xl gap-x-6 px-4 py-5 text-slate-900 sm:grid-cols-2 md:grid-cols-3 md:px-6 lg:grid-cols-4" aria-labelledby="tours-mega-menu-button">
+          @for (tour of tours; track tour.id) {
+            <li>
+              <a [routerLink]="['/tours', tour.id]" (click)="onNavigate()" class="flex items-start gap-3 rounded-lg p-3 hover:bg-slate-100">
+                <img [src]="tourImage(tour)" [alt]="tourName(tour)" class="h-14 w-16 shrink-0 rounded-lg object-cover" />
+                <span class="min-w-0">
+                  <span class="line-clamp-2 block font-semibold leading-5">{{ tourName(tour) }}</span>
+                  @if (tourLocation(tour)) {
+                    <span class="mt-0.5 block truncate text-sm text-slate-500">{{ tourLocation(tour) }}</span>
+                  }
+                  <span class="mt-0.5 block text-sm font-bold text-primary">{{ formattedTourPrice(tour) }}</span>
+                </span>
+              </a>
+            </li>
           } @empty {
-            <p class="p-4 text-center text-sm text-slate-500">{{ 'noToursFound' | translate }}</p>
+            <li class="sm:col-span-2 md:col-span-3 lg:col-span-4">
+              <p class="p-3 text-sm text-slate-500">{{ 'noToursFound' | translate }}</p>
+            </li>
           }
-        }
-      </div>
-      <a routerLink="/tours" (click)="closeMenu()" class="block border-t border-slate-100 px-4 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800">{{ 'viewAllTours' | translate }}</a>
+        </ul>
+
+        <div class="mx-auto max-w-screen-xl border-t border-slate-200 px-4 py-3 md:px-6">
+          <a routerLink="/tours" (click)="onNavigate()" class="text-sm font-semibold text-primary hover:underline">{{ 'viewAllTours' | translate }}</a>
+        </div>
+      }
     </div>
   }
 </div>

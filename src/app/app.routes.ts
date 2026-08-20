@@ -129,6 +129,14 @@ export const routes: Routes = [
           import('./features/configurations/bookings/bookings-page').then((m) => m.Bookings),
       },
       {
+        path: 'contact-messages',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/configurations/contact-messages/contact-messages-page').then(
+            (m) => m.ContactMessages,
+          ),
+      },
+      {
         path: 'agent-booking-manager',
         redirectTo: 'bookings',
       },

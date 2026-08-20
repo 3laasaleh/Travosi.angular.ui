@@ -18,42 +18,66 @@ describe('AirportSearchService', () => {
     service = TestBed.inject(AirportSearchService);
   });
 
-  it('passes encoded query, normalized language, and session token to the backend', () => {
+  it('passes the encoded query and limit to the backend', () => {
     apiService.get.mockReturnValue(of({
       isSuccess: true,
-      data: [{ placeId: 'abc', name: 'Cairo Airport', description: 'Cairo Airport, Egypt', displayName: 'CAI - Cairo' }],
+      data: [{
+        code: 'CAI',
+        icaoCode: 'HECA',
+        name: 'Cairo International Airport',
+        city: 'Cairo',
+        country: 'Egypt',
+        countryCode: 'EG',
+        value: 'CAI - Cairo International Airport',
+        displayName: 'CAI - Cairo International Airport, Cairo, Egypt',
+      }],
     }));
 
     let results: unknown;
-    service.search({ query: ' Cairo & Giza ', language: 'ar-EG', sessionToken: 'session token' })
-      .subscribe((value) => results = value);
+    service.search({ query: ' Cairo & Giza ', limit: 10 }).subscribe((value) => results = value);
 
-    expect(apiService.get).toHaveBeenCalledWith(
-      'Airports/search?query=Cairo%20%26%20Giza&language=ar&sessionToken=session%20token',
-    );
+    expect(apiService.get).toHaveBeenCalledWith('Airports/search?query=Cairo%20%26%20Giza&limit=10');
     expect(results).toEqual([{
-      placeId: 'abc',
-      name: 'Cairo Airport',
-      description: 'Cairo Airport, Egypt',
-      displayName: 'CAI - Cairo',
+      code: 'CAI',
+      icaoCode: 'HECA',
+      name: 'Cairo International Airport',
+      city: 'Cairo',
+      country: 'Egypt',
+      countryCode: 'EG',
+      value: 'CAI - Cairo International Airport',
+      displayName: 'CAI - Cairo International Airport, Cairo, Egypt',
     }]);
   });
 
-  it('normalizes PascalCase rows and falls back to the description for display', () => {
+  it('normalizes PascalCase rows and builds the missing value and display name', () => {
     apiService.get.mockReturnValue(of({
       IsSuccess: true,
-      Data: [{ PlaceId: 'xyz', Name: 'Heathrow', Description: 'Heathrow Airport, London' }],
+      Data: [{ Code: 'lhr', Name: 'Heathrow', City: 'London', Country: 'United Kingdom' }],
     }));
 
     let results: unknown;
-    service.search({ query: 'LHR', language: 'en', sessionToken: 'session' })
-      .subscribe((value) => results = value);
+    service.search({ query: 'LHR' }).subscribe((value) => results = value);
 
+    expect(apiService.get).toHaveBeenCalledWith('Airports/search?query=LHR&limit=20');
     expect(results).toEqual([{
-      placeId: 'xyz',
+      code: 'LHR',
+      icaoCode: '',
       name: 'Heathrow',
-      description: 'Heathrow Airport, London',
-      displayName: 'Heathrow Airport, London',
+      city: 'London',
+      country: 'United Kingdom',
+      countryCode: '',
+      value: 'LHR - Heathrow',
+      displayName: 'LHR - Heathrow, London, United Kingdom',
     }]);
+  });
+
+  it('loads the full catalog only once', () => {
+    apiService.get.mockReturnValue(of({ isSuccess: true, data: [{ code: 'JED', name: 'Jeddah' }] }));
+
+    service.loadAll().subscribe();
+    service.loadAll().subscribe();
+
+    expect(apiService.get).toHaveBeenCalledTimes(1);
+    expect(apiService.get).toHaveBeenCalledWith('Airports/GetAll');
   });
 });

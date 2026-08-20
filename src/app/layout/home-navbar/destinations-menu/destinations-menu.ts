@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
+import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { environment } from '../../../../environments/environment';
-import { CurrencyService } from '../../../core/services/currency.service';
 
 @Component({
-  selector: 'app-destinations-menu', standalone: true, imports: [RouterLink, TranslatePipe],
+  selector: 'app-destinations-menu', standalone: true, imports: [NgClass, RouterLink, TranslatePipe],
   templateUrl: './destinations-menu.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DestinationsMenu {
@@ -15,49 +24,39 @@ export class DestinationsMenu {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly translate = inject(TranslateService);
-  private readonly currencyService = inject(CurrencyService);
+
+  /** `desktop` renders a full-width mega menu bar, `mobile` renders an inline collapsible panel. */
+  @Input() layout: 'desktop' | 'mobile' = 'desktop';
+  @Output() navigated = new EventEmitter<void>();
+
   menuOpen = false;
   isLoading = false;
   loaded = false;
   loadFailed = false;
   destinations: any[] = [];
-  selectedDestination: any = null;
-  selectedCity: any = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   destinationName(item: any): string { return this.isArabic ? item?.nameAr ?? item?.nameEng ?? '' : item?.nameEng ?? item?.nameAr ?? ''; }
   cityName(item: any): string { return this.destinationName(item); }
-  tourName(item: any): string { return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? ''; }
-  tourImage(tour: any): string {
-    const raw = String(tour?.coverImageUrl ?? '').trim();
-    if (!raw) return 'assets/images/bg/3.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(raw)) return raw;
-    const path = raw.replace(/^\/+/, '').replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
-  }
-  formattedTourPrice(tour: any): string {
-    return this.currencyService.formatPrice(
-      tour?.pricePerPerson,
-      tour?.currencyId ?? tour?.currency ?? 'USD',
-    );
-  }
+  cities(destination: any): any[] { return destination?.cities ?? []; }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
-  get cities(): any[] { return this.selectedDestination?.cities ?? []; }
-  get tours(): any[] { return this.selectedCity?.tours ?? []; }
+  get isMobile(): boolean { return this.layout === 'mobile'; }
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
-    if (this.menuOpen && !this.loaded) this.loadHierarchy();
+    if (this.menuOpen && !this.loaded && !this.isLoading) this.loadHierarchy();
   }
 
   openMenu(): void {
+    if (this.isMobile) return;
     this.cancelClose();
     this.menuOpen = true;
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
   }
 
   scheduleClose(): void {
+    if (this.isMobile) return;
     this.cancelClose();
     this.closeTimer = setTimeout(() => this.closeMenu(), 140);
   }
@@ -72,17 +71,12 @@ export class DestinationsMenu {
   closeMenu(): void {
     this.cancelClose();
     this.menuOpen = false;
-    this.selectedDestination = null;
-    this.selectedCity = null;
   }
 
-  selectDestination(destination: any): void {
-    if (this.selectedDestination?.id === destination?.id) return;
-    this.selectedDestination = destination;
-    this.selectedCity = null;
+  onNavigate(): void {
+    this.closeMenu();
+    this.navigated.emit();
   }
-
-  selectCity(city: any): void { this.selectedCity = city; }
 
   retry(): void { this.loaded = false; this.loadHierarchy(); }
 
@@ -100,12 +94,13 @@ export class DestinationsMenu {
       const data = response?.data ?? response;
       const rows = data?.data ?? data?.destinations ?? data;
       this.destinations = Array.isArray(rows) ? rows : [];
-      this.selectedDestination = null;
-      this.selectedCity = null;
       this.loaded = true;
     });
   }
 
   @HostListener('document:keydown.escape') closeOnEscape(): void { this.closeMenu(); }
-  @HostListener('document:click', ['$event']) closeOnOutsideClick(event: MouseEvent): void { if (!this.elementRef.nativeElement.contains(event.target as Node)) this.closeMenu(); }
+  @HostListener('document:click', ['$event']) closeOnOutsideClick(event: MouseEvent): void {
+    if (this.isMobile) return;
+    if (!this.elementRef.nativeElement.contains(event.target as Node)) this.closeMenu();
+  }
 }

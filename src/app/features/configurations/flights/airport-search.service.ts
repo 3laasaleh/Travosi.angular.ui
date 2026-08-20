@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, shareReplay } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 
 export interface AirportSearchResult {
-  placeId: string;
+  code: string;
+  icaoCode: string;
   name: string;
-  description: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  value: string;
   displayName: string;
 }
 
 export interface AirportSearchRequest {
   query: string;
-  language: string;
-  sessionToken: string;
+  limit?: number;
 }
 
 interface AirportApiEnvelope {
@@ -26,20 +29,27 @@ interface AirportApiEnvelope {
 
 @Injectable({ providedIn: 'root' })
 export class AirportSearchService {
+  private allAirports$?: Observable<AirportSearchResult[]>;
+
   constructor(private readonly apiService: ApiService) {}
 
   search(request: AirportSearchRequest): Observable<AirportSearchResult[]> {
     const query = request.query.trim();
-    const language = request.language.toLowerCase().startsWith('ar') ? 'ar' : 'en';
-    const url = [
-      `Airports/search?query=${encodeURIComponent(query)}`,
-      `language=${encodeURIComponent(language)}`,
-      `sessionToken=${encodeURIComponent(request.sessionToken)}`,
-    ].join('&');
+    const limit = request.limit && request.limit > 0 ? request.limit : 20;
+    const url = `Airports/search?query=${encodeURIComponent(query)}&limit=${limit}`;
 
     return this.apiService.get(url).pipe(
       map((response: unknown) => this.parseResponse(response)),
     );
+  }
+
+  loadAll(): Observable<AirportSearchResult[]> {
+    this.allAirports$ ??= this.apiService.get('Airports/GetAll').pipe(
+      map((response: unknown) => this.parseResponse(response)),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+
+    return this.allAirports$;
   }
 
   private parseResponse(response: unknown): AirportSearchResult[] {
@@ -55,8 +65,8 @@ export class AirportSearchService {
 
     for (const row of rows) {
       const airport = this.normalizeAirport(row);
-      if (airport && !uniqueResults.has(airport.placeId)) {
-        uniqueResults.set(airport.placeId, airport);
+      if (airport && !uniqueResults.has(airport.code)) {
+        uniqueResults.set(airport.code, airport);
       }
     }
 
@@ -79,16 +89,25 @@ export class AirportSearchService {
     const record = this.asRecord(value);
     if (!record) return null;
 
-    const placeId = this.readString(record, 'placeId', 'PlaceId');
+    const code = this.readString(record, 'code', 'Code').toUpperCase();
     const name = this.readString(record, 'name', 'Name');
-    const description = this.readString(record, 'description', 'Description');
-    const displayName = this.readString(record, 'displayName', 'DisplayName') || description || name;
+    if (!code || !name) return null;
 
-    if (!placeId || !displayName) return null;
+    const city = this.readString(record, 'city', 'City');
+    const country = this.readString(record, 'country', 'Country');
+    const location = [city, country].filter((part) => !!part).join(', ');
+    const airportValue = this.readString(record, 'value', 'Value') || `${code} - ${name}`;
+    const displayName = this.readString(record, 'displayName', 'DisplayName')
+      || (location ? `${airportValue}, ${location}` : airportValue);
+
     return {
-      placeId,
-      name: name || displayName,
-      description: description || displayName,
+      code,
+      icaoCode: this.readString(record, 'icaoCode', 'IcaoCode'),
+      name,
+      city,
+      country,
+      countryCode: this.readString(record, 'countryCode', 'CountryCode').toUpperCase(),
+      value: airportValue,
       displayName,
     };
   }
