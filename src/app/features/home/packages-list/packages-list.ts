@@ -7,16 +7,19 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { formatHomePrice } from '../home-price.util';
+import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 
 interface PaginationInfo {
   page: number;
@@ -28,7 +31,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-packages-list',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
+  imports: [RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker],
   templateUrl: './packages-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,10 +44,16 @@ export class HomePackagesList implements OnInit {
 
   readonly pageSizeOptions = [8, 12, 24];
   readonly heroImage = 'assets/images/bg/cta.jpg';
+  private readonly imageIndexMap = new Map<string, number>();
 
   packages: any[] = [];
+  private allPackages: any[] = [];
   isLoading = false;
   errorMessage = '';
+  searchText = '';
+  dateFrom = this.toDateInput(new Date());
+  dateTo = this.toDateInput(this.addDays(new Date(), 7));
+  dateRangeError = false;
   paginationInfo: PaginationInfo = {
     page: 1,
     pageSize: 12,
@@ -56,14 +65,48 @@ export class HomePackagesList implements OnInit {
     this.loadPackages();
   }
 
+  onSearchChange(value: string): void {
+    this.searchText = value;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    const hasFromAndTo = !!this.dateFrom && !!this.dateTo;
+    if (hasFromAndTo && this.dateTo < this.dateFrom) {
+      this.dateRangeError = true;
+      return;
+    }
+
+    this.dateRangeError = false;
+    this.paginationInfo.page = 1;
+    this.loadPackages();
+  }
+
+  clearFilters(): void {
+    this.searchText = '';
+    this.dateFrom = this.toDateInput(new Date());
+    this.dateTo = this.toDateInput(this.addDays(new Date(), 7));
+    this.dateRangeError = false;
+    this.paginationInfo.page = 1;
+    this.loadPackages();
+  }
+
   loadPackages(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
+    const params = new URLSearchParams({
+      page: String(this.paginationInfo.page),
+      pageSize: String(this.paginationInfo.pageSize),
+    });
+
+    const trimmedSearch = this.searchText.trim();
+    if (trimmedSearch) params.set('searchTerm', trimmedSearch);
+    if (this.dateFrom) params.set('dateFrom', this.dateFrom);
+    if (this.dateTo) params.set('dateTo', this.dateTo);
+
     this.apiService
-      .getUnauthntecated(
-        `Packages?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`,
-      )
+      .getUnauthntecated(`Packages?${params.toString()}`)
       .pipe(
         catchError(() => {
           this.errorMessage = 'packagesLoadError';
@@ -83,9 +126,12 @@ export class HomePackagesList implements OnInit {
 
         const pageData = response?.data ?? response;
         const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
-        this.packages = Array.isArray(rows) ? rows : [];
+        this.allPackages = Array.isArray(rows) ? rows : [];
+        this.packages = this.allPackages.filter((item) =>
+          matchesSearchQuery(this.searchText, item) && isWithinDateRange(this.dateFrom, this.dateTo, item),
+        );
 
-        const totalCount = Number(pageData?.totalCount ?? this.packages.length);
+        const totalCount = Number(pageData?.totalCount ?? this.allPackages.length);
         const pageSize = Number(pageData?.pageSize ?? this.paginationInfo.pageSize);
         this.paginationInfo = {
           page: Number(pageData?.page ?? this.paginationInfo.page),
@@ -145,20 +191,60 @@ export class HomePackagesList implements OnInit {
     return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 
+  imageItems(item: any): any[] {
+    const images = Array.isArray(item?.images) ? item.images : [];
+    if (images.length) return images;
+    const fallback = item?.coverImageUrl ?? item?.imageUrl;
+    return fallback ? [{ imageUrl: fallback }] : [];
+  }
+
   imageUrl(item: any): string {
-    const image = Array.isArray(item?.images) ? item.images[0] : null;
-    const url =
-      image?.imageUrl ??
-      image?.url ??
-      image?.path ??
-      item?.coverImageUrl ??
-      item?.imageUrl ??
-      '';
+    return this.imageAt(item, 0);
+  }
+
+  imageAt(item: any, index: number): string {
+    const images = this.imageItems(item);
+    const source = images[Math.max(0, Math.min(index, images.length - 1))] ?? null;
+    const url = source?.imageUrl ?? source?.url ?? source?.path ?? item?.coverImageUrl ?? item?.imageUrl ?? '';
 
     if (!url) return 'assets/images/bg/2.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
 
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  getImageIndex(key: string): number {
+    return this.imageIndexMap.get(key) ?? 0;
+  }
+
+  setImageIndex(key: string, index: number, total: number): void {
+    if (!total) return;
+    this.imageIndexMap.set(key, ((index % total) + total) % total);
+  }
+
+  prevImage(key: string, total: number): void {
+    if (!total) return;
+    const current = this.getImageIndex(key);
+    this.setImageIndex(key, current - 1, total);
+  }
+
+  nextImage(key: string, total: number): void {
+    if (!total) return;
+    const current = this.getImageIndex(key);
+    this.setImageIndex(key, current + 1, total);
+  }
+
+  private addDays(value: Date, days: number): Date {
+    const clone = new Date(value.getTime());
+    clone.setDate(clone.getDate() + days);
+    return clone;
+  }
+
+  private toDateInput(value: Date): string {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

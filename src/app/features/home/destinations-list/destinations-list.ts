@@ -37,15 +37,16 @@ export class HomeDestinationsList implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
 
-  readonly pageSizeOptions = [8, 12, 24];
+  readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
+  private readonly imageIndexMap = new Map<string, number>();
 
   destinations: any[] = [];
   isLoading = false;
   errorMessage = '';
   paginationInfo: PaginationInfo = {
     page: 1,
-    pageSize: 12,
+    pageSize: 10,
     totalCount: 0,
     totalPages: 1,
   };
@@ -79,10 +80,11 @@ export class HomeDestinationsList implements OnInit {
           return;
         }
 
-        const pageData = response?.data ?? response;
-        const rows = pageData?.data ?? pageData?.items ?? pageData?.destinations ?? pageData;
+        const pageData = response?.data ;
+        const rows = pageData?.data ;
         this.destinations = Array.isArray(rows) ? rows : [];
-        this.updatePagination(pageData, this.destinations.length);
+        
+        this.updatePagination(pageData);
       });
   }
 
@@ -112,15 +114,21 @@ export class HomeDestinationsList implements OnInit {
       : destination?.nameEng ?? destination?.name ?? destination?.nameAr ?? '';
   }
 
+  imageItems(destination: any): any[] {
+    const images = Array.isArray(destination?.images) ? destination.images : [];
+    if (images.length) return images;
+    const fallback = destination?.coverImageUrl ?? destination?.imageUrl;
+    return fallback ? [{ imageUrl: fallback }] : [];
+  }
+
   imageUrl(destination: any): string {
-    const image = Array.isArray(destination?.images) ? destination.images[0] : null;
-    const url =
-      image?.imageUrl ??
-      image?.url ??
-      image?.path ??
-      destination?.coverImageUrl ??
-      destination?.imageUrl ??
-      '';
+    return this.imageAt(destination, 0);
+  }
+
+  imageAt(destination: any, index: number): string {
+    const images = this.imageItems(destination);
+    const source = images[Math.max(0, Math.min(index, images.length - 1))] ?? null;
+    const url = source?.imageUrl ?? source?.url ?? source?.path ?? destination?.coverImageUrl ?? destination?.imageUrl ?? '';
 
     if (!url) return 'assets/images/bg/2.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
@@ -129,17 +137,35 @@ export class HomeDestinationsList implements OnInit {
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
-  private updatePagination(pageData: any, rowCount: number): void {
-    const totalCount = Number(pageData?.totalCount ?? rowCount);
-    const pageSize = Number(pageData?.pageSize ?? this.paginationInfo.pageSize);
+  getImageIndex(key: string): number {
+    return this.imageIndexMap.get(key) ?? 0;
+  }
+
+  setImageIndex(key: string, index: number, total: number): void {
+    if (!total) return;
+    this.imageIndexMap.set(key, ((index % total) + total) % total);
+  }
+
+  prevImage(key: string, total: number): void {
+    if (!total) return;
+    const current = this.getImageIndex(key);
+    this.setImageIndex(key, current - 1, total);
+  }
+
+  nextImage(key: string, total: number): void {
+    if (!total) return;
+    const current = this.getImageIndex(key);
+    this.setImageIndex(key, current + 1, total);
+  }
+
+  private updatePagination(pageData: any): void {
+    const totalCount = Number(pageData?.totalCount);
+    const pageSize = Number(pageData?.pageSize);
     this.paginationInfo = {
       page: Number(pageData?.page ?? this.paginationInfo.page),
       pageSize,
       totalCount,
-      totalPages: Math.max(
-        1,
-        Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize))),
-      ),
+      totalPages:pageData.totalPages 
     };
   }
 }

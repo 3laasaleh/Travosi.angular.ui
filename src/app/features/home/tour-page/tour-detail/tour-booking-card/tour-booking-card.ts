@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  OnInit,
   inject,
 } from '@angular/core';
 import {
@@ -31,7 +32,7 @@ import { formatHomePrice } from '../../../home-price.util';
   templateUrl: './tour-booking-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TourBookingCard {
+export class TourBookingCard implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -132,6 +133,10 @@ export class TourBookingCard {
 
   get availableDateTo(): string {
     return this.formatDisplayDate(this.maxTravelDate);
+  }
+
+  ngOnInit(): void {
+    this.setDefaultDates();
   }
 
   goToLogin(): void {
@@ -271,6 +276,26 @@ export class TourBookingCard {
       showConfirmButton: false,
       timer: icon === 'success' ? 3000 : 4200,
       timerProgressBar: true,
+    });
+  }
+
+  private setDefaultDates(): void {
+    const dateFrom = this.minTravelDate;
+    if (!dateFrom) return;
+
+    let dateTo = this.maxTravelDate;
+    if (!dateTo) {
+      // If no end date, add 7 days from start date
+      const date = new Date(`${dateFrom}T00:00:00`);
+      if (!Number.isNaN(date.getTime())) {
+        date.setDate(date.getDate() + 7);
+        dateTo = this.toDateInput(date);
+      }
+    }
+
+    this.bookingForm.patchValue({
+      dateFrom,
+      dateTo: dateTo || dateFrom,
     });
   }
 }

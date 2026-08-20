@@ -10,22 +10,21 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, debounceTime, distinctUntilChanged, forkJoin, map, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 
 interface SearchResultGroup {
   labelKey: string;
   icon: string;
-  route: string;
   items: any[];
 }
 
 @Component({
   selector: 'app-search-box',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './search-box.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,16 +34,11 @@ export class SearchBox implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
 
   searchControl = new FormControl('', { nonNullable: true });
   resultsOpen = false;
   isLoading = false;
-  private loaded = false;
-
-  private destinations: any[] = [];
-  private tours: any[] = [];
-  private packages: any[] = [];
-
   groups: SearchResultGroup[] = [];
 
   get hasResults(): boolean {
@@ -53,31 +47,39 @@ export class SearchBox implements OnInit {
 
   displayName(item: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
-      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+    return arabic ? (item?.titleAr ?? item?.titleEn ?? item?.title ?? '') : (item?.titleEn ?? item?.title ?? '');
   }
 
   displayDescription(item: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (item?.subDescriptionAr ?? item?.descriptionAr ?? item?.subDescription ?? item?.description ?? '')
-      : (item?.subDescriptionEng ?? item?.descriptionEng ?? item?.subDescription ?? item?.description ?? '');
+    const text = item?.description ?? '';
+    if (!text) return '';
+    return arabic ? text : text;
   }
 
   ngOnInit(): void {
     this.searchControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((term) => this.search(term));
+      .pipe(
+        map((term) => term?.trim() ?? ''),
+        debounceTime(1000),
+        distinctUntilChanged(),
+        switchMap((term) => this.search(term)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((items) => {
+        this.groups = this.buildGroups(items);
+        this.resultsOpen = this.groups.some((group) => group.items.length > 0);
+        this.cdr.markForCheck();
+      });
   }
 
   onFocus(): void {
-    this.ensureDataLoaded();
     if (this.searchControl.value.trim().length >= 2) this.resultsOpen = true;
   }
 
   clearSearch(): void {
     this.searchControl.setValue('');
+    this.groups = [];
     this.resultsOpen = false;
   }
 
@@ -85,60 +87,47 @@ export class SearchBox implements OnInit {
     this.resultsOpen = false;
   }
 
-  private search(term: string): void {
-    const query = term.trim().toLowerCase();
-    if (query.length < 2) {
-      this.resultsOpen = false;
-      this.groups = [];
-      this.cdr.markForCheck();
-      return;
-    }
-    this.ensureDataLoaded();
-    const matches = (items: any[]) =>
-      items
-        .filter((item) => {
-          const name = `${item.nameEng ?? item.name ?? ''} ${item.nameAr ?? ''}`.toLowerCase();
-          return name.includes(query);
-        })
-        .slice(0, 5);
-
-    this.groups = [
-      { labelKey: 'destinations', icon: 'mdi-map-marker-outline', route: '/destinations', items: matches(this.destinations) },
-      { labelKey: 'tours', icon: 'mdi-compass-outline', route: '/tours', items: matches(this.tours) },
-      { labelKey: 'packages', icon: 'mdi-package-variant-closed', route: '/packages', items: matches(this.packages) },
-    ];
-    this.resultsOpen = true;
-    this.cdr.markForCheck();
+  navigateTo(item: any): void {
+    if (!item?.route) return;
+    this.closeResults();
+    void this.router.navigateByUrl(item.route);
   }
 
-  private ensureDataLoaded(): void {
-    if (this.loaded || this.isLoading) return;
+  private search(term: string) {
+    const query = term.trim();
+    if (query.length < 2) {
+      this.groups = [];
+      this.resultsOpen = false;
+      this.cdr.markForCheck();
+      return of([]);
+    }
+
     this.isLoading = true;
+    this.cdr.markForCheck();
 
-    const load = (url: string, key: string) =>
-      this.apiService.getUnauthntecated(url).pipe(
-        map((response: any) => {
-          const pageData = response?.data ?? response;
-          const rows = pageData?.data ?? pageData?.items ?? pageData?.[key] ?? pageData;
-          return Array.isArray(rows) ? rows : [];
-        }),
-        catchError(() => of([])),
-      );
-
-    forkJoin({
-      destinations: load('destinations?page=1&pageSize=100', 'destinations'),
-      tours: load('Tours?page=1&pageSize=100', 'tours'),
-      packages: load('Packages?page=1&pageSize=100', 'packages'),
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ destinations, tours, packages }) => {
-        this.destinations = destinations;
-        this.tours = tours;
-        this.packages = packages;
-        this.loaded = true;
+    return this.apiService.getUnauthntecated<any>(`Search?q=${encodeURIComponent(query)}&take=10`).pipe(
+      map((response: any) => {
+        const data = response?.data ?? response ?? [];
+        return Array.isArray(data) ? data : [];
+      }),
+      catchError(() => of([])),
+      finalize(() => {
         this.isLoading = false;
-        this.search(this.searchControl.value);
-      });
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  private buildGroups(items: any[]): SearchResultGroup[] {
+    const destinationItems = items.filter((item) => item?.type === 'destination').slice(0, 10);
+    const tourItems = items.filter((item) => item?.type === 'tour').slice(0, 10);
+    const packageItems = items.filter((item) => item?.type === 'package').slice(0, 10);
+
+    return [
+      { labelKey: 'destinations', icon: 'mdi-map-marker-outline', items: destinationItems },
+      { labelKey: 'tours', icon: 'mdi-compass-outline', items: tourItems },
+      { labelKey: 'packages', icon: 'mdi-package-variant-closed', items: packageItems },
+    ].filter((group) => group.items.length > 0);
   }
 
   @HostListener('document:click', ['$event'])

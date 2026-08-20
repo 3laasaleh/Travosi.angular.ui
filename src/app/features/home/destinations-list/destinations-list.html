@@ -30,11 +30,34 @@
       </div>
     } @else {
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        @for (destination of destinations; track destination.id ?? destination.destinationId ?? $index) {
+        @for (destination of destinations; track destination.id ?? destination.destinationId ?? $index; let destinationIndex = $index) {
           <a [routerLink]="['/destinations', destination.id ?? destination.destinationId]" class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 ">
             <article class="flex w-full flex-col">
               <div class="relative overflow-hidden">
-                <img [src]="imageUrl(destination)" [alt]="destinationName(destination)" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
+                @if (imageItems(destination).length > 1) {
+                  <button
+                    type="button"
+                    class="absolute left-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/40 bg-slate-950/55 text-lg text-white shadow-lg backdrop-blur-sm transition hover:bg-primary"
+                    [attr.aria-label]="'previous' | translate"
+                    [title]="'previous' | translate"
+                    (click)="$event.preventDefault(); $event.stopPropagation(); prevImage('destination-' + destinationIndex, imageItems(destination).length)"
+                  >
+                    <i class="mdi mdi-chevron-left"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="absolute right-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/40 bg-slate-950/55 text-lg text-white shadow-lg backdrop-blur-sm transition hover:bg-primary"
+                    [attr.aria-label]="'next' | translate"
+                    [title]="'next' | translate"
+                    (click)="$event.preventDefault(); $event.stopPropagation(); nextImage('destination-' + destinationIndex, imageItems(destination).length)"
+                  >
+                    <i class="mdi mdi-chevron-right"></i>
+                  </button>
+                  <span class="absolute bottom-3 right-3 z-10 rounded-full bg-slate-950/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
+                    {{ getImageIndex('destination-' + destinationIndex) + 1 }} / {{ imageItems(destination).length }}
+                  </span>
+                }
+                <img [src]="imageAt(destination, getImageIndex('destination-' + destinationIndex))" [alt]="destinationName(destination)" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
               </div>
               <div class="flex flex-1 flex-col p-4">
                 <h2 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">

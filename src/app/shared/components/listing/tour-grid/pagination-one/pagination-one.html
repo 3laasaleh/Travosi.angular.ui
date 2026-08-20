@@ -1,11 +1,21 @@
-<div class="flex justify-center" [class.mt-6]="!compact">
-  <nav aria-label="Pagination">
-    <ul class="inline-flex items-center -space-x-px">
+<div class="flex flex-col items-center gap-3" [class.mt-6]="!compact">
+  @if (totalCount > 0 || normalizedTotalPages > 1) {
+    <div class="text-sm font-medium text-slate-500">
+      <span class="text-slate-700">Page {{ normalizedCurrentPage }}</span>
+      @if (totalCount > 0) {
+        <span class="mx-2 text-slate-300">•</span>
+        <span>{{ pageSummary }}</span>
+      }
+    </div>
+  }
+
+  <nav aria-label="Pagination" class="flex items-center justify-center">
+    <ul class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
       <li>
         <button
           type="button"
           aria-label="Previous page"
-          class="inline-flex size-[40px] items-center justify-center rounded-s-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800  dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex size-10 items-center justify-center rounded-full border border-transparent text-slate-500 transition enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           [disabled]="normalizedCurrentPage === 1"
           (click)="goToPage(normalizedCurrentPage - 1)"
         >
@@ -16,32 +26,26 @@
       @for (page of visiblePages; track $index) {
         <li>
           @if (page === 'ellipsis') {
-            <span
-              class="inline-flex size-[40px] items-center justify-center border border-gray-100 bg-white text-slate-400 dark:border-gray-800 "
-              aria-hidden="true"
-            >…</span>
+            <span class="inline-flex size-10 items-center justify-center rounded-full text-base font-medium text-slate-400" aria-hidden="true">…</span>
           } @else {
             <button
               type="button"
-              class="inline-flex size-[40px] items-center justify-center border"
+              class="inline-flex size-10 items-center justify-center rounded-full border text-sm font-semibold transition"
               [class.z-10]="page === normalizedCurrentPage"
               [class.border-primary]="page === normalizedCurrentPage"
               [class.bg-primary]="page === normalizedCurrentPage"
               [class.text-white]="page === normalizedCurrentPage"
-              [class.border-gray-100]="page !== normalizedCurrentPage"
+              [class.border-slate-200]="page !== normalizedCurrentPage"
               [class.bg-white]="page !== normalizedCurrentPage"
-              [class.text-slate-400]="page !== normalizedCurrentPage"
-              [class.enabled:hover:border-primary]="page !== normalizedCurrentPage"
-              [class.enabled:hover:bg-primary]="page !== normalizedCurrentPage"
-              [class.enabled:hover:text-white]="page !== normalizedCurrentPage"
-              [class.dark:border-gray-800]="page !== normalizedCurrentPage"
-              [class.]="page !== normalizedCurrentPage"
-              [class.dark:enabled:hover:border-primary]="page !== normalizedCurrentPage"
-              [class.dark:enabled:hover:bg-primary]="page !== normalizedCurrentPage"
+              [class.text-slate-500]="page !== normalizedCurrentPage"
+              [class.hover:border-primary]="page !== normalizedCurrentPage"
+              [class.hover:text-primary]="page !== normalizedCurrentPage"
               [attr.aria-current]="page === normalizedCurrentPage ? 'page' : null"
               [attr.aria-label]="'Page ' + page"
               (click)="goToPage(page)"
-            >{{ page }}</button>
+            >
+              {{ page }}
+            </button>
           }
         </li>
       }
@@ -50,7 +54,7 @@
         <button
           type="button"
           aria-label="Next page"
-          class="inline-flex size-[40px] items-center justify-center rounded-e-3xl border border-gray-100 bg-white text-slate-400 enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white dark:border-gray-800  dark:enabled:hover:border-primary dark:enabled:hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex size-10 items-center justify-center rounded-full border border-transparent text-slate-500 transition enabled:hover:border-primary enabled:hover:bg-primary enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           [disabled]="normalizedCurrentPage === normalizedTotalPages"
           (click)="goToPage(normalizedCurrentPage + 1)"
         >

@@ -7,7 +7,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 })
 export class PaginationOne {
   @Input() currentPage = 1;
-  @Input() totalPages = 5;
+  @Input() totalPages = 0;
+  @Input() totalCount = 0;
+  @Input() pageSize = 10;
   @Input() maxVisiblePages = 5;
   @Input() compact = false;
 
@@ -22,6 +24,27 @@ export class PaginationOne {
       this.normalizedTotalPages,
       Math.max(1, Math.floor(Number(this.currentPage) || 1)),
     );
+  }
+
+  get effectivePageSize(): number {
+    return Math.max(1, Math.floor(Number(this.pageSize) || 1));
+  }
+
+  get startIndex(): number {
+    return (this.normalizedCurrentPage - 1) * this.effectivePageSize + 1;
+  }
+
+  get endIndex(): number {
+    if (!this.totalCount) return this.effectivePageSize;
+    return Math.min(this.normalizedCurrentPage * this.effectivePageSize, this.totalCount);
+  }
+
+  get pageSummary(): string {
+    if (this.totalCount > 0) {
+      return `${this.startIndex}-${this.endIndex} of ${this.totalCount}`;
+    }
+
+    return `Page ${this.normalizedCurrentPage} of ${this.normalizedTotalPages}`;
   }
 
   get visiblePages(): Array<number | 'ellipsis'> {

@@ -27,17 +27,22 @@
           }
         } @else if (hasResults) {
           @for (group of groups; track group.labelKey) {
-            @if (group.items.length) {
-              <p class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ group.labelKey | translate }}</p>
-              @for (item of group.items; track item.id) {
-                <a [routerLink]="group.route" (click)="closeResults()" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary  dark:hover:bg-slate-800" role="option">
-                  <i [class]="'mdi text-primary ' + group.icon"></i>
-                  <span class="min-w-0">
-                    <span class="block truncate">{{ displayName(item) }}</span>
-                    @if (displayDescription(item); as description) { <span class="block truncate text-xs text-slate-400">{{ description }}</span> }
-                  </span>
-                </a>
-              }
+            <p class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ group.labelKey | translate }}</p>
+            @for (item of group.items; track item.id ?? item.type + '-' + $index) {
+              <button
+                type="button"
+                (click)="navigateTo(item)"
+                class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
+                role="option"
+              >
+                <i [class]="'mdi text-primary ' + group.icon"></i>
+                <span class="min-w-0">
+                  <span class="block truncate">{{ displayName(item) }}</span>
+                  @if (displayDescription(item); as description) {
+                    <span class="block truncate text-xs text-slate-400">{{ description }}</span>
+                  }
+                </span>
+              </button>
             }
           }
         } @else {

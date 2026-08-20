@@ -545,6 +545,8 @@
     ,"nonNegativeValueRequired": "Enter zero or a positive value."
     ,"durationHoursRange": "Hours must be between 0 and 23."
     ,"validUrlRequired": "Enter a valid URL beginning with http:// or https://."
+    ,"search": "Search"
+    ,"clear": "Clear"
     ,"pageSize": "Page size"
     ,"totalRecords": "Total records"
     ,"addImage": "Add image"
