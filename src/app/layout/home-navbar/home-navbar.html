@@ -5,7 +5,7 @@
       <img src="./assets/images/main-logo.png" class="h-12 w-auto shrink-0 sm:h-14"
         [alt]="'seaworldHolidaysLogo' | translate">
       <span class=" sm:block">
-        <span class="block text-lg font-bold leading-tight text-primary ">Sea World Holidays</span>
+        <span class="block text-md font-bold leading-tight text-primary ">Sea World Holidays</span>
       </span>
     </a>
 
@@ -15,6 +15,7 @@
 
     <nav class="ml-auto hidden items-center gap-1 lg:flex" [attr.aria-label]="'mainNavigation' | translate">
       <app-destinations-menu (navigated)="closeMenus()" />
+      <app-packages-menu (navigated)="closeMenus()" />
     </nav>
 
     <div class="hidden h-8 w-px bg-slate-200 lg:block "></div>
@@ -194,6 +195,9 @@
       <ul class="flex flex-col font-medium">
         <li>
           <app-destinations-menu layout="mobile" (navigated)="closeMenus()" />
+        </li>
+        <li>
+          <app-packages-menu layout="mobile" (navigated)="closeMenus()" />
         </li>
       </ul>
 

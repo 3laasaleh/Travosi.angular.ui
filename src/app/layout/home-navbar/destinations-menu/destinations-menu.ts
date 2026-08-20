@@ -102,7 +102,7 @@ export class DestinationsMenu {
   private loadHierarchy(): void {
     this.isLoading = true;
     this.loadFailed = false;
-    this.api.getUnauthntecated('Destinations/Navigation?takeDestinations=10&takeCities=10&takeTours=8').pipe(
+    this.api.getUnauthntecated('Destinations/Navigation?takeDestinations=8&takeCities=10&takeTours=8').pipe(
       catchError(() => {
         this.loadFailed = true;
         return of(null);
