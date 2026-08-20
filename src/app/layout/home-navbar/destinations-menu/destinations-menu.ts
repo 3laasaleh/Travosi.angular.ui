@@ -34,11 +34,17 @@ export class DestinationsMenu {
   loaded = false;
   loadFailed = false;
   destinations: any[] = [];
+  activeDestinationId: number | null = null;
+  activeCityId: number | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   destinationName(item: any): string { return this.isArabic ? item?.nameAr ?? item?.nameEng ?? '' : item?.nameEng ?? item?.nameAr ?? ''; }
   cityName(item: any): string { return this.destinationName(item); }
   cities(destination: any): any[] { return destination?.cities ?? []; }
+  tours(city: any): any[] { return city?.tours ?? []; }
+  tourName(item: any): string {
+    return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? '';
+  }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
   get isMobile(): boolean { return this.layout === 'mobile'; }
 
@@ -53,6 +59,17 @@ export class DestinationsMenu {
     this.cancelClose();
     this.menuOpen = true;
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
+  }
+
+  activateDestination(destination: any): void {
+    if (this.isMobile) return;
+    this.activeDestinationId = Number(destination?.id) || null;
+    this.activeCityId = null;
+  }
+
+  activateCity(city: any): void {
+    if (this.isMobile) return;
+    this.activeCityId = Number(city?.id) || null;
   }
 
   scheduleClose(): void {
@@ -71,6 +88,8 @@ export class DestinationsMenu {
   closeMenu(): void {
     this.cancelClose();
     this.menuOpen = false;
+    this.activeDestinationId = null;
+    this.activeCityId = null;
   }
 
   onNavigate(): void {

@@ -13,7 +13,6 @@ import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 import { DestinationsMenu } from './destinations-menu/destinations-menu';
-import { ToursMenu } from './tours-menu/tours-menu';
 import { SearchBox } from './search-box/search-box';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../features/user/_services/auth.service';
@@ -21,7 +20,7 @@ import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, DecimalPipe, DestinationsMenu, ToursMenu, SearchBox],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DecimalPipe, DestinationsMenu, SearchBox],
   templateUrl: './home-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

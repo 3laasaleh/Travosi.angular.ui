@@ -15,7 +15,6 @@
 
     <nav class="ml-auto hidden items-center gap-1 lg:flex" [attr.aria-label]="'mainNavigation' | translate">
       <app-destinations-menu (navigated)="closeMenus()" />
-      <app-tours-menu (navigated)="closeMenus()" />
     </nav>
 
     <div class="hidden h-8 w-px bg-slate-200 lg:block "></div>
@@ -195,9 +194,6 @@
       <ul class="flex flex-col font-medium">
         <li>
           <app-destinations-menu layout="mobile" (navigated)="closeMenus()" />
-        </li>
-        <li>
-          <app-tours-menu layout="mobile" (navigated)="closeMenus()" />
         </li>
       </ul>
 
