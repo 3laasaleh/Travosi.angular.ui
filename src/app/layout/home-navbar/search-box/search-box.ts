@@ -12,13 +12,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap } from 'rxjs';
+import { catchError, distinctUntilChanged, finalize, map, of, switchMap, timer } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+
+type SearchResultType = 'destination' | 'tour' | 'package';
+
+interface SearchResultItem {
+  id: number;
+  type: SearchResultType;
+  titleEn: string;
+  titleAr?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  price?: number | null;
+  route?: string | null;
+}
 
 interface SearchResultGroup {
   labelKey: string;
   icon: string;
-  items: any[];
+  items: SearchResultItem[];
 }
 
 @Component({
@@ -39,36 +52,39 @@ export class SearchBox implements OnInit {
   searchControl = new FormControl('', { nonNullable: true });
   resultsOpen = false;
   isLoading = false;
+  searchFailed = false;
   groups: SearchResultGroup[] = [];
 
   get hasResults(): boolean {
     return this.groups.some((group) => group.items.length > 0);
   }
 
-  displayName(item: any): string {
+  displayName(item: SearchResultItem): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic ? (item?.titleAr ?? item?.titleEn ?? item?.title ?? '') : (item?.titleEn ?? item?.title ?? '');
+    const preferredTitle = arabic ? item.titleAr : item.titleEn;
+    const fallbackTitle = arabic ? item.titleEn : item.titleAr;
+    return preferredTitle?.trim() || fallbackTitle?.trim() || '';
   }
 
-  displayDescription(item: any): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    const text = item?.description ?? '';
-    if (!text) return '';
-    return arabic ? text : text;
+  displayDescription(item: SearchResultItem): string {
+    return (item.description ?? '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   ngOnInit(): void {
     this.searchControl.valueChanges
       .pipe(
         map((term) => term?.trim() ?? ''),
-        debounceTime(1000),
         distinctUntilChanged(),
-        switchMap((term) => this.search(term)),
+        switchMap((term) =>
+          term.length < 2 ? this.search(term) : timer(350).pipe(switchMap(() => this.search(term))),
+        ),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((items) => {
         this.groups = this.buildGroups(items);
-        this.resultsOpen = this.groups.some((group) => group.items.length > 0);
         this.cdr.markForCheck();
       });
   }
@@ -80,6 +96,8 @@ export class SearchBox implements OnInit {
   clearSearch(): void {
     this.searchControl.setValue('');
     this.groups = [];
+    this.isLoading = false;
+    this.searchFailed = false;
     this.resultsOpen = false;
   }
 
@@ -87,41 +105,68 @@ export class SearchBox implements OnInit {
     this.resultsOpen = false;
   }
 
-  navigateTo(item: any): void {
-    if (!item?.route) return;
+  navigateTo(item: SearchResultItem): void {
+    const routeByType: Record<SearchResultType, string> = {
+      destination: '/destinations',
+      tour: '/tours',
+      package: '/packages',
+    };
+
     this.closeResults();
-    void this.router.navigateByUrl(item.route);
+    void this.router.navigate([routeByType[item.type], item.id]);
   }
 
   private search(term: string) {
     const query = term.trim();
     if (query.length < 2) {
       this.groups = [];
+      this.isLoading = false;
+      this.searchFailed = false;
       this.resultsOpen = false;
       this.cdr.markForCheck();
-      return of([]);
+      return of<SearchResultItem[]>([]);
     }
 
     this.isLoading = true;
+    this.searchFailed = false;
+    this.resultsOpen = true;
     this.cdr.markForCheck();
 
-    return this.apiService.getUnauthntecated<any>(`Search?q=${encodeURIComponent(query)}&take=10`).pipe(
-      map((response: any) => {
-        const data = response?.data ?? response ?? [];
-        return Array.isArray(data) ? data : [];
-      }),
-      catchError(() => of([])),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      }),
+    return this.apiService
+      .getUnauthntecated<{ data?: SearchResultItem[] } | SearchResultItem[]>(
+        `Search?q=${encodeURIComponent(query)}&take=10`,
+      )
+      .pipe(
+        map((response) => {
+          const data = Array.isArray(response) ? response : (response?.data ?? []);
+          return this.validItems(data);
+        }),
+        catchError(() => {
+          this.searchFailed = true;
+          return of<SearchResultItem[]>([]);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+      );
+  }
+
+  private validItems(items: SearchResultItem[]): SearchResultItem[] {
+    const validTypes: SearchResultType[] = ['destination', 'tour', 'package'];
+    return items.filter(
+      (item) =>
+        Number.isInteger(item.id) &&
+        item.id > 0 &&
+        validTypes.includes(item.type) &&
+        Boolean(item.titleEn || item.titleAr),
     );
   }
 
-  private buildGroups(items: any[]): SearchResultGroup[] {
-    const destinationItems = items.filter((item) => item?.type === 'destination').slice(0, 10);
-    const tourItems = items.filter((item) => item?.type === 'tour').slice(0, 10);
-    const packageItems = items.filter((item) => item?.type === 'package').slice(0, 10);
+  private buildGroups(items: SearchResultItem[]): SearchResultGroup[] {
+    const destinationItems = items.filter((item) => item.type === 'destination').slice(0, 10);
+    const tourItems = items.filter((item) => item.type === 'tour').slice(0, 10);
+    const packageItems = items.filter((item) => item.type === 'package').slice(0, 10);
 
     return [
       { labelKey: 'destinations', icon: 'mdi-map-marker-outline', items: destinationItems },

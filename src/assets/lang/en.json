@@ -246,6 +246,7 @@
     "searchPlaceholder": "Search destinations, tours, packages...",
     "clearSearch": "Clear search",
     "noSearchResults": "No results found.",
+    "searchLoadError": "Search results could not be loaded. Please try again.",
     "language": "Language",
     "currency": "Currency",
     "currencyUsd": "US Dollar",

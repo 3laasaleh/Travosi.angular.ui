@@ -1,33 +1,51 @@
 <div class="relative w-full max-w-md">
   <div class="relative">
-    <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-lg text-slate-400"></i>
+    <i
+      class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-lg text-slate-400"
+    ></i>
     <input
       type="search"
       [formControl]="searchControl"
       [placeholder]="'searchPlaceholder' | translate"
       role="combobox"
       aria-autocomplete="list"
+      maxlength="200"
       [attr.aria-expanded]="resultsOpen"
-      class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 ps-10 pe-9 text-sm font-medium text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700  "
+      class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 ps-10 pe-9 text-sm font-medium text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700"
       (focus)="onFocus()"
     />
     @if (searchControl.value) {
-      <button type="button" class="absolute end-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800" [attr.aria-label]="'clearSearch' | translate" (click)="clearSearch()">
+      <button
+        type="button"
+        class="absolute end-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
+        [attr.aria-label]="'clearSearch' | translate"
+        (click)="clearSearch()"
+      >
         <i class="mdi mdi-close"></i>
       </button>
     }
   </div>
 
   @if (resultsOpen) {
-    <div class="absolute start-0 end-0 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 " role="listbox">
+    <div
+      class="absolute start-0 end-0 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700"
+      role="listbox"
+      [attr.aria-busy]="isLoading"
+    >
       <div class="max-h-96 overflow-y-auto p-2">
         @if (isLoading) {
-          @for (row of [1,2,3,4]; track row) {
+          @for (row of [1, 2, 3, 4]; track row) {
             <div class="mx-3 my-2 h-4 animate-pulse rounded-full bg-slate-200"></div>
           }
+        } @else if (searchFailed) {
+          <p class="p-4 text-center text-sm text-red-600">{{ 'searchLoadError' | translate }}</p>
         } @else if (hasResults) {
           @for (group of groups; track group.labelKey) {
-            <p class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ group.labelKey | translate }}</p>
+            <p
+              class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+            >
+              {{ group.labelKey | translate }}
+            </p>
             @for (item of group.items; track item.id ?? item.type + '-' + $index) {
               <button
                 type="button"
