@@ -15,6 +15,8 @@
 
     <nav class="ml-auto hidden items-center gap-1 lg:flex" [attr.aria-label]="'mainNavigation' | translate">
       <app-destinations-menu (navigated)="closeMenus()" />
+      <app-tours-menu (navigated)="closeMenus()" />
+      <app-tours-menu [nileCruisesOnly]="true" (navigated)="closeMenus()" />
       <app-packages-menu (navigated)="closeMenus()" />
     </nav>
 
@@ -195,6 +197,12 @@
       <ul class="flex flex-col font-medium">
         <li>
           <app-destinations-menu layout="mobile" (navigated)="closeMenus()" />
+        </li>
+        <li>
+          <app-tours-menu layout="mobile" (navigated)="closeMenus()" />
+        </li>
+        <li>
+          <app-tours-menu layout="mobile" [nileCruisesOnly]="true" (navigated)="closeMenus()" />
         </li>
         <li>
           <app-packages-menu layout="mobile" (navigated)="closeMenus()" />

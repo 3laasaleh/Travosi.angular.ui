@@ -1,57 +1,276 @@
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
-  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
-  <h2 class="mb-4 text-xl font-semibold">{{ (selectedQuotation ? 'editQuotation' : 'addQuotation') | translate }}</h2>
-  @if (optionsLoadError) { <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"><span>{{ 'quotationOptionsLoadError' | translate }}</span><button type="button" (click)="retryOptions()" class="rounded-full border border-amber-300 px-3 py-1 font-semibold hover:bg-amber-100">{{ 'retry' | translate }}</button></div> }
+  @if (errorMessage) {
+    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+      {{ errorMessage | translate }}
+    </div>
+  }
+  @if (successMessage) {
+    <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">
+      {{ successMessage | translate }}
+    </div>
+  }
+
+  <h2 class="mb-4 text-xl font-semibold">
+    {{ (selectedQuotation ? 'editQuotation' : 'addQuotation') | translate }}
+  </h2>
+
+  @if (optionsLoadError) {
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      <span>{{ 'quotationOptionsLoadError' | translate }}</span>
+      <button type="button" (click)="retryOptions()" class="rounded-full border border-amber-300 px-3 py-1 font-semibold hover:bg-amber-100">
+        {{ 'retry' | translate }}
+      </button>
+    </div>
+  }
+
   <form class="space-y-5" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'quotationNo' | translate }}</label><input formControlName="quotationNo" type="text" readonly [placeholder]="'quotationNoGenerated' | translate" class="w-full rounded-2xl border border-slate-300 bg-slate-100 px-3 py-2 text-slate-500" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label><select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2"><option value="">{{ 'selectCustomer' | translate }}</option>@for (customer of customers; track customer.id) { <option [ngValue]="customer.id">{{ customer.firstName }} {{ customer.lastName }}{{ customer.companyName ? ' — ' + customer.companyName : '' }}</option> }</select></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">@for (currency of currencies; track currency.code) { <option [ngValue]="currency.id">{{ currency.symbol }} {{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'status' | translate }}</label><select formControlName="status" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">@for (status of statuses; track status.value) { <option [ngValue]="status.value">{{ status.label.toLowerCase() | translate }}</option> }</select></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'travelStartDate' | translate }}</label><app-date-picker formControlName="travelStartDate" id="quotation-travel-start-date" [min]="today" [ariaLabel]="'travelStartDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'travelEndDate' | translate }}</label><app-date-picker formControlName="travelEndDate" id="quotation-travel-end-date" [min]="quotationForm.controls.travelStartDate.value || today" [ariaLabel]="'travelEndDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'validUntil' | translate }}</label><app-date-picker formControlName="validUntil" id="quotation-valid-until" [min]="today" [max]="quotationForm.controls.travelStartDate.value || null" [ariaLabel]="'validUntil' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'exchangeRate' | translate }}</label><input formControlName="exchangeRate" type="number" min="0.000001" step="0.000001" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label>
+        <select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
+          <option value="">{{ 'selectCustomer' | translate }}</option>
+          @for (customer of customers; track customer.id) {
+            <option [ngValue]="customer.id">{{ customer.firstName }} {{ customer.lastName }}{{ customer.companyName ? ' — ' + customer.companyName : '' }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label>
+        <select formControlName="currencyId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
+          @for (currency of currencies; track currency.code) {
+            <option [ngValue]="currency.id">{{ currency.symbol }} {{ currency.labelKey | translate }} ({{ currency.code }})</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'status' | translate }}</label>
+        <select formControlName="status" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
+          @for (status of statuses; track status.value) {
+            <option [ngValue]="status.value">{{ status.label.toLowerCase() | translate }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'travelStartDate' | translate }}</label>
+        <app-date-picker formControlName="travelStartDate" id="quotation-travel-start-date" [min]="today" [ariaLabel]="'travelStartDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'travelEndDate' | translate }}</label>
+        <app-date-picker formControlName="travelEndDate" id="quotation-travel-end-date" [min]="quotationForm.controls.travelStartDate.value || today" [ariaLabel]="'travelEndDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'validUntil' | translate }}</label>
+        <app-date-picker formControlName="validUntil" id="quotation-valid-until" [min]="today" [max]="quotationForm.controls.travelStartDate.value || null" [ariaLabel]="'validUntil' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+      </div>
     </div>
-    @if (quotationForm.hasError('invalidTravelDateRange')) { <p class="text-sm text-red-600">{{ 'endDateBeforeStart' | translate }}</p> }
-    @if (quotationForm.hasError('invalidValidityDate')) { <p class="text-sm text-red-600">{{ 'quotationValidityBeforeTravel' | translate }}</p> }
+
+    @if (quotationForm.hasError('invalidTravelDateRange')) {
+      <p class="text-sm text-red-600">{{ 'endDateBeforeStart' | translate }}</p>
+    }
+    @if (quotationForm.hasError('invalidValidityDate')) {
+      <p class="text-sm text-red-600">{{ 'quotationValidityBeforeTravel' | translate }}</p>
+    }
 
     <div class="grid gap-4 sm:grid-cols-3">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'adults' | translate }}</label><input formControlName="adults" type="number" min="1" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'children' | translate }}</label><input formControlName="children" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'infants' | translate }}</label><input formControlName="infants" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'adults' | translate }}</label>
+        <input formControlName="adults" type="number" min="1" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'children' | translate }}</label>
+        <input formControlName="children" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'infants' | translate }}</label>
+        <input formControlName="infants" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      </div>
     </div>
 
     <fieldset class="rounded-2xl border border-slate-200 bg-white p-4">
       <legend class="px-2 text-sm font-semibold">{{ 'quotationTravelItems' | translate }}</legend>
-      @if (optionsLoading) { <div class="h-28 animate-pulse rounded-xl bg-slate-100"></div> }
-      @else {
-        <div class="grid gap-5 lg:grid-cols-2">
-          <section><h3 class="mb-2 text-sm font-semibold text-primary">{{ 'packages' | translate }}</h3><div class="max-h-72 space-y-2 overflow-y-auto">
-            @for (pkg of packages; track pkg.id) { <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 hover:border-primary"><span class="flex min-w-0 items-center gap-3">@if (thumbnail(pkg)) { <img [src]="thumbnail(pkg)" [alt]="itemName(pkg)" class="h-12 w-16 rounded-lg object-cover" /> }<input type="checkbox" [checked]="isPackageSelected(pkg.id)" (change)="togglePackage(pkg, $any($event.target).checked)" /><span class="min-w-0"><span class="block truncate font-medium">{{ itemName(pkg) }}</span><span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(pkg) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(pkg) | number:'1.2-2' }}</span></span></span><strong>{{ catalogTotal(pkg) | number:'1.2-2' }}</strong></label> }
-            @empty { <p class="py-4 text-center text-sm text-slate-500">{{ 'noPackagesFound' | translate }}</p> }
-          </div></section>
-          <section><h3 class="mb-2 text-sm font-semibold text-primary">{{ 'tours' | translate }}</h3><div class="max-h-72 space-y-2 overflow-y-auto">
-            @for (tour of tours; track tour.id) { <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 hover:border-primary"><span class="flex min-w-0 items-center gap-3">@if (thumbnail(tour)) { <img [src]="thumbnail(tour)" [alt]="itemName(tour)" class="h-12 w-16 rounded-lg object-cover" /> }<input type="checkbox" [checked]="isTourSelected(tour.id)" (change)="toggleTour(tour, $any($event.target).checked)" /><span class="min-w-0"><span class="block truncate font-medium">{{ itemName(tour) }}</span><span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(tour) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(tour) | number:'1.2-2' }}</span></span></span><strong>{{ catalogTotal(tour) | number:'1.2-2' }}</strong></label> }
-            @empty { <p class="py-4 text-center text-sm text-slate-500">{{ 'noToursFound' | translate }}</p> }
-          </div></section>
+      @if (optionsLoading) {
+        <div class="h-28 animate-pulse rounded-xl bg-slate-100"></div>
+      } @else {
+        <div class="grid gap-5 xl:grid-cols-3">
+          <section>
+            <h3 class="mb-2 text-sm font-semibold text-primary">{{ 'packages' | translate }}</h3>
+            <div class="max-h-72 space-y-2 overflow-y-auto">
+              @for (pkg of packages; track pkg.id) {
+                <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 hover:border-primary">
+                  <span class="flex min-w-0 items-center gap-3">
+                    @if (thumbnail(pkg)) {
+                      <img [src]="thumbnail(pkg)" [alt]="itemName(pkg)" class="h-12 w-16 rounded-lg object-cover" />
+                    }
+                    <input type="checkbox" [checked]="isPackageSelected(pkg.id)" (change)="togglePackage(pkg, $any($event.target).checked)" />
+                    <span class="min-w-0">
+                      <span class="block truncate font-medium">{{ itemName(pkg) }}</span>
+                      <span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(pkg) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(pkg) | number:'1.2-2' }}</span>
+                    </span>
+                  </span>
+                  <strong>{{ catalogTotal(pkg) | number:'1.2-2' }}</strong>
+                </label>
+              } @empty {
+                <p class="py-4 text-center text-sm text-slate-500">{{ 'noPackagesFound' | translate }}</p>
+              }
+            </div>
+          </section>
+
+          <section>
+            <h3 class="mb-2 text-sm font-semibold text-primary">{{ 'tours' | translate }}</h3>
+            <div class="max-h-72 space-y-2 overflow-y-auto">
+              @for (tour of tours; track tour.id) {
+                <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 hover:border-primary">
+                  <span class="flex min-w-0 items-center gap-3">
+                    @if (thumbnail(tour)) {
+                      <img [src]="thumbnail(tour)" [alt]="itemName(tour)" class="h-12 w-16 rounded-lg object-cover" />
+                    }
+                    <input type="checkbox" [checked]="isTourSelected(tour.id)" (change)="toggleTour(tour, $any($event.target).checked)" />
+                    <span class="min-w-0">
+                      <span class="block truncate font-medium">{{ itemName(tour) }}</span>
+                      <span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(tour) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(tour) | number:'1.2-2' }}</span>
+                    </span>
+                  </span>
+                  <strong>{{ catalogTotal(tour) | number:'1.2-2' }}</strong>
+                </label>
+              } @empty {
+                <p class="py-4 text-center text-sm text-slate-500">{{ 'noToursFound' | translate }}</p>
+              }
+            </div>
+          </section>
+
+          <section>
+            <h3 class="mb-2 text-sm font-semibold text-primary">{{ 'flights' | translate }}</h3>
+            <div class="max-h-72 space-y-2 overflow-y-auto">
+              @for (flight of flights; track flight.id) {
+                <label class="flex items-start justify-between gap-3 rounded-xl border p-3 hover:border-primary" [class.cursor-pointer]="flight.isActive !== false || isFlightSelected(flight.id)" [class.opacity-60]="flight.isActive === false">
+                  <span class="flex min-w-0 items-start gap-3">
+                    <input class="mt-1" type="checkbox" [checked]="isFlightSelected(flight.id)" [disabled]="flight.isActive === false && !isFlightSelected(flight.id)" (change)="toggleFlight(flight, $any($event.target).checked)" />
+                    <span class="min-w-0">
+                      <span class="block font-medium">{{ flightName(flight) }}</span>
+                      <span class="block text-xs text-slate-500">{{ flight.departureTime | date:'medium' }} — {{ flight.arrivalTime | date:'medium' }}</span>
+                      <span class="block text-xs text-slate-500">{{ 'flightPricePerTraveler' | translate }}: {{ flightPrice(flight) | number:'1.2-2' }}</span>
+                    </span>
+                  </span>
+                  <strong>{{ flightTotal(flight) | number:'1.2-2' }}</strong>
+                </label>
+              } @empty {
+                <p class="py-4 text-center text-sm text-slate-500">{{ 'noFlightsFound' | translate }}</p>
+              }
+            </div>
+          </section>
         </div>
       }
     </fieldset>
 
+    <fieldset class="rounded-2xl border border-slate-200 bg-white p-4" formArrayName="transfers">
+      <legend class="px-2 text-sm font-semibold">{{ 'quotationTransfers' | translate }}</legend>
+      <div class="mb-3 flex items-center justify-between gap-3">
+        <p class="text-sm text-slate-500">{{ 'quotationTransfersHint' | translate }}</p>
+        <button type="button" (click)="addTransfer()" class="inline-flex items-center gap-1 rounded-full border border-primary px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/5">
+          <i class="mdi mdi-plus" aria-hidden="true"></i>{{ 'addTransfer' | translate }}
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        @for (transfer of transfersArray.controls; track transfer; let index = $index) {
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3" [formGroupName]="index">
+            <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_11rem_11rem_auto] xl:items-end">
+              <div>
+                <label class="mb-2 block text-sm font-medium">{{ 'transferFrom' | translate }}</label>
+                <input formControlName="from" type="text" maxlength="250" [placeholder]="'transferFromPlaceholder' | translate" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2" />
+              </div>
+              <div>
+                <label class="mb-2 block text-sm font-medium">{{ 'transferTo' | translate }}</label>
+                <input formControlName="to" type="text" maxlength="250" [placeholder]="'transferToPlaceholder' | translate" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2" />
+              </div>
+              <div>
+                <label class="mb-2 block text-sm font-medium">{{ 'fromTime' | translate }}</label>
+                <app-time-picker formControlName="fromTime" [id]="'quotation-transfer-from-time-' + index" [ariaLabel]="'fromTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div>
+                <label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label>
+                <app-time-picker formControlName="arrivalTime" [id]="'quotation-transfer-arrival-time-' + index" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
+              </div>
+              <button type="button" (click)="removeTransfer(index)" [attr.aria-label]="'remove' | translate" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-red-200 text-red-600 hover:bg-red-50">
+                <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+              </button>
+            </div>
+            @if (transfer.touched && transfer.invalid) {
+              <p class="mt-2 text-xs text-red-600">{{ 'transferFieldsRequired' | translate }}</p>
+            }
+          </div>
+        } @empty {
+          <p class="rounded-xl border border-dashed border-slate-300 px-4 py-5 text-center text-sm text-slate-500">{{ 'noTransfersAdded' | translate }}</p>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="rounded-2xl border border-slate-200 bg-white p-4" formArrayName="policies">
+      <legend class="px-2 text-sm font-semibold">{{ 'quotationPolicies' | translate }}</legend>
+      <div class="mb-3 flex items-center justify-between gap-3">
+        <p class="text-sm text-slate-500">{{ 'quotationPoliciesHint' | translate }}</p>
+        <button type="button" (click)="addPolicy()" class="inline-flex items-center gap-1 rounded-full border border-primary px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/5">
+          <i class="mdi mdi-plus" aria-hidden="true"></i>{{ 'addPolicy' | translate }}
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        @for (policy of policiesArray.controls; track policy; let index = $index) {
+          <div class="flex items-start gap-2" [formGroupName]="index">
+            <div class="min-w-0 flex-1">
+              <input formControlName="value" type="text" maxlength="500" [placeholder]="'quotationPolicyPlaceholder' | translate" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+              @if (policy.controls['value'].touched && policy.controls['value'].invalid) {
+                <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
+              }
+            </div>
+            <button type="button" (click)="removePolicy(index)" [attr.aria-label]="'remove' | translate" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-red-200 text-red-600 hover:bg-red-50">
+              <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+            </button>
+          </div>
+        } @empty {
+          <p class="rounded-xl border border-dashed border-slate-300 px-4 py-5 text-center text-sm text-slate-500">{{ 'noQuotationPoliciesAdded' | translate }}</p>
+        }
+      </div>
+    </fieldset>
+
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'discountAmount' | translate }}</label><input formControlName="discount" type="number" min="0" [max]="subTotal" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /><p class="mt-1 text-xs text-slate-500">{{ 'discountAppliedBeforeTax' | translate }}</p></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'taxRate' | translate }} (%)</label><input formControlName="taxRate" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'discountAmount' | translate }}</label>
+        <input formControlName="discount" type="number" min="0" [max]="subTotal" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        <p class="mt-1 text-xs text-slate-500">{{ 'discountAppliedBeforeTax' | translate }}</p>
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'taxRate' | translate }} (%)</label>
+        <input formControlName="taxRate" type="number" min="0" max="100" step="0.01" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      </div>
     </div>
 
     <div class="grid gap-3 rounded-2xl bg-slate-900 p-4 text-sm text-white sm:grid-cols-2">
-      <p>{{ 'subTotal' | translate }}: <strong>{{ subTotal | number:'1.2-2' }}</strong></p><p>{{ 'discount' | translate }}: <strong>{{ quotationForm.controls.discount.value | number:'1.2-2' }}</strong></p>
-      <p>{{ 'tax' | translate }}: <strong>{{ tax | number:'1.2-2' }}</strong></p><p>{{ 'totalCost' | translate }}: <strong>{{ totalCost | number:'1.2-2' }}</strong></p>
-      <p class="sm:col-span-2 text-base text-emerald-300">{{ 'finalPriceAfterDiscount' | translate }}: <strong>{{ totalAmount | number:'1.2-2' }}</strong></p>
+      <p>{{ 'subTotal' | translate }}: <strong>{{ subTotal | number:'1.2-2' }}</strong></p>
+      <p>{{ 'discount' | translate }}: <strong>{{ quotationForm.controls.discount.value | number:'1.2-2' }}</strong></p>
+      <p>{{ 'tax' | translate }}: <strong>{{ tax | number:'1.2-2' }}</strong></p>
+      <p>{{ 'totalCost' | translate }}: <strong>{{ totalCost | number:'1.2-2' }}</strong></p>
+      <p class="text-base text-emerald-300 sm:col-span-2">{{ 'finalPriceAfterDiscount' | translate }}: <strong>{{ totalAmount | number:'1.2-2' }}</strong></p>
     </div>
 
-    <div><label class="mb-2 block text-sm font-medium">{{ 'notes' | translate }}</label><textarea formControlName="notes" rows="3" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
-    <div class="flex gap-3"><button type="submit" [disabled]="quotationForm.invalid || isLoading || optionsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedQuotation ? 'update' : 'add') | translate }} }</button>@if (selectedQuotation) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'notes' | translate }}</label>
+      <textarea formControlName="notes" rows="3" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+    </div>
+
+    <div class="flex gap-3">
+      <button type="submit" [disabled]="quotationForm.invalid || isLoading || optionsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+        @if (isLoading) {
+          <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span>
+        } @else {
+          {{ (selectedQuotation ? 'update' : 'add') | translate }}
+        }
+      </button>
+      @if (selectedQuotation) {
+        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">
+          {{ 'cancel' | translate }}
+        </button>
+      }
+    </div>
   </form>
 </div>

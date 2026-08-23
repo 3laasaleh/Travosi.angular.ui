@@ -87,40 +87,70 @@
               <button type="button" class="rounded-full bg-slate-800 px-3 py-1.5 text-sm text-white disabled:opacity-50" [disabled]="isOptionsLoading" (click)="addItem(1)">
                 + {{ 'package' | translate }}
               </button>
+              <button type="button" class="rounded-full bg-sky-700 px-3 py-1.5 text-sm text-white disabled:opacity-50" [disabled]="isOptionsLoading" (click)="addItem(4)">
+                + {{ 'flight' | translate }}
+              </button>
+              <button type="button" class="rounded-full bg-amber-600 px-3 py-1.5 text-sm text-white" (click)="addItem(5)">
+                + {{ 'transfer' | translate }}
+              </button>
             </div>
           </div>
 
           <div formArrayName="items" class="space-y-3">
             @for (row of items.controls; track row) {
-              <div [formGroupName]="$index" class="grid items-start gap-3 rounded-xl bg-slate-50 p-3 md:grid-cols-2 xl:grid-cols-[100px_minmax(180px,1.4fr)_minmax(180px,1.4fr)_90px_120px_120px_120px_44px]">
+              <div [formGroupName]="$index" class="grid items-start gap-3 rounded-xl bg-slate-50 p-3 md:grid-cols-2 xl:grid-cols-4">
                 <label class="text-xs">
                   {{ 'type' | translate }}
                   <select formControlName="itemType" class="mt-1 w-full rounded-lg border-slate-300" (change)="itemTypeChanged(row)">
                     <option [ngValue]="2">{{ 'tour' | translate }}</option>
                     <option [ngValue]="1">{{ 'package' | translate }}</option>
+                    <option [ngValue]="4">{{ 'flight' | translate }}</option>
+                    <option [ngValue]="5">{{ 'transfer' | translate }}</option>
                   </select>
                 </label>
 
-                <label class="text-xs">
-                  {{ 'service' | translate }}
-                  <select formControlName="serviceId" class="mt-1 w-full rounded-lg border-slate-300" [disabled]="isOptionsLoading" (change)="serviceChanged(row)">
-                    <option [ngValue]="null">{{ 'select' | translate }}</option>
-                    @for (service of serviceOptions(row); track service.id) {
-                      <option [ngValue]="service.id">{{ name(service) }}</option>
+                @if (isTransfer(row)) {
+                  <label class="text-xs">
+                    {{ 'transferFrom' | translate }}
+                    <input type="text" formControlName="from" class="mt-1 w-full rounded-lg border-slate-300" [placeholder]="'transferFromPlaceholder' | translate">
+                  </label>
+                  <label class="text-xs">
+                    {{ 'transferTo' | translate }}
+                    <input type="text" formControlName="to" class="mt-1 w-full rounded-lg border-slate-300" [placeholder]="'transferToPlaceholder' | translate">
+                  </label>
+                  <label class="text-xs">
+                    {{ 'fromTime' | translate }}
+                    <app-time-picker formControlName="fromTime" [id]="'invoice-transfer-from-time-' + $index" [ariaLabel]="'fromTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                  </label>
+                  <label class="text-xs">
+                    {{ 'arrivalTime' | translate }}
+                    <app-time-picker formControlName="arrivalTime" [id]="'invoice-transfer-arrival-time-' + $index" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                  </label>
+                  @if (itemDetailsInvalid(row) && (row.controls.from.touched || row.controls.to.touched)) {
+                    <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferFieldsRequired' | translate }}</small>
+                  }
+                } @else {
+                  <label class="text-xs">
+                    {{ 'service' | translate }}
+                    <select formControlName="serviceId" class="mt-1 w-full rounded-lg border-slate-300" [disabled]="isOptionsLoading" (change)="serviceChanged(row)">
+                      <option [ngValue]="null">{{ 'select' | translate }}</option>
+                      @for (service of serviceOptions(row); track service.id) {
+                        <option [ngValue]="service.id">{{ name(service) }}</option>
+                      }
+                    </select>
+                    @if (row.controls.serviceId.touched && !row.controls.serviceId.value) {
+                      <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
                     }
-                  </select>
-                  @if (row.controls.serviceId.touched && row.controls.serviceId.invalid) {
-                    <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
-                  }
-                </label>
+                  </label>
 
-                <label class="text-xs">
-                  {{ 'description' | translate }}
-                  <input type="text" formControlName="description" class="mt-1 w-full rounded-lg border-slate-300" autocomplete="off">
-                  @if (row.controls.description.touched && row.controls.description.invalid) {
-                    <small class="mt-1 block text-red-600">{{ 'descriptionRequired' | translate }}</small>
-                  }
-                </label>
+                  <label class="text-xs">
+                    {{ 'description' | translate }}
+                    <input type="text" formControlName="description" class="mt-1 w-full rounded-lg border-slate-300" autocomplete="off">
+                    @if (row.controls.description.touched && !row.controls.description.value.trim()) {
+                      <small class="mt-1 block text-red-600">{{ 'descriptionRequired' | translate }}</small>
+                    }
+                  </label>
+                }
 
                 <label class="text-xs">
                   {{ 'quantity' | translate }}

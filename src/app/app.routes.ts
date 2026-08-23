@@ -35,6 +35,12 @@ export const routes: Routes = [
       import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
+    path: 'nile-cruises',
+    data: { nileCruisesOnly: true },
+    loadComponent: () =>
+      import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
+  },
+  {
     path: 'tours/:id',
     loadComponent: () =>
       import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),

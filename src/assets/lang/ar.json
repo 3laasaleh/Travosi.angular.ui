@@ -50,6 +50,7 @@
     "admin": "الإدارة",
     "destinations": "الوجهات",
     "tours": "الجولات",
+    "nileCruises": "الرحلات النيلية",
     "manageDestinationDetails": "إدارة تفاصيل الوجهة وصورها.",
     "manageTourDetails": "إدارة تفاصيل الجولة والصور وخط السير.",
     "backToDashboard": "العودة إلى لوحة التحكم",
@@ -107,6 +108,7 @@
     "selectAirline": "اختر شركة طيران",
     "airlineRequired": "شركة الطيران مطلوبة.",
     "flights": "الرحلات الجوية",
+    "flight": "رحلة جوية",
     "manageFlightDetails": "إدارة مواعيد الرحلات والأسعار والمقاعد.",
     "hideAddFlight": "إخفاء إضافة رحلة",
     "showAddFlight": "إظهار إضافة رحلة",
@@ -239,6 +241,7 @@
     "noPackagesFound": "لا توجد باقات.",
     "viewAllDestinations": "عرض كل الوجهات",
     "viewAllTours": "عرض كل الجولات",
+    "viewAllNileCruises": "عرض كل الرحلات النيلية",
     "viewAllPackages": "عرض كل الباقات",
     "exploreMore": "استكشف المزيد",
     "showMore": "عرض المزيد",
@@ -306,6 +309,7 @@
     "tourList": "قائمة الجولات",
     "loadingTours": "جارٍ تحميل الجولات...",
     "noToursFound": "لا توجد جولات.",
+    "noNileCruisesFound": "لا توجد رحلات نيلية.",
     "destinationServiceUnavailable": "خدمة الوجهات غير متاحة. يتم عرض بيانات تجريبية.",
     "destinationSaveError": "تعذر حفظ الوجهة.",
     "destinationUpdated": "تم تحديث الوجهة بنجاح.",
@@ -542,6 +546,7 @@
     ,"coverImageUrl": "رابط صورة الغلاف"
     ,"cancellationPolicy": "سياسة الإلغاء"
     ,"freeCancellation": "إلغاء مجاني"
+    ,"nileCruise": "رحلة نيلية"
     ,"positiveValueRequired": "أدخل قيمة أكبر من صفر."
     ,"valueShouldBeMoreThanZero": "أدخل صفرًا أو قيمة موجبة."
     ,"durationHoursRange": "يجب أن تكون الساعات بين 0 و23."
@@ -594,6 +599,7 @@
     ,"noItineraryAdded": "لم تتم إضافة خطوات إلى خط السير بعد."
     ,"seatsAvailable": "مقعد متاح"
     ,"toursLoadError": "تعذر تحميل الجولات."
+    ,"nileCruisesLoadError": "تعذر تحميل الرحلات النيلية."
     ,"destinationNotFound": "الوجهة غير موجودة."
     ,"tourNotFound": "الجولة غير موجودة."
     ,"toursInDestination": "الجولات في هذه الوجهة"
@@ -908,10 +914,27 @@
     "confirmActivateFlight": "هل تريد تفعيل هذه الرحلة؟",
     "confirmDeactivateFlight": "هل تريد إلغاء تفعيل هذه الرحلة؟",
     "quotationNoGenerated": "يتم إنشاؤه تلقائياً بعد الحفظ",
-    "quotationTravelItems": "الجولات والباقات",
+    "quotationTravelItems": "خدمات السفر",
     "adultPrice": "سعر البالغ",
     "childPrice": "سعر الطفل",
-    "selectAtLeastOneTravelItem": "اختر جولة أو باقة واحدة على الأقل.",
+    "flightPricePerTraveler": "السعر لكل مسافر",
+    "selectAtLeastOneTravelItem": "اختر باقة أو جولة أو رحلة جوية أو خدمة نقل واحدة على الأقل.",
+    "quotationTransfers": "خدمات النقل",
+    "quotationTransfersHint": "أضف كل نقطة استلام ووصول مشمولة في عرض السعر.",
+    "addTransfer": "إضافة خدمة نقل",
+    "transfer": "انتقال",
+    "noTransfersAdded": "لم تتم إضافة خدمات نقل بعد.",
+    "transferFrom": "من",
+    "transferTo": "إلى",
+    "fromTime": "وقت الانطلاق",
+    "transferFromPlaceholder": "مثال: مطار القاهرة الدولي",
+    "transferToPlaceholder": "مثال: فندق وسط المدينة",
+    "transferFieldsRequired": "مكان الانطلاق والوصول ووقتا الانطلاق والوصول مطلوبة.",
+    "quotationPolicies": "سياسات عرض السعر",
+    "quotationPoliciesHint": "أضف الشروط والسياسات التي تنطبق على عرض السعر.",
+    "addPolicy": "إضافة سياسة",
+    "quotationPolicyPlaceholder": "مثال: الأسعار خاضعة للتوافر",
+    "noQuotationPoliciesAdded": "لم تتم إضافة سياسات لعرض السعر بعد.",
     "discountAmount": "قيمة الخصم",
     "discountAppliedBeforeTax": "يتم تطبيق الخصم قبل الضريبة.",
     "finalPriceAfterDiscount": "السعر النهائي بعد الخصم",
@@ -936,7 +959,7 @@
     "loadingCities": "جارٍ تحميل المدن...",
     "cityRequired": "المدينة مطلوبة.",
     "citiesLoadError": "تعذر تحميل المدن.",
-    "quotationOptionsLoadError": "تعذر تحميل العملاء أو الباقات أو الجولات. تحقق من صلاحية الوصول ثم أعد المحاولة.",
+    "quotationOptionsLoadError": "تعذر تحميل العملاء أو الباقات أو الجولات أو الرحلات الجوية. تحقق من صلاحية الوصول ثم أعد المحاولة.",
     "quotationValidityBeforeTravel": "يجب أن يكون تاريخ صلاحية عرض السعر في أو قبل تاريخ بداية السفر.",
     "retry": "إعادة المحاولة",
     "whatsappFloatingLabel": "تواصل مع سي وورلد هوليدايز عبر واتساب",
@@ -950,7 +973,7 @@
     "items": "عناصر",
     "invoices": "الفواتير",
     "vouchers": "القسائم",
-    "manageInvoices": "إنشاء فواتير تفصيلية للجولات والباقات.",
+    "manageInvoices": "إنشاء فواتير تفصيلية للجولات والباقات والرحلات الجوية والانتقالات.",
     "manageVouchers": "إنشاء قسائم قابلة للطباعة للطيران والفنادق والجولات والباقات.",
     "invoiceNo": "رقم الفاتورة",
     "invoiceDate": "تاريخ الفاتورة",
@@ -973,7 +996,7 @@
     "createInvoice": "إنشاء فاتورة",
     "customerRequired": "اختر عميلاً.",
     "voucherOptionsLoadError": "تعذر تحميل العملاء أو خدمات السفر. تحقق من صلاحية الوصول ثم أعد المحاولة.",
-    "invoiceOptionsLoadError": "تعذر تحميل العملاء أو العملات أو الجولات أو الباقات. تظهر البيانات الاحتياطية المتاحة؛ أعد المحاولة قبل الحفظ.",
+    "invoiceOptionsLoadError": "تعذر تحميل العملاء أو العملات أو الجولات أو الباقات أو الرحلات الجوية. تظهر البيانات الاحتياطية المتاحة؛ أعد المحاولة قبل الحفظ.",
     "noServicesAvailable": "لا توجد خدمات متاحة لهذا النوع من القسائم.",
     "serviceRequired": "اختر خدمة سفر.",
     "serviceDateRequired": "تاريخ الخدمة مطلوب.",
@@ -991,7 +1014,7 @@
     "lineTotal": "إجمالي البند",
     "lineDiscountExceedsTotal": "لا يمكن أن يتجاوز خصم البند حاصل ضرب الكمية في سعر الوحدة.",
     "removeInvoiceItem": "إزالة بند الفاتورة",
-    "addInvoiceItemHint": "أضف جولة أو باقة واحدة على الأقل إلى الفاتورة.",
+    "addInvoiceItemHint": "أضف جولة أو باقة أو رحلة جوية أو انتقالاً واحداً على الأقل إلى الفاتورة.",
     "taxRateInvalid": "يجب أن تكون نسبة الضريبة بين 0٪ و100٪.",
     "invoiceDueDateInvalid": "يجب أن يكون تاريخ الاستحقاق في تاريخ الفاتورة أو بعده.",
     "serverCalculatedTotalsHint": "الإجماليات المعروضة تقديرية؛ يحسب الخادم إجماليات الفاتورة المحفوظة."

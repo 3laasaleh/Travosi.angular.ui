@@ -9,13 +9,22 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -47,12 +56,13 @@ export interface QuotationDTO {
   validUntil: string;
   notes?: string | null;
   items: any[];
+  policies?: Array<{ id?: number; value: string }>;
 }
 
 @Component({
   selector: 'app-quotations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, TranslatePipe, DatePicker],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, TranslatePipe, DatePicker, TimePicker],
   templateUrl: './quotations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -74,8 +84,10 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   ];
   packages: any[] = [];
   tours: any[] = [];
+  flights: any[] = [];
   selectedPackageIds = new Set<number>();
   selectedTourIds = new Set<number>();
+  selectedFlightIds = new Set<number>();
   isLoading = false;
   optionsLoading = false;
   optionsLoadError = false;
@@ -106,6 +118,18 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return this.tours.filter((tour) => this.selectedTourIds.has(Number(tour.id)));
   }
 
+  get selectedFlights(): any[] {
+    return this.flights.filter((flight) => this.selectedFlightIds.has(Number(flight.id)));
+  }
+
+  get policiesArray(): FormArray<FormGroup> {
+    return this.quotationForm.controls.policies;
+  }
+
+  get transfersArray(): FormArray<FormGroup> {
+    return this.quotationForm.controls.transfers;
+  }
+
   get travelerCount(): number {
     const form = this.quotationForm.controls;
     return form.adults.value + form.children.value + form.infants.value;
@@ -113,12 +137,22 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   get subTotal(): number {
     return this.selectedPackages.reduce((sum, pkg) => sum + this.catalogTotal(pkg), 0)
-      + this.selectedTours.reduce((sum, tour) => sum + this.catalogTotal(tour), 0);
+      + this.selectedTours.reduce((sum, tour) => sum + this.catalogTotal(tour), 0)
+      + this.selectedFlights.reduce((sum, flight) => sum + this.flightTotal(flight), 0);
   }
 
   get totalCost(): number {
-    return [...this.selectedPackages, ...this.selectedTours].reduce(
-      (sum, item) => sum + Number(item.costPrice ?? item.cost ?? 0), 0);
+    return this.buildQuotationItems().reduce(
+      (sum, item) => sum + Number(item.costPrice ?? 0) * Number(item.quantity ?? 0),
+      0,
+    );
+  }
+
+  get hasTravelItems(): boolean {
+    return this.selectedPackageIds.size > 0
+      || this.selectedTourIds.size > 0
+      || this.selectedFlightIds.size > 0
+      || this.transfersArray.length > 0;
   }
 
   get tax(): number {
@@ -130,7 +164,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax;
   }
 
-  get today(): string { return new Date().toISOString().slice(0, 10); }
+  get today(): string { return this.localDate(new Date()); }
 
   isPackageSelected(id: number): boolean {
     return this.selectedPackageIds.has(Number(id));
@@ -152,6 +186,16 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     else this.selectedTourIds.delete(id);
   }
 
+  isFlightSelected(id: number): boolean {
+    return this.selectedFlightIds.has(Number(id));
+  }
+
+  toggleFlight(flight: any, checked: boolean): void {
+    const id = Number(flight.id);
+    if (checked) this.selectedFlightIds.add(id);
+    else this.selectedFlightIds.delete(id);
+  }
+
   packagePrice(pkg: any): number {
     return Number(pkg.pricePerPerson ?? pkg.price ?? pkg.totalAmount ?? 0);
   }
@@ -163,6 +207,39 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   catalogTotal(item: any): number {
     return this.packagePrice(item) * this.quotationForm.controls.adults.value
       + this.childPrice(item) * this.quotationForm.controls.children.value;
+  }
+
+  flightPrice(flight: any): number {
+    return Number(flight?.price ?? 0);
+  }
+
+  flightTotal(flight: any): number {
+    return this.flightPrice(flight) * this.travelerCount;
+  }
+
+  flightName(flight: any): string {
+    const number = String(flight?.flightNumber ?? '').trim();
+    const airline = String(flight?.airlineName ?? flight?.airline?.name ?? '').trim();
+    const route = [flight?.departureAirport, flight?.arrivalAirport]
+      .filter(Boolean)
+      .join(' - ');
+    return [airline, number, route].filter(Boolean).join(' · ');
+  }
+
+  addPolicy(): void {
+    this.policiesArray.push(this.createPolicyGroup());
+  }
+
+  removePolicy(index: number): void {
+    this.policiesArray.removeAt(index);
+  }
+
+  addTransfer(): void {
+    this.transfersArray.push(this.createTransferGroup());
+  }
+
+  removeTransfer(index: number): void {
+    this.transfersArray.removeAt(index);
   }
 
   itemName(item: any): string {
@@ -196,6 +273,35 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     };
     this.selectedPackages.forEach((item) => addCatalogItem(item, 1, 'packageId'));
     this.selectedTours.forEach((item) => addCatalogItem(item, 2, 'tourId'));
+    this.selectedFlights.forEach((flight) => {
+      items.push({
+        itemType: 4,
+        description: this.flightName(flight),
+        quantity: Math.max(1, this.travelerCount),
+        costPrice: Number(flight.costPrice ?? flight.cost ?? 0),
+        sellingPrice: this.flightPrice(flight),
+        discount: 0,
+        sortOrder: sortOrder++,
+        flightId: Number(flight.id),
+      });
+    });
+    this.transfersArray.getRawValue().forEach((transfer: any) => {
+      const from = String(transfer.from ?? '').trim();
+      const to = String(transfer.to ?? '').trim();
+      items.push({
+        itemType: 5,
+        description: `${from} - ${to}`,
+        quantity: 1,
+        costPrice: 0,
+        sellingPrice: 0,
+        discount: 0,
+        sortOrder: sortOrder++,
+        from,
+        to,
+        fromTime: this.toApiTime(transfer.fromTime),
+        arrivalTime: this.toApiTime(transfer.arrivalTime),
+      });
+    });
     return items;
   }
 
@@ -205,15 +311,14 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       this.errorMessage = 'discountExceedsSubtotal';
       return;
     }
-    if (this.quotationForm.invalid || (!this.selectedPackageIds.size && !this.selectedTourIds.size)) {
+    if (this.quotationForm.invalid || !this.hasTravelItems) {
       this.quotationForm.markAllAsTouched();
-      if (!this.selectedPackageIds.size && !this.selectedTourIds.size) this.errorMessage = 'selectAtLeastOneTravelItem';
+      if (!this.hasTravelItems) this.errorMessage = 'selectAtLeastOneTravelItem';
       return;
     }
 
     const form = this.quotationForm.getRawValue();
     const payload: any = {
-      quotationNo: form.quotationNo.trim(),
       customerId: Number(form.customerId),
       currencyId: Number(form.currencyId),
       travelStartDate: form.travelStartDate,
@@ -221,7 +326,6 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       adults: form.adults,
       children: form.children,
       infants: form.infants,
-      exchangeRate: form.exchangeRate,
       subTotal: this.subTotal,
       discount: form.discount,
       taxRate: form.taxRate,
@@ -231,6 +335,10 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       status: form.status,
       validUntil: form.validUntil,
       notes: form.notes.trim() || null,
+      policies: form.policies.map((policy: any) => ({
+        id: Number(policy.id) || 0,
+        value: String(policy.value ?? '').trim(),
+      })),
       items: this.buildQuotationItems(),
     };
     if (this.selectedQuotation?.id) payload.id = this.selectedQuotation.id;
@@ -274,22 +382,23 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       tours: this.apiService.get('Tours?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
+      flights: this.apiService.get('Flights/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
     }).pipe(finalize(() => {
       this.optionsLoading = false;
       this.cdr.markForCheck();
-    })).subscribe(({ customers, packages, tours }) => {
+    })).subscribe(({ customers, packages, tours, flights }) => {
       this.customers = this.rows(customers, 'customers');
       this.packages = this.rows(packages, 'packages');
       this.tours = this.rows(tours, 'tours');
-      if (this.selectedQuotation) this.selectQuotationItems(this.selectedQuotation.items);
+      this.flights = this.rows(flights, 'flights');
+      if (this.selectedQuotation) this.selectCatalogItems(this.selectedQuotation.items);
     });
   }
 
   retryOptions(): void { this.loadOptions(); }
 
   private populateForm(quotation: QuotationDTO): void {
-    this.quotationForm.setValue({
-      quotationNo: quotation.quotationNo ?? '',
+    this.quotationForm.patchValue({
       customerId: quotation.customerId ?? '',
       currencyId: quotation.currencyId ?? '',
       travelStartDate: quotation.travelStartDate ?? '',
@@ -297,43 +406,66 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       adults: quotation.adults ?? 1,
       children: quotation.children ?? 0,
       infants: quotation.infants ?? 0,
-      exchangeRate: quotation.exchangeRate ?? 1,
       discount: quotation.discount ?? 0,
       taxRate: quotation.taxRate ?? 0,
       status: quotation.status ?? QuotationStatusEnum.Draft,
       validUntil: quotation.validUntil ?? '',
       notes: quotation.notes ?? '',
     });
-    this.selectQuotationItems(quotation.items);
+    this.setPolicies(quotation.policies ?? []);
+    this.setTransfers(quotation.items ?? []);
+    this.selectCatalogItems(quotation.items);
   }
 
-  private selectQuotationItems(items: any[] | undefined): void {
+  private selectCatalogItems(items: any[] | undefined): void {
     this.selectedPackageIds = new Set(
       (items ?? []).filter((item) => item.packageId ?? item.package?.id)
         .map((item) => Number(item.packageId ?? item.package?.id)),
     );
     this.selectedTourIds = new Set(
-      (items ?? []).filter((item) => item.tourId).map((item) => Number(item.tourId)),
+      (items ?? []).filter((item) => item.tourId ?? item.tour?.id)
+        .map((item) => Number(item.tourId ?? item.tour?.id)),
+    );
+    this.selectedFlightIds = new Set(
+      (items ?? []).filter((item) => item.flightId ?? item.flight?.id)
+        .map((item) => Number(item.flightId ?? item.flight?.id)),
     );
   }
 
+  private setPolicies(policies: Array<{ id?: number; value?: string } | string>): void {
+    this.policiesArray.clear();
+    policies.forEach((policy) => {
+      const normalized = typeof policy === 'string' ? { value: policy } : policy;
+      this.policiesArray.push(this.createPolicyGroup(normalized));
+    });
+  }
+
+  private setTransfers(items: any[]): void {
+    this.transfersArray.clear();
+    items
+      .filter((item) => Number(item?.itemType) === 5 || item?.itemTypeName === 'Transfer')
+      .forEach((item) => this.transfersArray.push(this.createTransferGroup(item)));
+  }
+
   private resetForm(emitCancel: boolean): void {
+    const today = this.today;
     this.selectedPackageIds.clear();
     this.selectedTourIds.clear();
+    this.selectedFlightIds.clear();
+    this.policiesArray.clear();
+    this.transfersArray.clear();
     this.quotationForm.reset({
-      quotationNo: '',
       customerId: '',
       currencyId: this.currencies[0].id,
-      travelStartDate: '',
-      travelEndDate: '',
+      travelStartDate: today,
+      travelEndDate: today,
       adults: 1,
       children: 0,
       infants: 0,
-      exchangeRate: 1,
       discount: 0,
       taxRate: 0,
       status: QuotationStatusEnum.Draft,
-      validUntil: '',
+      validUntil: today,
       notes: '',
     });
     if (emitCancel) this.editCancelled.emit();
@@ -345,26 +477,82 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return Array.isArray(rows) ? rows : [];
   }
 
-  private createForm() {
+  private createPolicyGroup(policy: { id?: number; value?: string } = {}): FormGroup {
     return new FormGroup({
-      quotationNo: new FormControl('', { nonNullable: true }),
+      id: new FormControl(Number(policy.id) || 0, { nonNullable: true }),
+      value: new FormControl(String(policy.value ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(500)],
+      }),
+    });
+  }
+
+  private createTransferGroup(transfer: any = {}): FormGroup {
+    return new FormGroup({
+      id: new FormControl(Number(transfer?.id) || 0, { nonNullable: true }),
+      from: new FormControl(String(transfer?.from ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(250)],
+      }),
+      to: new FormControl(String(transfer?.to ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(250)],
+      }),
+      fromTime: new FormControl(this.toInputTime(transfer?.fromTime) || this.currentTime(), {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      arrivalTime: new FormControl(this.toInputTime(transfer?.arrivalTime) || this.currentTime(), {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    });
+  }
+
+  private toInputTime(value: unknown): string {
+    const match = String(value ?? '').match(/^(\d{2}):(\d{2})/);
+    return match ? `${match[1]}:${match[2]}` : '';
+  }
+
+  private toApiTime(value: unknown): string | null {
+    const time = this.toInputTime(value);
+    return time ? `${time}:00` : null;
+  }
+
+  private createForm() {
+    const today = this.today;
+    return new FormGroup({
       customerId: new FormControl<number | ''>('', { nonNullable: true, validators: [Validators.required] }),
       currencyId: new FormControl<number | ''>(this.currencies[0].id, {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      travelStartDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      travelEndDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      travelStartDate: new FormControl(today, { nonNullable: true, validators: [Validators.required] }),
+      travelEndDate: new FormControl(today, { nonNullable: true, validators: [Validators.required] }),
       adults: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       children: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       infants: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
-      exchangeRate: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(0.000001)] }),
       discount: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       taxRate: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       status: new FormControl(QuotationStatusEnum.Draft, { nonNullable: true, validators: [Validators.required] }),
-      validUntil: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      validUntil: new FormControl(today, { nonNullable: true, validators: [Validators.required] }),
       notes: new FormControl('', { nonNullable: true }),
+      policies: new FormArray<FormGroup>([]),
+      transfers: new FormArray<FormGroup>([]),
     }, { validators: this.quotationDatesValidator });
+  }
+
+  private localDate(value: Date): string {
+    return [
+      value.getFullYear().toString().padStart(4, '0'),
+      (value.getMonth() + 1).toString().padStart(2, '0'),
+      value.getDate().toString().padStart(2, '0'),
+    ].join('-');
+  }
+
+  private currentTime(): string {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
   }
 
   private quotationDatesValidator(control: AbstractControl): ValidationErrors | null {

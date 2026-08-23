@@ -1,0 +1,12 @@
+<input
+  type="time"
+  autocomplete="off"
+  class="block w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-700 dark:disabled:bg-slate-800"
+  [ngClass]="inputClass"
+  [id]="inputId"
+  [value]="value"
+  [disabled]="isDisabled"
+  [placeholder]="placeholder"
+  [attr.aria-label]="ariaLabel || placeholder || 'Time'"
+  (input)="handleInput($event)"
+  (blur)="handleBlur()" />

@@ -56,8 +56,8 @@ export class Vouchers implements OnInit {
     customerId: new FormControl<number | null>(null, Validators.required),
     serviceType: new FormControl(1, { nonNullable: true, validators: [Validators.required] }),
     serviceId: new FormControl<number | null>(null, Validators.required),
-    serviceDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    endDate: new FormControl('', { nonNullable: true }),
+    serviceDate: new FormControl(this.localDate(new Date()), { nonNullable: true, validators: [Validators.required] }),
+    endDate: new FormControl(this.localDate(new Date()), { nonNullable: true }),
   }, { validators: Vouchers.dateRangeValidator });
 
   constructor(
@@ -295,9 +295,10 @@ export class Vouchers implements OnInit {
   }
 
   private reset(): void {
+    const today = this.localDate(new Date());
     this.selectedId = 0;
     this.errorMessage = '';
-    this.form.reset({ customerId: null, serviceType: 1, serviceId: null, serviceDate: '', endDate: '' });
+    this.form.reset({ customerId: null, serviceType: 1, serviceId: null, serviceDate: today, endDate: today });
   }
 
   private referenceId(voucher: any, serviceType: number): number | null {
@@ -324,6 +325,14 @@ export class Vouchers implements OnInit {
 
   private dateOnly(value: unknown): string {
     return typeof value === 'string' ? value.slice(0, 10) : '';
+  }
+
+  private localDate(value: Date): string {
+    return [
+      value.getFullYear().toString().padStart(4, '0'),
+      (value.getMonth() + 1).toString().padStart(2, '0'),
+      value.getDate().toString().padStart(2, '0'),
+    ].join('-');
   }
 
   private responseError(response: any, fallback: string): string {

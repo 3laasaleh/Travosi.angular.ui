@@ -799,6 +799,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       endDate: this.toDateInput(tour.endDate),
       cancellationPolicy: tour.cancellationPolicy ?? '',
       isFreeCancelation: tour.isFreeCancelation === true,
+      isNileCruise: tour.isNileCruise === true,
       isActive: tour.isActive !== false,
     });
     this.setHighlights(tour.highlights ?? []);
@@ -841,6 +842,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       images: [],
       cancellationPolicy: '',
       isFreeCancelation: false,
+      isNileCruise: false,
       isActive: true,
     });
     this.setHighlights([]);
@@ -896,6 +898,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       }),
       cancellationPolicy: new FormControl('', { nonNullable: true }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
+      isNileCruise: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
       highlights: new FormArray<FormGroup>([]),
       includes: new FormArray<FormGroup>([]),
@@ -1034,6 +1037,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       EndDate: this.toApiDate(form.endDate),
       CancellationPolicy: form.cancellationPolicy.trim(),
       IsFreeCancelation: form.isFreeCancelation,
+      IsNileCruise: form.isNileCruise,
       Highlights: this.toListPayload(form.highlights),
       Includes: this.toListPayload(form.includes),
       Excludes: this.toListPayload(form.excludes),

@@ -13,6 +13,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
+import { TimePicker } from '../../../shared/components/time-picker/time-picker';
 
 interface CurrencyOption {
   id: number;
@@ -27,6 +28,10 @@ interface InvoiceItemForm {
   quantity: FormControl<number>;
   unitPrice: FormControl<number>;
   discount: FormControl<number>;
+  from: FormControl<string>;
+  to: FormControl<string>;
+  fromTime: FormControl<string>;
+  arrivalTime: FormControl<string>;
 }
 
 type InvoiceItemGroup = FormGroup<InvoiceItemForm>;
@@ -34,7 +39,7 @@ type InvoiceItemGroup = FormGroup<InvoiceItemForm>;
 @Component({
   selector: 'app-invoices',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, DatePicker],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, DatePicker, TimePicker],
   templateUrl: './invoices-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,6 +54,7 @@ export class Invoices implements OnInit {
   customers: any[] = [];
   tours: any[] = [];
   packages: any[] = [];
+  flights: any[] = [];
   currencies: CurrencyOption[] = [...this.fallbackCurrencies];
   isListLoading = false;
   isOptionsLoading = false;
@@ -130,11 +136,25 @@ export class Invoices implements OnInit {
   }
 
   serviceOptions(row: InvoiceItemGroup): any[] {
-    return Number(row.controls.itemType.value) === 1 ? this.packages : this.tours;
+    return this.serviceOptionsForType(Number(row.controls.itemType.value));
+  }
+
+  isTransfer(row: InvoiceItemGroup): boolean {
+    return Number(row.controls.itemType.value) === 5;
   }
 
   itemTypeChanged(row: InvoiceItemGroup): void {
-    row.patchValue({ serviceId: null, description: '', unitPrice: 0, discount: 0 });
+    const time = this.currentTime();
+    row.patchValue({
+      serviceId: null,
+      description: '',
+      unitPrice: 0,
+      discount: 0,
+      from: '',
+      to: '',
+      fromTime: time,
+      arrivalTime: time,
+    });
     row.controls.serviceId.markAsUntouched();
     this.errorMessage = '';
   }
@@ -163,6 +183,16 @@ export class Invoices implements OnInit {
     return this.numberValue(row.controls.discount.value) > this.lineBase(row);
   }
 
+  itemDetailsInvalid(row: InvoiceItemGroup): boolean {
+    if (this.isTransfer(row)) {
+      return !row.controls.from.value.trim()
+        || !row.controls.to.value.trim()
+        || !row.controls.fromTime.value
+        || !row.controls.arrivalTime.value;
+    }
+    return !Number(row.controls.serviceId.value) || !row.controls.description.value.trim();
+  }
+
   save(): void {
     if (this.isSaving) return;
     if (this.form.hasError('invalidInvoiceDates')) {
@@ -178,6 +208,11 @@ export class Invoices implements OnInit {
     if (this.items.controls.some((row) => this.lineDiscountInvalid(row))) {
       this.items.markAllAsTouched();
       this.errorMessage = 'lineDiscountExceedsTotal';
+      return;
+    }
+    if (this.items.controls.some((row) => this.itemDetailsInvalid(row))) {
+      this.items.markAllAsTouched();
+      this.errorMessage = 'invalidInvoiceData';
       return;
     }
     if (this.form.controls.taxRate.invalid) {
@@ -201,16 +236,26 @@ export class Invoices implements OnInit {
       discount: this.numberValue(value.discount),
       taxRate: this.numberValue(value.taxRate),
       notes: value.notes.trim() || null,
-      items: value.items.map((item, index) => ({
+      items: value.items.map((item, index) => {
+        const type = Number(item.itemType);
+        const from = item.from.trim();
+        const to = item.to.trim();
+        return {
         itemType: Number(item.itemType),
-        description: item.description.trim(),
+        description: type === 5 ? `${from} - ${to}` : item.description.trim(),
         quantity: Number(item.quantity),
         unitPrice: this.numberValue(item.unitPrice),
         discount: this.numberValue(item.discount),
         sortOrder: index + 1,
-        packageId: Number(item.itemType) === 1 ? Number(item.serviceId) : null,
-        tourId: Number(item.itemType) === 2 ? Number(item.serviceId) : null,
-      })),
+        packageId: type === 1 ? Number(item.serviceId) : null,
+        tourId: type === 2 ? Number(item.serviceId) : null,
+        flightId: type === 4 ? Number(item.serviceId) : null,
+        from: type === 5 ? from : null,
+        to: type === 5 ? to : null,
+        fromTime: type === 5 ? this.toApiTime(item.fromTime) : null,
+        arrivalTime: type === 5 ? this.toApiTime(item.arrivalTime) : null,
+      };
+      }),
     };
 
     this.isSaving = true;
@@ -256,17 +301,21 @@ export class Invoices implements OnInit {
 
     (invoice.items ?? []).forEach((item: any) => {
       const itemType = Number(item.itemType);
-      const serviceId = Number(itemType === 1 ? item.packageId : item.tourId);
-      this.ensureCatalogItemIsAvailable(itemType, serviceId, item.description, item.unitPrice);
+      const serviceId = Number(itemType === 1 ? item.packageId : itemType === 2 ? item.tourId : itemType === 4 ? item.flightId : 0);
+      if (itemType !== 5) this.ensureCatalogItemIsAvailable(itemType, serviceId, item.description, item.unitPrice);
       const source = this.serviceOptionsForType(itemType)
         .find((option) => Number(option.id) === serviceId);
-      const row = this.createItemGroup(itemType, source);
+      const row = this.createItemGroup(itemType, source ?? item);
       row.patchValue({
-        serviceId,
+        serviceId: serviceId || null,
         description: item.description ?? this.name(source),
         quantity: this.numberValue(item.quantity, 1),
         unitPrice: this.numberValue(item.unitPrice),
         discount: this.numberValue(item.discount),
+        from: item.from ?? '',
+        to: item.to ?? '',
+        fromTime: this.toInputTime(item.fromTime),
+        arrivalTime: this.toInputTime(item.arrivalTime),
       });
       this.items.push(row);
     });
@@ -333,6 +382,7 @@ export class Invoices implements OnInit {
       customers: safeGet('Customers?page=1&pageSize=100'),
       tours: safeGet('Tours?page=1&pageSize=100'),
       packages: safeGet('Packages?page=1&pageSize=100'),
+      flights: safeGet('Flights/GetAll?page=1&pageSize=100'),
       currencies: safeGet('Currencies'),
     }).pipe(finalize(() => {
       this.isOptionsLoading = false;
@@ -341,6 +391,7 @@ export class Invoices implements OnInit {
       this.customers = this.optionRows(response.customers);
       this.tours = this.optionRows(response.tours);
       this.packages = this.optionRows(response.packages);
+      this.flights = this.optionRows(response.flights);
       const currencies = this.optionRows(response.currencies)
         .map((currency) => ({
           id: Number(currency.id),
@@ -353,6 +404,10 @@ export class Invoices implements OnInit {
   }
 
   name(item: any): string {
+    if (item?.flightNumber) {
+      const route = [item?.departureAirport, item?.arrivalAirport].filter(Boolean).join(' - ');
+      return [item?.airlineName ?? item?.airline?.name, item.flightNumber, route].filter(Boolean).join(' · ');
+    }
     return item?.nameEng ?? item?.titleEng ?? item?.nameAr ?? item?.titleAr ?? item?.name ?? '';
   }
 
@@ -389,12 +444,12 @@ export class Invoices implements OnInit {
   }
 
   private createItemGroup(type: number, source?: any): InvoiceItemGroup {
+    const time = this.currentTime();
     return new FormGroup<InvoiceItemForm>({
       itemType: new FormControl(type, { nonNullable: true, validators: [Validators.required] }),
-      serviceId: new FormControl<number | null>(source?.id ?? null, [Validators.required, Validators.min(1)]),
+      serviceId: new FormControl<number | null>(source?.id ?? null),
       description: new FormControl(this.name(source), {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/\S/)],
       }),
       quantity: new FormControl(1, {
         nonNullable: true,
@@ -408,20 +463,27 @@ export class Invoices implements OnInit {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),
+      from: new FormControl(String(source?.from ?? ''), { nonNullable: true }),
+      to: new FormControl(String(source?.to ?? ''), { nonNullable: true }),
+      fromTime: new FormControl(this.toInputTime(source?.fromTime) || time, { nonNullable: true }),
+      arrivalTime: new FormControl(this.toInputTime(source?.arrivalTime) || time, { nonNullable: true }),
     });
   }
 
   private serviceOptionsForType(type: number): any[] {
-    return type === 1 ? this.packages : this.tours;
+    if (type === 1) return this.packages;
+    if (type === 2) return this.tours;
+    if (type === 4) return this.flights;
+    return [];
   }
 
   private ensureCatalogItemIsAvailable(type: number, id: number, description: string, price: unknown): void {
     if (!id) return;
     const target = this.serviceOptionsForType(type);
     if (target.some((option) => Number(option.id) === id)) return;
-    target.push(type === 1
-      ? { id, nameEng: description, pricePerPerson: price }
-      : { id, titleEng: description, pricePerPerson: price });
+    if (type === 1) target.push({ id, nameEng: description, pricePerPerson: price });
+    else if (type === 2) target.push({ id, titleEng: description, pricePerPerson: price });
+    else if (type === 4) target.push({ id, flightNumber: description, price });
   }
 
   private ensureCurrencyIsAvailable(invoice: any): void {
@@ -480,6 +542,21 @@ export class Invoices implements OnInit {
 
   private dateOnly(value: unknown): string {
     return typeof value === 'string' ? value.slice(0, 10) : '';
+  }
+
+  private toInputTime(value: unknown): string {
+    const match = String(value ?? '').match(/^(\d{2}):(\d{2})/);
+    return match ? `${match[1]}:${match[2]}` : '';
+  }
+
+  private toApiTime(value: unknown): string | null {
+    const time = this.toInputTime(value);
+    return time ? `${time}:00` : null;
+  }
+
+  private currentTime(): string {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
   }
 
   private responseError(response: any, fallback: string): string {

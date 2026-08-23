@@ -3,7 +3,7 @@
 <section class="relative table w-full bg-cover bg-center bg-no-repeat py-36" [style.background-image]="'url(' + heroImage + ')'">
   <div class="absolute inset-0 bg-gradient-to-b from-slate-900/55 via-slate-900/75 to-slate-900"></div>
   <div class="container relative pt-10 text-center">
-    <h1 class="text-4xl font-semibold tracking-wide text-white">{{ 'tours' | translate }}</h1>
+    <h1 class="text-4xl font-semibold tracking-wide text-white">{{ pageTitleKey | translate }}</h1>
   </div>
 </section>
 
@@ -129,7 +129,7 @@
             </article>
           </a>
         } @empty {
-          <div class="col-span-full rounded-2xl border border-dashed border-slate-300 p-12 text-center text-slate-500 dark:border-slate-700"><i class="mdi mdi-compass-off-outline text-5xl text-slate-300"></i><p class="mt-3">{{ 'noToursFound' | translate }}</p></div>
+          <div class="col-span-full rounded-2xl border border-dashed border-slate-300 p-12 text-center text-slate-500 dark:border-slate-700"><i class="mdi mdi-compass-off-outline text-5xl text-slate-300"></i><p class="mt-3">{{ emptyMessageKey | translate }}</p></div>
         }
       </div>
     }

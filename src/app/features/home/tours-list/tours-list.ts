@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -40,9 +40,11 @@ export class HomeToursList implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
+  readonly nileCruisesOnly = this.route.snapshot.data['nileCruisesOnly'] === true;
   private readonly imageIndexMap = new Map<string, number>();
 
   tours: any[] = [];
@@ -63,6 +65,9 @@ export class HomeToursList implements OnInit {
   ngOnInit(): void {
     this.loadTours();
   }
+
+  get pageTitleKey(): string { return this.nileCruisesOnly ? 'nileCruises' : 'tours'; }
+  get emptyMessageKey(): string { return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound'; }
 
   onSearchChange(value: string): void {
     this.searchText = value;
@@ -103,12 +108,13 @@ export class HomeToursList implements OnInit {
     if (trimmedSearch) params.set('searchTerm', trimmedSearch);
     if (this.dateFrom) params.set('dateFrom', this.dateFrom);
     if (this.dateTo) params.set('dateTo', this.dateTo);
+    if (this.nileCruisesOnly) params.set('isNileCruise', 'true');
 
     this.apiService
       .getUnauthntecated(`Tours?${params.toString()}`)
       .pipe(
         catchError(() => {
-          this.errorMessage = 'toursLoadError';
+          this.errorMessage = this.nileCruisesOnly ? 'nileCruisesLoadError' : 'toursLoadError';
           return of(null);
         }),
         finalize(() => {

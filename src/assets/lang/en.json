@@ -50,6 +50,7 @@
     "admin": "Admin",
     "destinations": "Destinations",
     "tours": "Tours",
+    "nileCruises": "Nile Cruises",
     "manageDestinationDetails": "Manage destination details and images.",
     "manageTourDetails": "Manage tour details, images, and itinerary.",
     "backToDashboard": "Back to dashboard",
@@ -107,6 +108,7 @@
     "selectAirline": "Select an airline",
     "airlineRequired": "Airline is required.",
     "flights": "Flights",
+    "flight": "Flight",
     "manageFlightDetails": "Manage flight schedules, prices, and seats.",
     "hideAddFlight": "Hide add flight",
     "showAddFlight": "Show add flight",
@@ -239,6 +241,7 @@
     "noPackagesFound": "No packages found.",
     "viewAllDestinations": "View all destinations",
     "viewAllTours": "View all tours",
+    "viewAllNileCruises": "View all Nile cruises",
     "viewAllPackages": "View all packages",
     "exploreMore": "Explore more",
     "showMore": "Show more",
@@ -306,6 +309,7 @@
     "tourList": "Tour list",
     "loadingTours": "Loading tours...",
     "noToursFound": "No tours found.",
+    "noNileCruisesFound": "No Nile cruises found.",
     "destinationServiceUnavailable": "The destination service is unavailable.",
     "destinationSaveError": "The destination could not be saved.",
     "destinationUpdated": "Destination updated successfully.",
@@ -542,6 +546,7 @@
     ,"coverImageUrl": "Cover image URL"
     ,"cancellationPolicy": "Cancellation policy"
     ,"freeCancellation": "Free cancellation"
+    ,"nileCruise": "Nile cruise"
     ,"positiveValueRequired": "Enter a value greater than zero."
     ,"nonNegativeValueRequired": "Enter zero or a positive value."
     ,"durationHoursRange": "Hours must be between 0 and 23."
@@ -594,6 +599,7 @@
     ,"noItineraryAdded": "No itinerary steps added yet."
     ,"seatsAvailable": "seats available"
     ,"toursLoadError": "Unable to load tours."
+    ,"nileCruisesLoadError": "Unable to load Nile cruises."
     ,"destinationNotFound": "Destination not found."
     ,"tourNotFound": "Tour not found."
     ,"toursInDestination": "Tours in this destination"
@@ -908,10 +914,27 @@
     "confirmActivateFlight": "Activate this flight?",
     "confirmDeactivateFlight": "Deactivate this flight?",
     "quotationNoGenerated": "Generated automatically after saving",
-    "quotationTravelItems": "Tours and packages",
+    "quotationTravelItems": "Travel services",
     "adultPrice": "Adult price",
     "childPrice": "Child price",
-    "selectAtLeastOneTravelItem": "Select at least one tour or package.",
+    "flightPricePerTraveler": "Price per traveler",
+    "selectAtLeastOneTravelItem": "Select at least one package, tour, flight, or transfer.",
+    "quotationTransfers": "Transfers",
+    "quotationTransfersHint": "Add each pickup and drop-off included in this quotation.",
+    "addTransfer": "Add transfer",
+    "transfer": "Transfer",
+    "noTransfersAdded": "No transfers added yet.",
+    "transferFrom": "From",
+    "transferTo": "To",
+    "fromTime": "From time",
+    "transferFromPlaceholder": "e.g. Cairo International Airport",
+    "transferToPlaceholder": "e.g. Downtown hotel",
+    "transferFieldsRequired": "From, to, from time, and arrival time are required.",
+    "quotationPolicies": "Quotation policies",
+    "quotationPoliciesHint": "Add the terms and policies that apply to this quotation.",
+    "addPolicy": "Add policy",
+    "quotationPolicyPlaceholder": "e.g. Prices are subject to availability",
+    "noQuotationPoliciesAdded": "No quotation policies added yet.",
     "discountAmount": "Discount amount",
     "discountAppliedBeforeTax": "The discount is applied before tax.",
     "finalPriceAfterDiscount": "Final price after discount",
@@ -936,7 +959,7 @@
     "loadingCities": "Loading cities...",
     "cityRequired": "City is required.",
     "citiesLoadError": "Cities could not be loaded.",
-    "quotationOptionsLoadError": "Customers, packages, or tours could not be loaded. Check your access and try again.",
+    "quotationOptionsLoadError": "Customers, packages, tours, or flights could not be loaded. Check your access and try again.",
     "quotationValidityBeforeTravel": "The quotation validity date must be on or before the travel start date.",
     "retry": "Retry",
     "whatsappFloatingLabel": "Chat with Sea World Holidays on WhatsApp",
@@ -950,7 +973,7 @@
     "items": "items",
     "invoices": "Invoices",
     "vouchers": "Vouchers",
-    "manageInvoices": "Create itemized invoices for tours and packages.",
+    "manageInvoices": "Create itemized invoices for tours, packages, flights, and transfers.",
     "manageVouchers": "Create printable flight, hotel, tour, and package vouchers.",
     "invoiceNo": "Invoice no.",
     "invoiceDate": "Invoice date",
@@ -973,7 +996,7 @@
     "createInvoice": "Create invoice",
     "customerRequired": "Select a customer.",
     "voucherOptionsLoadError": "Customers or travel services could not be loaded. Check your access and try again.",
-    "invoiceOptionsLoadError": "Customers, currencies, tours, or packages could not be loaded. Available fallback data is shown; retry before saving.",
+    "invoiceOptionsLoadError": "Customers, currencies, tours, packages, or flights could not be loaded. Available fallback data is shown; retry before saving.",
     "noServicesAvailable": "No services are available for this voucher type.",
     "serviceRequired": "Select a travel service.",
     "serviceDateRequired": "Service date is required.",
@@ -991,7 +1014,7 @@
     "lineTotal": "Line total",
     "lineDiscountExceedsTotal": "Line discount cannot exceed quantity multiplied by unit price.",
     "removeInvoiceItem": "Remove invoice item",
-    "addInvoiceItemHint": "Add at least one tour or package to the invoice.",
+    "addInvoiceItemHint": "Add at least one tour, package, flight, or transfer to the invoice.",
     "taxRateInvalid": "Tax rate must be between 0% and 100%.",
     "invoiceDueDateInvalid": "Due date must be on or after the invoice date.",
     "serverCalculatedTotalsHint": "Preview totals are estimates; the saved invoice totals are calculated by the server."
