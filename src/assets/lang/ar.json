@@ -38,6 +38,7 @@
   "activate": "تفعيل",
   "confirm": "تأكيد",
   "confirmStatusChange": "تأكيد تغيير الحالة",
+  "statusChangeConfirmation": "هل أنت متأكد من تغيير الحالة إلى {{status}}؟",
   "confirmDeactivateDestination": "هل أنت متأكد من إلغاء تفعيل هذه الوجهة؟",
   "confirmActivateDestination": "هل أنت متأكد من تفعيل هذه الوجهة؟",
   "statusUpdated": "تم تحديث حالة الوجهة بنجاح.",

@@ -38,6 +38,7 @@
     "activate": "Activate",
     "confirm": "Confirm",
     "confirmStatusChange": "Confirm status change",
+    "statusChangeConfirmation": "Are you sure you want to change the status to {{status}}?",
     "confirmDeactivateDestination": "Are you sure you want to deactivate this destination?",
     "confirmActivateDestination": "Are you sure you want to activate this destination?",
     "statusUpdated": "Destination status updated successfully.",

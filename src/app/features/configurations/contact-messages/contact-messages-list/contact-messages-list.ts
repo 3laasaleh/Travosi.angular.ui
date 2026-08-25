@@ -118,8 +118,21 @@ export class ContactMessagesList implements OnInit, OnChanges {
     this.loadMessages();
   }
 
-  markAsRead(message: ContactMessageDTO): void {
+  async markAsRead(message: ContactMessageDTO): Promise<void> {
     if (this.updatingId !== null || message.isRead) return;
+    const confirmation = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant('statusChangeConfirmation', {
+        status: this.translate.instant('read'),
+      }),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
 
     this.updatingId = Number(message.id);
     this.apiService

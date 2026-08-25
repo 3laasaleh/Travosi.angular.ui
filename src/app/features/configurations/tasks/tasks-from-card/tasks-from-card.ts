@@ -10,8 +10,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TASK_STATUS_OPTIONS, TaskStatusEnum } from '../task-status.enum';
@@ -59,6 +60,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -82,13 +84,29 @@ export class TasksFromCard implements OnInit, OnChanges {
     });
   }
 
-  saveTask(): void {
+  async saveTask(): Promise<void> {
     if (this.isLoading) return;
     if (this.taskForm.invalid) {
       this.taskForm.markAllAsTouched();
       return;
     }
     const form = this.taskForm.getRawValue();
+    if (this.selectedTask && Number(this.selectedTask.status) !== Number(form.status)) {
+      const statusKey = this.taskStatusOptions.find((option) => option.value === Number(form.status))?.labelKey;
+      const confirmation = await Swal.fire({
+        icon: 'question',
+        title: this.translate.instant('confirmStatusChange'),
+        text: this.translate.instant('statusChangeConfirmation', {
+          status: this.translate.instant(statusKey ?? 'taskStatus'),
+        }),
+        showCancelButton: true,
+        confirmButtonText: this.translate.instant('confirm'),
+        cancelButtonText: this.translate.instant('cancel'),
+        confirmButtonColor: '#00d492',
+        reverseButtons: true,
+      });
+      if (!confirmation.isConfirmed) return;
+    }
     const payload: any = {
       title: form.title.trim(),
       description: form.description.trim(),

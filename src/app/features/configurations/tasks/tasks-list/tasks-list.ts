@@ -143,13 +143,18 @@ export class TasksList implements OnInit, OnChanges {
     return this.isAdmin && Number(task?.status) === TaskStatusEnum.Completed;
   }
 
-  startTask(task: any): void {
+  async startTask(task: any): Promise<void> {
+    if (!await this.confirmStatusChange('taskStatusInProgress')) return;
     this.changeStatus(task, TaskStatusEnum.InProgress);
   }
 
   async finishTask(task: any): Promise<void> {
     const result = await Swal.fire({
+      icon: 'question',
       title: this.translate.instant('finishTask'),
+      text: this.translate.instant('statusChangeConfirmation', {
+        status: this.translate.instant('taskStatusCompleted'),
+      }),
       input: 'textarea',
       inputLabel: this.translate.instant('agentCompletionNote'),
       inputPlaceholder: this.translate.instant('agentCompletionNotePlaceholder'),
@@ -164,13 +169,18 @@ export class TasksList implements OnInit, OnChanges {
     this.changeStatus(task, TaskStatusEnum.Completed, String(result.value).trim());
   }
 
-  closeTask(task: any): void {
+  async closeTask(task: any): Promise<void> {
+    if (!await this.confirmStatusChange('taskStatusClosed')) return;
     this.changeStatus(task, TaskStatusEnum.Closed);
   }
 
   async returnTask(task: any): Promise<void> {
     const result = await Swal.fire({
+      icon: 'warning',
       title: this.translate.instant('returnTask'),
+      text: this.translate.instant('statusChangeConfirmation', {
+        status: this.translate.instant('taskStatusReturned'),
+      }),
       input: 'textarea',
       inputLabel: this.translate.instant('returnReason'),
       inputPlaceholder: this.translate.instant('returnReasonPlaceholder'),
@@ -218,5 +228,21 @@ export class TasksList implements OnInit, OnChanges {
       this.taskNotifications.notifyChanged();
       this.loadTasks();
     });
+  }
+
+  private async confirmStatusChange(statusKey: string): Promise<boolean> {
+    const result = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant('statusChangeConfirmation', {
+        status: this.translate.instant(statusKey),
+      }),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    return result.isConfirmed;
   }
 }

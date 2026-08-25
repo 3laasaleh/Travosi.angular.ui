@@ -178,7 +178,8 @@ export class BookingsList implements OnInit, OnChanges {
     });
   }
 
-  completeBooking(booking: any): void {
+  async completeBooking(booking: any): Promise<void> {
+    if (!await this.confirmStatusChange('bookingStatusCompleted')) return;
     this.changeStatus(booking, BookingStatusEnum.Completed);
   }
 
@@ -243,6 +244,22 @@ export class BookingsList implements OnInit, OnChanges {
         });
         this.loadBookings();
       });
+  }
+
+  private async confirmStatusChange(statusKey: string): Promise<boolean> {
+    const result = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant('statusChangeConfirmation', {
+        status: this.translate.instant(statusKey),
+      }),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    return result.isConfirmed;
   }
 
   private escapeHtml(value: unknown): string {
