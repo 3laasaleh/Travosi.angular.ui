@@ -125,6 +125,42 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return this.deletingImageIndex !== null ? 'deletingPackageImage' : (this.apiLoadingMessage || 'pleaseWaitForRequest');
   }
 
+  get detailsStepInvalid(): boolean {
+    const controls = this.packageForm.controls;
+    const requiredControls = [
+      controls.nameEng,
+      controls.nameAr,
+      controls.description,
+      controls.durationDays,
+      controls.durationHours,
+      controls.pricePerPerson,
+      controls.pricePerChild,
+      controls.maxCapacity,
+      controls.dateFrom,
+      controls.dateTo,
+      controls.destinationIds,
+    ];
+    const cancellationPolicyMissing = !controls.isFreeCancelation.value
+      && !controls.cancellationPolicy.value.trim();
+    const dateRangeInvalid = !!controls.dateFrom.value
+      && !!controls.dateTo.value
+      && controls.dateTo.value < controls.dateFrom.value;
+    return requiredControls.some((control) => control.invalid)
+      || cancellationPolicyMissing
+      || dateRangeInvalid;
+  }
+
+  get currentStepInvalid(): boolean {
+    if (this.activeStep === 1) return this.detailsStepInvalid;
+    if (this.activeStep === 2) return !this.currentPackageId || this.packageForm.controls.images.invalid;
+    const itinerary = this.packageForm.controls.itinerary.value;
+    return !this.currentPackageId
+      || !!this.itineraryDraft
+      || !itinerary.length
+      || hasInvalidItinerary(itinerary, Number(this.packageForm.controls.durationDays.value))
+      || hasItineraryTimeOverlap(itinerary);
+  }
+
   loadDestinations(): void {
     this.destinationsLoading = true;
     this.adminService.getDestinations(1, 100).pipe(

@@ -134,6 +134,11 @@ describe('QuotationsFromCard', () => {
     expect(component.quotationForm.controls.validUntil.value).toBe(component.defaultValidUntil);
   });
 
+  it('keeps the quotation date validator bound to the component', () => {
+    expect(() => component.quotationForm.controls.validUntil.setValue('2020-01-01')).not.toThrow();
+    expect(component.quotationForm.hasError('invalidValidityPeriod')).toBe(true);
+  });
+
   it('saves a selected flight, trimmed policies, and normalized transfer times', () => {
     component.flights = [flight];
     component.toggleFlight(flight, true);

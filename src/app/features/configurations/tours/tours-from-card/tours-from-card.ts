@@ -192,6 +192,39 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return this.apiLoadingMessage || 'pleaseWaitForRequest';
   }
 
+  get detailsStepInvalid(): boolean {
+    const controls: AbstractControl[] = [
+      this.tourForm.controls.titleEng,
+      this.tourForm.controls.titleAr,
+      this.tourForm.controls.destinationId,
+      this.tourForm.controls.cityId,
+      this.tourForm.controls.pricePerPerson,
+      this.tourForm.controls.pricePerChild,
+      this.tourForm.controls.currencyId,
+      this.tourForm.controls.maxSeats,
+      this.tourForm.controls.durationDays,
+      this.tourForm.controls.durationHours,
+      this.tourForm.controls.startDate,
+      this.tourForm.controls.endDate,
+      this.tourForm.controls.highlights,
+      this.tourForm.controls.includes,
+      this.tourForm.controls.excludes,
+    ];
+    return controls.some((control) => control.invalid)
+      || this.tourForm.hasError('invalidDateRange');
+  }
+
+  get currentStepInvalid(): boolean {
+    if (this.activeStep === 1) return this.detailsStepInvalid;
+    if (this.activeStep === 2) return !this.currentTourId || this.tourForm.controls.images.invalid;
+    const itinerary = this.itineraryArray.getRawValue();
+    return !this.currentTourId
+      || !!this.itineraryDraft
+      || !itinerary.length
+      || hasInvalidItinerary(itinerary, Number(this.tourForm.controls.durationDays.value))
+      || hasItineraryTimeOverlap(itinerary);
+  }
+
   loadDestinations(): void {
     this.destinationsLoading = true;
     this.errorMessage = '';

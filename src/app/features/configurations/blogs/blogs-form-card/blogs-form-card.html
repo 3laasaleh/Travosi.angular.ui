@@ -13,10 +13,20 @@
       <label class="text-sm font-medium">
         English title
         <input formControlName="titleEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2" />
+        @if (form.controls.titleEng.touched && form.controls.titleEng.hasError('required')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</span>
+        } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        }
       </label>
       <label class="text-sm font-medium">
         Arabic title
         <input formControlName="titleAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2" />
+        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('required')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</span>
+        } @else if (form.controls.titleAr.touched && form.controls.titleAr.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        }
       </label>
     </div>
 
@@ -24,10 +34,16 @@
       <label class="text-sm font-medium">
         English summary
         <textarea formControlName="summaryEng" maxlength="500" rows="2" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        @if (form.controls.summaryEng.touched && form.controls.summaryEng.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
+        }
       </label>
       <label class="text-sm font-medium">
         Arabic summary
         <textarea formControlName="summaryAr" maxlength="500" rows="2" dir="rtl" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
+        }
       </label>
     </div>
 
@@ -35,10 +51,20 @@
       <label class="text-sm font-medium">
         English content
         <textarea formControlName="contentEng" maxlength="15000" rows="8" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        @if (form.controls.contentEng.touched && form.controls.contentEng.hasError('required')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
+        } @else if (form.controls.contentEng.touched && form.controls.contentEng.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
+        }
       </label>
       <label class="text-sm font-medium">
         Arabic content
         <textarea formControlName="contentAr" maxlength="15000" rows="8" dir="rtl" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('required')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
+        } @else if (form.controls.contentAr.touched && form.controls.contentAr.hasError('maxlength')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
+        }
       </label>
     </div>
 

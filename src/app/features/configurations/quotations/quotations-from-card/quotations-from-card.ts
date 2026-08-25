@@ -738,7 +738,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return { date: this.localDate(pickup), fromTime: time(pickup), arrivalTime: time(arrival) };
   }
 
-  private transferScheduleValidator(control: AbstractControl): ValidationErrors | null {
+  private readonly transferScheduleValidator = (control: AbstractControl): ValidationErrors | null => {
     const date = String(control.get('transferDate')?.value ?? '');
     const fromTime = String(control.get('fromTime')?.value ?? '');
     const arrivalTime = String(control.get('arrivalTime')?.value ?? '');
@@ -750,9 +750,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     if (pickup.getTime() < Date.now()) return { transferTimeInPast: true };
     if (arrival.getTime() <= pickup.getTime()) return { invalidTransferTimeRange: true };
     return null;
-  }
+  };
 
-  private quotationDatesValidator(control: AbstractControl): ValidationErrors | null {
+  private readonly quotationDatesValidator = (control: AbstractControl): ValidationErrors | null => {
     const start = String(control.get('travelStartDate')?.value ?? '');
     const end = String(control.get('travelEndDate')?.value ?? '');
     const validUntil = String(control.get('validUntil')?.value ?? '');
@@ -760,5 +760,5 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     if (validUntil && validUntil <= this.today) return { invalidValidityPeriod: true };
     if (start && validUntil && validUntil > start) return { invalidValidityDate: true };
     return null;
-  }
+  };
 }

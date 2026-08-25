@@ -740,6 +740,7 @@
   "selectedDestinationsCount": "الوجهات المختارة",
   "maxCapacity": "السعة القصوى",
   "fieldRequired": "هذا الحقل مطلوب.",
+  "maximumCharacters": "يجب ألا يتجاوز النص {{count}} حرفًا.",
   "cancellationPolicyRequired": "سياسة الإلغاء مطلوبة عندما لا يكون الإلغاء مجانياً.",
   "savedPackageNumber": "الباقة المحفوظة",
   "packageDetailsCreated": "تم حفظ تفاصيل الباقة. يمكنك الآن إضافة الصور.",

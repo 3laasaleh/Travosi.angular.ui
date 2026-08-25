@@ -740,6 +740,7 @@
     ,"selectedDestinationsCount": "Selected destinations"
     ,"maxCapacity": "Maximum capacity"
     ,"fieldRequired": "This field is required."
+    ,"maximumCharacters": "Maximum {{count}} characters."
     ,"cancellationPolicyRequired": "A cancellation policy is required when cancellation is not free."
     ,"savedPackageNumber": "Saved package"
     ,"packageDetailsCreated": "Package details saved. You can now add images."
