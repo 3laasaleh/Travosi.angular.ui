@@ -9,10 +9,12 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of, switchMap, throwError } from 'rxjs';
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
+import { QuotationStatusEnum } from '../quotations-from-card/quotations-from-card';
 
 interface PaginationInfoDTO {
   page: number;
@@ -29,6 +31,11 @@ interface PaginationInfoDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuotationsList implements OnInit, OnChanges {
+  private readonly allowedTransitions: Partial<Record<QuotationStatusEnum, QuotationStatusEnum[]>> = {
+    [QuotationStatusEnum.Draft]: [QuotationStatusEnum.Sent, QuotationStatusEnum.Cancelled],
+    [QuotationStatusEnum.Sent]: [QuotationStatusEnum.Accepted, QuotationStatusEnum.Rejected, QuotationStatusEnum.Expired, QuotationStatusEnum.Cancelled],
+    [QuotationStatusEnum.Expired]: [QuotationStatusEnum.Cancelled],
+  };
   readonly pageSizeOptions = [10, 20, 50];
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
@@ -37,13 +44,14 @@ export class QuotationsList implements OnInit, OnChanges {
   quotations: any[] = [];
   isLoading = false;
   errorMessage = '';
-  sendMessage = '';
   sendingQuotationId: number | null = null;
+  statusUpdatingId: number | null = null;
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +71,7 @@ export class QuotationsList implements OnInit, OnChanges {
     this.apiService.get(`Quotations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
       catchError(() => {
         this.errorMessage = 'quotationServiceUnavailable';
+        this.showToast('error', 'quotationServiceUnavailable');
         return of(null);
       }),
       finalize(() => {
@@ -111,25 +120,101 @@ export class QuotationsList implements OnInit, OnChanges {
     }
   }
 
-  sendQuotation(quotation: any): void {
+  canEdit(quotation: any): boolean {
+    return Number(quotation?.status) === QuotationStatusEnum.Draft;
+  }
+
+  canChangeStatus(quotation: any): boolean {
+    return (this.allowedTransitions[Number(quotation?.status) as QuotationStatusEnum]?.length ?? 0) > 0;
+  }
+
+  statusKey(quotation: any): string {
+    const status = Number(quotation?.status);
+    return QuotationStatusEnum[status]?.toLowerCase() || String(quotation?.statusName ?? 'draft').toLowerCase();
+  }
+
+  async changeQuotationStatus(quotation: any): Promise<void> {
+    const id = Number(quotation?.id);
+    const currentStatus = Number(quotation?.status) as QuotationStatusEnum;
+    const allowed = this.allowedTransitions[currentStatus] ?? [];
+    if (!id || !allowed.length || this.statusUpdatingId !== null) return;
+
+    const inputOptions = Object.fromEntries(
+      allowed.map((status) => [String(status), this.translate.instant(QuotationStatusEnum[status].toLowerCase())]),
+    );
+    const result = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('confirmStatusChange'),
+      text: this.translate.instant('quotationStatusChangePrompt'),
+      input: 'select',
+      inputOptions,
+      inputPlaceholder: this.translate.instant('chooseQuotationStatus'),
+      inputValidator: (value) => value ? undefined : this.translate.instant('quotationStatusRequired'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('confirm'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) return;
+
+    const nextStatus = Number(result.value) as QuotationStatusEnum;
+    if (!allowed.includes(nextStatus)) return;
+    this.statusUpdatingId = id;
+    this.apiService.patch('Quotations/ChangeStatus', { id, status: nextStatus }).pipe(
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'quotationStatusUpdateError'));
+        return of(null);
+      }),
+      finalize(() => {
+        this.statusUpdatingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.showToast('error', this.apiMessage(response, 'quotationStatusUpdateError'));
+        return;
+      }
+      quotation.status = nextStatus;
+      quotation.statusName = QuotationStatusEnum[nextStatus];
+      this.showToast('success', response?.message || 'quotationStatusUpdated');
+      this.cdr.markForCheck();
+    });
+  }
+
+  async sendQuotation(quotation: any): Promise<void> {
     const id = Number(quotation.id);
     if (!id || this.sendingQuotationId !== null) return;
-    const isSent = Number(quotation.status) === 2;
+    const currentStatus = Number(quotation.status) as QuotationStatusEnum;
+    const shouldSend = currentStatus === QuotationStatusEnum.Draft;
+    if (shouldSend) {
+      const confirmation = await Swal.fire({
+        icon: 'question',
+        title: this.translate.instant('confirmQuotationSend'),
+        text: this.translate.instant('confirmQuotationSendMessage'),
+        showCancelButton: true,
+        confirmButtonText: this.translate.instant('confirm'),
+        cancelButtonText: this.translate.instant('cancel'),
+        confirmButtonColor: '#00d492',
+        reverseButtons: true,
+      });
+      if (!confirmation.isConfirmed) return;
+    }
     this.sendingQuotationId = id;
     this.errorMessage = '';
-    this.sendMessage = '';
 
-    const pdf$ = isSent
-      ? this.apiService.getFile(`Quotations/${id}/Pdf`)
-      : this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
+    const pdf$ = shouldSend
+      ? this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
           switchMap((response: any) => response?.isSuccess === false
             ? throwError(() => new Error(response?.message || 'quotationSendError'))
             : this.apiService.getFile(`Quotations/${id}/Pdf`)),
-        );
+        )
+      : this.apiService.getFile(`Quotations/${id}/Pdf`);
 
     pdf$.pipe(
-      catchError(() => {
-        this.errorMessage = 'quotationSendError';
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'quotationSendError'));
         return of(null);
       }),
       finalize(() => {
@@ -145,11 +230,32 @@ export class QuotationsList implements OnInit, OnChanges {
         anchor.download = `${quotation.quotationNo ?? `quotation-${id}`}.pdf`;
         anchor.click();
         URL.revokeObjectURL(url);
-        this.sendMessage = 'quotationPdfDownloaded';
-        if (!isSent) this.loadQuotations();
+        this.showToast('success', shouldSend ? 'quotationSent' : 'quotationPdfDownloaded');
+        if (shouldSend) this.loadQuotations();
         return;
       }
-      this.errorMessage = 'quotationPdfInvalid';
+      this.showToast('error', 'quotationPdfInvalid');
+    });
+  }
+
+  private apiMessage(source: any, fallback: string): string {
+    const payload = source?.error ?? source;
+    const errors = Array.isArray(payload?.errors)
+      ? payload.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
+      : [];
+    return errors.length ? errors.join(' ') : payload?.message || fallback;
+  }
+
+  private showToast(icon: 'success' | 'error', message: string): void {
+    void Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon,
+      iconColor: icon === 'success' ? '#00d492' : undefined,
+      title: this.translate.instant(message),
+      showConfirmButton: false,
+      timer: icon === 'success' ? 2500 : 4500,
+      timerProgressBar: true,
     });
   }
 }

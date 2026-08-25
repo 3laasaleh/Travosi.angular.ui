@@ -5,11 +5,12 @@ import { ToursFromCard } from './tours-from-card/tours-from-card';
 import { ToursList } from './tours-list/tours-list';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourDetail } from '../../home/tour-page/tour-detail/tour-detail/tour-detail';
+import { DiscountManager } from '../shared/discount-manager/discount-manager';
 
 @Component({
   selector: 'app-tours',
   standalone: true,
-  imports: [TranslatePipe, ToursFromCard, ToursList, ItineraryTimeline, TourDetail],
+  imports: [TranslatePipe, ToursFromCard, ToursList, ItineraryTimeline, TourDetail, DiscountManager],
   templateUrl: './tours-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tours-page.scss',
@@ -22,6 +23,19 @@ export class Tours {
   previewTour: any = null;
   previewImageIndex = 0;
   refreshToken = 0;
+  discountTour: any = null;
+
+  openDiscountManager(tour: any): void {
+    this.discountTour = tour;
+  }
+
+  closeDiscountManager(): void {
+    this.discountTour = null;
+  }
+
+  handleDiscountChanged(): void {
+    this.refreshToken++;
+  }
 
   toggleForm(): void {
     this.showForm = !this.showForm;

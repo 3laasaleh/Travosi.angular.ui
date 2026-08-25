@@ -56,6 +56,7 @@ export class Invoices implements OnInit {
   customers: any[] = [];
   tours: any[] = [];
   packages: any[] = [];
+  hotels: any[] = [];
   flights: any[] = [];
   currencies: CurrencyOption[] = [...this.fallbackCurrencies];
   isListLoading = false;
@@ -70,6 +71,7 @@ export class Invoices implements OnInit {
   readonly catalogSections = [
     { type: 1, labelKey: 'packages', emptyKey: 'noPackagesFound', icon: 'mdi-bag-suitcase-outline' },
     { type: 2, labelKey: 'tours', emptyKey: 'noToursFound', icon: 'mdi-map-marker-path' },
+    { type: 3, labelKey: 'hotels', emptyKey: 'noHotelsFound', icon: 'mdi-bed-outline' },
     { type: 4, labelKey: 'flights', emptyKey: 'noFlightsFound', icon: 'mdi-airplane' },
   ];
 
@@ -201,7 +203,7 @@ export class Invoices implements OnInit {
       .find((option) => Number(option.id) === Number(row.controls.serviceId.value));
     row.patchValue({
       description: this.name(source),
-      unitPrice: this.numberValue(source?.pricePerPerson ?? source?.price),
+      unitPrice: this.catalogPrice(source),
       discount: 0,
     });
   }
@@ -287,6 +289,7 @@ export class Invoices implements OnInit {
         sortOrder: index + 1,
         packageId: type === 1 ? Number(item.serviceId) : null,
         tourId: type === 2 ? Number(item.serviceId) : null,
+        hotelId: type === 3 ? Number(item.serviceId) : null,
         flightId: type === 4 ? Number(item.serviceId) : null,
         from: type === 5 ? from : null,
         to: type === 5 ? to : null,
@@ -340,7 +343,7 @@ export class Invoices implements OnInit {
 
     (invoice.items ?? []).forEach((item: any) => {
       const itemType = Number(item.itemType);
-      const serviceId = Number(itemType === 1 ? item.packageId : itemType === 2 ? item.tourId : itemType === 4 ? item.flightId : 0);
+      const serviceId = Number(itemType === 1 ? item.packageId : itemType === 2 ? item.tourId : itemType === 3 ? item.hotelId : itemType === 4 ? item.flightId : 0);
       if (itemType !== 5) this.ensureCatalogItemIsAvailable(itemType, serviceId, item.description, item.unitPrice);
       const source = this.serviceOptionsForType(itemType)
         .find((option) => Number(option.id) === serviceId);
@@ -422,6 +425,7 @@ export class Invoices implements OnInit {
       customers: safeGet('Customers?page=1&pageSize=100'),
       tours: safeGet('Tours?page=1&pageSize=100'),
       packages: safeGet('Packages?page=1&pageSize=100'),
+      hotels: safeGet('Hotels?page=1&pageSize=100'),
       flights: safeGet('Flights/GetAll?page=1&pageSize=100'),
       currencies: safeGet('Currencies'),
     }).pipe(finalize(() => {
@@ -431,6 +435,7 @@ export class Invoices implements OnInit {
       this.customers = this.optionRows(response.customers);
       this.tours = this.optionRows(response.tours);
       this.packages = this.optionRows(response.packages);
+      this.hotels = this.optionRows(response.hotels);
       this.flights = this.optionRows(response.flights);
       const currencies = this.optionRows(response.currencies)
         .map((currency) => ({
@@ -454,12 +459,17 @@ export class Invoices implements OnInit {
   itemTypeKey(type: unknown): string {
     if (Number(type) === 1) return 'package';
     if (Number(type) === 2) return 'tour';
+    if (Number(type) === 3) return 'hotel';
     if (Number(type) === 4) return 'flight';
     return 'transfer';
   }
 
   catalogPrice(item: any): number {
-    return this.numberValue(item?.pricePerPerson ?? item?.price ?? item?.adultPrice ?? item?.totalAmount);
+    const rooms = Array.isArray(item?.rooms) ? item.rooms : [];
+    const activeRooms = rooms.filter((room: any) => room?.isActive !== false);
+    const room = (activeRooms.length ? activeRooms : rooms)
+      .sort((left: any, right: any) => this.numberValue(left?.sellingPrice) - this.numberValue(right?.sellingPrice))[0];
+    return this.numberValue(item?.pricePerPerson ?? item?.price ?? item?.adultPrice ?? item?.totalAmount ?? room?.sellingPrice);
   }
 
   thumbnail(item: any): string {
@@ -563,6 +573,7 @@ export class Invoices implements OnInit {
   private serviceOptionsForType(type: number): any[] {
     if (type === 1) return this.packages;
     if (type === 2) return this.tours;
+    if (type === 3) return this.hotels;
     if (type === 4) return this.flights;
     return [];
   }
@@ -573,6 +584,7 @@ export class Invoices implements OnInit {
     if (target.some((option) => Number(option.id) === id)) return;
     if (type === 1) target.push({ id, nameEng: description, pricePerPerson: price });
     else if (type === 2) target.push({ id, titleEng: description, pricePerPerson: price });
+    else if (type === 3) target.push({ id, name: description, price });
     else if (type === 4) target.push({ id, flightNumber: description, price });
   }
 

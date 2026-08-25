@@ -52,7 +52,7 @@ export class CityPage implements OnInit {
   imageUrl(source: any): string { const raw = typeof source === 'string' ? source : source?.imageUrl ?? source?.url ?? ''; return !raw ? 'assets/images/bg/3.jpg' : /^(blob:|data:|https?:\/\/)/i.test(raw) ? raw : `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`; }
   tourImage(tour: any): string { return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl); }
   tourTitle(tour: any): string { return this.isArabic ? tour?.titleAr ?? tour?.titleEng ?? '' : tour?.titleEng ?? tour?.titleAr ?? ''; }
-  formattedTourPrice(tour: any): string { return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour); }
+  formattedTourPrice(tour: any): string { return formatHomePrice(this.currencyService, tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price, tour); }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   private load(destinationId: number, cityId: number): void {

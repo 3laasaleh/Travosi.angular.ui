@@ -4,11 +4,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { PackagesFromCard } from './packages-from-card/packages-from-card';
 import { PackagesList } from './packages-list/packages-list';
+import { DiscountManager } from '../shared/discount-manager/discount-manager';
 
 @Component({
   selector: 'app-packages',
   standalone: true,
-  imports: [ TranslatePipe, PackagesFromCard, PackagesList],
+  imports: [TranslatePipe, PackagesFromCard, PackagesList, DiscountManager],
   templateUrl: './packages-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './packages-page.scss',
@@ -22,6 +23,19 @@ export class Packages {
   previewImageIndex = 0;
   imageMagnifierOpen = false;
   refreshToken = 0;
+  discountPackage: any = null;
+
+  openDiscountManager(travelPackage: any): void {
+    this.discountPackage = travelPackage;
+  }
+
+  closeDiscountManager(): void {
+    this.discountPackage = null;
+  }
+
+  handleDiscountChanged(): void {
+    this.refreshToken++;
+  }
 
   toggleForm(): void {
     this.showForm = !this.showForm;

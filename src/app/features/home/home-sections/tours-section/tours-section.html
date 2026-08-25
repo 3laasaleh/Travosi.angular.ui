@@ -27,11 +27,12 @@
               <div class="relative overflow-hidden">
                 <img [src]="imageUrl(item)" [alt]="item.titleEng " loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
                 @if (item.destinationName ) { <span class="absolute start-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur"><i class="mdi mdi-map-marker-outline me-1 text-primary"></i>{{ item.destinationName  }}</span> }
+                @if (item.activeDiscount?.isCurrentlyActive) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount?.percentage }}%</span> }
               </div>
               <div class="flex flex-1 flex-col p-4">
                 <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.titleEng }}</h3>
                 @if (item.description ?? item.fullDescription) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ item.fullDescription ?? item.description }}</p> }
-                <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong><i class="mdi mdi-arrow-right text-xl text-slate-400 transition group-hover:text-primary rtl:rotate-180"></i></div></div>
+                <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"><div><strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>@if (item.activeDiscount?.isCurrentlyActive) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }</div><i class="mdi mdi-arrow-right text-xl text-slate-400 transition group-hover:text-primary rtl:rotate-180"></i></div></div>
               </div>
             </article>
           </a>

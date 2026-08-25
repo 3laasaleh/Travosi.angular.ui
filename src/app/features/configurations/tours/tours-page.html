@@ -22,7 +22,7 @@
       @if (showForm) {
         <app-tours-from-card [selectedTour]="selectedTour" (tourSaved)="handleTourSaved()" (editCancelled)="clearSelectedTour()" />
       } @else {
-        <app-configurations-tours-list [viewMode]="viewMode" [refreshToken]="refreshToken" (previewRequested)="openPreview($event)" (editRequested)="selectTourForEdit($event)" />
+        <app-configurations-tours-list [viewMode]="viewMode" [refreshToken]="refreshToken" (previewRequested)="openPreview($event)" (editRequested)="selectTourForEdit($event)" (discountRequested)="openDiscountManager($event)" />
       }
     </div>
   </div>
@@ -89,5 +89,9 @@
         </div>
       </div>
     </div>
+  }
+
+  @if (discountTour) {
+    <app-discount-manager productType="tour" [product]="discountTour" (closeRequested)="closeDiscountManager()" (discountChanged)="handleDiscountChanged()" />
   }
 </section>

@@ -40,6 +40,7 @@ export class ToursList implements OnInit, OnChanges {
   @Input() refreshToken = 0;
   @Output() previewRequested = new EventEmitter<any>();
   @Output() editRequested = new EventEmitter<any>();
+  @Output() discountRequested = new EventEmitter<any>();
 
   tours: any[] = [];
   isLoading = false;

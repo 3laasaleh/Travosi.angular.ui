@@ -62,6 +62,8 @@
     "hideAddDestination": "Hide add destination",
     "showAddDestination": "Show add destination",
     "hotels": "Hotels",
+    "room": "Room",
+    "night": "night",
     "manageHotelDetails": "Manage hotel details and contacts.",
     "hideAddHotel": "Hide add hotel",
     "showAddHotel": "Show add hotel",
@@ -931,7 +933,7 @@
     "adultPrice": "Adult price",
     "childPrice": "Child price",
     "flightPricePerTraveler": "Price per traveler",
-    "selectAtLeastOneTravelItem": "Select at least one package, tour, flight, or transfer.",
+    "selectAtLeastOneTravelItem": "Select at least one package, tour, hotel, flight, or transfer.",
     "quotationTransfers": "Transfers",
     "quotationTransfersHint": "Add each pickup and drop-off included in this quotation.",
     "addTransfer": "Add transfer",
@@ -1015,7 +1017,7 @@
     "invoiceDetails": "Invoice details",
     "chooseVoucherType": "Choose the travel service type for this voucher.",
     "selectVoucherServiceHint": "Select the service whose complete details will appear on the voucher.",
-    "invoiceTravelItemsHint": "Select tours, packages, and flights from the catalog, then add any required transfers.",
+    "invoiceTravelItemsHint": "Select tours, packages, hotels, and flights from the catalog, then add any required transfers.",
     "selectedInvoiceItems": "Selected travel services",
     "travelTransfersHint": "Add the pickup and drop-off details for each transfer.",
     "customerRequired": "Select a customer.",
@@ -1051,7 +1053,7 @@
     "lineTotal": "Line total",
     "lineDiscountExceedsTotal": "Line discount cannot exceed quantity multiplied by unit price.",
     "removeInvoiceItem": "Remove invoice item",
-    "addInvoiceItemHint": "Add at least one tour, package, flight, or transfer to the invoice.",
+    "addInvoiceItemHint": "Add at least one tour, package, hotel, flight, or transfer to the invoice.",
     "taxRateInvalid": "Tax rate must be between 0% and 100%.",
     "invoiceDueDateInvalid": "Due date must be on or after the invoice date.",
     "serverCalculatedTotalsHint": "Preview totals are estimates; the saved invoice totals are calculated by the server."
@@ -1083,4 +1085,49 @@
     ,"contactMessagesFilter_unread": "Unread"
     ,"contactMessagesFilter_read": "Read"
     ,"photos": "photos"
+    ,"discountManagement": "Discount management"
+    ,"discountEmailNotice": "Creating a period queues one private email for every registered user and active subscriber."
+    ,"createDiscount": "Create discount"
+    ,"restartDiscount": "Restart discount"
+    ,"cancelRestart": "Cancel restart"
+    ,"discountPercentage": "Discount percentage"
+    ,"discountHistory": "Discount period history"
+    ,"discountHistoryLoadError": "The discount history could not be loaded."
+    ,"discountPercentageInvalid": "Discount percentage must be greater than 0 and less than 100."
+    ,"discountDatesRequired": "Start and end dates are required."
+    ,"discountStartPast": "The discount start date cannot be in the past."
+    ,"discountEndInvalid": "The discount end date must be after its start date."
+    ,"discountSaveError": "The discount could not be saved."
+    ,"discountStopError": "The discount could not be stopped."
+    ,"discountCreated": "Discount created and customer emails queued"
+    ,"discountRestarted": "A new discount period was started"
+    ,"discountStopped": "Discount stopped"
+    ,"stopDiscount": "Stop discount?"
+    ,"confirmStopDiscount": "Customers will no longer see this discount and pending emails will be cancelled."
+    ,"stop": "Stop"
+    ,"restart": "Restart"
+    ,"startNewPeriod": "Start new period"
+    ,"discountStatusActive": "Active"
+    ,"discountStatusScheduled": "Scheduled"
+    ,"discountStatusStopped": "Stopped"
+    ,"discountStatusExpired": "Expired"
+    ,"emailsQueued": "{{count}} email(s) queued"
+    ,"noDiscountHistory": "No discount periods have been created yet."
+    ,"manageDiscount": "Manage discount"
+    ,"discountOff": "{{percentage}}% off"
+    ,"limitedTimeOffer": "Limited-time offer"
+    ,"invalidDate": "Enter a valid date."
+    ,"travelStartDatePast": "Travel start date cannot be in the past."
+    ,"travelEndDateAfterStart": "Travel end date must be after the travel start date."
+    ,"quotationValidityFuture": "The quotation validity date must be after today."
+    ,"quotationValidationError": "Complete every required field with valid values before saving."
+    ,"changeQuotationStatus": "Change status"
+    ,"chooseQuotationStatus": "Choose the new status"
+    ,"quotationStatusRequired": "Select a status to continue."
+    ,"quotationStatusChangePrompt": "Choose the next quotation status, then confirm the change."
+    ,"quotationStatusUpdated": "Quotation status updated successfully."
+    ,"quotationStatusUpdateError": "The quotation status could not be updated."
+    ,"confirmQuotationSend": "Send quotation?"
+    ,"confirmQuotationSendMessage": "This will change the quotation status from Draft to Sent before downloading its PDF."
+    ,"cancelled": "Cancelled"
 }

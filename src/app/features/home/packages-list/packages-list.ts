@@ -200,6 +200,10 @@ export class HomePackagesList implements OnInit {
   }
 
   formattedPrice(item: any): string {
+    return formatHomePrice(this.currencyService, item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price, item);
+  }
+
+  formattedOriginalPrice(item: any): string {
     return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 

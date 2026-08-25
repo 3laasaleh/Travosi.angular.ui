@@ -71,7 +71,15 @@ export class TourDetail {
   }
 
   get formattedPrice(): string {
+    return formatHomePrice(this.currencyService, this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ?? this.tour?.price, this.tour);
+  }
+
+  get formattedOriginalPrice(): string {
     return formatHomePrice(this.currencyService, this.tour?.pricePerPerson ?? this.tour?.price, this.tour);
+  }
+
+  get hasDiscount(): boolean {
+    return this.tour?.activeDiscount?.isCurrentlyActive === true;
   }
 
   get description(): string {

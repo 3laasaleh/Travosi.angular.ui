@@ -78,11 +78,27 @@ export class TourBookingCard implements OnInit {
   }
 
   get pricePerPerson(): number {
-    return this.rawPrice(this.product?.pricePerPerson ?? this.product?.price);
+    return this.rawPrice(this.product?.discountedPricePerPerson ?? this.product?.pricePerPerson ?? this.product?.price);
   }
 
   get pricePerChild(): number {
-    return this.rawPrice(this.product?.pricePerChild);
+    return this.rawPrice(this.product?.discountedPricePerChild ?? this.product?.pricePerChild);
+  }
+
+  get hasDiscount(): boolean {
+    return this.product?.activeDiscount?.isCurrentlyActive === true;
+  }
+
+  get discountPercentage(): number {
+    return Number(this.product?.activeDiscount?.percentage ?? 0);
+  }
+
+  get formattedOriginalPricePerPerson(): string {
+    return formatHomePrice(this.currencyService, this.product?.pricePerPerson ?? this.product?.price, this.product);
+  }
+
+  get formattedOriginalPricePerChild(): string {
+    return formatHomePrice(this.currencyService, this.product?.pricePerChild, this.product);
   }
 
   get seatsAvailable(): number {

@@ -110,7 +110,7 @@
               </div>
               <div>
                 <label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label>
-                <app-time-picker formControlName="arrivalTime" id="voucher-transfer-arrival-time" [min]="form.controls.fromTime.value" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
+                <app-time-picker formControlName="arrivalTime" id="voucher-transfer-arrival-time" [min]="form.controls.fromTime.value" [minExclusive]="true" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
                 @if (form.controls.arrivalTime.touched && form.controls.arrivalTime.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p> }
               </div>
               @if (form.touched && form.hasError('transferTimeInPast')) {

@@ -1,83 +1,172 @@
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
-  @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{
+    errorMessage | translate }}</div> }
+  @if (successMessage) { <div
+    class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
+    successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedFlight ? 'editFlight' : 'addFlight') | translate }}</h2>
   <form class="space-y-4" [formGroup]="flightForm" (ngSubmit)="saveFlight()">
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'flightNumber' | translate }}</label><input formControlName="flightNumber" type="text" maxlength="20" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('flightNumber')?.touched && flightForm.get('flightNumber')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'flightNumberRequired' | translate }}</p> } @else if (flightForm.controls.flightNumber.touched && flightForm.controls.flightNumber.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'flightNumberMaxLength' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'airline' | translate }}</label><select formControlName="airlineId" class="w-full rounded-2xl border border-slate-300 px-3 py-2"><option [ngValue]="null" disabled>{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }</select>@if (flightForm.get('airlineId')?.touched && flightForm.get('airlineId')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'flightNumber' | translate }}</label><input
+          formControlName="flightNumber" type="text" maxlength="20"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('flightNumber')?.touched &&
+        flightForm.get('flightNumber')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
+          'flightNumberRequired' | translate }}</p> } @else if (flightForm.controls.flightNumber.touched &&
+        flightForm.controls.flightNumber.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
+          'flightNumberMaxLength' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'airline' | translate }}</label><select
+          formControlName="airlineId" class="w-full rounded-2xl border border-slate-300 px-3 py-2">
+          <option [ngValue]="null" disabled>{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track
+          airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }
+        </select>@if (flightForm.get('airlineId')?.touched && flightForm.get('airlineId')?.hasError('required')) { <p
+          class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p> }</div>
     </div>
     <div class="grid gap-4 md:grid-cols-2">
       <div class="relative">
-        <label for="departureAirport" class="mb-2 block text-sm font-medium">{{ 'departureAirport' | translate }}</label>
+        <label for="departureAirport" class="mb-2 block text-sm font-medium">{{ 'departureAirport' | translate
+          }}</label>
         <div class="relative">
-          <i class="mdi mdi-airplane-takeoff pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
-          <input id="departureAirport" formControlName="departureAirport" type="search" autocomplete="off" maxlength="250" role="combobox"
-            aria-autocomplete="list" [attr.aria-expanded]="departureAirportOpen" aria-controls="departure-airport-results"
-            [attr.aria-activedescendant]="airportActiveDescendant('departure')" [attr.aria-invalid]="flightForm.controls.departureAirport.touched && (flightForm.controls.departureAirport.invalid || flightForm.controls.departureAirportCode.invalid)"
+          <i
+            class="mdi mdi-airplane-takeoff pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
+          <input id="departureAirport" formControlName="departureAirport" type="search" autocomplete="off"
+            maxlength="250" role="combobox" aria-autocomplete="list" [attr.aria-expanded]="departureAirportOpen"
+            aria-controls="departure-airport-results"
+            [attr.aria-activedescendant]="airportActiveDescendant('departure')"
+            [attr.aria-invalid]="flightForm.controls.departureAirport.touched && (flightForm.controls.departureAirport.invalid || flightForm.controls.departureAirportCode.invalid)"
             [placeholder]="'searchAirportPlaceholder' | translate"
             class="w-full rounded-2xl border border-slate-300 py-2 pe-10 ps-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-            (focus)="openAirportResults('departure')" (blur)="closeAirportResultsLater('departure')" (keydown)="onAirportKeydown('departure', $event)" />
-          @if (departureAirportLoading) { <i class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
+            (focus)="openAirportResults('departure')" (blur)="closeAirportResultsLater('departure')"
+            (keydown)="onAirportKeydown('departure', $event)" />
+          @if (departureAirportLoading) { <i
+            class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
         </div>
         @if (departureAirportOpen && flightForm.controls.departureAirport.value.trim().length >= 2) {
-          <div id="departure-airport-results" role="listbox" class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-            @for (airport of departureAirports; track airport.code; let index = $index) {
-              <button [id]="airportOptionId('departure', index)" type="button" role="option" [attr.aria-selected]="departureAirportActiveIndex === index" class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5" [class.bg-primary\/5]="departureAirportActiveIndex === index" (mouseenter)="setAirportActiveIndex('departure', index)" (mousedown)="$event.preventDefault()" (click)="selectAirport('departure', airport)">
-                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-xs font-semibold text-primary" translate="no">{{ airport.code }}</span>
-                <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span class="mt-0.5 block truncate text-xs text-slate-500">{{ airportLocation(airport) }}</span></span>
-              </button>
-            } @empty {
-              @if (!departureAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (departureAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
-            }
-            <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span translate="no">OurAirports</span></p>
-          </div>
+        <div id="departure-airport-results" role="listbox"
+          class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+          @for (airport of departureAirports; track airport.code; let index = $index) {
+          <button [id]="airportOptionId('departure', index)" type="button" role="option"
+            [attr.aria-selected]="departureAirportActiveIndex === index"
+            class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5"
+            [class.bg-primary\/5]="departureAirportActiveIndex === index"
+            (mouseenter)="setAirportActiveIndex('departure', index)" (mousedown)="$event.preventDefault()"
+            (click)="selectAirport('departure', airport)">
+            <span
+              class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-xs font-semibold text-primary"
+              translate="no">{{ airport.code }}</span>
+            <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span
+                class="mt-0.5 block truncate text-xs text-slate-500">{{ airportLocation(airport) }}</span></span>
+          </button>
+          } @empty {
+          @if (!departureAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{
+            (departureAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
+          }
+          <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span
+              translate="no">OurAirports</span></p>
+        </div>
         }
-        @if (flightForm.controls.departureAirport.touched && flightForm.controls.departureAirport.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureAirportRequired' | translate }}</p> }
-        @else if (flightForm.controls.departureAirport.touched && flightForm.controls.departureAirport.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'airportNameMaxLength' | translate }}</p> }
-        @else if (airportSelectionInvalid('departure')) { <p class="mt-1 text-xs text-red-600">{{ 'airportSelectionRequired' | translate }}</p> }
+        @if (flightForm.controls.departureAirport.touched && flightForm.controls.departureAirport.hasError('required'))
+        { <p class="mt-1 text-xs text-red-600">{{ 'departureAirportRequired' | translate }}</p> }
+        @else if (flightForm.controls.departureAirport.touched &&
+        flightForm.controls.departureAirport.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
+          'airportNameMaxLength' | translate }}</p> }
+        @else if (airportSelectionInvalid('departure')) { <p class="mt-1 text-xs text-red-600">{{
+          'airportSelectionRequired' | translate }}</p> }
       </div>
       <div class="relative">
         <label for="arrivalAirport" class="mb-2 block text-sm font-medium">{{ 'arrivalAirport' | translate }}</label>
         <div class="relative">
-          <i class="mdi mdi-airplane-landing pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
-          <input id="arrivalAirport" formControlName="arrivalAirport" type="search" autocomplete="off" maxlength="250" role="combobox"
-            aria-autocomplete="list" [attr.aria-expanded]="arrivalAirportOpen" aria-controls="arrival-airport-results"
-            [attr.aria-activedescendant]="airportActiveDescendant('arrival')" [attr.aria-invalid]="flightForm.controls.arrivalAirport.touched && (flightForm.controls.arrivalAirport.invalid || flightForm.controls.arrivalAirportCode.invalid)"
+          <i
+            class="mdi mdi-airplane-landing pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i>
+          <input id="arrivalAirport" formControlName="arrivalAirport" type="search" autocomplete="off" maxlength="250"
+            role="combobox" aria-autocomplete="list" [attr.aria-expanded]="arrivalAirportOpen"
+            aria-controls="arrival-airport-results" [attr.aria-activedescendant]="airportActiveDescendant('arrival')"
+            [attr.aria-invalid]="flightForm.controls.arrivalAirport.touched && (flightForm.controls.arrivalAirport.invalid || flightForm.controls.arrivalAirportCode.invalid)"
             [placeholder]="'searchAirportPlaceholder' | translate"
             class="w-full rounded-2xl border border-slate-300 py-2 pe-10 ps-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-            (focus)="openAirportResults('arrival')" (blur)="closeAirportResultsLater('arrival')" (keydown)="onAirportKeydown('arrival', $event)" />
-          @if (arrivalAirportLoading) { <i class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
+            (focus)="openAirportResults('arrival')" (blur)="closeAirportResultsLater('arrival')"
+            (keydown)="onAirportKeydown('arrival', $event)" />
+          @if (arrivalAirportLoading) { <i
+            class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
         </div>
         @if (arrivalAirportOpen && flightForm.controls.arrivalAirport.value.trim().length >= 2) {
-          <div id="arrival-airport-results" role="listbox" class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-            @for (airport of arrivalAirports; track airport.code; let index = $index) {
-              <button [id]="airportOptionId('arrival', index)" type="button" role="option" [attr.aria-selected]="arrivalAirportActiveIndex === index" class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5" [class.bg-primary\/5]="arrivalAirportActiveIndex === index" (mouseenter)="setAirportActiveIndex('arrival', index)" (mousedown)="$event.preventDefault()" (click)="selectAirport('arrival', airport)">
-                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-xs font-semibold text-primary" translate="no">{{ airport.code }}</span>
-                <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span class="mt-0.5 block truncate text-xs text-slate-500">{{ airportLocation(airport) }}</span></span>
-              </button>
-            } @empty {
-              @if (!arrivalAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (arrivalAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
-            }
-            <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span translate="no">OurAirports</span></p>
-          </div>
+        <div id="arrival-airport-results" role="listbox"
+          class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+          @for (airport of arrivalAirports; track airport.code; let index = $index) {
+          <button [id]="airportOptionId('arrival', index)" type="button" role="option"
+            [attr.aria-selected]="arrivalAirportActiveIndex === index"
+            class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5"
+            [class.bg-primary\/5]="arrivalAirportActiveIndex === index"
+            (mouseenter)="setAirportActiveIndex('arrival', index)" (mousedown)="$event.preventDefault()"
+            (click)="selectAirport('arrival', airport)">
+            <span
+              class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-xs font-semibold text-primary"
+              translate="no">{{ airport.code }}</span>
+            <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span
+                class="mt-0.5 block truncate text-xs text-slate-500">{{ airportLocation(airport) }}</span></span>
+          </button>
+          } @empty {
+          @if (!arrivalAirportLoading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{
+            (arrivalAirportSearchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
+          }
+          <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span
+              translate="no">OurAirports</span></p>
+        </div>
         }
-        @if (flightForm.controls.arrivalAirport.touched && flightForm.controls.arrivalAirport.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalAirportRequired' | translate }}</p> }
-        @else if (flightForm.controls.arrivalAirport.touched && flightForm.controls.arrivalAirport.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'airportNameMaxLength' | translate }}</p> }
-        @else if (airportSelectionInvalid('arrival')) { <p class="mt-1 text-xs text-red-600">{{ 'airportSelectionRequired' | translate }}</p> }
+        @if (flightForm.controls.arrivalAirport.touched && flightForm.controls.arrivalAirport.hasError('required')) { <p
+          class="mt-1 text-xs text-red-600">{{ 'arrivalAirportRequired' | translate }}</p> }
+        @else if (flightForm.controls.arrivalAirport.touched &&
+        flightForm.controls.arrivalAirport.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
+          'airportNameMaxLength' | translate }}</p> }
+        @else if (airportSelectionInvalid('arrival')) { <p class="mt-1 text-xs text-red-600">{{
+          'airportSelectionRequired' | translate }}</p> }
       </div>
     </div>
-    @if ((flightForm.controls.departureAirport.touched || flightForm.controls.arrivalAirport.touched) && flightForm.hasError('sameAirport')) { <p class="-mt-2 text-xs text-red-600">{{ 'departureArrivalDifferent' | translate }}</p> }
+    @if ((flightForm.controls.departureAirport.touched || flightForm.controls.arrivalAirport.touched) &&
+    flightForm.hasError('sameAirport')) { <p class="-mt-2 text-xs text-red-600">{{ 'departureArrivalDifferent' |
+      translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'departureTime' | translate }}</label><app-date-picker formControlName="departureTime" id="flight-departure-time" [includeTime]="true" [ariaLabel]="'departureTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if (flightForm.get('departureTime')?.touched && flightForm.get('departureTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'departureTimeRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label><app-date-picker formControlName="arrivalTime" id="flight-arrival-time" [includeTime]="true" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if (flightForm.get('arrivalTime')?.touched && flightForm.get('arrivalTime')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'departureTime' | translate }}</label><app-date-picker
+          formControlName="departureTime" id="flight-departure-time" [includeTime]="true"
+          [ariaLabel]="'departureTime' | translate"
+          inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if
+        (flightForm.get('departureTime')?.touched && flightForm.get('departureTime')?.hasError('required')) { <p
+          class="mt-1 text-xs text-red-600">{{ 'departureTimeRequired' | translate }}</p> }</div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label>
+        <app-date-picker
+          formControlName="arrivalTime" id="flight-arrival-time" [includeTime]="true"
+          [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+          @if(flightForm.get('arrivalTime')?.touched && flightForm.get('arrivalTime')?.hasError('required')) { 
+            <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p> }
+        </div>
     </div>
-    @if ((flightForm.controls.departureTime.touched || flightForm.controls.arrivalTime.touched) && flightForm.hasError('arrivalNotAfterDeparture')) { <p class="-mt-2 text-xs text-red-600">{{ 'arrivalTimeAfterDeparture' | translate }}</p> }
+    @if ((flightForm.controls.departureTime.touched || flightForm.controls.arrivalTime.touched) &&
+    flightForm.hasError('arrivalNotAfterDeparture')) { <p class="-mt-2 text-xs text-red-600">{{
+      'arrivalTimeAfterDeparture' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-3">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'price' | translate }}</label><div class="relative"><span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e border-slate-300 text-sm font-semibold text-slate-500">$</span><input formControlName="price" type="text" appNumbersOnly class="w-full rounded-2xl border border-slate-300 py-2 pe-3 ps-12" /></div>@if (flightForm.get('price')?.touched && flightForm.get('price')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'priceRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'availableSeats' | translate }}</label><input formControlName="availableSeats" type="number" min="0" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('availableSeats')?.touched && flightForm.get('availableSeats')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'availableSeatsRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'flightClass' | translate }}</label><select formControlName="flightClass" class="w-full rounded-2xl border border-slate-300 px-3 py-2">@for (option of flightClassOptions; track option.value) { <option [ngValue]="option.value">{{ option.labelKey | translate }}</option> }</select></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'price' | translate }}</label>
+        <div class="relative"><span
+            class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e border-slate-300 text-sm font-semibold text-slate-500">$</span><input
+            formControlName="price" type="text" appNumbersOnly
+            class="w-full rounded-2xl border border-slate-300 py-2 pe-3 ps-12" /></div>@if
+        (flightForm.get('price')?.touched && flightForm.get('price')?.invalid) { <p class="mt-1 text-xs text-red-600">{{
+          'priceRequired' | translate }}</p> }
+      </div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'availableSeats' | translate }}</label><input
+          formControlName="availableSeats" type="number" min="0"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (flightForm.get('availableSeats')?.touched
+        && flightForm.get('availableSeats')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'availableSeatsRequired'
+          | translate }}</p> }</div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'flightClass' | translate }}</label><select
+          formControlName="flightClass" class="w-full rounded-2xl border border-slate-300 px-3 py-2">@for (option of
+          flightClassOptions; track option.value) { <option [ngValue]="option.value">{{ option.labelKey | translate }}
+          </option> }</select></div>
     </div>
-    <div class="flex gap-3"><button type="submit" [disabled]="flightForm.invalid || isLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedFlight ? 'update' : 'add') | translate }} }</button>@if (selectedFlight) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+    <div class="flex gap-3"><button type="submit" [disabled]="flightForm.invalid || isLoading"
+        class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if
+        (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span>
+        } @else { {{ (selectedFlight ? 'update' : 'add') | translate }} }</button>@if (selectedFlight) { <button
+        type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading"
+        (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
   </form>
 </div>

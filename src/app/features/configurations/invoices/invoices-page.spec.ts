@@ -89,4 +89,37 @@ describe('Invoices', () => {
     component.toggleCatalogItem(2, tour, false);
     expect(component.items.length).toBe(0);
   });
+
+  it('saves a hotel invoice line with the lowest active room rate', () => {
+    const api = {
+      post: vi.fn().mockReturnValue(of({ isSuccess: true })),
+      put: vi.fn().mockReturnValue(of({ isSuccess: true })),
+      get: vi.fn().mockReturnValue(of({ data: [] })),
+    };
+    const component = new Invoices(
+      api as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    const hotel = {
+      id: 31,
+      name: 'Nile View Hotel',
+      rooms: [
+        { sellingPrice: 150, isActive: true },
+        { sellingPrice: 95, isActive: true },
+      ],
+    };
+
+    component.form.patchValue({ customerId: 7, currencyId: 2 });
+    component.addItem(3, hotel);
+    component.save();
+
+    const [, payload] = api.post.mock.calls[0];
+    expect(payload.items[0]).toMatchObject({
+      itemType: 3,
+      hotelId: 31,
+      description: 'Nile View Hotel',
+      unitPrice: 95,
+    });
+  });
 });

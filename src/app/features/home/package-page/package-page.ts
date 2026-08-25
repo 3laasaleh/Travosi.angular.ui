@@ -104,9 +104,21 @@ export class HomePackagePage implements OnInit {
   get formattedPrice(): string {
     return formatHomePrice(
       this.currencyService,
-      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
+      this.travelPackage?.discountedPricePerPerson ?? this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
       this.travelPackage,
     );
+  }
+
+  get formattedOriginalPrice(): string {
+    return formatHomePrice(this.currencyService, this.travelPackage?.pricePerPerson ?? this.travelPackage?.price, this.travelPackage);
+  }
+
+  get hasDiscount(): boolean {
+    return this.travelPackage?.activeDiscount?.isCurrentlyActive === true;
+  }
+
+  get discountPercentage(): number {
+    return Number(this.travelPackage?.activeDiscount?.percentage ?? 0);
   }
 
   get duration(): string {

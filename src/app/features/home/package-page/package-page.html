@@ -22,6 +22,7 @@
       </a>
       <p class="mt-5 text-xs font-bold uppercase tracking-[0.24em] text-primary">{{ 'travelPackage' | translate }}</p>
       <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
+      @if (hasDiscount) { <span class="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700"><i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}</span> }
       @if (destinationName) {
         <p class="mt-3 flex items-center gap-2 font-medium text-slate-500"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}</p>
       }
@@ -53,7 +54,7 @@
           <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3">
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ duration }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div></div>
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-account-group-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p></div></div>
-            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-wallet-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-bold text-primary">{{ formattedPrice }}</p></div></div>
+            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-wallet-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-bold text-primary">{{ formattedPrice }}</p>@if (hasDiscount) { <p class="text-xs text-slate-400 line-through">{{ formattedOriginalPrice }}</p> }</div></div>
           </div>
         </section>
 

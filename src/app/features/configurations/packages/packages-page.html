@@ -19,7 +19,7 @@
       @if (showForm) {
         <app-packages-from-card [selectedPackage]="selectedPackage" (packageSaved)="handlePackageSaved()" (editCancelled)="clearSelectedPackage()" />
       } @else {
-        <app-configurations-packages-list [viewMode]="viewMode" [refreshToken]="refreshToken" (previewRequested)="openPreview($event)" (editRequested)="selectPackageForEdit($event)" />
+        <app-configurations-packages-list [viewMode]="viewMode" [refreshToken]="refreshToken" (previewRequested)="openPreview($event)" (editRequested)="selectPackageForEdit($event)" (discountRequested)="openDiscountManager($event)" />
       }
     </div>
   </div>
@@ -72,5 +72,8 @@
         }
       </div>
     }
+  }
+  @if (discountPackage) {
+    <app-discount-manager productType="package" [product]="discountPackage" (closeRequested)="closeDiscountManager()" (discountChanged)="handleDiscountChanged()" />
   }
 </section>

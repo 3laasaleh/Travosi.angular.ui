@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, SimpleChange } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { of, throwError } from 'rxjs';
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import {
   QuotationDTO,
@@ -29,8 +31,26 @@ describe('QuotationsFromCard', () => {
     availableSeats: 12,
     isActive: true,
   };
+  const hotel = {
+    id: 31,
+    name: 'Nile View Hotel',
+    isActive: true,
+    rooms: [{
+      id: 301,
+      name: 'Deluxe room',
+      roomTypeName: 'Deluxe',
+      mealPlanName: 'Breakfast',
+      maxAdults: 2,
+      maxChildren: 1,
+      costPrice: 70,
+      sellingPrice: 100,
+      isActive: true,
+    }],
+  };
 
   beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
     apiService = {
       get: vi.fn((url: string) => {
         if (url.startsWith('Customers')) {
@@ -41,6 +61,9 @@ describe('QuotationsFromCard', () => {
         }
         if (url.startsWith('Tours')) {
           return of({ data: { tours: [{ id: 21, titleEng: 'City tour' }] } });
+        }
+        if (url.startsWith('Hotels')) {
+          return of({ data: { data: [hotel] } });
         }
         if (url.startsWith('Flights/GetAll')) {
           return of({ data: { data: [flight] } });
@@ -55,6 +78,7 @@ describe('QuotationsFromCard', () => {
     component = TestBed.runInInjectionContext(() => new QuotationsFromCard(
       apiService as unknown as ApiService,
       { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
     ));
   });
 
@@ -64,10 +88,12 @@ describe('QuotationsFromCard', () => {
     expect(apiService.get).toHaveBeenCalledWith('Customers?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Packages?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Tours?page=1&pageSize=100');
+    expect(apiService.get).toHaveBeenCalledWith('Hotels?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Flights/GetAll?page=1&pageSize=100');
     expect(component.customers).toEqual([{ id: 7, firstName: 'Mona', lastName: 'Ali' }]);
     expect(component.packages).toEqual([{ id: 11, nameEng: 'Dubai package' }]);
     expect(component.tours).toEqual([{ id: 21, titleEng: 'City tour' }]);
+    expect(component.hotels).toEqual([hotel]);
     expect(component.flights).toEqual([flight]);
     expect(component.optionsLoading).toBe(false);
   });
@@ -76,12 +102,36 @@ describe('QuotationsFromCard', () => {
     expect(component.thumbnail(flight)).toMatch(/\/images\/airlines\/sea-world-air\.webp$/);
   });
 
+  it('saves a hotel using its lowest active room rate and the quotation stay dates', () => {
+    component.hotels = [hotel];
+    component.toggleHotel(hotel, true);
+    fillRequiredFields(component);
+
+    component.saveQuotation();
+
+    const [, payload] = apiService.post.mock.calls[0];
+    expect(payload.items).toContainEqual(expect.objectContaining({
+      itemType: 3,
+      hotelId: hotel.id,
+      description: 'Nile View Hotel - Deluxe room',
+      quantity: 10,
+      costPrice: 70,
+      sellingPrice: 100,
+      serviceStartDate: '2030-05-10',
+      serviceEndDate: '2030-05-20',
+      roomType: 'Deluxe',
+      numberOfRooms: 1,
+      mealPlan: 'Breakfast',
+    }));
+  });
+
   it('hides generated fields and initializes all quotation dates', () => {
     expect(component.quotationForm.contains('quotationNo')).toBe(false);
     expect(component.quotationForm.contains('exchangeRate')).toBe(false);
-    expect(component.quotationForm.controls.travelStartDate.value).toBe(component.today);
-    expect(component.quotationForm.controls.travelEndDate.value).toBe(component.today);
-    expect(component.quotationForm.controls.validUntil.value).toBe(component.today);
+    expect(component.quotationForm.contains('status')).toBe(false);
+    expect(component.quotationForm.controls.travelStartDate.value).toBe(component.defaultTravelStartDate);
+    expect(component.quotationForm.controls.travelEndDate.value).toBe(component.defaultTravelEndDate);
+    expect(component.quotationForm.controls.validUntil.value).toBe(component.defaultValidUntil);
   });
 
   it('saves a selected flight, trimmed policies, and normalized transfer times', () => {
@@ -109,6 +159,7 @@ describe('QuotationsFromCard', () => {
     expect(endpoint).toBe('Quotations');
     expect(payload.quotationNo).toBeUndefined();
     expect(payload.exchangeRate).toBeUndefined();
+    expect(payload.status).toBeUndefined();
     expect(payload.policies).toEqual([{
       id: 0,
       value: 'Non-refundable after confirmation',
@@ -129,6 +180,57 @@ describe('QuotationsFromCard', () => {
       fromTime: '09:30:00',
       arrivalTime: '10:45:00',
     });
+    expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({ toast: true, icon: 'success' }));
+  });
+
+  it('blocks the HTTP request and marks each invalid date before saving', () => {
+    component.flights = [flight];
+    component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    component.quotationForm.patchValue({
+      travelStartDate: '2030-05-10',
+      travelEndDate: '2030-05-10',
+      validUntil: '2020-01-01',
+    });
+
+    component.saveQuotation();
+
+    expect(component.quotationForm.controls.travelEndDate.hasError('dateNotAfterStart')).toBe(true);
+    expect(component.quotationForm.controls.validUntil.hasError('validityNotFuture')).toBe(true);
+    expect(component.quotationForm.controls.travelEndDate.touched).toBe(true);
+    expect(component.quotationForm.controls.validUntil.touched).toBe(true);
+    expect(apiService.post).not.toHaveBeenCalled();
+    expect(apiService.put).not.toHaveBeenCalled();
+    expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({ toast: true, icon: 'warning' }));
+  });
+
+  it('enables saving only after all fields and one travel item are valid', () => {
+    expect(component.canSave).toBe(false);
+    expect(component.travelServicesInvalid).toBe(true);
+
+    component.flights = [flight];
+    component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    expect(component.canSave).toBe(true);
+    expect(component.travelServicesInvalid).toBe(false);
+
+    component.quotationForm.controls.travelEndDate.setValue('2030-05-10');
+    expect(component.canSave).toBe(false);
+  });
+
+  it('shows an error toast when the save API fails', () => {
+    apiService.post.mockReturnValueOnce(throwError(() => ({ error: { message: 'Server rejected quotation' } })));
+    component.flights = [flight];
+    component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+
+    component.saveQuotation();
+
+    expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
+      toast: true,
+      icon: 'error',
+      title: 'Server rejected quotation',
+    }));
   });
 
   it('hydrates selected flights, policies, and transfer times for editing', () => {
@@ -225,6 +327,9 @@ describe('QuotationsFromCard', () => {
       arrivalTime: '10:30',
     });
 
+    expect(component.transfersArray.at(0).hasError('invalidTransferTimeRange')).toBe(true);
+
+    component.transfersArray.at(0).patchValue({ arrivalTime: '11:00' });
     expect(component.transfersArray.at(0).hasError('invalidTransferTimeRange')).toBe(true);
   });
 });

@@ -35,6 +35,7 @@ export class PackagesList implements OnInit, OnChanges {
   @Input() refreshToken = 0;
   @Output() previewRequested = new EventEmitter<any>();
   @Output() editRequested = new EventEmitter<any>();
+  @Output() discountRequested = new EventEmitter<any>();
 
   readonly pageSizeOptions = [10, 20, 50];
   packages: any[] = [];

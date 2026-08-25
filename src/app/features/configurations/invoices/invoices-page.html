@@ -84,13 +84,13 @@
           <legend class="px-2 text-sm font-semibold">{{ 'quotationTravelItems' | translate }}</legend>
           <p class="mb-3 text-sm text-slate-500">{{ 'invoiceTravelItemsHint' | translate }}</p>
           @if (isOptionsLoading) {
-            <div class="grid gap-4 xl:grid-cols-3">
+            <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
               @for (section of catalogSections; track section.type) {
                 <div class="h-40 animate-pulse rounded-2xl bg-slate-100"></div>
               }
             </div>
           } @else {
-            <div class="grid gap-5 xl:grid-cols-3">
+            <div class="grid gap-5 xl:grid-cols-2 2xl:grid-cols-4">
               @for (section of catalogSections; track section.type) {
                 <section>
                   <h3 class="mb-2 text-sm font-semibold text-primary">{{ section.labelKey | translate }}</h3>

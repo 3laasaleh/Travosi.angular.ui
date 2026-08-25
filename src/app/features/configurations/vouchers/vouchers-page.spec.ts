@@ -57,6 +57,9 @@ describe('Vouchers', () => {
 
     component.form.patchValue({ serviceDate: '2030-05-10', fromTime: '11:00', arrivalTime: '10:30' });
     expect(component.form.hasError('invalidTransferTimeRange')).toBe(true);
+
+    component.form.patchValue({ fromTime: '11:00', arrivalTime: '11:00' });
+    expect(component.form.hasError('invalidTransferTimeRange')).toBe(true);
   });
 
   it('selects a voucher type and service from the visual catalog', () => {

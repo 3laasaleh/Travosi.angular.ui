@@ -144,7 +144,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formattedTourPrice(tour: any): string {
-    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
+    return formatHomePrice(this.currencyService, tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price, tour);
   }
 
   tourDestinationName(tour: any): string {

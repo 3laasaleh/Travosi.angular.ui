@@ -13,7 +13,7 @@
 
       <div class="flex items-center gap-3 p-4 sm:p-5">
         <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600 dark:bg-emerald-500/10"><i class="mdi mdi-wallet-outline"></i></span>
-        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-black text-primary">{{ formattedPrice }} <span class="text-xs font-semibold text-slate-400">/ {{ 'person' | translate }}</span></p></div>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-black text-primary">{{ formattedPrice }} <span class="text-xs font-semibold text-slate-400">/ {{ 'person' | translate }}</span></p>@if (hasDiscount) { <p class="text-xs text-slate-400 line-through">{{ formattedOriginalPrice }}</p> }</div>
       </div>
     </div>
   </section>

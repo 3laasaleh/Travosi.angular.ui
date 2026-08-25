@@ -16,6 +16,9 @@ export interface TourHomeDTO {
   destinationName: string;
   description?: string | null;
   fullDescription?: string | null;
+  pricePerPerson?: number;
+  discountedPricePerPerson?: number | null;
+  activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
   
 }
 @Component({
@@ -58,6 +61,10 @@ export class ToursSection implements OnInit {
   }
 
   formattedPrice(item: any): string {
+    return formatHomePrice(this.currencyService, item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price, item);
+  }
+
+  formattedOriginalPrice(item: any): string {
     return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 

@@ -180,6 +180,10 @@ export class HomeToursList implements OnInit {
   }
 
   formattedPrice(tour: any): string {
+    return formatHomePrice(this.currencyService, tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price, tour);
+  }
+
+  formattedOriginalPrice(tour: any): string {
     return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
   }
 

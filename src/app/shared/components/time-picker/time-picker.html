@@ -1,16 +1,28 @@
-<input
-  type="time"
-  autocomplete="off"
-  class="block w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-700 dark:disabled:bg-slate-800"
-  [ngClass]="inputClass"
-  [id]="inputId"
-  [value]="value"
-  [disabled]="isDisabled"
-  [attr.min]="min"
-  [attr.max]="max"
-  [attr.step]="step"
-  [placeholder]="placeholder"
-  [attr.aria-label]="ariaLabel || placeholder || 'Time'"
-  (input)="handleInput($event)"
-  (change)="handleInput($event)"
-  (blur)="handleBlur()" />
+<div class="relative">
+  <input
+    #timeInput
+    type="time"
+    autocomplete="off"
+    class="block w-full cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2.5 pe-11 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-700 dark:disabled:bg-slate-800"
+    [ngClass]="inputClass"
+    [id]="inputId"
+    [value]="value"
+    [disabled]="isDisabled"
+    [attr.min]="effectiveMin"
+    [attr.max]="max"
+    [attr.step]="step"
+    [placeholder]="placeholder"
+    [attr.aria-label]="ariaLabel || placeholder || 'Time'"
+    (click)="openPicker()"
+    (input)="handleInput($event)"
+    (change)="handleInput($event)"
+    (blur)="handleBlur()" />
+  <button
+    type="button"
+    class="absolute end-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:pointer-events-none disabled:opacity-40"
+    [disabled]="isDisabled"
+    [attr.aria-label]="ariaLabel || placeholder || 'Open time picker'"
+    (click)="openPicker()">
+    <i class="mdi mdi-clock-outline text-lg" aria-hidden="true"></i>
+  </button>
+</div>

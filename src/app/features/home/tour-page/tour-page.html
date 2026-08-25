@@ -39,6 +39,7 @@
       <section class="mb-10 md:mb-12">
         @if (images.length) {
           <div class="relative overflow-hidden rounded-2xl bg-slate-100 md:grid md:h-[480px] md:grid-cols-[2fr_1fr] md:gap-2">
+            @if (tour.activeDiscount?.isCurrentlyActive) { <span class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg"><i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: tour.activeDiscount.percentage } }}</span> }
             <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
               <img [src]="imageUrl(images[0])" [alt]="title" class="aspect-[4/3] h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
             </button>

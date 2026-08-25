@@ -73,6 +73,27 @@ describe('TimePicker', () => {
     expect(input.step).toBe('300');
   });
 
+  it('opens the native picker from the clock button', () => {
+    const showPicker = vi.fn();
+    Object.defineProperty(input, 'showPicker', { value: showPicker, configurable: true });
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+
+    button.click();
+
+    expect(document.activeElement).toBe(input);
+    expect(showPicker).toHaveBeenCalledTimes(1);
+  });
+
+  it('moves an exclusive minimum forward by one step', () => {
+    fixture.componentRef.setInput('min', '09:15');
+    fixture.componentRef.setInput('minExclusive', true);
+    fixture.componentRef.setInput('step', 60);
+    fixture.detectChanges();
+
+    expect(component.effectiveMin).toBe('09:16');
+    expect(input.min).toBe('09:16');
+  });
+
   it('uses a unique generated id when one is not supplied', () => {
     const secondFixture = TestBed.createComponent(TimePicker);
     secondFixture.detectChanges();
