@@ -78,19 +78,29 @@ export class SearchBox implements OnInit {
       .pipe(
         map((term) => term?.trim() ?? ''),
         distinctUntilChanged(),
-        switchMap((term) =>
-          term.length < 2 ? this.search(term) : timer(350).pipe(switchMap(() => this.search(term))),
-        ),
+        switchMap((term) => {
+          if (!term) return this.search(term);
+
+          this.hideResultsWhileTyping();
+          return timer(300).pipe(
+            switchMap(() => {
+              this.showLoadingState();
+              return this.search(term);
+            }),
+          );
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((items) => {
+          this.isLoading=true;
+
         this.groups = this.buildGroups(items);
         this.cdr.markForCheck();
       });
   }
 
   onFocus(): void {
-    if (this.searchControl.value.trim().length >= 2) this.resultsOpen = true;
+    if (this.searchControl.value.trim()) this.resultsOpen = true;
   }
 
   clearSearch(): void {
@@ -118,7 +128,7 @@ export class SearchBox implements OnInit {
 
   private search(term: string) {
     const query = term.trim();
-    if (query.length < 2) {
+    if (!query) {
       this.groups = [];
       this.isLoading = false;
       this.searchFailed = false;
@@ -150,6 +160,20 @@ export class SearchBox implements OnInit {
           this.cdr.markForCheck();
         }),
       );
+  }
+
+  private showLoadingState(): void {
+    this.isLoading = true;
+    this.searchFailed = false;
+    this.resultsOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  private hideResultsWhileTyping(): void {
+    this.isLoading = false;
+    this.searchFailed = false;
+    this.resultsOpen = false;
+    this.cdr.markForCheck();
   }
 
   private validItems(items: SearchResultItem[]): SearchResultItem[] {

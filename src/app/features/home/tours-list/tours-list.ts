@@ -52,12 +52,15 @@ export class HomeToursList implements OnInit {
   isLoading = false;
   errorMessage = '';
   searchText = '';
-  dateFrom = this.toDateInput(new Date());
-  dateTo = this.toDateInput(this.addDays(new Date(), 7));
+  dateFrom = '';
+  dateTo = '';
   dateRangeError = false;
+  private appliedSearchText = '';
+  private appliedDateFrom = '';
+  private appliedDateTo = '';
   paginationInfo: PaginationInfo = {
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
     totalCount: 0,
     totalPages: 1,
   };
@@ -69,9 +72,12 @@ export class HomeToursList implements OnInit {
   get pageTitleKey(): string { return this.nileCruisesOnly ? 'nileCruises' : 'tours'; }
   get emptyMessageKey(): string { return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound'; }
 
-  onSearchChange(value: string): void {
-    this.searchText = value;
-    this.applyFilters();
+  get searchSuggestions(): string[] {
+    const values = this.allTours.flatMap((tour) => [
+      this.tourTitle(tour),
+      this.destinationName(tour),
+    ]);
+    return [...new Set(values.map((value) => value.trim()).filter(Boolean))].slice(0, 20);
   }
 
   applyFilters(): void {
@@ -82,14 +88,20 @@ export class HomeToursList implements OnInit {
     }
 
     this.dateRangeError = false;
+    this.appliedSearchText = this.searchText.trim();
+    this.appliedDateFrom = this.dateFrom;
+    this.appliedDateTo = this.dateTo;
     this.paginationInfo.page = 1;
     this.loadTours();
   }
 
   clearFilters(): void {
     this.searchText = '';
-    this.dateFrom = this.toDateInput(new Date());
-    this.dateTo = this.toDateInput(this.addDays(new Date(), 7));
+    this.dateFrom = '';
+    this.dateTo = '';
+    this.appliedSearchText = '';
+    this.appliedDateFrom = '';
+    this.appliedDateTo = '';
     this.dateRangeError = false;
     this.paginationInfo.page = 1;
     this.loadTours();
@@ -104,10 +116,9 @@ export class HomeToursList implements OnInit {
       pageSize: String(this.paginationInfo.pageSize),
     });
 
-    const trimmedSearch = this.searchText.trim();
-    if (trimmedSearch) params.set('searchTerm', trimmedSearch);
-    if (this.dateFrom) params.set('dateFrom', this.dateFrom);
-    if (this.dateTo) params.set('dateTo', this.dateTo);
+    if (this.appliedSearchText) params.set('searchTerm', this.appliedSearchText);
+    if (this.appliedDateFrom) params.set('dateFrom', this.appliedDateFrom);
+    if (this.appliedDateTo) params.set('dateTo', this.appliedDateTo);
     if (this.nileCruisesOnly) params.set('isNileCruise', 'true');
 
     this.apiService
@@ -133,7 +144,8 @@ export class HomeToursList implements OnInit {
         const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
         this.allTours = Array.isArray(rows) ? rows : [];
         this.tours = this.allTours.filter((tour) =>
-          matchesSearchQuery(this.searchText, tour) && isWithinDateRange(this.dateFrom, this.dateTo, tour),
+          matchesSearchQuery(this.appliedSearchText, tour)
+          && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, tour),
         );
         this.updatePagination(pageData, this.allTours.length);
       });
@@ -224,16 +236,4 @@ export class HomeToursList implements OnInit {
     };
   }
 
-  private addDays(value: Date, days: number): Date {
-    const clone = new Date(value.getTime());
-    clone.setDate(clone.getDate() + days);
-    return clone;
-  }
-
-  private toDateInput(value: Date): string {
-    const year = value.getFullYear();
-    const month = String(value.getMonth() + 1).padStart(2, '0');
-    const day = String(value.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
 }

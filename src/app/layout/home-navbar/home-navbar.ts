@@ -23,7 +23,7 @@ import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, DecimalPipe, DestinationsMenu, PackagesMenu, ToursMenu, SearchBox],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DecimalPipe, DestinationsMenu, ToursMenu, SearchBox],
   templateUrl: './home-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

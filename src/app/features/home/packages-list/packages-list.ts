@@ -42,7 +42,7 @@ export class HomePackagesList implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
 
-  readonly pageSizeOptions = [8, 12, 24];
+  readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
   private readonly imageIndexMap = new Map<string, number>();
 
@@ -51,12 +51,15 @@ export class HomePackagesList implements OnInit {
   isLoading = false;
   errorMessage = '';
   searchText = '';
-  dateFrom = this.toDateInput(new Date());
-  dateTo = this.toDateInput(this.addDays(new Date(), 7));
+  dateFrom = '';
+  dateTo = '';
   dateRangeError = false;
+  private appliedSearchText = '';
+  private appliedDateFrom = '';
+  private appliedDateTo = '';
   paginationInfo: PaginationInfo = {
     page: 1,
-    pageSize: 12,
+    pageSize: 20,
     totalCount: 0,
     totalPages: 1,
   };
@@ -65,9 +68,12 @@ export class HomePackagesList implements OnInit {
     this.loadPackages();
   }
 
-  onSearchChange(value: string): void {
-    this.searchText = value;
-    this.applyFilters();
+  get searchSuggestions(): string[] {
+    const values = this.allPackages.flatMap((item) => [
+      this.packageTitle(item),
+      this.destinationName(item),
+    ]);
+    return [...new Set(values.map((value) => value.trim()).filter(Boolean))].slice(0, 20);
   }
 
   applyFilters(): void {
@@ -78,14 +84,20 @@ export class HomePackagesList implements OnInit {
     }
 
     this.dateRangeError = false;
+    this.appliedSearchText = this.searchText.trim();
+    this.appliedDateFrom = this.dateFrom;
+    this.appliedDateTo = this.dateTo;
     this.paginationInfo.page = 1;
     this.loadPackages();
   }
 
   clearFilters(): void {
     this.searchText = '';
-    this.dateFrom = this.toDateInput(new Date());
-    this.dateTo = this.toDateInput(this.addDays(new Date(), 7));
+    this.dateFrom = '';
+    this.dateTo = '';
+    this.appliedSearchText = '';
+    this.appliedDateFrom = '';
+    this.appliedDateTo = '';
     this.dateRangeError = false;
     this.paginationInfo.page = 1;
     this.loadPackages();
@@ -100,10 +112,9 @@ export class HomePackagesList implements OnInit {
       pageSize: String(this.paginationInfo.pageSize),
     });
 
-    const trimmedSearch = this.searchText.trim();
-    if (trimmedSearch) params.set('searchTerm', trimmedSearch);
-    if (this.dateFrom) params.set('dateFrom', this.dateFrom);
-    if (this.dateTo) params.set('dateTo', this.dateTo);
+    if (this.appliedSearchText) params.set('searchTerm', this.appliedSearchText);
+    if (this.appliedDateFrom) params.set('dateFrom', this.appliedDateFrom);
+    if (this.appliedDateTo) params.set('dateTo', this.appliedDateTo);
 
     this.apiService
       .getUnauthntecated(`Packages?${params.toString()}`)
@@ -128,7 +139,8 @@ export class HomePackagesList implements OnInit {
         const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
         this.allPackages = Array.isArray(rows) ? rows : [];
         this.packages = this.allPackages.filter((item) =>
-          matchesSearchQuery(this.searchText, item) && isWithinDateRange(this.dateFrom, this.dateTo, item),
+          matchesSearchQuery(this.appliedSearchText, item)
+          && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, item),
         );
 
         const totalCount = Number(pageData?.totalCount ?? this.allPackages.length);
@@ -235,16 +247,4 @@ export class HomePackagesList implements OnInit {
     this.setImageIndex(key, current + 1, total);
   }
 
-  private addDays(value: Date, days: number): Date {
-    const clone = new Date(value.getTime());
-    clone.setDate(clone.getDate() + days);
-    return clone;
-  }
-
-  private toDateInput(value: Date): string {
-    const year = value.getFullYear();
-    const month = String(value.getMonth() + 1).padStart(2, '0');
-    const day = String(value.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
 }
