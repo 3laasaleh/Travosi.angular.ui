@@ -6,7 +6,11 @@
   [id]="inputId"
   [value]="value"
   [disabled]="isDisabled"
+  [attr.min]="min"
+  [attr.max]="max"
+  [attr.step]="step"
   [placeholder]="placeholder"
   [attr.aria-label]="ariaLabel || placeholder || 'Time'"
   (input)="handleInput($event)"
+  (change)="handleInput($event)"
   (blur)="handleBlur()" />

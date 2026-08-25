@@ -12,7 +12,7 @@
   </div>
 }
 
-<div class="sticky top-24 rounded-2xl border border-gray-100 bg-white p-6 shadow ">
+<div class="rounded-2xl border border-gray-100 bg-white p-6 shadow">
   <div class="flex items-end justify-between">
     <div>
       <span class="text-sm font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
@@ -26,7 +26,7 @@
     }
   </div>
 
-  <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="bookNow()">
+  <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="availabilityConfirmed ? bookNow() : checkAvailability()">
     @if (hasAvailableDateRange) {
       <div class="mb-4 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3" role="note">
         <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
@@ -92,13 +92,6 @@
       </div>
     </div>
 
-    <div class="mb-4">
-      <label for="specialRequests" class="text-sm font-semibold">{{ 'specialRequests' | translate }}</label>
-      <textarea id="specialRequests" formControlName="specialRequests" rows="3" maxlength="1000"
-        class="mt-2 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800  "
-        [placeholder]="'specialRequestsPlaceholder' | translate"></textarea>
-      @if (bookingForm.controls.specialRequests.touched && bookingForm.controls.specialRequests.hasError('maxlength')) { <p class="mt-1 text-xs text-red-500">{{ 'specialRequestsMaxLength' | translate }}</p> }
-    </div>
 
     @if (hasSeatLimit) {
       <p class="mb-4 text-xs" [class.text-slate-400]="guests <= seatsAvailable" [class.text-red-500]="guests > seatsAvailable">
@@ -114,15 +107,29 @@
     @if (errorMessage) { <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
     @if (successMessage) { <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
 
-    @if (isLoggedIn) {
-      <button type="submit" [disabled]="isSubmitting || product?.isActive === false"
-        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
-        @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span> } @else { <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span> }
-      </button>
-    } @else {
-      <button type="button" (click)="goToLogin()" class="inline-flex w-full items-center justify-center gap-2 rounded-md  bg-primary  px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-primary-600">
-        <i class="mdi mdi-login"></i>{{ 'loginToBook' | translate }}
-      </button>
+    @if (availabilityStatus === 'available') {
+      <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" role="status">
+        <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-check-circle text-lg"></i>{{ 'selectionAvailable' | translate }}</p>
+        <p class="mt-1 text-xs text-emerald-600">{{ 'availabilityCanChange' | translate }}</p>
+      </div>
+    } @else if (availabilityStatus === 'unavailable') {
+      <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
+        <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-calendar-remove-outline text-lg"></i>{{ 'selectionUnavailable' | translate }}</p>
+        @if (availabilitySeats > 0) { <p class="mt-1 text-xs">{{ 'onlySeatsAvailable' | translate:{ seats: availabilitySeats } }}</p> }
+      </div>
     }
+
+    <button type="submit" [disabled]="isSubmitting || isCheckingAvailability || product?.isActive === false"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
+      @if (isCheckingAvailability) {
+        <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'checkingAvailability' | translate }}</span>
+      } @else if (isSubmitting) {
+        <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span>
+      } @else if (availabilityConfirmed) {
+        <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span>
+      } @else {
+        <i class="mdi mdi-calendar-search-outline"></i><span>{{ 'checkAvailability' | translate }}</span>
+      }
+    </button>
   </form>
 </div>

@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Input,
   OnInit,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormControl,
@@ -39,6 +41,7 @@ export class TourBookingCard implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
@@ -52,6 +55,10 @@ export class TourBookingCard implements OnInit {
   }
 
   isSubmitting = false;
+  isCheckingAvailability = false;
+  availabilityConfirmed = false;
+  availabilityStatus: 'available' | 'unavailable' | null = null;
+  availabilitySeats = 0;
   errorMessage = '';
   successMessage = '';
 
@@ -137,6 +144,49 @@ export class TourBookingCard implements OnInit {
 
   ngOnInit(): void {
     this.setDefaultDates();
+    this.bookingForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.resetAvailability());
+  }
+
+  checkAvailability(): void {
+    if (this.isCheckingAvailability || this.isSubmitting) return;
+
+    if (this.bookingForm.invalid) {
+      this.bookingForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.createBookingPayload();
+    if (!payload) return;
+
+    this.isCheckingAvailability = true;
+    this.availabilityStatus = null;
+    this.availabilityConfirmed = false;
+    this.errorMessage = '';
+
+    this.apiService.postUnauthenticated('Bookings/CheckAvailability', payload).pipe(
+      catchError(() => {
+        this.errorMessage = 'availabilityCheckError';
+        this.showToast('error', this.errorMessage);
+        return of(null);
+      }),
+      finalize(() => {
+        this.isCheckingAvailability = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+
+      const data = response?.data ?? response;
+      const isAvailable = response?.isSuccess !== false && data?.isAvailable === true;
+      this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
+      this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
+      this.availabilityConfirmed = isAvailable;
+      if (!isAvailable && response?.isSuccess === false) {
+        this.errorMessage = 'availabilityCheckError';
+      }
+    });
   }
 
   goToLogin(): void {
@@ -163,6 +213,11 @@ export class TourBookingCard implements OnInit {
       return;
     }
 
+    if (!this.availabilityConfirmed) {
+      this.checkAvailability();
+      return;
+    }
+
     const form = this.bookingForm.getRawValue();
     if (
       form.dateFrom < this.minTravelDate ||
@@ -178,23 +233,8 @@ export class TourBookingCard implements OnInit {
       return;
     }
 
-    const productId = Number(this.product?.id ?? this.product?.tourId ?? this.product?.packageId);
-    if (!Number.isInteger(productId) || productId <= 0) {
-      this.errorMessage = 'bookingCreateError';
-      return;
-    }
-    const payload = {
-      NumberOfTravelers: this.guests,
-      SpecialRequests: form.specialRequests.trim() || null,
-      DateFrom: this.toApiDate(form.dateFrom),
-      DateTo: this.toApiDate(form.dateTo),
-      TourId: this.isPackage ? null : productId,
-      PackageId: this.isPackage ? productId : null,
-      TravelDate: this.toApiDate(form.dateFrom),
-      Adults: form.adults,
-      Children: form.children,
-      Notes: form.specialRequests.trim() || null,
-    };
+    const payload = this.createBookingPayload();
+    if (!payload) return;
 
     this.isSubmitting = true;
     this.errorMessage = '';
@@ -216,10 +256,34 @@ export class TourBookingCard implements OnInit {
         this.showToast('error', this.errorMessage);
         return;
       }
-      this.successMessage = response?.message || 'bookingCreated';
-      this.showToast('success', this.successMessage);
+      this.successMessage = 'bookingCreated';
+      this.showBookingConfirmation(response?.data ?? response);
       this.bookingForm.reset({ dateFrom: '', dateTo: '', adults: 1, children: 0, specialRequests: '' });
+      this.setDefaultDates();
+      this.resetAvailability();
     });
+  }
+
+  private createBookingPayload(): Record<string, unknown> | null {
+    const productId = Number(this.product?.id ?? this.product?.tourId ?? this.product?.packageId);
+    if (!Number.isInteger(productId) || productId <= 0) {
+      this.errorMessage = 'bookingCreateError';
+      return null;
+    }
+
+    const form = this.bookingForm.getRawValue();
+    return {
+      NumberOfTravelers: this.guests,
+      SpecialRequests: form.specialRequests.trim() || null,
+      DateFrom: this.toApiDate(form.dateFrom),
+      DateTo: this.toApiDate(form.dateTo),
+      TourId: this.isPackage ? null : productId,
+      PackageId: this.isPackage ? productId : null,
+      TravelDate: this.toApiDate(form.dateFrom),
+      Adults: form.adults,
+      Children: form.children,
+      Notes: form.specialRequests.trim() || null,
+    };
   }
 
   private static dateRangeValidator(control: AbstractControl): ValidationErrors | null {
@@ -277,6 +341,32 @@ export class TourBookingCard implements OnInit {
       timer: icon === 'success' ? 3000 : 4200,
       timerProgressBar: true,
     });
+  }
+
+  private showBookingConfirmation(booking: any): void {
+    const createdAt = booking?.createdDate ? new Date(booking.createdDate) : new Date();
+    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar') ? 'ar-EG' : 'en-GB';
+    const bookingTime = new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(createdAt);
+    const messageKey = booking?.acknowledgementEmailSent === false
+      ? 'bookingConfirmationEmailPending'
+      : 'bookingConfirmationMessage';
+
+    Swal.fire({
+      icon: 'success',
+      title: this.translate.instant('bookingRequestReceived'),
+      text: this.translate.instant(messageKey, { time: bookingTime }),
+      confirmButtonText: this.translate.instant('ok'),
+      confirmButtonColor: '#0891b2',
+    });
+  }
+
+  private resetAvailability(): void {
+    this.availabilityConfirmed = false;
+    this.availabilityStatus = null;
+    this.availabilitySeats = 0;
   }
 
   private setDefaultDates(): void {

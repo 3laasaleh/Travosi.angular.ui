@@ -116,8 +116,10 @@ export class HomeTourPage implements OnInit {
     this.selectedImageIndex = (this.selectedImageIndex + 1) % imageCount;
   }
 
-  openImageViewer(): void {
-    if (this.images.length) this.imageViewerOpen = true;
+  openImageViewer(index = this.selectedImageIndex): void {
+    if (!this.images.length) return;
+    this.selectImage(index);
+    this.imageViewerOpen = true;
   }
 
   closeImageViewer(): void {
@@ -134,6 +136,8 @@ export class HomeTourPage implements OnInit {
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
   }
+
+
 
   private imageMatchesCover(image: any, cover: string): boolean {
     return this.normalizeImagePath(this.imageUrl(image)) === this.normalizeImagePath(cover);

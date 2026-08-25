@@ -20,6 +20,7 @@ describe('QuotationsFromCard', () => {
     id: 41,
     flightNumber: 'SW 104',
     airlineName: 'Sea World Air',
+    airlineLogoUrl: '/images/airlines/sea-world-air.webp',
     departureAirport: 'CAI - Cairo International Airport',
     arrivalAirport: 'DXB - Dubai International Airport',
     departureTime: '2030-05-10T08:00:00',
@@ -71,6 +72,10 @@ describe('QuotationsFromCard', () => {
     expect(component.optionsLoading).toBe(false);
   });
 
+  it('uses the airline logo as the flight thumbnail', () => {
+    expect(component.thumbnail(flight)).toMatch(/\/images\/airlines\/sea-world-air\.webp$/);
+  });
+
   it('hides generated fields and initializes all quotation dates', () => {
     expect(component.quotationForm.contains('quotationNo')).toBe(false);
     expect(component.quotationForm.contains('exchangeRate')).toBe(false);
@@ -92,6 +97,7 @@ describe('QuotationsFromCard', () => {
     component.transfersArray.at(0).patchValue({
       from: '  Cairo Airport  ',
       to: '  Downtown Hotel  ',
+      transferDate: '2030-05-10',
       fromTime: '09:30',
       arrivalTime: '10:45',
     });
@@ -119,6 +125,7 @@ describe('QuotationsFromCard', () => {
       quantity: 1,
       from: 'Cairo Airport',
       to: 'Downtown Hotel',
+      transferDate: '2030-05-10',
       fromTime: '09:30:00',
       arrivalTime: '10:45:00',
     });
@@ -153,6 +160,7 @@ describe('QuotationsFromCard', () => {
           itemType: 5,
           from: 'Cairo Airport',
           to: 'Downtown Hotel',
+          transferDate: '2030-05-10',
           fromTime: '09:30:00',
           arrivalTime: '10:45:00',
         },
@@ -175,6 +183,7 @@ describe('QuotationsFromCard', () => {
       id: 102,
       from: 'Cairo Airport',
       to: 'Downtown Hotel',
+      transferDate: '2030-05-10',
       fromTime: '09:30',
       arrivalTime: '10:45',
     }]);
@@ -192,6 +201,32 @@ describe('QuotationsFromCard', () => {
     expect(component.transfersArray.at(0).controls['from'].touched).toBe(true);
     expect(apiService.post).not.toHaveBeenCalled();
     expect(apiService.put).not.toHaveBeenCalled();
+  });
+
+  it('rejects a transfer pickup date and time in the past', () => {
+    component.addTransfer();
+    component.transfersArray.at(0).patchValue({
+      from: 'Cairo Airport',
+      to: 'Downtown Hotel',
+      transferDate: '2020-01-01',
+      fromTime: '09:30',
+      arrivalTime: '10:30',
+    });
+
+    expect(component.transfersArray.at(0).hasError('transferTimeInPast')).toBe(true);
+  });
+
+  it('requires arrival time to be later than pickup time', () => {
+    component.addTransfer();
+    component.transfersArray.at(0).patchValue({
+      from: 'Cairo Airport',
+      to: 'Downtown Hotel',
+      transferDate: '2030-05-10',
+      fromTime: '11:00',
+      arrivalTime: '10:30',
+    });
+
+    expect(component.transfersArray.at(0).hasError('invalidTransferTimeRange')).toBe(true);
   });
 });
 

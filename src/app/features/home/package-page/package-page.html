@@ -14,40 +14,42 @@
   </div>
 </main>
 } @else {
-<section class="relative flex min-h-[430px] items-end bg-cover bg-center py-16"
-  [style.background-image]="'url(' + imageUrl(images[0]) + ')'">
-  <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-900/20"></div>
-  <div class="container relative text-white"><a routerLink="/home"
-      class="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-white/75 hover:text-white"><i
-        class="mdi mdi-arrow-left rtl:rotate-180"></i>{{ 'backToHome' | translate }}</a>
-    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'travelPackage' | translate }}</p>
-    <h1 class="mt-3 max-w-4xl text-4xl font-semibold md:text-6xl">{{ title }}</h1>@if (destinationName) { <p
-      class="mt-4 flex items-center gap-2 text-white/75"><i class="mdi mdi-map-marker-outline text-primary"></i>{{
-      destinationName }}</p> }
-  </div>
-</section>
-
-<main class="py-16 md:py-24">
+<main class="py-8 md:py-12">
   <div class="container">
-    @if (images.length) { <section class="mx-auto mb-12 max-w-6xl">
-      <div class="overflow-hidden rounded-2xl bg-slate-100 shadow-sm"><img
-          [src]="imageUrl(images[selectedImageIndex])" [alt]="title"
-          class="aspect-[16/9] max-h-[620px] w-full object-cover" /></div>@if (images.length > 1) { <div
-        class="mt-4 flex justify-center gap-3 overflow-x-auto pb-2">@for (image of images; track
-        $index; let imageIndex = $index) { <button type="button" class="shrink-0 overflow-hidden rounded-2xl border-2"
-          [class.border-primary]="imageIndex === selectedImageIndex"
-          [class.border-transparent]="imageIndex !== selectedImageIndex" (click)="selectImage(imageIndex)"><img
-            [src]="imageUrl(image)" [alt]="title" class="h-24 w-36 object-cover sm:h-28 sm:w-44" /></button> }</div> }
-    </section> }
+    <header class="mb-7">
+      <a routerLink="/home" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-primary">
+        <i class="mdi mdi-arrow-left rtl:rotate-180"></i>{{ 'backToHome' | translate }}
+      </a>
+      <p class="mt-5 text-xs font-bold uppercase tracking-[0.24em] text-primary">{{ 'travelPackage' | translate }}</p>
+      <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
+      @if (destinationName) {
+        <p class="mt-3 flex items-center gap-2 font-medium text-slate-500"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}</p>
+      }
+    </header>
+
+    @if (images.length) {
+      <section class="relative mb-10 overflow-hidden rounded-2xl bg-slate-100 md:mb-12 md:grid md:h-[480px] md:grid-cols-[2fr_1fr] md:gap-2">
+        <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
+          <img [src]="imageUrl(images[0])" [alt]="title" class="aspect-[4/3] h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
+        </button>
+        @if (images.length > 1) {
+          <div class="hidden min-h-0 gap-2 md:grid" [class.grid-cols-2]="images.length > 3">
+            @for (image of images.slice(1, 5); track $index; let imageIndex = $index) {
+              <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
+                <img [src]="imageUrl(image)" [alt]="title" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+              </button>
+            }
+          </div>
+        }
+        <button type="button" class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition hover:bg-slate-50" (click)="openImageViewer(0)">
+          <i class="mdi mdi-image-multiple-outline text-lg"></i>{{ images.length }} {{ 'photos' | translate }}
+        </button>
+      </section>
+    }
 
     <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div class="space-y-8">
         <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <div class="bg-primary/5 p-6 sm:p-8">
-            <span class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary"><i class="mdi mdi-package-variant-closed"></i>{{ 'travelPackage' | translate }}</span>
-            <h2 class="mt-4 text-2xl font-semibold text-slate-900 sm:text-3xl">{{ title }}</h2>
-            @if (destinationName) { <p class="mt-3 flex items-center gap-2 font-medium text-slate-500"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}</p> }
-          </div>
           <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3">
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ duration }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div></div>
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-account-group-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p></div></div>
@@ -63,20 +65,20 @@
         <app-itinerary-timeline [items]="itinerary" />
 
         @if (highlights.length) { <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div class="flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-lg bg-primary text-xl text-white"><i class="mdi mdi-star-four-points-outline"></i></span><h2 class="text-xl font-bold text-slate-900">{{ 'packageHighlights' | translate }}</h2></div>
-          <ul class="mt-4 space-y-2">@for (highlight of highlights; track $index) { <li class="flex items-start gap-3 text-sm text-slate-700"><i class="mdi mdi-check-circle text-primary"></i><span>{{ itemText(highlight) }}</span></li> }</ul>
+          <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-star-four-points-outline"></i></span><h2 class="text-xl font-bold text-slate-900">{{ 'packageHighlights' | translate }}</h2></div>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2">@for (highlight of highlights; track $index) { <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-sm leading-6 text-slate-700"><i class="mdi mdi-check-circle mt-0.5 shrink-0 text-lg text-primary"></i><span>{{ itemText(highlight) }}</span></li> }</ul>
         </section> }
 
         @if (includedItems.length || excludedItems.length) { <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <h2 class="text-xl font-bold text-slate-900">{{ 'whatsIncludedExcluded' | translate }}</h2>
-          <div class="mt-5 grid gap-6 md:grid-cols-2">
-            <div>
+          <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-format-list-checks"></i></span><h2 class="text-xl font-bold text-slate-900">{{ 'whatsIncludedExcluded' | translate }}</h2></div>
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5">
               <h3 class="flex items-center gap-2 font-bold text-slate-900"><i class="mdi mdi-check-circle text-emerald-500"></i>{{ 'included' | translate }}</h3>
-              <ul class="mt-4 space-y-2">@for (item of includedItems; track $index) { <li class="flex items-start gap-2 text-sm text-slate-700"><i class="mdi mdi-check text-emerald-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourIncludesAdded' | translate }}</li> }</ul>
+              <ul class="mt-4 space-y-3">@for (item of includedItems; track $index) { <li class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i class="mdi mdi-check mt-0.5 shrink-0 text-emerald-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourIncludesAdded' | translate }}</li> }</ul>
             </div>
-            <div>
+            <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-5">
               <h3 class="flex items-center gap-2 font-bold text-slate-900"><i class="mdi mdi-close-circle text-rose-500"></i>{{ 'excluded' | translate }}</h3>
-              <ul class="mt-4 space-y-2">@for (item of excludedItems; track $index) { <li class="flex items-start gap-2 text-sm text-slate-700"><i class="mdi mdi-close text-rose-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourExcludesAdded' | translate }}</li> }</ul>
+              <ul class="mt-4 space-y-3">@for (item of excludedItems; track $index) { <li class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i class="mdi mdi-close mt-0.5 shrink-0 text-rose-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourExcludesAdded' | translate }}</li> }</ul>
             </div>
           </div>
         </section> }
@@ -94,7 +96,7 @@
         </section> }
       </div>
 
-      <aside class="space-y-5">
+      <aside class="self-stretch space-y-5">
         <div class="rounded-[2rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-xl">
           <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
             {{ 'packageSummary' | translate }}</p>
@@ -132,11 +134,22 @@
           </a>
          }
         </div>
-        <app-tour-booking-card [travelPackage]="travelPackage" />
+        <div class="lg:sticky lg:top-24">
+          <app-tour-booking-card [travelPackage]="travelPackage" />
+        </div>
       </aside>
     </div>
   </div>
 </main>
+}
+
+@if (imageViewerOpen) {
+  <app-image-viewer-modal
+    [images]="resolvedImages"
+    [title]="title"
+    [(selectedIndex)]="selectedImageIndex"
+    (closed)="closeImageViewer()"
+  />
 }
 
 <app-footer-one />

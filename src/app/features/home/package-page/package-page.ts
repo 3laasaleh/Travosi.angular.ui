@@ -16,13 +16,14 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
+import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { formatHomePrice } from '../home-price.util';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard, ImageViewerModal],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,6 +39,7 @@ export class HomePackagePage implements OnInit {
   isLoading = true;
   errorMessage = '';
   selectedImageIndex = 0;
+  imageViewerOpen = false;
 
   get title(): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
@@ -57,6 +59,10 @@ export class HomePackagePage implements OnInit {
     if (Array.isArray(this.travelPackage?.images) && this.travelPackage.images.length) return this.travelPackage.images;
     const fallback = this.travelPackage?.coverImageUrl ?? this.travelPackage?.imageUrl;
     return fallback ? [fallback] : [];
+  }
+
+  get resolvedImages(): string[] {
+    return this.images.map((image) => this.imageUrl(image));
   }
 
   get itinerary(): any[] {
@@ -137,6 +143,16 @@ export class HomePackagePage implements OnInit {
     if (index >= 0 && index < this.images.length) this.selectedImageIndex = index;
   }
 
+  openImageViewer(index = this.selectedImageIndex): void {
+    if (!this.images.length) return;
+    this.selectImage(index);
+    this.imageViewerOpen = true;
+  }
+
+  closeImageViewer(): void {
+    this.imageViewerOpen = false;
+  }
+
   imageUrl(source: any): string {
     const url = typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
     if (!url) return 'assets/images/bg/2.jpg';
@@ -161,6 +177,7 @@ export class HomePackagePage implements OnInit {
     this.errorMessage = '';
     this.travelPackage = null;
     this.selectedImageIndex = 0;
+    this.imageViewerOpen = false;
     this.packageRequest(packageId).pipe(
       finalize(() => {
         this.isLoading = false;

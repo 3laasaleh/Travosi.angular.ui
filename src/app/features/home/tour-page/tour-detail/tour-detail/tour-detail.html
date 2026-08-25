@@ -1,20 +1,5 @@
 <div class="space-y-8">
-  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 ">
-    <div class="relative overflow-hidden bg-gradient-to-br from-cyan-50 via-white to-amber-50 p-6 sm:p-8 dark:from-cyan-950/40 dark:via-slate-900 dark:to-amber-950/20">
-      <div class="pointer-events-none absolute -end-16 -top-20 h-52 w-52 rounded-full bg-primary/10 blur-3xl"></div>
-      <div class="relative">
-        <span class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-          <i class="mdi mdi-compass-outline text-base"></i>{{ 'tour' | translate }}
-        </span>
-        <h2 class="mt-4 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl ">{{ title }}</h2>
-        @if (destinationName) {
-          <p class="mt-3 flex items-center gap-2 font-medium text-slate-500 ">
-            <i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}
-          </p>
-        }
-      </div>
-    </div>
-
+  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800">
     <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3 dark:divide-slate-800">
       <div class="flex items-center gap-3 p-4 sm:p-5">
         <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-cyan-50 text-xl text-primary dark:bg-primary/10"><i class="mdi mdi-clock-outline"></i></span>
@@ -46,16 +31,14 @@
   @if (highlightItems.length) {
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800">
       <div class="flex items-center gap-3">
-        <span class="grid h-10 w-10 place-items-center rounded-lg bg-amber-500 text-xl text-white"><i class="mdi mdi-star-four-points-outline"></i></span>
-        <div>
-          <h2 class="text-xl font-bold text-slate-900">{{ 'tourHighlights' | translate }}</h2>
-        </div>
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-star-four-points-outline"></i></span>
+        <h2 class="text-xl font-bold text-slate-900">{{ 'tourHighlights' | translate }}</h2>
       </div>
 
-      <ul class="mt-6 space-y-2">
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2">
         @for (item of highlightItems; track item.id ?? $index) {
-          <li class="flex items-start gap-3 text-sm text-slate-700">
-            <i class="mdi mdi-check-circle mt-0.5 shrink-0 text-amber-500"></i>
+          <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-sm leading-6 text-slate-700">
+            <i class="mdi mdi-check-circle mt-0.5 shrink-0 text-lg text-primary"></i>
             <span>{{ itemValue(item) }}</span>
           </li>
         }
@@ -64,19 +47,20 @@
   }
 
   @if (includedItems.length || excludedItems.length) {
-    <section class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800">
-      <div class="border-b border-slate-100 bg-slate-50/80 px-6 py-5 sm:px-8 dark:border-slate-800">
+    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800">
+      <div class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-format-list-checks"></i></span>
         <h2 class="text-xl font-bold text-slate-900">{{ 'whatsIncludedExcluded' | translate }}</h2>
       </div>
 
-      <div class="grid md:grid-cols-2 md:divide-x md:divide-slate-200 dark:md:divide-slate-800">
-        <div class="p-6 sm:p-8">
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5">
           <h3 class="flex items-center gap-2 font-bold text-slate-900">
             <i class="mdi mdi-check-circle text-emerald-500"></i>{{ 'included' | translate }}
           </h3>
-          <ul class="mt-4 space-y-2">
+          <ul class="mt-4 space-y-3">
             @for (item of includedItems; track item.id ?? $index) {
-              <li class="flex items-start gap-3 text-sm text-slate-700">
+              <li class="flex items-start gap-3 text-sm leading-6 text-slate-700">
                 <i class="mdi mdi-check text-emerald-500 mt-0.5 shrink-0"></i>
                 <span>{{ itemValue(item) }}</span>
               </li>
@@ -86,13 +70,13 @@
           </ul>
         </div>
 
-        <div class="border-t border-slate-200 p-6 sm:p-8 md:border-t-0 dark:border-slate-800">
+        <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-5">
           <h3 class="flex items-center gap-2 font-bold text-slate-900">
             <i class="mdi mdi-close-circle text-rose-500"></i>{{ 'excluded' | translate }}
           </h3>
-          <ul class="mt-4 space-y-2">
+          <ul class="mt-4 space-y-3">
             @for (item of excludedItems; track item.id ?? $index) {
-              <li class="flex items-start gap-3 text-sm text-slate-700">
+              <li class="flex items-start gap-3 text-sm leading-6 text-slate-700">
                 <i class="mdi mdi-close text-rose-500 mt-0.5 shrink-0"></i>
                 <span>{{ itemValue(item) }}</span>
               </li>

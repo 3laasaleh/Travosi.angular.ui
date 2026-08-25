@@ -465,6 +465,16 @@
     ,"travelDateRequired": "Travel date is required."
     ,"bookNow": "Book now"
     ,"loginToBook": "Log in to book"
+    ,"checkAvailability": "Check availability"
+    ,"checkingAvailability": "Checking availability..."
+    ,"selectionAvailable": "Your selection is available"
+    ,"selectionUnavailable": "Your selection is not currently available"
+    ,"availabilityCanChange": "Availability is checked again when you submit the booking."
+    ,"onlySeatsAvailable": "Only {{seats}} seats are currently available."
+    ,"availabilityCheckError": "Availability could not be checked. Please try again."
+    ,"bookingRequestReceived": "Booking request received"
+    ,"bookingConfirmationMessage": "Your booking request was received at {{time}}. A confirmation email has been sent to you. Our representative will get in touch with you as soon as possible to confirm the booking."
+    ,"bookingConfirmationEmailPending": "Your booking request was received at {{time}}. Our representative will get in touch with you as soon as possible to confirm the booking. Your email acknowledgement will be sent shortly."
     ,"bookingNotesPlaceholder": "Any special requests or notes for our team..."
     ,"bookingCreated": "Your booking was created successfully. Our team will call you to confirm."
     ,"bookingCreateError": "Your booking could not be created. Please try again."
@@ -772,6 +782,7 @@
     ,"office": "Office"
     ,"officeAddress": "Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor."
     ,"footerCompanyLinks": "Company links"
+    ,"waysYouCanPay": "Ways You Can Pay"
     ,"aboutUs": "About us"
     ,"contactUs": "Contact us"
     ,"newsletter": "Newsletter"
@@ -929,7 +940,9 @@
     "fromTime": "From time",
     "transferFromPlaceholder": "e.g. Cairo International Airport",
     "transferToPlaceholder": "e.g. Downtown hotel",
-    "transferFieldsRequired": "From, to, from time, and arrival time are required.",
+    "transferFieldsRequired": "Date, from, to, from time, and arrival time are required.",
+    "transferTimeInPast": "The transfer pickup date and time cannot be in the past.",
+    "invalidTransferTimeRange": "Arrival time must be later than the pickup time.",
     "quotationPolicies": "Quotation policies",
     "quotationPoliciesHint": "Add the terms and policies that apply to this quotation.",
     "addPolicy": "Add policy",
@@ -974,7 +987,7 @@
     "invoices": "Invoices",
     "vouchers": "Vouchers",
     "manageInvoices": "Create itemized invoices for tours, packages, flights, and transfers.",
-    "manageVouchers": "Create printable flight, hotel, tour, and package vouchers.",
+    "manageVouchers": "Create detailed printable flight, hotel, tour, package, and transfer vouchers.",
     "invoiceNo": "Invoice no.",
     "invoiceDate": "Invoice date",
     "dueDate": "Due date",
@@ -1001,7 +1014,7 @@
     "serviceRequired": "Select a travel service.",
     "serviceDateRequired": "Service date is required.",
     "invalidVoucherDates": "End date must be on or after the service date.",
-    "voucherDetailsHelp": "The voucher links the customer to one booked travel service and records the service dates shown on the printable document.",
+    "voucherDetailsHelp": "The printable voucher includes the selected service schedule, route, itinerary, inclusions, and other available operational details.",
     "serviceDates": "Service dates",
     "to": "to",
     "downloadPdf": "Download PDF",
@@ -1045,4 +1058,5 @@
     ,"contactMessagesFilter_all": "All"
     ,"contactMessagesFilter_unread": "Unread"
     ,"contactMessagesFilter_read": "Read"
+    ,"photos": "photos"
 }

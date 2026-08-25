@@ -15,6 +15,15 @@ describe('FooterOne newsletter subscription', () => {
     );
   });
 
+  it('exposes the supported payment logos for the footer', () => {
+    expect(component.paymentMethods.map((payment) => payment.name)).toEqual([
+      'Mastercard',
+      'Visa',
+      'PayPal',
+      'InstaPay',
+    ]);
+  });
+
   it('trims and submits a new subscription, then resets the form', () => {
     postUnauthenticated.mockReturnValue(of({
       isSuccess: true,

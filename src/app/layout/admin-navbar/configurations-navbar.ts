@@ -21,6 +21,7 @@ import { ApiService } from '../../core/services/apiservice.service';
 import { TaskNotificationsService } from '../../core/services/task-notifications.service';
 import { LanguageService } from '../../core/services/language.service';
 import { AuthService } from '../../features/user/_services/auth.service';
+import { CONFIGURATION_MENU_ITEMS } from '../configuration-menu-items';
 
 @Component({
   selector: 'app-configurations-navbar',
@@ -50,6 +51,7 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   languageMenuOpen = false;
   switchingLanguage: string | null = null;
   agentTasks: any[] = [];
+  readonly menuItems = CONFIGURATION_MENU_ITEMS;
 
   get isAgent(): boolean {
     return this.authService.getCurrentUserRole() === 'Agent';

@@ -27,6 +27,12 @@ type NewsletterMessage =
 export class FooterOne implements AfterViewInit {
   logo = 'assets/images/main-logo.png';
   year = new Date().getFullYear();
+  readonly paymentMethods = [
+    { name: 'Mastercard', logo: 'assets/images/payments/mastercard.jpg' },
+    { name: 'Visa', logo: 'assets/images/payments/visa.jpg' },
+    { name: 'PayPal', logo: 'assets/images/payments/paypal.jpg' },
+    { name: 'InstaPay', logo: 'assets/images/payments/instapay.png', compactLogo: true },
+  ];
   isSubmitting = false;
   newsletterMessage: NewsletterMessage = null;
   newsletterMessageKind: 'success' | 'error' | null = null;

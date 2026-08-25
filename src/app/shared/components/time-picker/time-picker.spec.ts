@@ -57,6 +57,9 @@ describe('TimePicker', () => {
     fixture.componentRef.setInput('placeholder', 'Select time');
     fixture.componentRef.setInput('ariaLabel', 'Transfer departure time');
     fixture.componentRef.setInput('inputClass', 'rounded-2xl');
+    fixture.componentRef.setInput('min', '09:15');
+    fixture.componentRef.setInput('max', '22:30');
+    fixture.componentRef.setInput('step', 300);
     component.setDisabledState(true);
     fixture.detectChanges();
 
@@ -65,6 +68,9 @@ describe('TimePicker', () => {
     expect(input.getAttribute('aria-label')).toBe('Transfer departure time');
     expect(input.classList.contains('rounded-2xl')).toBe(true);
     expect(input.disabled).toBe(true);
+    expect(input.min).toBe('09:15');
+    expect(input.max).toBe('22:30');
+    expect(input.step).toBe('300');
   });
 
   it('uses a unique generated id when one is not supplied', () => {

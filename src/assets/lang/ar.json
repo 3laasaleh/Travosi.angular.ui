@@ -465,6 +465,16 @@
     ,"travelDateRequired": "تاريخ السفر مطلوب."
     ,"bookNow": "احجز الآن"
     ,"loginToBook": "سجل الدخول للحجز"
+    ,"checkAvailability": "تحقق من التوافر"
+    ,"checkingAvailability": "جارٍ التحقق من التوافر..."
+    ,"selectionAvailable": "اختيارك متاح"
+    ,"selectionUnavailable": "اختيارك غير متاح حاليًا"
+    ,"availabilityCanChange": "سيتم التحقق من التوافر مرة أخرى عند إرسال الحجز."
+    ,"onlySeatsAvailable": "يتوفر حاليًا {{seats}} مقاعد فقط."
+    ,"availabilityCheckError": "تعذر التحقق من التوافر. يرجى المحاولة مرة أخرى."
+    ,"bookingRequestReceived": "تم استلام طلب الحجز"
+    ,"bookingConfirmationMessage": "تم استلام طلب حجزك في {{time}}. أرسلنا إليك رسالة تأكيد عبر البريد الإلكتروني. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز."
+    ,"bookingConfirmationEmailPending": "تم استلام طلب حجزك في {{time}}. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز، وسيتم إرسال إشعار البريد الإلكتروني قريبًا."
     ,"bookingNotesPlaceholder": "أي طلبات خاصة أو ملاحظات لفريقنا..."
     ,"bookingCreated": "تم إنشاء حجزك بنجاح. سيتصل بك فريقنا للتأكيد."
     ,"bookingCreateError": "تعذر إنشاء حجزك. يرجى المحاولة مرة أخرى."
@@ -772,6 +782,7 @@
     ,"office": "المكتب"
     ,"officeAddress": "الهرم، برج الرحاب، 7 شارع المريوطية، أبراج السعد، أعلى بنك مصر، الدور الأول."
     ,"footerCompanyLinks": "روابط الشركة"
+    ,"waysYouCanPay": "طرق الدفع المتاحة"
     ,"aboutUs": "من نحن"
     ,"contactUs": "اتصل بنا"
     ,"newsletter": "النشرة البريدية"
@@ -929,7 +940,9 @@
     "fromTime": "وقت الانطلاق",
     "transferFromPlaceholder": "مثال: مطار القاهرة الدولي",
     "transferToPlaceholder": "مثال: فندق وسط المدينة",
-    "transferFieldsRequired": "مكان الانطلاق والوصول ووقتا الانطلاق والوصول مطلوبة.",
+    "transferFieldsRequired": "التاريخ ومكانا الانطلاق والوصول ووقتا الانطلاق والوصول مطلوبة.",
+    "transferTimeInPast": "لا يمكن أن يكون تاريخ ووقت انطلاق الانتقال في الماضي.",
+    "invalidTransferTimeRange": "يجب أن يكون وقت الوصول بعد وقت الانطلاق.",
     "quotationPolicies": "سياسات عرض السعر",
     "quotationPoliciesHint": "أضف الشروط والسياسات التي تنطبق على عرض السعر.",
     "addPolicy": "إضافة سياسة",
@@ -974,7 +987,7 @@
     "invoices": "الفواتير",
     "vouchers": "القسائم",
     "manageInvoices": "إنشاء فواتير تفصيلية للجولات والباقات والرحلات الجوية والانتقالات.",
-    "manageVouchers": "إنشاء قسائم قابلة للطباعة للطيران والفنادق والجولات والباقات.",
+    "manageVouchers": "إنشاء قسائم تفصيلية قابلة للطباعة للطيران والفنادق والجولات والباقات والانتقالات.",
     "invoiceNo": "رقم الفاتورة",
     "invoiceDate": "تاريخ الفاتورة",
     "dueDate": "تاريخ الاستحقاق",
@@ -1001,7 +1014,7 @@
     "serviceRequired": "اختر خدمة سفر.",
     "serviceDateRequired": "تاريخ الخدمة مطلوب.",
     "invalidVoucherDates": "يجب أن يكون تاريخ الانتهاء في تاريخ الخدمة أو بعده.",
-    "voucherDetailsHelp": "تربط القسيمة العميل بخدمة سفر محجوزة واحدة وتسجل تواريخ الخدمة الظاهرة في المستند القابل للطباعة.",
+    "voucherDetailsHelp": "تتضمن القسيمة القابلة للطباعة مواعيد الخدمة والمسار والبرنامج وما يشمله الحجز والتفاصيل التشغيلية المتاحة.",
     "serviceDates": "تواريخ الخدمة",
     "to": "إلى",
     "downloadPdf": "تنزيل PDF",
@@ -1045,4 +1058,5 @@
     ,"contactMessagesFilter_all": "الكل"
     ,"contactMessagesFilter_unread": "غير المقروءة"
     ,"contactMessagesFilter_read": "المقروءة"
+    ,"photos": "صور"
 }

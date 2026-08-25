@@ -248,7 +248,13 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   thumbnail(item: any): string {
     const image = item?.images?.[0];
-    const raw = item?.coverImageUrl ?? image?.imageUrl ?? image?.url ?? item?.imageUrl ?? '';
+    const raw = item?.airlineLogoUrl
+      ?? item?.airline?.logoUrl
+      ?? item?.coverImageUrl
+      ?? image?.imageUrl
+      ?? image?.url
+      ?? item?.imageUrl
+      ?? '';
     if (!raw || /^(blob:|data:|https?:\/\/)/i.test(raw)) return raw;
     const path = String(raw).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
@@ -298,6 +304,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         sortOrder: sortOrder++,
         from,
         to,
+        transferDate: transfer.transferDate,
         fromTime: this.toApiTime(transfer.fromTime),
         arrivalTime: this.toApiTime(transfer.arrivalTime),
       });
@@ -488,6 +495,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   private createTransferGroup(transfer: any = {}): FormGroup {
+    const defaults = this.defaultTransferSchedule();
     return new FormGroup({
       id: new FormControl(Number(transfer?.id) || 0, { nonNullable: true }),
       from: new FormControl(String(transfer?.from ?? ''), {
@@ -498,15 +506,28 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(250)],
       }),
-      fromTime: new FormControl(this.toInputTime(transfer?.fromTime) || this.currentTime(), {
+      transferDate: new FormControl(this.toInputDate(transfer?.transferDate) || defaults.date, {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      arrivalTime: new FormControl(this.toInputTime(transfer?.arrivalTime) || this.currentTime(), {
+      fromTime: new FormControl(this.toInputTime(transfer?.fromTime) || defaults.fromTime, {
         nonNullable: true,
         validators: [Validators.required],
       }),
-    });
+      arrivalTime: new FormControl(this.toInputTime(transfer?.arrivalTime) || defaults.arrivalTime, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    }, { validators: this.transferScheduleValidator });
+  }
+
+  minTimeForTransferDate(value: unknown): string | null {
+    return this.toInputDate(value) === this.today ? this.currentTime() : null;
+  }
+
+  private toInputDate(value: unknown): string {
+    const match = String(value ?? '').match(/^(\d{4}-\d{2}-\d{2})/);
+    return match?.[1] ?? '';
   }
 
   private toInputTime(value: unknown): string {
@@ -553,6 +574,32 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   private currentTime(): string {
     const now = new Date();
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  private defaultTransferSchedule(): { date: string; fromTime: string; arrivalTime: string } {
+    const pickup = new Date(Date.now() + 15 * 60_000);
+    const arrival = new Date(pickup.getTime() + 60 * 60_000);
+    if (pickup.getDate() !== arrival.getDate()) {
+      pickup.setDate(pickup.getDate() + 1);
+      pickup.setHours(9, 0, 0, 0);
+      arrival.setTime(pickup.getTime() + 60 * 60_000);
+    }
+    const time = (value: Date) => `${value.getHours().toString().padStart(2, '0')}:${value.getMinutes().toString().padStart(2, '0')}`;
+    return { date: this.localDate(pickup), fromTime: time(pickup), arrivalTime: time(arrival) };
+  }
+
+  private transferScheduleValidator(control: AbstractControl): ValidationErrors | null {
+    const date = String(control.get('transferDate')?.value ?? '');
+    const fromTime = String(control.get('fromTime')?.value ?? '');
+    const arrivalTime = String(control.get('arrivalTime')?.value ?? '');
+    if (!date || !fromTime || !arrivalTime) return null;
+
+    const pickup = new Date(`${date}T${fromTime}:00`);
+    const arrival = new Date(`${date}T${arrivalTime}:00`);
+    if (Number.isNaN(pickup.getTime()) || Number.isNaN(arrival.getTime())) return { invalidTransferSchedule: true };
+    if (pickup.getTime() < Date.now()) return { transferTimeInPast: true };
+    if (arrival.getTime() <= pickup.getTime()) return { invalidTransferTimeRange: true };
+    return null;
   }
 
   private quotationDatesValidator(control: AbstractControl): ValidationErrors | null {

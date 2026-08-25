@@ -32,6 +32,9 @@ export class TimePicker implements ControlValueAccessor {
   @Input() placeholder = '';
   @Input() ariaLabel = '';
   @Input() inputClass = '';
+  @Input() min: string | null = null;
+  @Input() max: string | null = null;
+  @Input() step = 60;
 
   value = '';
   isDisabled = false;

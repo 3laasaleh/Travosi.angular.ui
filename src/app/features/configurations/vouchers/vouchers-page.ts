@@ -12,19 +12,20 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
+import { TimePicker } from '../../../shared/components/time-picker/time-picker';
 
 type VoucherReferenceKey = 'flightId' | 'hotelId' | 'tourId' | 'packageId';
 
 interface VoucherTypeOption {
   id: number;
   key: string;
-  referenceKey: VoucherReferenceKey;
+  referenceKey: VoucherReferenceKey | null;
 }
 
 @Component({
   selector: 'app-vouchers',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, DatePicker],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, DatePicker, TimePicker],
   templateUrl: './vouchers-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -50,15 +51,20 @@ export class Vouchers implements OnInit {
     { id: 2, key: 'hotel', referenceKey: 'hotelId' },
     { id: 3, key: 'tour', referenceKey: 'tourId' },
     { id: 4, key: 'package', referenceKey: 'packageId' },
+    { id: 5, key: 'transfer', referenceKey: null },
   ];
 
   readonly form = new FormGroup({
     customerId: new FormControl<number | null>(null, Validators.required),
     serviceType: new FormControl(1, { nonNullable: true, validators: [Validators.required] }),
-    serviceId: new FormControl<number | null>(null, Validators.required),
+    serviceId: new FormControl<number | null>(null),
+    from: new FormControl('', { nonNullable: true }),
+    to: new FormControl('', { nonNullable: true }),
+    fromTime: new FormControl(this.currentTime(), { nonNullable: true }),
+    arrivalTime: new FormControl(this.currentTime(), { nonNullable: true }),
     serviceDate: new FormControl(this.localDate(new Date()), { nonNullable: true, validators: [Validators.required] }),
     endDate: new FormControl(this.localDate(new Date()), { nonNullable: true }),
-  }, { validators: Vouchers.dateRangeValidator });
+  }, { validators: [Vouchers.dateRangeValidator, Vouchers.serviceDetailsValidator] });
 
   constructor(
     private readonly api: ApiService,
@@ -89,7 +95,10 @@ export class Vouchers implements OnInit {
 
   serviceTypeChanged(): void {
     this.form.controls.serviceId.reset(null);
+    this.form.controls.from.reset('');
+    this.form.controls.to.reset('');
     this.errorMessage = '';
+    this.form.updateValueAndValidity();
   }
 
   save(): void {
@@ -107,7 +116,8 @@ export class Vouchers implements OnInit {
 
     const value = this.form.getRawValue();
     const type = this.types.find((option) => option.id === Number(value.serviceType));
-    if (!type || value.serviceId === null) {
+    const isTransfer = Number(value.serviceType) === 5;
+    if (!type || (!isTransfer && value.serviceId === null)) {
       this.errorMessage = 'invalidVoucherData';
       return;
     }
@@ -118,7 +128,7 @@ export class Vouchers implements OnInit {
       tourId: null,
       packageId: null,
     };
-    references[type.referenceKey] = Number(value.serviceId);
+    if (type.referenceKey) references[type.referenceKey] = Number(value.serviceId);
 
     const payload = {
       id: this.selectedId,
@@ -126,6 +136,10 @@ export class Vouchers implements OnInit {
       serviceType: Number(value.serviceType),
       serviceDate: value.serviceDate,
       endDate: value.endDate || null,
+      from: isTransfer ? value.from.trim() : null,
+      to: isTransfer ? value.to.trim() : null,
+      fromTime: isTransfer ? this.toApiTime(value.fromTime) : null,
+      arrivalTime: isTransfer ? this.toApiTime(value.arrivalTime) : null,
       ...references,
     };
 
@@ -166,6 +180,10 @@ export class Vouchers implements OnInit {
       customerId: Number(voucher.customerId),
       serviceType,
       serviceId,
+      from: voucher.from ?? '',
+      to: voucher.to ?? '',
+      fromTime: this.toInputTime(voucher.fromTime),
+      arrivalTime: this.toInputTime(voucher.arrivalTime),
       serviceDate: this.dateOnly(voucher.serviceDate),
       endDate: this.dateOnly(voucher.endDate),
     });
@@ -296,14 +314,15 @@ export class Vouchers implements OnInit {
 
   private reset(): void {
     const today = this.localDate(new Date());
+    const time = this.currentTime();
     this.selectedId = 0;
     this.errorMessage = '';
-    this.form.reset({ customerId: null, serviceType: 1, serviceId: null, serviceDate: today, endDate: today });
+    this.form.reset({ customerId: null, serviceType: 1, serviceId: null, from: '', to: '', fromTime: time, arrivalTime: time, serviceDate: today, endDate: today });
   }
 
   private referenceId(voucher: any, serviceType: number): number | null {
     const type = this.types.find((option) => option.id === serviceType);
-    const value = type ? voucher?.[type.referenceKey] : null;
+    const value = type?.referenceKey ? voucher?.[type.referenceKey] : null;
     return value === null || value === undefined ? null : Number(value);
   }
 
@@ -335,6 +354,21 @@ export class Vouchers implements OnInit {
     ].join('-');
   }
 
+  private currentTime(): string {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  private toApiTime(value: unknown): string | null {
+    const normalized = this.toInputTime(value);
+    return normalized ? `${normalized}:00` : null;
+  }
+
+  private toInputTime(value: unknown): string {
+    const match = String(value ?? '').match(/^(\d{2}):(\d{2})/);
+    return match ? `${match[1]}:${match[2]}` : '';
+  }
+
   private responseError(response: any, fallback: string): string {
     const errors = Array.isArray(response?.errors)
       ? response.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
@@ -361,5 +395,17 @@ export class Vouchers implements OnInit {
     const start = String(control.get('serviceDate')?.value ?? '');
     const end = String(control.get('endDate')?.value ?? '');
     return start && end && end < start ? { invalidDateRange: true } : null;
+  }
+
+  private static serviceDetailsValidator(control: AbstractControl): ValidationErrors | null {
+    const type = Number(control.get('serviceType')?.value);
+    if (type === 5) {
+      return String(control.get('from')?.value ?? '').trim()
+        && String(control.get('to')?.value ?? '').trim()
+        && control.get('fromTime')?.value
+        && control.get('arrivalTime')?.value
+        ? null : { transferDetailsRequired: true };
+    }
+    return Number(control.get('serviceId')?.value) > 0 ? null : { serviceRequired: true };
   }
 }

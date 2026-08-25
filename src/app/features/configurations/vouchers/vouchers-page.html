@@ -58,20 +58,44 @@
             </select>
           </label>
 
-          <label class="text-sm font-medium md:col-span-2">
-            {{ 'service' | translate }}
-            <select formControlName="serviceId" class="mt-2 w-full rounded-xl border-slate-300" [disabled]="isOptionsLoading">
-              <option [ngValue]="null">{{ (isOptionsLoading ? 'loading' : 'select') | translate }}</option>
-              @for (service of serviceOptions; track service.id) {
-                <option [ngValue]="service.id">{{ serviceName(service) }}</option>
+          @if (form.controls.serviceType.value === 5) {
+            <div class="grid gap-4 md:col-span-2 md:grid-cols-2 xl:grid-cols-4">
+              <label class="text-sm font-medium">
+                {{ 'transferFrom' | translate }}
+                <input formControlName="from" type="text" maxlength="250" class="mt-2 w-full rounded-xl border-slate-300" [placeholder]="'transferFromPlaceholder' | translate">
+              </label>
+              <label class="text-sm font-medium">
+                {{ 'transferTo' | translate }}
+                <input formControlName="to" type="text" maxlength="250" class="mt-2 w-full rounded-xl border-slate-300" [placeholder]="'transferToPlaceholder' | translate">
+              </label>
+              <label class="text-sm font-medium">
+                {{ 'fromTime' | translate }}
+                <app-time-picker formControlName="fromTime" class="mt-2 block" id="voucher-transfer-from-time" [ariaLabel]="'fromTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+              </label>
+              <label class="text-sm font-medium">
+                {{ 'arrivalTime' | translate }}
+                <app-time-picker formControlName="arrivalTime" class="mt-2 block" id="voucher-transfer-arrival-time" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+              </label>
+              @if (form.hasError('transferDetailsRequired') && (form.controls.from.touched || form.controls.to.touched)) {
+                <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferFieldsRequired' | translate }}</small>
               }
-            </select>
-            @if (!isOptionsLoading && !serviceOptions.length) {
-              <small class="mt-1 block text-amber-700">{{ 'noServicesAvailable' | translate }}</small>
-            } @else if (form.controls.serviceId.touched && form.controls.serviceId.invalid) {
-              <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
-            }
-          </label>
+            </div>
+          } @else {
+            <label class="text-sm font-medium md:col-span-2">
+              {{ 'service' | translate }}
+              <select formControlName="serviceId" class="mt-2 w-full rounded-xl border-slate-300" [disabled]="isOptionsLoading">
+                <option [ngValue]="null">{{ (isOptionsLoading ? 'loading' : 'select') | translate }}</option>
+                @for (service of serviceOptions; track service.id) {
+                  <option [ngValue]="service.id">{{ serviceName(service) }}</option>
+                }
+              </select>
+              @if (!isOptionsLoading && !serviceOptions.length) {
+                <small class="mt-1 block text-amber-700">{{ 'noServicesAvailable' | translate }}</small>
+              } @else if (form.hasError('serviceRequired') && form.controls.serviceId.touched) {
+                <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
+              }
+            </label>
+          }
 
           <label class="text-sm font-medium">
             {{ 'serviceDate' | translate }}
