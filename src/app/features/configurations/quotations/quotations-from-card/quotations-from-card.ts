@@ -45,7 +45,6 @@ export interface QuotationDTO {
   adults: number;
   children: number;
   infants: number;
-  exchangeRate: number;
   subTotal: number;
   discount: number;
   taxRate: number;
