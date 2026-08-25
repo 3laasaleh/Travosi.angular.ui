@@ -10,7 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, of, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -44,7 +44,7 @@ export class QuotationsList implements OnInit, OnChanges {
   quotations: any[] = [];
   isLoading = false;
   errorMessage = '';
-  sendingQuotationId: number | null = null;
+  downloadingQuotationId: number | null = null;
   statusUpdatingId: number | null = null;
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
@@ -183,42 +183,19 @@ export class QuotationsList implements OnInit, OnChanges {
     });
   }
 
-  async sendQuotation(quotation: any): Promise<void> {
+  downloadQuotationPdf(quotation: any): void {
     const id = Number(quotation.id);
-    if (!id || this.sendingQuotationId !== null) return;
-    const currentStatus = Number(quotation.status) as QuotationStatusEnum;
-    const shouldSend = currentStatus === QuotationStatusEnum.Draft;
-    if (shouldSend) {
-      const confirmation = await Swal.fire({
-        icon: 'question',
-        title: this.translate.instant('confirmQuotationSend'),
-        text: this.translate.instant('confirmQuotationSendMessage'),
-        showCancelButton: true,
-        confirmButtonText: this.translate.instant('confirm'),
-        cancelButtonText: this.translate.instant('cancel'),
-        confirmButtonColor: '#00d492',
-        reverseButtons: true,
-      });
-      if (!confirmation.isConfirmed) return;
-    }
-    this.sendingQuotationId = id;
+    if (!id || this.downloadingQuotationId !== null) return;
+    this.downloadingQuotationId = id;
     this.errorMessage = '';
 
-    const pdf$ = shouldSend
-      ? this.apiService.patch(`Quotations/${id}/Send`, {}).pipe(
-          switchMap((response: any) => response?.isSuccess === false
-            ? throwError(() => new Error(response?.message || 'quotationSendError'))
-            : this.apiService.getFile(`Quotations/${id}/Pdf`)),
-        )
-      : this.apiService.getFile(`Quotations/${id}/Pdf`);
-
-    pdf$.pipe(
+    this.apiService.getFile(`Quotations/${id}/Pdf`).pipe(
       catchError((error) => {
-        this.showToast('error', this.apiMessage(error, 'quotationSendError'));
+        this.showToast('error', this.apiMessage(error, 'pdfDownloadError'));
         return of(null);
       }),
       finalize(() => {
-        this.sendingQuotationId = null;
+        this.downloadingQuotationId = null;
         this.cdr.markForCheck();
       }),
     ).subscribe((blob: Blob | null) => {
@@ -230,8 +207,7 @@ export class QuotationsList implements OnInit, OnChanges {
         anchor.download = `${quotation.quotationNo ?? `quotation-${id}`}.pdf`;
         anchor.click();
         URL.revokeObjectURL(url);
-        this.showToast('success', shouldSend ? 'quotationSent' : 'quotationPdfDownloaded');
-        if (shouldSend) this.loadQuotations();
+        this.showToast('success', 'quotationPdfDownloaded');
         return;
       }
       this.showToast('error', 'quotationPdfInvalid');

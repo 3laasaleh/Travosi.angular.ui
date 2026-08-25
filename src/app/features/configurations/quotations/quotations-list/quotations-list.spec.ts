@@ -1,6 +1,6 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { QuotationStatusEnum } from '../quotations-from-card/quotations-from-card';
@@ -56,5 +56,25 @@ describe('QuotationsList status workflow', () => {
     expect(component.canChangeStatus(quotation)).toBe(false);
     expect(fire).not.toHaveBeenCalled();
     expect(api.patch).not.toHaveBeenCalled();
+  });
+
+  it('downloads a draft quotation without changing its status', () => {
+    const api = {
+      patch: vi.fn(),
+      get: vi.fn().mockReturnValue(of({ data: [] })),
+      getFile: vi.fn().mockReturnValue(NEVER),
+    };
+    const component = new QuotationsList(
+      api as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    const quotation = { id: 19, status: QuotationStatusEnum.Draft };
+
+    component.downloadQuotationPdf(quotation);
+
+    expect(api.getFile).toHaveBeenCalledWith('Quotations/19/Pdf');
+    expect(api.patch).not.toHaveBeenCalled();
+    expect(quotation.status).toBe(QuotationStatusEnum.Draft);
   });
 });

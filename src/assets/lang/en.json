@@ -1045,6 +1045,7 @@
     "serviceDates": "Service dates",
     "to": "to",
     "downloadPdf": "Download PDF",
+    "downloading": "Downloading...",
     "pdfDownloadError": "The PDF could not be downloaded.",
     "voucherListLoadError": "The vouchers could not be loaded.",
     "invoiceListLoadError": "The invoices could not be loaded.",

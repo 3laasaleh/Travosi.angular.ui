@@ -1045,6 +1045,7 @@
   "serviceDates": "تواريخ الخدمة",
   "to": "إلى",
   "downloadPdf": "تنزيل PDF",
+  "downloading": "جارٍ التنزيل...",
   "pdfDownloadError": "تعذر تنزيل ملف PDF.",
   "voucherListLoadError": "تعذر تحميل القسائم.",
   "invoiceListLoadError": "تعذر تحميل الفواتير.",
