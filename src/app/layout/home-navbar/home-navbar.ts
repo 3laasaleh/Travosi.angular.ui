@@ -17,7 +17,6 @@ import { DestinationsMenu } from './destinations-menu/destinations-menu';
 import { PackagesMenu } from './packages-menu/packages-menu';
 import { ToursMenu } from './tours-menu/tours-menu';
 import { SearchBox } from './search-box/search-box';
-import { finalize } from 'rxjs';
 import { AuthService } from '../../features/user/_services/auth.service';
 import { CurrencyService } from '../../core/services/currency.service';
 
@@ -60,13 +59,10 @@ export class HomeNavbar implements AfterViewInit {
     if (this.switchingLanguage !== null) return;
     this.switchingLanguage = lang;
     this.mobileMenuOpen = false;
-    this.languageService.setGLobalLanguage(lang).pipe(
-      finalize(() => {
-        this.switchingLanguage = null;
-        this.closeMenus();
-        this.cdr.markForCheck();
-      }),
-    ).subscribe({ error: () => {} });
+    this.languageMenuOpen = false;
+    this.closeMenus();
+    this.cdr.markForCheck();
+    this.languageService.setLanguageAndReload(lang);
   }
 
   get canAccessConfigurations(): boolean {

@@ -13,7 +13,7 @@
       <app-search-box class="w-full max-w-md" />
     </div>
 
-    <nav class="ml-auto hidden items-center gap-1 lg:flex" [attr.aria-label]="'mainNavigation' | translate">
+    <nav class="ms-auto hidden items-center gap-1 lg:flex" [attr.aria-label]="'mainNavigation' | translate">
       <app-destinations-menu (navigated)="closeMenus()" />
       <app-tours-menu (navigated)="closeMenus()" />
       <app-tours-menu [nileCruisesOnly]="true" (navigated)="closeMenus()" />
@@ -41,7 +41,7 @@
             [class.mdi-chevron-up]="currencyMenuOpen"></i>
         </button>
         @if (currencyMenuOpen) {
-        <div class="absolute right-0 mt-2 w-36 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
+        <div class="absolute end-0 mt-2 w-36 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
           role="menu">
           <div class="p-2">
             @for (currency of currencyService.options(); track currency.id) {
@@ -79,7 +79,7 @@
 
         @if (languageMenuOpen) {
         <div
-          class="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 "
+          class="absolute end-0 mt-2 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 "
           role="menu">
           <div class="p-2">
             <button type="button" (click)="switchLanguage('en')" [disabled]="switchingLanguage !== null"
@@ -108,7 +108,7 @@
       <div class="relative hidden lg:block">
         @if (isLoggedIn) {
         <button type="button"
-          class="flex items-center gap-3 rounded-2xl p-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 dark:hover:bg-slate-800"
           [attr.aria-label]="'openAccountMenu' | translate" aria-haspopup="menu" [attr.aria-expanded]="accountMenuOpen"
           (click)="toggleAccountMenu($event)">
 
@@ -140,7 +140,7 @@
 
         @if (accountMenuOpen) {
         <div
-          class="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 "
+          class="absolute end-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 "
           role="menu">
           @if (isLoggedIn) {
           <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">

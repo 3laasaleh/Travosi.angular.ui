@@ -52,9 +52,37 @@ input,textarea,select {
   min-width: 50px !important;
  }
 
- body{
-  overflow-x: hidden;
- }
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body,
+  app-root {
+    overflow-x: hidden;
+  }
+}
+
+/* Tailwind's positive switch-thumb translation must be mirrored in RTL. */
+[dir='rtl'] [role='switch'] > .translate-x-6 {
+  translate: -1.5rem 0 !important;
+}
+
+[dir='rtl'] [role='switch'] > .translate-x-1 {
+  translate: -0.25rem 0 !important;
+}
 
 /* SweetAlert2 success icon brand color. */
 div:where(.swal2-icon).swal2-success {
@@ -77,7 +105,8 @@ div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
   z-index: 2147483647;
   display: grid;
   place-items: center;
-  width: 100vw;
+  width: auto;
+  max-width: 100%;
   height: 100dvh;
   background: rgb(15 23 42 / 55%);
 }

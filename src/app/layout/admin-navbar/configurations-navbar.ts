@@ -125,13 +125,10 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
     if (this.switchingLanguage !== null) return;
     this.switchingLanguage = language;
     this.mobileMenuOpen = false;
-    this.languageService.setGLobalLanguage(language).pipe(
-      finalize(() => {
-        this.switchingLanguage = null;
-        this.closeMenus();
-        this.cdr.markForCheck();
-      }),
-    ).subscribe({ error: () => {} });
+    this.languageMenuOpen = false;
+    this.closeMenus();
+    this.cdr.markForCheck();
+    this.languageService.setLanguageAndReload(language);
   }
 
   get userName(): string {
