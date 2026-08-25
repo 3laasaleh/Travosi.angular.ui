@@ -111,8 +111,11 @@
                             <input id="passportNumber" type="text" formControlName="passportNumber"
                                 class="mt-3 w-full py-2 px-3 h-10 uppercase bg-transparent   rounded outline-none border border-gray-100 dark:border-gray-800 focus:border-primary focus:ring-0"
                                 [class.border-red-500]="signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.invalid">
-                            @if (signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.hasError('required')) {
-                            <p class="mt-1 text-sm text-red-600">{{ 'passportNumberRequired' | translate }}</p>
+                            @if (signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.hasError('maxLength')) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'passportNumberMaxLength' | translate }}</p>
+                            }
+                                @if (signupForm.controls.passportNumber.touched && signupForm.controls.passportNumber.hasError('minLength')) {
+                            <p class="mt-1 text-sm text-red-600">{{ 'passportNumberMinLength' | translate }}</p>
                             }
                         </div>
 

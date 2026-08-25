@@ -1,22 +1,8 @@
-@if (isSubmitting) {
-  <!-- loader -->
-  <div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status" aria-live="assertive" [attr.aria-label]="'creatingBooking' | translate">
-    <div class="flex min-w-64 flex-col items-center rounded-3xl border border-white/15 bg-white px-8 py-7 text-center shadow-2xl">
-      <span class="relative grid h-16 w-16 place-items-center">
-        <span class="absolute inset-0 animate-spin rounded-full border-4 border-slate-200 border-t-primary-600"></span>
-        <i class="mdi mdi-calendar-check-outline text-2xl text-primary"></i>
-      </span>
-      <p class="mt-5 font-semibold text-slate-800">{{ 'creatingBooking' | translate }}</p>
-      <p class="mt-1 text-xs text-slate-500">{{ 'pleaseWaitForRequest' | translate }}</p>
-    </div>
-  </div>
-}
-
-<div class="rounded-2xl border border-gray-100 bg-white p-6 shadow">
-  <div class="flex items-end justify-between">
+<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+  <div class="flex items-end justify-between gap-3 border-b border-slate-100 pb-3">
     <div>
-      <span class="text-sm font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
-      <p class="text-2xl font-semibold">{{ formattedPricePerPerson }}</p>
+      <span class="text-xs font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
+      <p class="text-xl font-bold leading-tight text-slate-900">{{ formattedPricePerPerson }}</p>
     </div>
     @if (pricePerChild > 0) {
       <div class="text-end">
@@ -26,22 +12,20 @@
     }
   </div>
 
-  <form class="mt-6" [formGroup]="bookingForm" (ngSubmit)="availabilityConfirmed ? bookNow() : checkAvailability()">
+  <form class="mt-3" [formGroup]="bookingForm" (ngSubmit)="availabilityConfirmed ? bookNow() : checkAvailability()">
     @if (hasAvailableDateRange) {
-      <div class="mb-4 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3" role="note">
-        <p class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
-          <i class="mdi mdi-calendar-range text-lg" aria-hidden="true"></i>
-          {{ 'availableBookingDates' | translate }}
-        </p>
-        <p class="mt-1.5 text-sm font-semibold text-slate-700">
+      <div class="mb-3 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2" role="note">
+        <i class="mdi mdi-calendar-range shrink-0 text-lg text-primary" aria-hidden="true"></i>
+        <p class="min-w-0 text-xs font-semibold leading-5 text-slate-700">
+          <span class="text-primary">{{ 'availableBookingDates' | translate }}:</span>
           {{ 'availableBookingDateRange' | translate:{ from: availableDateFrom, to: availableDateTo } }}
         </p>
       </div>
     }
 
-    <div class="mb-4 grid grid-cols-2 gap-3">
+    <div class="mb-3 grid grid-cols-2 gap-2.5">
       <div>
-        <label for="bookingDateFrom" class="text-sm font-semibold">{{ 'dateFrom' | translate }}</label>
+        <label for="bookingDateFrom" class="text-xs font-semibold text-slate-600">{{ 'dateFrom' | translate }}</label>
         <app-date-picker
           id="bookingDateFrom"
           formControlName="dateFrom"
@@ -49,14 +33,14 @@
           [max]="maxTravelDate"
           [placeholder]="'dateFrom' | translate"
           [ariaLabel]="'dateFrom' | translate"
-          class="mt-2 block"
-          [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary-400 dark:border-gray-800  '" />
+          class="mt-1 block"
+          [inputClass]="'h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800'" />
         @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">{{ 'dateFromRequired' | translate }}</p>
         }
       </div>
       <div>
-        <label for="bookingDateTo" class="text-sm font-semibold">{{ 'dateTo' | translate }}</label>
+        <label for="bookingDateTo" class="text-xs font-semibold text-slate-600">{{ 'dateTo' | translate }}</label>
         <app-date-picker
           id="bookingDateTo"
           formControlName="dateTo"
@@ -64,8 +48,8 @@
           [max]="maxTravelDate"
           [placeholder]="'dateTo' | translate"
           [ariaLabel]="'dateTo' | translate"
-          class="mt-2 block"
-          [inputClass]="'h-10 w-full rounded border border-gray-100 bg-transparent py-2 ps-3 outline-none focus:border-primary-400 dark:border-gray-800  '" />
+          class="mt-1 block"
+          [inputClass]="'h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800'" />
         @if (bookingForm.controls.dateTo.touched && bookingForm.controls.dateTo.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">{{ 'dateToRequired' | translate }}</p>
         }
@@ -75,18 +59,18 @@
       </div>
     </div>
 
-    <div class="mb-4 grid grid-cols-2 gap-3">
+    <div class="mb-3 grid grid-cols-2 gap-2.5">
       <div>
-        <label for="adults" class="text-sm font-semibold">{{ 'adults' | translate }}</label>
+        <label for="adults" class="text-xs font-semibold text-slate-600">{{ 'adults' | translate }}</label>
         <input id="adults" type="number" min="1" step="1" formControlName="adults"
-          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800  " />
+          class="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800" />
         @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'atLeastOneAdult' | translate }}</p> }
         @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
       </div>
       <div>
-        <label for="children" class="text-sm font-semibold">{{ 'children' | translate }}</label>
+        <label for="children" class="text-xs font-semibold text-slate-600">{{ 'children' | translate }}</label>
         <input id="children" type="number" min="0" step="1" formControlName="children"
-          class="mt-2 h-10 w-full rounded border border-gray-100 bg-transparent px-3 py-2 outline-none focus:border-primary-400 dark:border-gray-800  " />
+          class="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800" />
         @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'childrenCannotBeNegative' | translate }}</p> }
         @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
       </div>
@@ -94,33 +78,33 @@
 
 
     @if (hasSeatLimit) {
-      <p class="mb-4 text-xs" [class.text-slate-400]="guests <= seatsAvailable" [class.text-red-500]="guests > seatsAvailable">
+      <p class="mb-2.5 text-xs" [class.text-slate-400]="guests <= seatsAvailable" [class.text-red-500]="guests > seatsAvailable">
         <i class="mdi mdi-account-group-outline me-1"></i>{{ seatsAvailable }} {{ 'seatsAvailable' | translate }}
       </p>
     }
 
-    <div class="mb-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ">
-      <span class="text-sm font-semibold">{{ 'total' | translate }} · {{ guests }} {{ 'travelers' | translate }}</span>
-      <span class="text-lg font-bold text-primary">{{ formattedTotalAmount }}</span>
+    <div class="mb-3 flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+      <span class="text-xs font-semibold text-slate-600">{{ 'total' | translate }} · {{ guests }} {{ 'travelers' | translate }}</span>
+      <span class="text-base font-bold text-primary">{{ formattedTotalAmount }}</span>
     </div>
 
-    @if (errorMessage) { <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div> }
-    @if (successMessage) { <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
+    @if (errorMessage) { <div class="mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">{{ errorMessage | translate }}</div> }
+    @if (successMessage) { <div class="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-600">{{ successMessage | translate }}</div> }
 
     @if (availabilityStatus === 'available') {
-      <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" role="status">
+      <div class="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700" role="status">
         <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-check-circle text-lg"></i>{{ 'selectionAvailable' | translate }}</p>
         <p class="mt-1 text-xs text-emerald-600">{{ 'availabilityCanChange' | translate }}</p>
       </div>
     } @else if (availabilityStatus === 'unavailable') {
-      <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
+      <div class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700" role="alert">
         <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-calendar-remove-outline text-lg"></i>{{ 'selectionUnavailable' | translate }}</p>
         @if (availabilitySeats > 0) { <p class="mt-1 text-xs">{{ 'onlySeatsAvailable' | translate:{ seats: availabilitySeats } }}</p> }
       </div>
     }
 
     <button type="submit" [disabled]="isSubmitting || isCheckingAvailability || product?.isActive === false"
-      class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 text-center text-base text-white duration-500 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
+      class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
       @if (isCheckingAvailability) {
         <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'checkingAvailability' | translate }}</span>
       } @else if (isSubmitting) {

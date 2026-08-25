@@ -1,1075 +1,1076 @@
 {
-    "blogs": "\u0627\u0644\u0645\u062f\u0648\u0646\u0629",
-    "blogsLoadError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
-    "tryAgain": "\u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649",
-    "noBlogsFound": "\u0644\u0627 \u062a\u0648\u062c\u062f \u0645\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u0634\u0648\u0631\u0629 \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
-    "readMore": "\u0627\u0642\u0631\u0623 \u0627\u0644\u0645\u0632\u064a\u062f",
-    "viewAllBlogs": "\u0639\u0631\u0636 \u0643\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a",
-    "previousBlog": "\u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a \u0627\u0644\u0633\u0627\u0628\u0642\u0629",
-    "nextBlog": "\u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a \u0627\u0644\u062a\u0627\u0644\u064a\u0629",
-    "manageBlogDetails": "\u0625\u0646\u0634\u0627\u0621 \u0648\u0646\u0634\u0631 \u0623\u062e\u0628\u0627\u0631 \u0648\u0623\u062f\u0644\u0629 \u0648\u0642\u0635\u0635 \u0627\u0644\u0633\u0641\u0631.",
-    "showAddBlog": "\u0625\u0636\u0627\u0641\u0629 \u0645\u062f\u0648\u0646\u0629",
-    "hideAddBlog": "\u0625\u062e\u0641\u0627\u0621 \u0646\u0645\u0648\u0630\u062c \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
-    "blogsData": "\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a",
-    "publishDate": "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0646\u0634\u0631",
-    "editBlog": "\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
-    "confirmDeactivateBlog": "\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u0625\u0644\u063a\u0627\u0621 \u062a\u0641\u0639\u064a\u0644 \u0647\u0630\u0647 \u0627\u0644\u0645\u062f\u0648\u0646\u0629\u061f",
-    "confirmActivateBlog": "\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u062a\u0641\u0639\u064a\u0644 \u0647\u0630\u0647 \u0627\u0644\u0645\u062f\u0648\u0646\u0629\u061f",
-    "blogStatusUpdated": "\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 \u0628\u0646\u062c\u0627\u062d.",
-    "blogStatusUpdateError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629.",
-    "noBlogsCreated": "\u0644\u0645 \u064a\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0623\u064a \u0645\u062f\u0648\u0646\u0627\u062a \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
-    "blogImages": "\u0635\u0648\u0631 \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
-    "blogImageRules": "JPG \u0623\u0648 PNG \u0623\u0648 WebP\u060c \u0648\u0628\u062d\u062f \u0623\u0642\u0635\u0649 5 \u0645\u064a\u062c\u0627\u0628\u0627\u064a\u062a",
-    "blogImageLimit": "\u0627\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0644\u0644\u0645\u062f\u0648\u0646\u0629 \u0647\u0648 5 \u0635\u0648\u0631.",
-    "blogImageNumber": "\u0635\u0648\u0631\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 {{number}}",
-    "processingImages": "\u062c\u0627\u0631\u064d \u0645\u0639\u0627\u0644\u062c\u0629 \u0627\u0644\u0635\u0648\u0631...",
-    "delete": "حذف",
-    "removeImage": "إزالة الصورة",
-    "confirmImageDelete": "هل تريد حذف هذه الصورة؟",
-    "imageDeleteWarning": "سيؤدي هذا الإجراء إلى حذف الصورة نهائيًا.",
-    "imageDeleted": "تم حذف الصورة بنجاح.",
-    "viewLargerImage": "عرض الصورة بحجم أكبر",
-    "previousImage": "الصورة السابقة",
-    "nextImage": "الصورة التالية",
-    "imageDeleteError": "تعذر حذف الصورة.",
-    "image": "الصورة",
-    "status": "الحالة",
-    "actions": "الإجراءات",
-    "activate": "تفعيل",
-    "confirm": "تأكيد",
-    "confirmStatusChange": "تأكيد تغيير الحالة",
-    "confirmDeactivateDestination": "هل أنت متأكد من إلغاء تفعيل هذه الوجهة؟",
-    "confirmActivateDestination": "هل أنت متأكد من تفعيل هذه الوجهة؟",
-    "statusUpdated": "تم تحديث حالة الوجهة بنجاح.",
-    "statusUpdateError": "تعذر تحديث حالة الوجهة.",
-    "view": "عرض",
-    "close": "إغلاق",
-    "active": "نشط",
-    "inactive": "غير نشط",
-    "tour": "جولة",
-    "admin": "الإدارة",
-    "destinations": "الوجهات",
-    "tours": "الجولات",
-    "nileCruises": "الرحلات النيلية",
-    "manageDestinationDetails": "إدارة تفاصيل الوجهة وصورها.",
-    "manageTourDetails": "إدارة تفاصيل الجولة والصور وخط السير.",
-    "backToDashboard": "العودة إلى لوحة التحكم",
-    "switchToGrid": "عرض شبكي",
-    "switchToTable": "عرض جدولي",
-    "collapseMenu": "طي القائمة",
-    "expandMenu": "توسيع القائمة",
-    "hideAddDestination": "إخفاء إضافة وجهة",
-    "showAddDestination": "إظهار إضافة وجهة",
-    "hotels": "الفنادق",
-    "manageHotelDetails": "إدارة تفاصيل الفنادق وبيانات الاتصال.",
-    "hideAddHotel": "إخفاء إضافة فندق",
-    "showAddHotel": "إظهار إضافة فندق",
-    "editHotel": "تعديل الفندق",
-    "addHotel": "إضافة فندق",
-    "hotelName": "اسم الفندق",
-    "hotelNameRequired": "اسم الفندق مطلوب.",
-    "starRating": "تصنيف النجوم",
-    "starRatingRequired": "تصنيف النجوم مطلوب.",
-    "address": "العنوان",
-    "activeHotel": "فندق نشط",
-    "hotelRecords": "سجلات الفنادق",
-    "loadingHotels": "جاري تحميل الفنادق...",
-    "noHotelsFound": "لا توجد فنادق.",
-    "hotelSaveError": "تعذر حفظ الفندق.",
-    "hotelServiceUnavailable": "خدمة الفنادق غير متاحة.",
-    "confirmDeactivateHotel": "هل أنت متأكد من إلغاء تفعيل هذا الفندق؟",
-    "confirmActivateHotel": "هل أنت متأكد من تفعيل هذا الفندق؟",
-    "airlines": "شركات الطيران",
-    "manageAirlineDetails": "إدارة تفاصيل شركات الطيران والشعارات.",
-    "hideAddAirline": "إخفاء إضافة شركة طيران",
-    "showAddAirline": "إظهار إضافة شركة طيران",
-    "editAirline": "تعديل شركة الطيران",
-    "addAirline": "إضافة شركة طيران",
-    "airlineName": "اسم شركة الطيران",
-    "airlineNameRequired": "اسم شركة الطيران مطلوب.",
-    "airlineCode": "رمز إياتا",
-    "airlineCodeRequired": "رمز إياتا مطلوب.",
-    "airlineCodeInvalid": "استخدم حرفين أو ثلاثة أحرف أو أرقام.",
-    "logoUrl": "رابط الشعار",
-    "logo": "الشعار",
-    "airlineRecords": "سجلات شركات الطيران",
-    "noAirlinesFound": "لا توجد شركات طيران.",
-    "airlineSaveError": "تعذر حفظ شركة الطيران.",
-    "airlineServiceUnavailable": "خدمة شركات الطيران غير متاحة.",
-    "airlineLogoRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
-    "airlineLogoRequired": "شعار شركة الطيران مطلوب.",
-    "chooseImage": "اختر صورة",
-    "replaceImage": "استبدال الصورة",
-    "confirmDeactivateAirline": "هل أنت متأكد من إلغاء تفعيل شركة الطيران هذه؟",
-    "confirmActivateAirline": "هل أنت متأكد من تفعيل شركة الطيران هذه؟",
-    "airlineStatusUpdated": "تم تحديث حالة شركة الطيران.",
-    "airlineStatusUpdateError": "تعذر تحديث حالة شركة الطيران.",
-    "airline": "شركة الطيران",
-    "selectAirline": "اختر شركة طيران",
-    "airlineRequired": "شركة الطيران مطلوبة.",
-    "flights": "الرحلات الجوية",
-    "flight": "رحلة جوية",
-    "manageFlightDetails": "إدارة مواعيد الرحلات والأسعار والمقاعد.",
-    "hideAddFlight": "إخفاء إضافة رحلة",
-    "showAddFlight": "إظهار إضافة رحلة",
-    "editFlight": "تعديل الرحلة",
-    "addFlight": "إضافة رحلة",
-    "flightNumber": "رقم الرحلة",
-    "flightNumberRequired": "رقم الرحلة مطلوب.",
-    "flightNumberMaxLength": "يجب ألا يتجاوز رقم الرحلة 20 حرفًا.",
-    "departureAirport": "مطار المغادرة",
-    "departureAirportRequired": "مطار المغادرة مطلوب.",
-    "arrivalAirport": "مطار الوصول",
-    "arrivalAirportRequired": "مطار الوصول مطلوب.",
-    "searchAirportPlaceholder": "ابحث باسم المطار أو المدينة أو الرمز",
-    "noAirportsFound": "لم يتم العثور على مطارات مطابقة.",
-    "airportSearchUnavailable": "البحث عن المطارات غير متاح مؤقتًا. يرجى المحاولة مرة أخرى.",
-    "airportSelectionRequired": "اختر مطارًا من نتائج البحث.",
-    "airportNameMaxLength": "يجب ألا يتجاوز اسم المطار 250 حرفًا.",
-    "departureArrivalDifferent": "يجب أن يكون مطارا المغادرة والوصول مختلفين.",
-    "departureTime": "وقت المغادرة",
-    "departureTimeRequired": "وقت المغادرة مطلوب.",
-    "arrivalTime": "وقت الوصول",
-    "arrivalTimeRequired": "وقت الوصول مطلوب.",
-    "arrivalTimeAfterDeparture": "يجب أن يكون وقت الوصول بعد وقت المغادرة.",
-    "availableSeats": "المقاعد المتاحة",
-    "availableSeatsRequired": "عدد المقاعد المتاحة مطلوب.",
-    "flightClass": "درجة الرحلة",
-    "flightClassEconomy": "اقتصادية",
-    "flightClassBusiness": "رجال الأعمال",
-    "flightClassFirst": "الأولى",
-    "route": "المسار",
-    "flightRecords": "سجلات الرحلات",
-    "noFlightsFound": "لا توجد رحلات.",
-    "flightSaveError": "تعذر حفظ الرحلة.",
-    "flightServiceUnavailable": "خدمة الرحلات غير متاحة.",
-    "customers": "العملاء",
-    "manageCustomerDetails": "إدارة حسابات العملاء وبيانات الاتصال.",
-    "hideAddCustomer": "إخفاء إضافة عميل",
-    "showAddCustomer": "إظهار إضافة عميل",
-    "editCustomer": "تعديل العميل",
-    "addCustomer": "إضافة عميل",
-    "customerName": "اسم العميل",
-    "customerNameRequired": "اسم العميل مطلوب.",
-    "activeCustomer": "عميل نشط",
-    "customerRecords": "سجلات العملاء",
-    "noCustomersFound": "لا يوجد عملاء.",
-    "customerSaveError": "تعذر حفظ العميل.",
-    "customerFormInvalid": "أكمل جميع بيانات العميل والمسافرين المطلوبة.",
-    "customerSavedWithTravelers": "تم حفظ العميل والمسافرين والتعيين بنجاح.",
-    "customerProfile": "ملف العميل",
-    "leadTraveler": "المسافر الرئيسي",
-    "leadTravelerHint": "يتم حفظ العميل بصفته المسافر الرئيسي.",
-    "dateOfBirth": "تاريخ الميلاد",
-    "dateOfBirthRequired": "تاريخ الميلاد مطلوب.",
-    "createAccount": "إنشاء حساب",
-    "gender": "النوع",
-    "male": "ذكر",
-    "female": "أنثى",
-    "customerAgentNotificationHint": "سيتلقى الوكيل المحدد إشعارًا بعد الحفظ.",
-    "customerAutoAssignedToAgent": "سيتم تعيين هذا العميل إليك تلقائيًا.",
-    "requiredTravelerFieldsHint": "جميع بيانات الهوية والاتصال وجواز السفر وتاريخ الميلاد مطلوبة.",
-    "companionTravelers": "المسافرون المرافقون",
-    "companionTravelersHint": "أضف الزوج أو الزوجة والأطفال والرضع والمربية أو أي مرافقين آخرين.",
-    "addSpouse": "إضافة زوج/زوجة",
-    "addAdult": "إضافة بالغ",
-    "addInfant": "إضافة رضيع",
-    "addBabysitter": "إضافة مربية",
-    "adult": "بالغ",
-    "child": "طفل",
-    "infant": "رضيع",
-    "traveler": "مسافر",
-    "travelerType": "نوع المسافر",
-    "relationship": "صلة القرابة",
-    "removeTraveler": "حذف المسافر",
-    "noCompanionTravelers": "لم تتم إضافة مسافرين مرافقين.",
-    "bookingAssignment": "تعيين الحجز",
-    "assignmentSuccessful": "تم التعيين بنجاح",
-    "agentNotificationConfirmed": "تم تعيين {{agent}} وإرسال إشعار إليه.",
-    "bookingAgentNotificationHint": "سيؤدي الحفظ إلى تعيين الحجز وإشعار الوكيل المحدد.",
-    "assignAndNotify": "تعيين وإشعار",
-    "done": "تم",
-    "customerServiceUnavailable": "خدمة العملاء غير متاحة.",
-    "confirmDeactivateCustomer": "هل أنت متأكد من إلغاء تفعيل هذا العميل؟",
-    "confirmActivateCustomer": "هل أنت متأكد من تفعيل هذا العميل؟",
-    "quotations": "عروض الأسعار",
-    "manageQuotationDetails": "إدارة عروض الأسعار والتسعير.",
-    "hideAddQuotation": "إخفاء إضافة عرض سعر",
-    "showAddQuotation": "إظهار إضافة عرض سعر",
-    "editQuotation": "تعديل عرض السعر",
-    "addQuotation": "إضافة عرض سعر",
-    "quotationRecords": "سجلات عروض الأسعار",
-    "noQuotationsFound": "لا توجد عروض أسعار.",
-    "quotationSaveError": "تعذر حفظ عرض السعر.",
-    "quotationServiceUnavailable": "خدمة عروض الأسعار غير متاحة.",
-    "tasks": "المهام",
-    "manageTaskDetails": "إسناد المهام للوكلاء ومتابعة تقدمها.",
-    "hideAddTask": "إخفاء إضافة مهمة",
-    "showAddTask": "إظهار إضافة مهمة",
-    "editTask": "تعديل المهمة",
-    "addTask": "إضافة مهمة",
-    "taskTitle": "عنوان المهمة",
-    "taskTitleRequired": "عنوان المهمة مطلوب.",
-    "assignedAgent": "الوكيل المكلف",
-    "selectAgent": "اختر وكيلاً",
-    "agentRequired": "الوكيل مطلوب.",
-    "dueDate": "تاريخ الاستحقاق",
-    "taskStatus": "حالة المهمة",
-    "taskStatusPending": "قيد الانتظار",
-    "taskStatusInProgress": "قيد التنفيذ",
-    "taskStatusCompleted": "مكتملة",
-    "taskStatusReturned": "معادة",
-    "taskStatusClosed": "مغلقة",
-    "startTask": "بدء",
-    "finishTask": "إنهاء",
-    "closeTask": "إغلاق",
-    "returnTask": "إعادة",
-    "agentCompletionNote": "ملاحظة الإنجاز",
-    "agentCompletionNotePlaceholder": "صف ما تم إنجازه لإكمال هذه المهمة...",
-    "agentCompletionNoteRequired": "ملاحظة الإنجاز مطلوبة.",
-    "returnReason": "سبب الإعادة",
-    "returnReasonPlaceholder": "اشرح سبب إعادة المهمة...",
-    "taskStatusUpdated": "تم تحديث حالة المهمة.",
-    "taskStatusUpdateError": "تعذر تحديث حالة المهمة.",
-    "taskRecords": "سجلات المهام",
-    "noTasksFound": "لا توجد مهام.",
-    "taskSaveError": "تعذر حفظ المهمة.",
-    "taskServiceUnavailable": "خدمة المهام غير متاحة.",
-    "myTasks": "مهامي",
-    "viewAllTasks": "عرض كل المهام",
-    "packages": "الباقات",
-    "noPackagesFound": "لا توجد باقات.",
-    "viewAllDestinations": "عرض كل الوجهات",
-    "viewAllTours": "عرض كل الجولات",
-    "viewAllNileCruises": "عرض كل الرحلات النيلية",
-    "viewAllPackages": "عرض كل الباقات",
-    "exploreMore": "استكشف المزيد",
-    "showMore": "عرض المزيد",
-    "loading": "جاري التحميل...",
-    "searchPlaceholder": "ابحث عن وجهات، جولات، باقات...",
-    "clearSearch": "مسح البحث",
-    "noSearchResults": "لا توجد نتائج.",
-    "searchLoadError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u0628\u062d\u062b. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
-    "language": "اللغة",
-    "currency": "العملة",
-    "currencyUsd": "دولار أمريكي",
-    "currencyEur": "يورو",
-    "currencyEgp": "جنيه مصري",
-    "currencySar": "ريال سعودي",
-    "editDestination": "تعديل الوجهة",
-    "addDestination": "إضافة وجهة",
-    "englishName": "الاسم بالإنجليزية",
-    "arabicName": "الاسم بالعربية",
-    "englishNameRequired": "الاسم الإنجليزي مطلوب.",
-    "arabicNameRequired": "الاسم العربي مطلوب.",
-    "englishNameInvalid": "استخدم الحروف الإنجليزية وابدأ بحرف.",
-    "arabicNameInvalid": "استخدم الحروف العربية فقط وابدأ بحرف عربي.",
-    "shortDescription": "وصف مختصر",
-    "optional": "اختياري",
-    "description": "الوصف",
-    "descriptionRequired": "الوصف مطلوب.",
-    "destinationImages": "صور الوجهة",
-    "tourImages": "صور الجولة",
-    "chooseImages": "اختر الصور",
-    "destinationImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
-    "tourImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
-    "tourImageLimit": "الحد الأقصى للجولة هو 5 صور.",
-    "imagesRequired": "صورة واحدة على الأقل مطلوبة.",
-    "remove": "إزالة",
-    "cover": "الغلاف",
-    "activeDestination": "وجهة نشطة",
-    "activeTour": "جولة نشطة",
-    "update": "تحديث",
-    "add": "إضافة",
-    "cancel": "إلغاء",
-    "destinationsData": "سجلات الوجهات",
-    "previous": "السابق",
-    "next": "التالي",
-    "loadingDestinations": "جارٍ تحميل الوجهات...",
-    "edit": "تعديل",
-    "deactivate": "إلغاء التفعيل",
-    "noDestinationsFound": "لا توجد وجهات.",
-    "editTour": "تعديل الجولة",
-    "addTour": "إضافة جولة",
-    "englishTitle": "العنوان بالإنجليزية",
-    "arabicTitle": "العنوان بالعربية",
-    "englishTitleRequired": "العنوان الإنجليزي مطلوب.",
-    "arabicTitleRequired": "العنوان العربي مطلوب.",
-    "destination": "الوجهة",
-    "selectDestination": "اختر وجهة",
-    "destinationRequired": "الوجهة مطلوبة.",
-    "duration": "المدة",
-    "durationRequired": "المدة مطلوبة.",
-    "price": "السعر",
-    "priceRequired": "السعر مطلوب.",
-    "itinerary": "خط السير",
-    "itineraryRequired": "خط السير مطلوب.",
-    "updateTour": "تحديث الجولة",
-    "createTour": "إنشاء الجولة",
-    "tourList": "قائمة الجولات",
-    "loadingTours": "جارٍ تحميل الجولات...",
-    "noToursFound": "لا توجد جولات.",
-    "noNileCruisesFound": "لا توجد رحلات نيلية.",
-    "destinationServiceUnavailable": "خدمة الوجهات غير متاحة. يتم عرض بيانات تجريبية.",
-    "destinationSaveError": "تعذر حفظ الوجهة.",
-    "destinationUpdated": "تم تحديث الوجهة بنجاح.",
-    "destinationCreated": "تم إنشاء الوجهة بنجاح.",
-    "destinationImageLimit": "الحد الأقصى للوجهة هو 5 صور.",
-    "invalidImageType": "يرجى اختيار ملفات صور فقط.",
-    "imageTooLarge": "يجب ألا يتجاوز حجم كل صورة 5 ميجابايت.",
-    "imageReadError": "تعذر قراءة إحدى الصور.",
-    "imageResolutionTooSmall": "دقة الصورة منخفضة. استخدم صورة بدقة 1200 x 675 بكسل على الأقل.",
-    "imageAspectRatioInvalid": "يجب أن تكون الصورة أفقية بنسبة أبعاد بين 4:3 و16:9.",
-    "destinationDeactivated": "تم إلغاء تفعيل الوجهة بنجاح.",
-    "destinationsLoadError": "تعذر تحميل الوجهات. يرجى المحاولة مرة أخرى.",
-    "packagesLoadError": "تعذر تحميل الباقات. يرجى المحاولة مرة أخرى.",
-    "tourSaveError": "تعذر حفظ الجولة.",
-    "tourUpdated": "تم تحديث الجولة بنجاح.",
-    "tourCreated": "تم إنشاء الجولة بنجاح.",
-    "tourDeactivated": "تم إلغاء تفعيل الجولة بنجاح.",
-    "send": "إرسال",
-    "emailAddress":"البريد الالكتروني",
-    "emailPlaceholder": "name@example.com",
-    "passwordPlaceholder": "كلمة المرور",
-    "emailRequired": "البريد الإلكتروني مطلوب.",
-    "emailInvalid": "أدخل عنوان بريد إلكتروني صالح.",
-    "passwordRequired": "كلمة المرور مطلوبة.",
-    "passwordMin": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
-    "submittingSignin": "جاري تسجيل الدخول...",
-    "submitSignIn": "تسجيل الدخول",
-    "noAccount": "لا تملك حسابًا؟",
-    "signup": "إنشاء حساب",
-    "firstName": "الاسم الأول",
-    "firstNameRequired": "الاسم الأول مطلوب.",
-    "firstNameMin": "يجب أن يكون الاسم الأول حرفين على الأقل.",
-    "lastNameRequired": "اسم العائلة مطلوب.",
-    "lastNameMin": "يجب أن يكون اسم العائلة حرفين على الأقل.",
-    "mobileRequired": "رقم الجوال مطلوب.",
-    "mobileInvalid": "أدخل رقم جوال صالح.",
-    "confirmRequired": "يرجى تأكيد كلمة المرور.",
-    "confirmMismatch": "كلمتا المرور غير متطابقتين.",
-    "acceptTerms": "يجب قبول الشروط والأحكام.",
-    "lastName": "اسم العائلة",
-    "mobile": "رقم الجوال",
-    "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "iaccept": "أوافق على",
-    "terms": "الشروط والأحكام",
-    "submittingSignUp": "جاري إنشاء الحساب...",
-    "alreadyHave": "هل لديك حساب؟",
-    "signin": "تسجيل الدخول",
-    "personalDetails": "البيانات الشخصية",
-    "createChangeSaveData": "قم بتعديل الحقول أدناه ثم اضغط حفظ لتحديث الملف الشخصي.",
-    "saveChanges": "حفظ التغييرات",
-    "changePassword": "تغيير كلمة المرور",
-    "phone": "رقم الجوال",
-    "website": "الموقع الإلكتروني",
-    "oldPassword": "كلمة المرور القديمة",
-    "newPassword": "كلمة المرور الجديدة",
-    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
-    "savePassword": "حفظ كلمة المرور",
-    "personalSaveSuccess": "تم تحديث البيانات الشخصية بنجاح.",
-    "personalSaveError": "تعذر حفظ البيانات الشخصية. حاول مرة أخرى.",
-    "passwordSaveSuccess": "تم تغيير كلمة المرور بنجاح.",
-    "passwordSaveError": "تعذر تغيير كلمة المرور. حاول مرة أخرى.",
-    "resetPassword": "إعادة تعيين كلمة المرور",
-    "resetInvalidLink": "رابط إعادة التعيين غير صالح. يرجى طلب إعادة تعيين كلمة مرور جديدة.",
-    "resetTokenExpired": "انتهت صلاحية رمز إعادة التعيين. يرجى طلب إعادة تعيين كلمة مرور جديدة.",
-    "passwordMinLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
-    "passwordComplexity": "يجب أن تتضمن كلمة المرور حرفًا كبيرًا، رقمًا، ورمزًا.",
-    "resetPasswordSuccess": "تم إعادة تعيين كلمة المرور بنجاح.",
-    "resetPasswordError": "تعذر إعادة تعيين كلمة المرور. حاول مرة أخرى."
-    ,"adults": "البالغون"
-    ,"amount": "المبلغ"
-    ,"bookingDate": "تاريخ الحجز"
-    ,"bookingId": "رقم الحجز"
-    ,"bookingRecords": "سجلات الحجوزات"
-    ,"bookings": "الحجوزات"
-    ,"children": "الأطفال"
-    ,"companyName": "اسم الشركة"
-    ,"companyNameRequired": "اسم الشركة مطلوب."
-    ,"Configurations": "الإعدادات"
-    ,"customer": "العميل"
-    ,"customerType": "نوع العميل"
-    ,"discount": "الخصم"
-    ,"exchangeRate": "سعر الصرف"
-    ,"guests": "الضيوف"
-    ,"infants": "الرضع"
-    ,"manageBookings": "إدارة حجوزات الوكلاء وسجلات الحجوزات."
-    ,"noBookingsFound": "لا توجد حجوزات."
-    ,"notes": "ملاحظات"
-    ,"passportNumber": "رقم جواز السفر"
-    ,"passportNumberRequired": "رقم جواز السفر مطلوب."
-    ,"quotationNo": "رقم عرض السعر"
-    ,"selectCurrency": "اختر العملة"
-    ,"selectCustomer": "اختر العميل"
-    ,"selectedPackages": "الباقات المختارة"
-    ,"sendAndDownloadPdf": "تنزيل PDF"
-    ,"submit": "إرسال"
-    ,"submitting": "جارٍ الإرسال..."
-    ,"subTotal": "المجموع الفرعي"
-    ,"tax": "الضريبة"
-    ,"taxRate": "نسبة الضريبة"
-    ,"totalAmount": "المبلغ الإجمالي"
-    ,"totalCost": "إجمالي التكلفة"
-    ,"travelDates": "تواريخ السفر"
-    ,"travelEndDate": "تاريخ انتهاء السفر"
-    ,"travelStartDate": "تاريخ بدء السفر"
-    ,"validUntil": "صالح حتى"
-    ,"individual": "فرد"
-    ,"couple": "زوجان"
-    ,"family": "عائلة"
-    ,"company": "شركة"
-    ,"selectAtLeastOnePackage": "اختر باقة واحدة على الأقل."
-    ,"quotationSaved": "تم حفظ عرض السعر بنجاح."
-    ,"quotationSendError": "تعذر إرسال عرض السعر."
-    ,"quotationPdfDownloaded": "تم تنزيل ملف عرض السعر بنجاح."
-    ,"quotationSent": "تم إرسال عرض السعر بنجاح."
-    ,"hideAddTour": "إخفاء قسم إضافة جولة"
-    ,"showAddTour": "إظهار قسم إضافة جولة"
-    ,"hideAddPackage": "إخفاء قسم إضافة باقة"
-    ,"showAddPackage": "إظهار قسم إضافة باقة"
-    ,"contentManagement": "إدارة المحتوى"
-    ,"manageTravelContent": "إدارة محتوى السفر والحجوزات"
-    ,"viewWebsite": "عرض الموقع"
-    ,"administrator": "المسؤول"
-    ,"myProfile": "ملفي الشخصي"
-    ,"signOut": "تسجيل الخروج"
-    ,"notifications": "الإشعارات"
-    ,"adminNavigation": "تنقل الإدارة"
-    ,"adminAgentMenu": "قائمة المسؤول / الوكيل"
-    ,"packageList": "قائمة الباقات"
-    ,"destinationId": "رقم الوجهة"
-    ,"draft": "مسودة"
-    ,"sent": "مُرسل"
-    ,"accepted": "مقبول"
-    ,"rejected": "مرفوض"
-    ,"expired": "منتهي الصلاحية"
-    ,"managePackageDetails": "إنشاء وإدارة باقات السفر للموقع."
-    ,"editPackage": "تعديل الباقة"
-    ,"addPackage": "إضافة باقة"
-    ,"title": "العنوان"
-    ,"imageUrl": "رابط الصورة"
-    ,"activePackage": "باقة نشطة"
-    ,"updatePackage": "تحديث الباقة"
-    ,"createPackage": "إنشاء باقة"
-    ,"loadingPackages": "جارٍ تحميل الباقات"
-    ,"quickAccessManagement": "وصول سريع إلى أقسام الإدارة."
-    ,"Booking": "الحجوزات"
-    ,"Cities": "المدن"
-    ,"cities": "المدن"
-    ,"bookingsLoadError": "تعذر تحميل الحجوزات. يرجى المحاولة مرة أخرى."
-    ,"total": "الإجمالي"
-    ,"travelDate": "تاريخ السفر"
-    ,"travelDateRequired": "تاريخ السفر مطلوب."
-    ,"bookNow": "احجز الآن"
-    ,"loginToBook": "سجل الدخول للحجز"
-    ,"checkAvailability": "تحقق من التوافر"
-    ,"checkingAvailability": "جارٍ التحقق من التوافر..."
-    ,"selectionAvailable": "اختيارك متاح"
-    ,"selectionUnavailable": "اختيارك غير متاح حاليًا"
-    ,"availabilityCanChange": "سيتم التحقق من التوافر مرة أخرى عند إرسال الحجز."
-    ,"onlySeatsAvailable": "يتوفر حاليًا {{seats}} مقاعد فقط."
-    ,"availabilityCheckError": "تعذر التحقق من التوافر. يرجى المحاولة مرة أخرى."
-    ,"bookingRequestReceived": "تم استلام طلب الحجز"
-    ,"bookingConfirmationMessage": "تم استلام طلب حجزك في {{time}}. أرسلنا إليك رسالة تأكيد عبر البريد الإلكتروني. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز."
-    ,"bookingConfirmationEmailPending": "تم استلام طلب حجزك في {{time}}. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز، وسيتم إرسال إشعار البريد الإلكتروني قريبًا."
-    ,"bookingNotesPlaceholder": "أي طلبات خاصة أو ملاحظات لفريقنا..."
-    ,"bookingCreated": "تم إنشاء حجزك بنجاح. سيتصل بك فريقنا للتأكيد."
-    ,"bookingCreateError": "تعذر إنشاء حجزك. يرجى المحاولة مرة أخرى."
-    ,"bookingSeatsExceeded": "عدد الضيوف يتجاوز المقاعد المتاحة."
-    ,"availableBookingDates": "تواريخ الحجز المتاحة"
-    ,"availableBookingDateRange": "من {{from}} إلى {{to}}"
-    ,"bookingStatusPending": "قيد الانتظار"
-    ,"bookingStatusConfirmed": "مؤكد"
-    ,"bookingStatusCancelled": "ملغي"
-    ,"bookingStatusCompleted": "مكتمل"
-    ,"confirmBooking": "تأكيد"
-    ,"completeBooking": "إكمال"
-    ,"cancelBooking": "إلغاء الحجز"
-    ,"cancelBookingConfirm": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟"
-    ,"bookingStatusUpdated": "تم تحديث حالة الحجز."
-    ,"bookingStatusUpdateError": "تعذر تحديث حالة الحجز."
-    ,"filterByStatus": "تصفية حسب الحالة"
-    ,"allStatuses": "كل الحالات"
-    ,"bookingProduct": "الجولة / الباقة"
-    ,"customerPhone": "هاتف العميل"
-    ,"confirmBookingByPhone": "تأكيد الحجز بعد الاتصال بالعميل"
-    ,"customerContactedConfirm": "تم الاتصال بالعميل — تأكيد"
-    ,"statusNoteOptional": "ملاحظة المكالمة (اختياري)"
-    ,"phoneConfirmationNotePlaceholder": "أضف أي تفاصيل من مكالمة التأكيد..."
-    ,"notAvailable": "غير متاح"
-    ,"cancellationFee": "رسوم الإلغاء"
-    ,"enterCancellationFee": "أدخل مبلغ رسوم الإلغاء. استخدم 0 إذا لم توجد رسوم."
-    ,"freeCancellationNoFee": "هذا الحجز يتيح إلغاءً مجانيًا، لذلك لن تُفرض رسوم."
-    ,"cancellationFeeInvalid": "لا يمكن أن تكون رسوم الإلغاء سالبة."
-    ,"packageUnavailableForBooking": "هذه الباقة غير متاحة للحجز."
-    ,"assignAgent": "تعيين وكيل"
-    ,"assignBookingAgent": "تعيين الحجز لوكيل"
-    ,"hideAssignBooking": "إخفاء نموذج التعيين"
-    ,"bookingAssigned": "تم تعيين الحجز للوكيل."
-    ,"bookingAssignError": "تعذر تعيين الحجز."
-    ,"packageTitleRequired": "يرجى إضافة عنوان للباقة."
-    ,"packageUpdated": "تم تحديث الباقة بنجاح."
-    ,"packageCreated": "تم إنشاء الباقة بنجاح."
-    ,"packageDeactivated": "تم إلغاء تفعيل الباقة بنجاح."
-    ,"packageSaveError": "تعذر حفظ الباقة. يرجى المحاولة مرة أخرى."
-    ,"confirmDeactivatePackage": "هل تريد إلغاء تفعيل هذه الباقة؟"
-    ,"confirmActivatePackage": "هل تريد تفعيل هذه الباقة؟"
-    ,"languageEnglish": "الإنجليزية"
-    ,"languageArabic": "العربية"
-    ,"travelAgency": "وكالة سفر"
-    ,"homeLinkLabel": "الصفحة الرئيسية لسي وورلد هوليدايز"
-    ,"openAccountMenu": "فتح قائمة الحساب"
-    ,"toggleAdminNavigation": "تبديل قائمة تنقل الإدارة"
-    ,"airlineLogo": "شعار شركة الطيران"
-    ,"manageCityDetails": "إدارة المدن وربط كل مدينة بالوجهة التابعة لها."
-    ,"hideAddCity": "إخفاء إضافة مدينة"
-    ,"showAddCity": "إظهار إضافة مدينة"
-    ,"editCity": "تعديل المدينة"
-    ,"addCity": "إضافة مدينة"
-    ,"cityRecords": "سجلات المدن"
-    ,"noCitiesFound": "لا توجد مدن."
-    ,"citySaveError": "تعذر حفظ المدينة."
-    ,"cityServiceUnavailable": "خدمة المدن غير متاحة."
-    ,"cityCreated": "تم إنشاء المدينة بنجاح."
-    ,"cityUpdated": "تم تحديث المدينة بنجاح."
-    ,"confirmDeactivateCity": "هل أنت متأكد من إلغاء تفعيل هذه المدينة؟"
-    ,"confirmActivateCity": "هل أنت متأكد من تفعيل هذه المدينة؟"
-    ,"cityStatusUpdated": "تم تحديث حالة المدينة بنجاح."
-    ,"saving": "جارٍ الحفظ..."
-    ,"forgotPasswordError": "تعذر إرسال بريد إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
-    ,"searchDestinations": "البحث في الوجهات"
-    ,"noMatchingDestinations": "لا توجد وجهات مطابقة لبحثك."
-    ,"pricePerPerson": "سعر الفرد"
-    ,"pricePerChild": "سعر الطفل"
-    ,"maxSeats": "الحد الأقصى للمقاعد"
-    ,"durationDays": "المدة بالأيام"
-    ,"durationHours": "الساعات الإضافية"
-    ,"startDate": "تاريخ البدء"
-    ,"endDate": "تاريخ الانتهاء"
-    ,"startDateRequired": "تاريخ البدء مطلوب."
-    ,"endDateRequired": "تاريخ الانتهاء مطلوب."
-    ,"endDateBeforeStart": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء أو مساويًا له."
-    ,"fullDescription": "الوصف الكامل"
-    ,"coverImageUrl": "رابط صورة الغلاف"
-    ,"cancellationPolicy": "سياسة الإلغاء"
-    ,"freeCancellation": "إلغاء مجاني"
-    ,"nileCruise": "رحلة نيلية"
-    ,"positiveValueRequired": "أدخل قيمة أكبر من صفر."
-    ,"valueShouldBeMoreThanZero": "أدخل صفرًا أو قيمة موجبة."
-    ,"durationHoursRange": "يجب أن تكون الساعات بين 0 و23."
-    ,"validUrlRequired": "أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://."
-    ,"search": "بحث"
-    ,"clear": "مسح"
-    ,"pageSize": "حجم الصفحة"
-    ,"totalRecords": "إجمالي السجلات"
-    ,"addImage": "إضافة صورة"
-    ,"noImagesAdded": "لم تتم إضافة صور للمعرض بعد."
-    ,"tourHighlights": "أبرز مميزات الجولة"
-    ,"tourHighlightsHint": "أهم النقاط التي يراها المسافر بسرعة، مثل \"دخول بدون طابور\" أو \"مرشد سياحي مرافق\"."
-    ,"addHighlight": "إضافة ميزة"
-    ,"highlightPlaceholder": "مثال: نقل خاص من وإلى المطار"
-    ,"noHighlightsAdded": "لم تتم إضافة مميزات بعد."
-    ,"whatsIncludedExcluded": "ما هو مشمول / غير مشمول"
-    ,"whatsIncludedExcludedHint": "أخبر المسافر بدقة بما هو مشمول وغير مشمول ضمن السعر."
-    ,"addIncluded": "إضافة عنصر مشمول"
-    ,"addExcluded": "إضافة عنصر غير مشمول"
-    ,"includePlaceholder": "مثال: الإقامة الفندقية، الوجبات، تذاكر الدخول"
-    ,"noIncludesAdded": "لم تتم إضافة عناصر مشمولة أو غير مشمولة بعد."
-    ,"included": "مشمول"
-    ,"excluded": "غير مشمول"
-    ,"itineraryHint": "أضف كل خطوة رئيسية واحفظها، ثم أضف إليها خطوات فرعية اختيارية."
-    ,"addStep": "إضافة خطوة"
-    ,"addChild": "إضافة خطوة فرعية"
-    ,"step": "الخطوة"
-    ,"stepTitle": "عنوان الخطوة"
-    ,"stepTitlePlaceholder": "مثال: الانتقال من الفندق وزيارة المتحف"
-    ,"stepTitleRequired": "عنوان الخطوة مطلوب."
-    ,"itineraryValue": "قيمة الخطوة"
-    ,"itineraryValuePlaceholder": "مثال: المتحف المصري"
-    ,"startTime": "وقت البدء"
-    ,"endTime": "وقت الانتهاء"
-    ,"childStep": "خطوة فرعية"
-    ,"parentStepId": "معرّف الخطوة الرئيسية"
-    ,"stepDescriptionPlaceholder": "صف ما يحدث خلال هذه الخطوة..."
-    ,"itinerarySteps": "خطوات خط السير"
-    ,"stepDetails": "تفاصيل الخطوة"
-    ,"childStepDetails": "تفاصيل الخطوة الفرعية"
-    ,"saveStep": "حفظ الخطوة"
-    ,"clickAddStepToStart": "اضغط على إضافة خطوة لفتح بطاقة إدخال خط السير."
-    ,"saveItineraryStepFirst": "احفظ أو ألغِ خطوة خط السير المفتوحة قبل المتابعة."
-    ,"addDay": "إضافة يوم"
-    ,"day": "اليوم"
-    ,"dayTitlePlaceholder": "مثال: الوصول وجولة في المدينة"
-    ,"dayTitleRequired": "عنوان اليوم مطلوب."
-    ,"dayDescriptionPlaceholder": "صف الأنشطة المخطط لها في هذا اليوم..."
-    ,"dayDescriptionRequired": "وصف اليوم مطلوب."
-    ,"noItineraryAdded": "لم تتم إضافة خطوات إلى خط السير بعد."
-    ,"seatsAvailable": "مقعد متاح"
-    ,"toursLoadError": "تعذر تحميل الجولات."
-    ,"nileCruisesLoadError": "تعذر تحميل الرحلات النيلية."
-    ,"destinationNotFound": "الوجهة غير موجودة."
-    ,"tourNotFound": "الجولة غير موجودة."
-    ,"toursInDestination": "الجولات في هذه الوجهة"
-    ,"tourCount": "{{count}} جولات"
-    ,"noToursForDestination": "لا توجد جولات متاحة لهذه الوجهة."
-    ,"exploreNow": "استكشف الآن"
-    ,"backToDestinations": "العودة إلى الوجهات"
-    ,"type": "النوع"
-    ,"groupSize": "حجم المجموعة"
-    ,"languages": "اللغات"
-    ,"tourDescriptions": "وصف الجولة"
-    ,"days": "أيام"
-    ,"hours": "ساعات"
-    ,"people": "أشخاص"
-    ,"person": "فرد"
-    ,"yourJourney": "رحلتك"
-    ,"tripItinerary": "خط سير الرحلة"
-    ,"tripItineraryDescription": "تابع الرحلة خطوة بخطوة مع تنظيم واضح لكل محطة ونشاط."
-    ,"journeyStep": "خطوة الرحلة"
-    ,"packageNotFound": "الباقة غير موجودة."
-    ,"backToHome": "العودة إلى الرئيسية"
-    ,"travelPackage": "باقة سفر"
-    ,"packageOverview": "نظرة عامة على الباقة"
-    ,"packageHighlights": "أبرز مميزات الباقة"
-    ,"toursInPackage": "الجولات المشمولة في الباقة"
-    ,"viewDetails": "عرض التفاصيل"
-    ,"packageSummary": "ملخص الباقة"
-    ,"viewDestination": "عرض الوجهة"
-    ,"tourCreationSteps": "خطوات إنشاء الجولة"
-    ,"tourStepperHint": "احفظ بيانات الجولة أولاً، ثم أضف الصور وأنشئ خط السير."
-    ,"tourDetailsStep": "بيانات الجولة"
-    ,"tourImagesStep": "صور الجولة"
-    ,"tourItineraryStep": "خط سير الجولة"
-    ,"detailsStepHint": "أدخل البيانات الأساسية واحفظها لإنشاء سجل الجولة."
-    ,"imagesStepHint": "اختر صور الجولة، وستكون الصورة الأولى هي صورة الغلاف."
-    ,"itineraryStepHint": "أنشئ الرحلة باستخدام خطوات رئيسية ومستوى واحد من الأنشطة الفرعية."
-    ,"savedTourNumber": "الجولة المحفوظة"
-    ,"saveDetailsAndContinue": "حفظ البيانات والمتابعة"
-    ,"continueToItinerary": "المتابعة إلى خط السير"
-    ,"finishTour": "حفظ وإنهاء الجولة"
-    ,"imagesStagedHint": "الصور المختارة جاهزة وسيتم رفعها مع خط السير عند إنهاء الجولة."
-    ,"completeTourDetailsFirst": "أكمل بيانات الجولة المطلوبة قبل المتابعة."
-    ,"tourIdMissingAfterCreate": "تم حفظ الجولة، لكن واجهة البرمجة لم تُرجع رقمها. يجب إرجاع رقم الجولة المنشأة للمتابعة إلى الصور وخط السير."
-    ,"tourDetailsCreated": "تم حفظ بيانات الجولة. يمكنك الآن إضافة الصور."
-    ,"tourDetailsUpdated": "تم تحديث بيانات الجولة. يمكنك الآن مراجعة الصور."
-    ,"saveImagesAndContinue": "رفع الصور والمتابعة"
-    ,"saveItineraryAndFinish": "حفظ خط السير والإنهاء"
-    ,"imagesUploadStepHint": "ترسل هذه الخطوة طلب بيانات متعدد الأجزاء يحتوي فقط على رقم الجولة والصور."
-    ,"tourImagesSaved": "تم رفع صور الجولة بنجاح."
-    ,"tourImagesSaveError": "تعذر رفع صور الجولة."
-    ,"tourItinerarySaveError": "تعذر حفظ خط سير الجولة."
-    ,"dayNumber": "رقم اليوم"
-    ,"dayNumberPositive": "يجب أن يكون رقم اليوم عددًا صحيحًا أكبر من صفر."
-    ,"stepTitleMaxLength": "يجب ألا يتجاوز عنوان الخطوة 200 حرف."
-    ,"stepDescriptionMaxLength": "يجب ألا يتجاوز وصف الخطوة 2000 حرف."
-    ,"endTimeAfterStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء."
-    ,"itineraryTimesRequired": "وقت البدء ووقت الانتهاء مطلوبان."
-    ,"itineraryTitleAndTimesRequired": "أضف خطوة واحدة على الأقل إلى خط السير. يجب أن تحتوي كل خطوة على عنوان ووقت بدء ووقت انتهاء."
-    ,"itineraryTimeQuarterHour": "اختر وقتًا بدقائق 00 أو 15 أو 30 أو 45."
-    ,"itineraryTimeConflict": "يتداخل هذا الوقت مع خطوة أخرى في خط سير اليوم نفسه. اختر نطاقًا زمنيًا مختلفًا."
-    ,"savingTourDetails": "جارٍ حفظ بيانات الجولة..."
-    ,"uploadingTourImages": "جارٍ رفع صور الجولة..."
-    ,"savingTourItinerary": "جارٍ حفظ خط سير الجولة..."
-    ,"deletingTourImage": "جارٍ حذف صورة الجولة..."
-    ,"pleaseWaitForRequest": "يرجى الانتظار حتى يكتمل الطلب."
-    ,"tourImagesAlreadySaved": "صور الجولة محفوظة بالفعل."
-    ,"tourIncludes": "العناصر المشمولة في الجولة"
-    ,"tourExcludes": "العناصر غير المشمولة في الجولة"
-    ,"includeValuePlaceholder": "مثال: مرشد سياحي محترف"
-    ,"excludeValuePlaceholder": "مثال: المصروفات الشخصية"
-    ,"noTourIncludesAdded": "لم تتم إضافة عناصر مشمولة بعد."
-    ,"noTourExcludesAdded": "لم تتم إضافة عناصر غير مشمولة بعد."
-    ,"listValueRequired": "أدخل قيمة أو احذف هذا الصف."
-    ,"confirmDeactivateTour": "هل تريد إلغاء تفعيل هذه الجولة؟ يمكن تعديلها بعد أن تصبح غير نشطة."
-    ,"confirmActivateTour": "هل تريد تفعيل هذه الجولة؟ لا يمكن تعديل الجولات النشطة."
-    ,"tourStatusUpdated": "تم تحديث حالة الجولة بنجاح."
-    ,"tourStatusUpdateError": "تعذر تحديث حالة الجولة."
-    ,"creatingBooking": "جارٍ إنشاء حجزك..."
-    ,"dateFrom": "تاريخ البدء"
-    ,"dateTo": "تاريخ الانتهاء"
-    ,"dateFromRequired": "تاريخ البدء مطلوب."
-    ,"dateToRequired": "تاريخ الانتهاء مطلوب."
-    ,"bookingDateRangeInvalid": "يجب أن يكون تاريخ الانتهاء في تاريخ البدء أو بعده."
-    ,"bookingDateOutsideAvailability": "اختر تواريخ ضمن فترة الحجز المتاحة."
-    ,"duplicateBookingDates": "لقد حجزت هذه الجولة أو الباقة بالفعل لنفس التواريخ."
-    ,"travelersWholeNumber": "أدخل عددًا صحيحًا للمسافرين."
-    ,"atLeastOneAdult": "مطلوب شخص بالغ واحد على الأقل."
-    ,"childrenCannotBeNegative": "لا يمكن أن يكون عدد الأطفال سالبًا."
-    ,"specialRequests": "طلبات خاصة"
-    ,"specialRequestsPlaceholder": "أخبرنا عن متطلبات الطعام أو سهولة الوصول أو الاستلام أو أي طلبات أخرى..."
-    ,"specialRequestsMaxLength": "يجب ألا تتجاوز الطلبات الخاصة 1000 حرف."
-    ,"travelers": "مسافر"
-    ,"tourUnavailableForBooking": "هذه الجولة غير متاحة للحجز."
-    ,"addProfileImage": "إضافة صورة"
-    ,"changeProfileImage": "تغيير الصورة"
-    ,"profileImageHint": "صورة JPG أو PNG أو WEBP أو GIF بحجم أقصى 5 ميجابايت."
-    ,"uploadingProfileImage": "جارٍ رفع صورة ملفك الشخصي..."
-    ,"removingProfileImage": "جارٍ إزالة صورة ملفك الشخصي..."
-    ,"profileImageUpdated": "تم تحديث صورة الملف الشخصي بنجاح."
-    ,"profileImageRemoved": "تمت إزالة صورة الملف الشخصي بنجاح."
-    ,"profileImageUploadError": "تعذر رفع صورة الملف الشخصي."
-    ,"profileImageRemoveError": "تعذر إزالة صورة الملف الشخصي."
-    ,"confirmRemoveProfileImage": "هل تريد إزالة صورة ملفك الشخصي؟"
-    ,"removeProfileImageWarning": "سيتم عرض صورة رمزية تحتوي على الأحرف الأولى من اسمك بدلاً منها."
-    ,"confirmSignOut": "تأكيد تسجيل الخروج"
-    ,"confirmSignOutQuestion": "هل أنت متأكد من رغبتك في تسجيل الخروج من حسابك؟"
-    ,"myBookings": "حجوزاتي"
-    ,"settings": "الإعدادات"
-    ,"noAgentsFound": "لا يوجد وكلاء متاحون حاليًا."
-    ,"packageImages": "صور الباقة"
-    ,"packageImagesHint": "اختر معرض صور الباقة؛ سيتم استخدام الصورة الأولى كغلاف."
-    ,"packageImagesUploadStepHint": "ترفع هذه الخطوة صور الباقة المحددة، ويمكنك معاينتها أو إزالتها قبل المتابعة."
-    ,"packageImageRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت"
-    ,"packageImageLimit": "يمكن أن تحتوي الباقة على 5 صور كحد أقصى."
-    ,"packageImagesSaveError": "تعذر رفع صور الباقة."
-    ,"packageIdMissingAfterCreate": "تم حفظ الباقة، لكن الواجهة البرمجية لم تُرجع رقمها لرفع الصور."
-    ,"packageCreationSteps": "خطوات إنشاء الباقة"
-    ,"packageStepperHint": "احفظ تفاصيل الباقة، ثم ارفع الصور وأنشئ خط السير."
-    ,"packageDetailsStep": "تفاصيل الباقة"
-    ,"packageImagesStep": "صور الباقة"
-    ,"packageItineraryStep": "خط سير الباقة"
-    ,"packageDetailsHint": "أدخل بيانات الباقة والوجهات ثم احفظ للمتابعة."
-    ,"selectDestinations": "اختر وجهة واحدة على الأقل"
-    ,"selectedDestinationsCount": "الوجهات المختارة"
-    ,"maxCapacity": "السعة القصوى"
-    ,"fieldRequired": "هذا الحقل مطلوب."
-    ,"cancellationPolicyRequired": "سياسة الإلغاء مطلوبة عندما لا يكون الإلغاء مجانياً."
-    ,"savedPackageNumber": "الباقة المحفوظة"
-    ,"packageDetailsCreated": "تم حفظ تفاصيل الباقة. يمكنك الآن إضافة الصور."
-    ,"packageDetailsUpdated": "تم تحديث تفاصيل الباقة. يمكنك الآن مراجعة الصور."
-    ,"packageImagesSaved": "تم رفع صور الباقة بنجاح."
-    ,"packageItineraryRequired": "أضف خطوة صحيحة واحدة على الأقل إلى خط السير."
-    ,"validItineraryStepRequired": "أدخل عنوانًا ويومًا صحيحًا ووقتي بدء وانتهاء بدقائق 00 أو 15 أو 30 أو 45."
-    ,"savingPackageDetails": "جارٍ حفظ تفاصيل الباقة..."
-    ,"uploadingPackageImages": "جارٍ رفع صور الباقة..."
-    ,"savingPackageItinerary": "جارٍ حفظ خط سير الباقة..."
-    ,"deletingPackageImage": "جارٍ حذف صورة الباقة..."
-    ,"packageItinerarySaveError": "تعذر حفظ خط سير الباقة."
-    ,"loadingHomePage": "جارٍ تحميل الصفحة الرئيسية لسي وورلد هوليدايز"
-    ,"travelAroundWorld": "سافر حول العالم مع سي وورلد هوليدايز"
-    ,"homeHeroPackagesTitle": "سافر أبعد مع باقة صُممت خصيصاً لك"
-    ,"homeHeroPackagesDescription": "اكتشف عطلات مخططة بعناية تجمع بين الوجهات المميزة والإقامة المريحة والدعم من لحظة المغادرة حتى العودة."
-    ,"explorePackages": "استكشف باقات العطلات"
-    ,"homeHeroDestinationsTitle": "وجهتك القادمة التي لا تُنسى بانتظارك"
-    ,"homeHeroDestinationsDescription": "من العطلات الهادئة إلى المغامرات الثقافية، نساعدك على اختيار وتخطيط رحلة تناسب اهتماماتك وميزانيتك."
-    ,"exploreDestinations": "استكشف الوجهات"
-    ,"seaworldTravelConsultants": "مستشارو السفر في سي وورلد هوليدايز"
-    ,"visitors": "الزوار"
-    ,"travelPackages": "باقات السفر"
-    ,"aboutseaworldHolidays": "عن سي وورلد هوليدايز"
-    ,"trustedTravelPartnerTitle": "شريكك الموثوق لرحلات مخططة بعناية"
-    ,"trustedTravelPartnerDescription": "تجمع سي وورلد هوليدايز بين الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات وخطط السفر المخصصة في خدمة متكاملة. يخطط فريقنا الخبير لكل تفصيل بوضوح وعناية لتسافر بثقة."
-    ,"learnMoreAboutUs": "اعرف المزيد عنا"
-    ,"ourTravelPromise": "وعدنا لك في كل رحلة"
-    ,"whyTravelersChooseUs": "تخطيط سفر يركز على ما يهمك"
-    ,"whyTravelersChooseUsDescription": "خبرة عملية وخدمة مهتمة وترتيبات موثوقة منذ استفسارك الأول وحتى عودتك إلى المنزل."
-    ,"personalizedTravelPlanning": "تخطيط سفر مخصص"
-    ,"personalizedTravelPlanningDescription": "نصمم كل برنامج وفق وتيرتك المفضلة واهتماماتك ومواعيد سفرك وميزانيتك."
-    ,"supportThroughoutJourney": "دعم طوال رحلتك"
-    ,"supportThroughoutJourneyDescription": "يبقى فريقنا متاحاً قبل الرحلة وأثناءها وبعدها كلما احتجت إلى المساعدة."
-    ,"trustedTravelArrangements": "ترتيبات سفر موثوقة"
-    ,"trustedTravelArrangementsDescription": "ننسق الرحلات والإقامة والجولات والتنقلات الموثوقة مع معلومات واضحة في كل خطوة."
-    ,"seaworldHolidaysLogo": "شعار سي وورلد هوليدايز"
-    ,"mainNavigation": "التنقل الرئيسي"
-    ,"mobileNavigation": "قائمة التنقل على الهاتف"
-    ,"toggleHomeNavigation": "فتح أو إغلاق قائمة الموقع"
-    ,"footerTravelDescription": "من باقات العطلات المخصصة إلى الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات، نهتم بالتفاصيل لتسافر بثقة."
-    ,"emailseaworldHolidays": "مراسلة سي وورلد هوليدايز بالبريد الإلكتروني"
-    ,"callseaworldHolidays": "الاتصال بسي وورلد هوليدايز"
-    ,"office": "المكتب"
-    ,"officeAddress": "الهرم، برج الرحاب، 7 شارع المريوطية، أبراج السعد، أعلى بنك مصر، الدور الأول."
-    ,"footerCompanyLinks": "روابط الشركة"
-    ,"waysYouCanPay": "طرق الدفع المتاحة"
-    ,"aboutUs": "من نحن"
-    ,"contactUs": "اتصل بنا"
-    ,"newsletter": "النشرة البريدية"
-    ,"newsletterDescription": "استقبل أفكار السفر وإلهام الوجهات وأحدث عروض العطلات عبر البريد الإلكتروني."
-    ,"writeYourEmail": "أدخل بريدك الإلكتروني"
-    ,"subscribe": "اشترك"
-    ,"subscribing": "جارٍ الاشتراك..."
-    ,"newsletterEmailRequired": "البريد الإلكتروني مطلوب."
-    ,"newsletterEmailInvalid": "أدخل عنوان بريد إلكتروني صالحًا."
-    ,"newsletterEmailTooLong": "يجب ألا يزيد البريد الإلكتروني عن 254 حرفًا."
-    ,"newsletterSubscribedSuccess": "شكرًا لاشتراكك في نشرتنا البريدية."
-    ,"newsletterAlreadySubscribed": "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا البريدية."
-    ,"newsletterSubscribeError": "تعذر إتمام اشتراكك. يرجى المحاولة مرة أخرى."
-    ,"allRightsReserved": "جميع الحقوق محفوظة."
-    ,"activateAccount": "تفعيل حسابك"
-    ,"activationInProgress": "جارٍ تفعيل حسابك، يرجى الانتظار..."
-    ,"activationLinkInvalid": "رابط التفعيل غير صالح أو غير مكتمل."
-    ,"activationFailed": "تعذر تفعيل الحساب. يرجى المحاولة مرة أخرى."
-    ,"returnToSignup": "العودة إلى إنشاء الحساب"
-    ,"accountActivatedRedirecting": "تم تفعيل حسابك. جارٍ إعادة التوجيه..."
-    ,"emailSentSuccessfully": "تم إرسال البريد الإلكتروني بنجاح"
-    ,"passwordResetEmailSentDescription": "تم إرسال رسالة إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. تحقق من صندوق الوارد والرسائل غير المرغوب فيها إذا لم تصل خلال بضع دقائق."
-    ,"resetPasswordTitle": "إعادة تعيين كلمة المرور"
-    ,"resetPasswordInstructions": "أدخل بريدك الإلكتروني وسنرسل إليك رابطًا لإنشاء كلمة مرور جديدة."
-    ,"rememberPassword": "هل تذكرت كلمة المرور"
-    ,"forgotPassword": "نسيت كلمة المرور"
-    ,"signupCompleted": "تم إنشاء حسابك بنجاح."
-    ,"signupFailed": "تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى."
-    ,"registrationFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى."
-    ,"firstNamePlaceholder": "الاسم الأول"
-    ,"lastNamePlaceholder": "اسم العائلة"
-    ,"mobilePlaceholder": "+20 101 060 737"
-    ,"success": "تم بنجاح"
-    ,"activated": "تم التفعيل"
-    ,"accountCreatedActivationRequired": "تم إنشاء حسابك. يرجى التحقق من بريدك الإلكتروني لتفعيله."
-    ,"accountActivatedSignin": "تم تفعيل حسابك بنجاح. يمكنك الآن تسجيل الدخول."
-    ,"continue": "متابعة"
-    ,"bookingHistoryDescription": "راجع حجوزاتك الحالية وسجل الحجوزات السابق."
-    ,"rows": "الصفوف"
-    ,"loadingBookings": "جارٍ تحميل حجوزاتك"
-    ,"noBookingsFound": "لا توجد حجوزات."
-    ,"tourOrPackage": "جولة / باقة"
-    ,"bookedOn": "تاريخ الحجز"
-    ,"userBookingsLoadError": "تعذر تحميل حجوزاتك. يرجى المحاولة مرة أخرى لاحقًا."
-    ,"showingBookings": "عرض {{shown}} من أصل {{total}} حجز"
-    ,"pageOf": "الصفحة {{page}} من {{total}}"
-    ,"date": "التاريخ"
-    ,"selectYourDate": "اختر التاريخ"
-    ,"numberOfPeople": "عدد الأشخاص"
-    ,"numberOfChildren": "عدد الأطفال"
-    ,"searchNow": "ابحث الآن"
-    ,"tourMap": "خريطة الجولة"
-    ,"destinationNumber": "الوجهة رقم {{id}}"
-    ,"durationDaysHours": "{{days}} يوم، {{hours}} ساعة"
-    ,"destinationImageNumber": "صورة الوجهة {{number}}"
-    ,"packageImageNumber": "صورة الباقة {{number}}"
-    ,"tourCover": "غلاف الجولة"
-    ,"tourImageNumber": "صورة الجولة {{number}}"
-    ,"agent": "الوكيل"
-    ,"back": "رجوع"
-    ,"home": "الرئيسية"
-    ,"nonNegativeValueRequired": "يجب ألا تكون القيمة سالبة."
-    ,"whatsappseaworldHolidays": "تواصل مع سي وورلد هوليدايز عبر واتساب"
-    ,"instagramseaworldHolidays": "زيارة سي وورلد هوليدايز على إنستغرام"
-    ,"facebookseaworldHolidays": "زيارة سي وورلد هوليدايز على فيسبوك"
-    ,"showPassword": "إظهار كلمة المرور"
-    ,"hidePassword": "إخفاء كلمة المرور"
-    ,"showConfirmPassword": "إظهار تأكيد كلمة المرور"
-    ,"hideConfirmPassword": "إخفاء تأكيد كلمة المرور"
-    ,"aboutseaworld": {
-      "eyebrow": "سي وورلد هوليدايز",
-      "pageTitle": "عن سي وورلد هوليدايز",
-      "tagline": "اكتشف العالم بثقة وراحة وعناية استثنائية.",
-      "home": "سي وورلد",
-      "breadcrumb": "من نحن",
-      "introduction": {
-        "eyebrow": "من نحن",
-        "title": "اكتشف العالم بثقة",
-        "paragraphOne": "في سي وورلد هوليدايز، نؤمن بأن السفر لا يقتصر على الوصول إلى وجهة، بل يتعلق بصناعة تجارب لا تُنسى، واكتشاف ثقافات جديدة، وتكوين ذكريات تدوم مدى الحياة. سواء كنت تخطط لعطلة هادئة على الشاطئ، أو جولة مليئة بالمغامرات، أو إجازة عائلية، أو شهر عسل، أو رحلة عمل، فإن فريقنا المتخصص هنا ليجعل كل رحلة سلسة وممتعة.",
-        "paragraphTwo": "بشغفنا بتقديم خدمة استثنائية واهتمامنا بأدق التفاصيل، نوفر حلول سفر مصممة بعناية لتناسب احتياجات كل مسافر. بدءًا من حجوزات الطيران والفنادق ووصولًا إلى باقات العطلات المتكاملة، والمساعدة في التأشيرات، وخدمات النقل من وإلى المطار، وبرامج الرحلات المخصصة، نهتم بكل تفاصيل رحلتك لتتمكن من التركيز على الاستمتاع بالتجربة."
-      },
-      "mission": {
-        "title": "مهمتنا",
-        "description": "مهمتنا هي تقديم تجارب سفر متميزة من خلال خدمات موثوقة وشخصية وبأسعار مناسبة. ونسعى إلى بناء علاقات دائمة مع عملائنا من خلال الاحترافية والشفافية والعناية الاستثنائية بالعملاء."
-      },
-      "vision": {
-        "title": "رؤيتنا",
-        "description": "أن نصبح إحدى وكالات السفر الأكثر ثقة في المنطقة، من خلال ربط الناس بوجهات استثنائية وتقديم حلول سفر مبتكرة وخدمة عملاء عالمية المستوى."
-      },
-      "offer": {
-        "title": "ما نقدمه",
-        "items": [
-          "باقات عطلات دولية ومحلية",
-          "جولات خاصة وجماعية مصممة حسب الطلب",
-          "حجوزات طيران مع شركات الطيران الرائدة",
-          "حجوزات فنادق حول العالم",
-          "المساعدة في التأشيرات والاستشارات السياحية",
-          "خدمات النقل من وإلى المطار وخدمات المواصلات",
-          "باقات شهر العسل والعطلات العائلية",
-          "إدارة رحلات الشركات",
-          "رحلات بحرية وتجارب سفر فاخرة",
-          "المساعدة في تأمين السفر"
-        ]
-      },
-      "whyChooseUs": {
-        "title": "لماذا تختار سي وورلد هوليدايز؟",
-        "items": [
-          "مستشارو سفر ذوو خبرة مكرسون لرضاك",
-          "برامج رحلات شخصية تناسب تفضيلاتك وميزانيتك",
-          "أسعار تنافسية وقيمة استثنائية",
-          "شراكات موثوقة مع شركات الطيران والفنادق ومزودي الخدمات السياحية",
-          "دعم سريع ومتجاوب قبل رحلتك وأثناءها وبعدها",
-          "التزام بالجودة والموثوقية ورضا العملاء"
-        ]
-      },
-      "commitment": {
-        "title": "التزامنا",
-        "description": "كل مسافر فريد، وكل رحلة تستحق اهتمامًا خاصًا. في سي وورلد هوليدايز، نلتزم بتقديم خدمة شخصية ونصائح سفر متخصصة وتجارب مخططة بعناية تتجاوز التوقعات. من استفسارك الأول وحتى عودتك سالمًا، نكون معك في كل خطوة."
-      },
-      "closing": "دع سي وورلد هوليدايز تحول أحلامك في السفر إلى مغامرات لا تُنسى. استكشف العالم بثقة وراحة، واطمئن إلى أن كل التفاصيل قد تم ترتيبها بعناية من فريق يهتم حقًا برحلتك."
+  "blogs": "\u0627\u0644\u0645\u062f\u0648\u0646\u0629",
+  "blogsLoadError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
+  "tryAgain": "\u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649",
+  "noBlogsFound": "\u0644\u0627 \u062a\u0648\u062c\u062f \u0645\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u0634\u0648\u0631\u0629 \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
+  "readMore": "\u0627\u0642\u0631\u0623 \u0627\u0644\u0645\u0632\u064a\u062f",
+  "viewAllBlogs": "\u0639\u0631\u0636 \u0643\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a",
+  "previousBlog": "\u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a \u0627\u0644\u0633\u0627\u0628\u0642\u0629",
+  "nextBlog": "\u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a \u0627\u0644\u062a\u0627\u0644\u064a\u0629",
+  "manageBlogDetails": "\u0625\u0646\u0634\u0627\u0621 \u0648\u0646\u0634\u0631 \u0623\u062e\u0628\u0627\u0631 \u0648\u0623\u062f\u0644\u0629 \u0648\u0642\u0635\u0635 \u0627\u0644\u0633\u0641\u0631.",
+  "showAddBlog": "\u0625\u0636\u0627\u0641\u0629 \u0645\u062f\u0648\u0646\u0629",
+  "hideAddBlog": "\u0625\u062e\u0641\u0627\u0621 \u0646\u0645\u0648\u0630\u062c \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
+  "blogsData": "\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062f\u0648\u0646\u0627\u062a",
+  "publishDate": "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0646\u0634\u0631",
+  "editBlog": "\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
+  "confirmDeactivateBlog": "\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u0625\u0644\u063a\u0627\u0621 \u062a\u0641\u0639\u064a\u0644 \u0647\u0630\u0647 \u0627\u0644\u0645\u062f\u0648\u0646\u0629\u061f",
+  "confirmActivateBlog": "\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u062a\u0641\u0639\u064a\u0644 \u0647\u0630\u0647 \u0627\u0644\u0645\u062f\u0648\u0646\u0629\u061f",
+  "blogStatusUpdated": "\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 \u0628\u0646\u062c\u0627\u062d.",
+  "blogStatusUpdateError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u062f\u064a\u062b \u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629.",
+  "noBlogsCreated": "\u0644\u0645 \u064a\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0623\u064a \u0645\u062f\u0648\u0646\u0627\u062a \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
+  "blogImages": "\u0635\u0648\u0631 \u0627\u0644\u0645\u062f\u0648\u0646\u0629",
+  "blogImageRules": "JPG \u0623\u0648 PNG \u0623\u0648 WebP\u060c \u0648\u0628\u062d\u062f \u0623\u0642\u0635\u0649 5 \u0645\u064a\u062c\u0627\u0628\u0627\u064a\u062a",
+  "blogImageLimit": "\u0627\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0644\u0644\u0645\u062f\u0648\u0646\u0629 \u0647\u0648 5 \u0635\u0648\u0631.",
+  "blogImageNumber": "\u0635\u0648\u0631\u0629 \u0627\u0644\u0645\u062f\u0648\u0646\u0629 {{number}}",
+  "processingImages": "\u062c\u0627\u0631\u064d \u0645\u0639\u0627\u0644\u062c\u0629 \u0627\u0644\u0635\u0648\u0631...",
+  "delete": "حذف",
+  "removeImage": "إزالة الصورة",
+  "confirmImageDelete": "هل تريد حذف هذه الصورة؟",
+  "imageDeleteWarning": "سيؤدي هذا الإجراء إلى حذف الصورة نهائيًا.",
+  "imageDeleted": "تم حذف الصورة بنجاح.",
+  "viewLargerImage": "عرض الصورة بحجم أكبر",
+  "previousImage": "الصورة السابقة",
+  "nextImage": "الصورة التالية",
+  "imageDeleteError": "تعذر حذف الصورة.",
+  "image": "الصورة",
+  "status": "الحالة",
+  "actions": "الإجراءات",
+  "activate": "تفعيل",
+  "confirm": "تأكيد",
+  "confirmStatusChange": "تأكيد تغيير الحالة",
+  "confirmDeactivateDestination": "هل أنت متأكد من إلغاء تفعيل هذه الوجهة؟",
+  "confirmActivateDestination": "هل أنت متأكد من تفعيل هذه الوجهة؟",
+  "statusUpdated": "تم تحديث حالة الوجهة بنجاح.",
+  "statusUpdateError": "تعذر تحديث حالة الوجهة.",
+  "view": "عرض",
+  "close": "إغلاق",
+  "active": "نشط",
+  "inactive": "غير نشط",
+  "tour": "جولة",
+  "admin": "الإدارة",
+  "destinations": "الوجهات",
+  "tours": "الجولات",
+  "nileCruises": "الرحلات النيلية",
+  "manageDestinationDetails": "إدارة تفاصيل الوجهة وصورها.",
+  "manageTourDetails": "إدارة تفاصيل الجولة والصور وخط السير.",
+  "backToDashboard": "العودة إلى لوحة التحكم",
+  "switchToGrid": "عرض شبكي",
+  "switchToTable": "عرض جدولي",
+  "collapseMenu": "طي القائمة",
+  "expandMenu": "توسيع القائمة",
+  "hideAddDestination": "إخفاء إضافة وجهة",
+  "showAddDestination": "إظهار إضافة وجهة",
+  "hotels": "الفنادق",
+  "manageHotelDetails": "إدارة تفاصيل الفنادق وبيانات الاتصال.",
+  "hideAddHotel": "إخفاء إضافة فندق",
+  "showAddHotel": "إظهار إضافة فندق",
+  "editHotel": "تعديل الفندق",
+  "addHotel": "إضافة فندق",
+  "hotelName": "اسم الفندق",
+  "hotelNameRequired": "اسم الفندق مطلوب.",
+  "starRating": "تصنيف النجوم",
+  "starRatingRequired": "تصنيف النجوم مطلوب.",
+  "address": "العنوان",
+  "activeHotel": "فندق نشط",
+  "hotelRecords": "سجلات الفنادق",
+  "loadingHotels": "جاري تحميل الفنادق...",
+  "noHotelsFound": "لا توجد فنادق.",
+  "hotelSaveError": "تعذر حفظ الفندق.",
+  "hotelServiceUnavailable": "خدمة الفنادق غير متاحة.",
+  "confirmDeactivateHotel": "هل أنت متأكد من إلغاء تفعيل هذا الفندق؟",
+  "confirmActivateHotel": "هل أنت متأكد من تفعيل هذا الفندق؟",
+  "airlines": "شركات الطيران",
+  "manageAirlineDetails": "إدارة تفاصيل شركات الطيران والشعارات.",
+  "hideAddAirline": "إخفاء إضافة شركة طيران",
+  "showAddAirline": "إظهار إضافة شركة طيران",
+  "editAirline": "تعديل شركة الطيران",
+  "addAirline": "إضافة شركة طيران",
+  "airlineName": "اسم شركة الطيران",
+  "airlineNameRequired": "اسم شركة الطيران مطلوب.",
+  "airlineCode": "رمز إياتا",
+  "airlineCodeRequired": "رمز إياتا مطلوب.",
+  "airlineCodeInvalid": "استخدم حرفين أو ثلاثة أحرف أو أرقام.",
+  "logoUrl": "رابط الشعار",
+  "logo": "الشعار",
+  "airlineRecords": "سجلات شركات الطيران",
+  "noAirlinesFound": "لا توجد شركات طيران.",
+  "airlineSaveError": "تعذر حفظ شركة الطيران.",
+  "airlineServiceUnavailable": "خدمة شركات الطيران غير متاحة.",
+  "airlineLogoRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
+  "airlineLogoRequired": "شعار شركة الطيران مطلوب.",
+  "chooseImage": "اختر صورة",
+  "replaceImage": "استبدال الصورة",
+  "confirmDeactivateAirline": "هل أنت متأكد من إلغاء تفعيل شركة الطيران هذه؟",
+  "confirmActivateAirline": "هل أنت متأكد من تفعيل شركة الطيران هذه؟",
+  "airlineStatusUpdated": "تم تحديث حالة شركة الطيران.",
+  "airlineStatusUpdateError": "تعذر تحديث حالة شركة الطيران.",
+  "airline": "شركة الطيران",
+  "selectAirline": "اختر شركة طيران",
+  "airlineRequired": "شركة الطيران مطلوبة.",
+  "flights": "الرحلات الجوية",
+  "flight": "رحلة جوية",
+  "manageFlightDetails": "إدارة مواعيد الرحلات والأسعار والمقاعد.",
+  "hideAddFlight": "إخفاء إضافة رحلة",
+  "showAddFlight": "إظهار إضافة رحلة",
+  "editFlight": "تعديل الرحلة",
+  "addFlight": "إضافة رحلة",
+  "flightNumber": "رقم الرحلة",
+  "flightNumberRequired": "رقم الرحلة مطلوب.",
+  "flightNumberMaxLength": "يجب ألا يتجاوز رقم الرحلة 20 حرفًا.",
+  "departureAirport": "مطار المغادرة",
+  "departureAirportRequired": "مطار المغادرة مطلوب.",
+  "arrivalAirport": "مطار الوصول",
+  "arrivalAirportRequired": "مطار الوصول مطلوب.",
+  "searchAirportPlaceholder": "ابحث باسم المطار أو المدينة أو الرمز",
+  "noAirportsFound": "لم يتم العثور على مطارات مطابقة.",
+  "airportSearchUnavailable": "البحث عن المطارات غير متاح مؤقتًا. يرجى المحاولة مرة أخرى.",
+  "airportSelectionRequired": "اختر مطارًا من نتائج البحث.",
+  "airportNameMaxLength": "يجب ألا يتجاوز اسم المطار 250 حرفًا.",
+  "departureArrivalDifferent": "يجب أن يكون مطارا المغادرة والوصول مختلفين.",
+  "departureTime": "وقت المغادرة",
+  "departureTimeRequired": "وقت المغادرة مطلوب.",
+  "arrivalTime": "وقت الوصول",
+  "arrivalTimeRequired": "وقت الوصول مطلوب.",
+  "arrivalTimeAfterDeparture": "يجب أن يكون وقت الوصول بعد وقت المغادرة.",
+  "availableSeats": "المقاعد المتاحة",
+  "availableSeatsRequired": "عدد المقاعد المتاحة مطلوب.",
+  "flightClass": "درجة الرحلة",
+  "flightClassEconomy": "اقتصادية",
+  "flightClassBusiness": "رجال الأعمال",
+  "flightClassFirst": "الأولى",
+  "route": "المسار",
+  "flightRecords": "سجلات الرحلات",
+  "noFlightsFound": "لا توجد رحلات.",
+  "flightSaveError": "تعذر حفظ الرحلة.",
+  "flightServiceUnavailable": "خدمة الرحلات غير متاحة.",
+  "customers": "العملاء",
+  "manageCustomerDetails": "إدارة حسابات العملاء وبيانات الاتصال.",
+  "hideAddCustomer": "إخفاء إضافة عميل",
+  "showAddCustomer": "إظهار إضافة عميل",
+  "editCustomer": "تعديل العميل",
+  "addCustomer": "إضافة عميل",
+  "customerName": "اسم العميل",
+  "customerNameRequired": "اسم العميل مطلوب.",
+  "activeCustomer": "عميل نشط",
+  "customerRecords": "سجلات العملاء",
+  "noCustomersFound": "لا يوجد عملاء.",
+  "customerSaveError": "تعذر حفظ العميل.",
+  "customerFormInvalid": "أكمل جميع بيانات العميل والمسافرين المطلوبة.",
+  "customerSavedWithTravelers": "تم حفظ العميل والمسافرين والتعيين بنجاح.",
+  "customerProfile": "ملف العميل",
+  "leadTraveler": "المسافر الرئيسي",
+  "leadTravelerHint": "يتم حفظ العميل بصفته المسافر الرئيسي.",
+  "dateOfBirth": "تاريخ الميلاد",
+  "dateOfBirthRequired": "تاريخ الميلاد مطلوب.",
+  "createAccount": "إنشاء حساب",
+  "gender": "النوع",
+  "male": "ذكر",
+  "female": "أنثى",
+  "customerAgentNotificationHint": "سيتلقى الوكيل المحدد إشعارًا بعد الحفظ.",
+  "customerAutoAssignedToAgent": "سيتم تعيين هذا العميل إليك تلقائيًا.",
+  "requiredTravelerFieldsHint": "جميع بيانات الهوية والاتصال وجواز السفر وتاريخ الميلاد مطلوبة.",
+  "companionTravelers": "المسافرون المرافقون",
+  "companionTravelersHint": "أضف الزوج أو الزوجة والأطفال والرضع والمربية أو أي مرافقين آخرين.",
+  "addSpouse": "إضافة زوج/زوجة",
+  "addAdult": "إضافة بالغ",
+  "addInfant": "إضافة رضيع",
+  "addBabysitter": "إضافة مربية",
+  "adult": "بالغ",
+  "child": "طفل",
+  "infant": "رضيع",
+  "traveler": "مسافر",
+  "travelerType": "نوع المسافر",
+  "relationship": "صلة القرابة",
+  "removeTraveler": "حذف المسافر",
+  "noCompanionTravelers": "لم تتم إضافة مسافرين مرافقين.",
+  "bookingAssignment": "تعيين الحجز",
+  "assignmentSuccessful": "تم التعيين بنجاح",
+  "agentNotificationConfirmed": "تم تعيين {{agent}} وإرسال إشعار إليه.",
+  "bookingAgentNotificationHint": "سيؤدي الحفظ إلى تعيين الحجز وإشعار الوكيل المحدد.",
+  "assignAndNotify": "تعيين وإشعار",
+  "done": "تم",
+  "customerServiceUnavailable": "خدمة العملاء غير متاحة.",
+  "confirmDeactivateCustomer": "هل أنت متأكد من إلغاء تفعيل هذا العميل؟",
+  "confirmActivateCustomer": "هل أنت متأكد من تفعيل هذا العميل؟",
+  "quotations": "عروض الأسعار",
+  "manageQuotationDetails": "إدارة عروض الأسعار والتسعير.",
+  "hideAddQuotation": "إخفاء إضافة عرض سعر",
+  "showAddQuotation": "إظهار إضافة عرض سعر",
+  "editQuotation": "تعديل عرض السعر",
+  "addQuotation": "إضافة عرض سعر",
+  "quotationRecords": "سجلات عروض الأسعار",
+  "noQuotationsFound": "لا توجد عروض أسعار.",
+  "quotationSaveError": "تعذر حفظ عرض السعر.",
+  "quotationServiceUnavailable": "خدمة عروض الأسعار غير متاحة.",
+  "tasks": "المهام",
+  "manageTaskDetails": "إسناد المهام للوكلاء ومتابعة تقدمها.",
+  "hideAddTask": "إخفاء إضافة مهمة",
+  "showAddTask": "إظهار إضافة مهمة",
+  "editTask": "تعديل المهمة",
+  "addTask": "إضافة مهمة",
+  "taskTitle": "عنوان المهمة",
+  "taskTitleRequired": "عنوان المهمة مطلوب.",
+  "assignedAgent": "الوكيل المكلف",
+  "selectAgent": "اختر وكيلاً",
+  "agentRequired": "الوكيل مطلوب.",
+  "dueDate": "تاريخ الاستحقاق",
+  "taskStatus": "حالة المهمة",
+  "taskStatusPending": "قيد الانتظار",
+  "taskStatusInProgress": "قيد التنفيذ",
+  "taskStatusCompleted": "مكتملة",
+  "taskStatusReturned": "معادة",
+  "taskStatusClosed": "مغلقة",
+  "startTask": "بدء",
+  "finishTask": "إنهاء",
+  "closeTask": "إغلاق",
+  "returnTask": "إعادة",
+  "agentCompletionNote": "ملاحظة الإنجاز",
+  "agentCompletionNotePlaceholder": "صف ما تم إنجازه لإكمال هذه المهمة...",
+  "agentCompletionNoteRequired": "ملاحظة الإنجاز مطلوبة.",
+  "returnReason": "سبب الإعادة",
+  "returnReasonPlaceholder": "اشرح سبب إعادة المهمة...",
+  "taskStatusUpdated": "تم تحديث حالة المهمة.",
+  "taskStatusUpdateError": "تعذر تحديث حالة المهمة.",
+  "taskRecords": "سجلات المهام",
+  "noTasksFound": "لا توجد مهام.",
+  "taskSaveError": "تعذر حفظ المهمة.",
+  "taskServiceUnavailable": "خدمة المهام غير متاحة.",
+  "myTasks": "مهامي",
+  "viewAllTasks": "عرض كل المهام",
+  "packages": "الباقات",
+  "noPackagesFound": "لا توجد باقات.",
+  "viewAllDestinations": "عرض كل الوجهات",
+  "viewAllTours": "عرض كل الجولات",
+  "viewAllNileCruises": "عرض كل الرحلات النيلية",
+  "viewAllPackages": "عرض كل الباقات",
+  "exploreMore": "استكشف المزيد",
+  "showMore": "عرض المزيد",
+  "loading": "جاري التحميل...",
+  "searchPlaceholder": "ابحث عن وجهات، جولات، باقات...",
+  "clearSearch": "مسح البحث",
+  "noSearchResults": "لا توجد نتائج.",
+  "searchLoadError": "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u0628\u062d\u062b. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
+  "language": "اللغة",
+  "currency": "العملة",
+  "currencyUsd": "دولار أمريكي",
+  "currencyEur": "يورو",
+  "currencyEgp": "جنيه مصري",
+  "currencySar": "ريال سعودي",
+  "editDestination": "تعديل الوجهة",
+  "addDestination": "إضافة وجهة",
+  "englishName": "الاسم بالإنجليزية",
+  "arabicName": "الاسم بالعربية",
+  "englishNameRequired": "الاسم الإنجليزي مطلوب.",
+  "arabicNameRequired": "الاسم العربي مطلوب.",
+  "englishNameInvalid": "استخدم الحروف الإنجليزية وابدأ بحرف.",
+  "arabicNameInvalid": "استخدم الحروف العربية فقط وابدأ بحرف عربي.",
+  "shortDescription": "وصف مختصر",
+  "optional": "اختياري",
+  "description": "الوصف",
+  "descriptionRequired": "الوصف مطلوب.",
+  "destinationImages": "صور الوجهة",
+  "tourImages": "صور الجولة",
+  "chooseImages": "اختر الصور",
+  "destinationImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
+  "tourImageRules": "صورة JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
+  "tourImageLimit": "الحد الأقصى للجولة هو 5 صور.",
+  "imagesRequired": "صورة واحدة على الأقل مطلوبة.",
+  "remove": "إزالة",
+  "cover": "الغلاف",
+  "activeDestination": "وجهة نشطة",
+  "activeTour": "جولة نشطة",
+  "update": "تحديث",
+  "add": "إضافة",
+  "cancel": "إلغاء",
+  "destinationsData": "سجلات الوجهات",
+  "previous": "السابق",
+  "next": "التالي",
+  "loadingDestinations": "جارٍ تحميل الوجهات...",
+  "edit": "تعديل",
+  "deactivate": "إلغاء التفعيل",
+  "noDestinationsFound": "لا توجد وجهات.",
+  "editTour": "تعديل الجولة",
+  "addTour": "إضافة جولة",
+  "englishTitle": "العنوان بالإنجليزية",
+  "arabicTitle": "العنوان بالعربية",
+  "englishTitleRequired": "العنوان الإنجليزي مطلوب.",
+  "arabicTitleRequired": "العنوان العربي مطلوب.",
+  "destination": "الوجهة",
+  "selectDestination": "اختر وجهة",
+  "destinationRequired": "الوجهة مطلوبة.",
+  "duration": "المدة",
+  "durationRequired": "المدة مطلوبة.",
+  "price": "السعر",
+  "priceRequired": "السعر مطلوب.",
+  "itinerary": "خط السير",
+  "itineraryRequired": "خط السير مطلوب.",
+  "updateTour": "تحديث الجولة",
+  "createTour": "إنشاء الجولة",
+  "tourList": "قائمة الجولات",
+  "loadingTours": "جارٍ تحميل الجولات...",
+  "noToursFound": "لا توجد جولات.",
+  "noNileCruisesFound": "لا توجد رحلات نيلية.",
+  "destinationServiceUnavailable": "خدمة الوجهات غير متاحة. يتم عرض بيانات تجريبية.",
+  "destinationSaveError": "تعذر حفظ الوجهة.",
+  "destinationUpdated": "تم تحديث الوجهة بنجاح.",
+  "destinationCreated": "تم إنشاء الوجهة بنجاح.",
+  "destinationImageLimit": "الحد الأقصى للوجهة هو 5 صور.",
+  "invalidImageType": "يرجى اختيار ملفات صور فقط.",
+  "imageTooLarge": "يجب ألا يتجاوز حجم كل صورة 5 ميجابايت.",
+  "imageReadError": "تعذر قراءة إحدى الصور.",
+  "imageResolutionTooSmall": "دقة الصورة منخفضة. استخدم صورة بدقة 1200 x 675 بكسل على الأقل.",
+  "imageAspectRatioInvalid": "يجب أن تكون الصورة أفقية بنسبة أبعاد بين 4:3 و16:9.",
+  "destinationDeactivated": "تم إلغاء تفعيل الوجهة بنجاح.",
+  "destinationsLoadError": "تعذر تحميل الوجهات. يرجى المحاولة مرة أخرى.",
+  "packagesLoadError": "تعذر تحميل الباقات. يرجى المحاولة مرة أخرى.",
+  "tourSaveError": "تعذر حفظ الجولة.",
+  "tourUpdated": "تم تحديث الجولة بنجاح.",
+  "tourCreated": "تم إنشاء الجولة بنجاح.",
+  "tourDeactivated": "تم إلغاء تفعيل الجولة بنجاح.",
+  "send": "إرسال",
+  "emailAddress": "البريد الالكتروني",
+  "emailPlaceholder": "name@example.com",
+  "passwordPlaceholder": "كلمة المرور",
+  "emailRequired": "البريد الإلكتروني مطلوب.",
+  "emailInvalid": "أدخل عنوان بريد إلكتروني صالح.",
+  "passwordRequired": "كلمة المرور مطلوبة.",
+  "passwordMin": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+  "submittingSignin": "جاري تسجيل الدخول...",
+  "submitSignIn": "تسجيل الدخول",
+  "noAccount": "لا تملك حسابًا؟",
+  "signup": "إنشاء حساب",
+  "firstName": "الاسم الأول",
+  "firstNameRequired": "الاسم الأول مطلوب.",
+  "firstNameMin": "يجب أن يكون الاسم الأول حرفين على الأقل.",
+  "lastNameRequired": "اسم العائلة مطلوب.",
+  "lastNameMin": "يجب أن يكون اسم العائلة حرفين على الأقل.",
+  "mobileRequired": "رقم الجوال مطلوب.",
+  "mobileInvalid": "أدخل رقم جوال صالح.",
+  "confirmRequired": "يرجى تأكيد كلمة المرور.",
+  "confirmMismatch": "كلمتا المرور غير متطابقتين.",
+  "acceptTerms": "يجب قبول الشروط والأحكام.",
+  "lastName": "اسم العائلة",
+  "mobile": "رقم الجوال",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "iaccept": "أوافق على",
+  "terms": "الشروط والأحكام",
+  "submittingSignUp": "جاري إنشاء الحساب...",
+  "alreadyHave": "هل لديك حساب؟",
+  "signin": "تسجيل الدخول",
+  "personalDetails": "البيانات الشخصية",
+  "createChangeSaveData": "قم بتعديل الحقول أدناه ثم اضغط حفظ لتحديث الملف الشخصي.",
+  "saveChanges": "حفظ التغييرات",
+  "changePassword": "تغيير كلمة المرور",
+  "phone": "رقم الجوال",
+  "website": "الموقع الإلكتروني",
+  "oldPassword": "كلمة المرور القديمة",
+  "newPassword": "كلمة المرور الجديدة",
+  "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+  "savePassword": "حفظ كلمة المرور",
+  "personalSaveSuccess": "تم تحديث البيانات الشخصية بنجاح.",
+  "personalSaveError": "تعذر حفظ البيانات الشخصية. حاول مرة أخرى.",
+  "passwordSaveSuccess": "تم تغيير كلمة المرور بنجاح.",
+  "passwordSaveError": "تعذر تغيير كلمة المرور. حاول مرة أخرى.",
+  "resetPassword": "إعادة تعيين كلمة المرور",
+  "resetInvalidLink": "رابط إعادة التعيين غير صالح. يرجى طلب إعادة تعيين كلمة مرور جديدة.",
+  "resetTokenExpired": "انتهت صلاحية رمز إعادة التعيين. يرجى طلب إعادة تعيين كلمة مرور جديدة.",
+  "passwordMinLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+  "passwordComplexity": "يجب أن تتضمن كلمة المرور حرفًا كبيرًا، رقمًا، ورمزًا.",
+  "resetPasswordSuccess": "تم إعادة تعيين كلمة المرور بنجاح.",
+  "resetPasswordError": "تعذر إعادة تعيين كلمة المرور. حاول مرة أخرى.",
+  "adults": "البالغون",
+  "amount": "المبلغ",
+  "bookingDate": "تاريخ الحجز",
+  "bookingId": "رقم الحجز",
+  "bookingRecords": "سجلات الحجوزات",
+  "bookings": "الحجوزات",
+  "children": "الأطفال",
+  "companyName": "اسم الشركة",
+  "companyNameRequired": "اسم الشركة مطلوب.",
+  "Configurations": "الإعدادات",
+  "customer": "العميل",
+  "customerType": "نوع العميل",
+  "discount": "الخصم",
+  "exchangeRate": "سعر الصرف",
+  "guests": "الضيوف",
+  "infants": "الرضع",
+  "manageBookings": "إدارة حجوزات الوكلاء وسجلات الحجوزات.",
+  "notes": "ملاحظات",
+  "passportNumber": "رقم جواز السفر",
+  "passportNumberRequired": "رقم جواز السفر مطلوب.",
+"passportNumberMaxLength": "يجب ألا يتجاوز رقم جواز السفر الحد الأقصى المسموح به 20",
+"passportNumberMinLength": "يجب ألا يقل رقم جواز السفر عن الحد الأدنى المسموح به 8",
+  "quotationNo": "رقم عرض السعر",
+  "selectCurrency": "اختر العملة",
+  "selectCustomer": "اختر العميل",
+  "selectedPackages": "الباقات المختارة",
+  "sendAndDownloadPdf": "تنزيل PDF",
+  "submit": "إرسال",
+  "submitting": "جارٍ الإرسال...",
+  "subTotal": "المجموع الفرعي",
+  "tax": "الضريبة",
+  "taxRate": "نسبة الضريبة",
+  "totalAmount": "المبلغ الإجمالي",
+  "totalCost": "إجمالي التكلفة",
+  "travelDates": "تواريخ السفر",
+  "travelEndDate": "تاريخ انتهاء السفر",
+  "travelStartDate": "تاريخ بدء السفر",
+  "validUntil": "صالح حتى",
+  "individual": "فرد",
+  "couple": "زوجان",
+  "family": "عائلة",
+  "company": "شركة",
+  "selectAtLeastOnePackage": "اختر باقة واحدة على الأقل.",
+  "quotationSaved": "تم حفظ عرض السعر بنجاح.",
+  "quotationSendError": "تعذر إرسال عرض السعر.",
+  "quotationPdfDownloaded": "تم تنزيل ملف عرض السعر بنجاح.",
+  "quotationSent": "تم إرسال عرض السعر بنجاح.",
+  "hideAddTour": "إخفاء قسم إضافة جولة",
+  "showAddTour": "إظهار قسم إضافة جولة",
+  "hideAddPackage": "إخفاء قسم إضافة باقة",
+  "showAddPackage": "إظهار قسم إضافة باقة",
+  "contentManagement": "إدارة المحتوى",
+  "manageTravelContent": "إدارة محتوى السفر والحجوزات",
+  "viewWebsite": "عرض الموقع",
+  "administrator": "المسؤول",
+  "myProfile": "ملفي الشخصي",
+  "signOut": "تسجيل الخروج",
+  "notifications": "الإشعارات",
+  "adminNavigation": "تنقل الإدارة",
+  "adminAgentMenu": "قائمة المسؤول / الوكيل",
+  "packageList": "قائمة الباقات",
+  "destinationId": "رقم الوجهة",
+  "draft": "مسودة",
+  "sent": "مُرسل",
+  "accepted": "مقبول",
+  "rejected": "مرفوض",
+  "expired": "منتهي الصلاحية",
+  "managePackageDetails": "إنشاء وإدارة باقات السفر للموقع.",
+  "editPackage": "تعديل الباقة",
+  "addPackage": "إضافة باقة",
+  "title": "العنوان",
+  "imageUrl": "رابط الصورة",
+  "activePackage": "باقة نشطة",
+  "updatePackage": "تحديث الباقة",
+  "createPackage": "إنشاء باقة",
+  "loadingPackages": "جارٍ تحميل الباقات",
+  "quickAccessManagement": "وصول سريع إلى أقسام الإدارة.",
+  "Booking": "الحجوزات",
+  "Cities": "المدن",
+  "cities": "المدن",
+  "bookingsLoadError": "تعذر تحميل الحجوزات. يرجى المحاولة مرة أخرى.",
+  "total": "الإجمالي",
+  "travelDate": "تاريخ السفر",
+  "travelDateRequired": "تاريخ السفر مطلوب.",
+  "bookNow": "احجز الآن",
+  "loginToBook": "سجل الدخول للحجز",
+  "checkAvailability": "تحقق من التوافر",
+  "checkingAvailability": "جارٍ التحقق من التوافر...",
+  "selectionAvailable": "اختيارك متاح",
+  "selectionUnavailable": "اختيارك غير متاح حاليًا",
+  "availabilityCanChange": "سيتم التحقق من التوافر مرة أخرى عند إرسال الحجز.",
+  "onlySeatsAvailable": "يتوفر حاليًا {{seats}} مقاعد فقط.",
+  "availabilityCheckError": "تعذر التحقق من التوافر. يرجى المحاولة مرة أخرى.",
+  "bookingRequestReceived": "تم استلام طلب الحجز",
+  "bookingConfirmationMessage": "تم استلام طلب حجزك في {{time}}. أرسلنا إليك رسالة تأكيد عبر البريد الإلكتروني. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز.",
+  "bookingConfirmationEmailPending": "تم استلام طلب حجزك في {{time}}. سيتواصل معك ممثلنا في أقرب وقت ممكن لتأكيد الحجز، وسيتم إرسال إشعار البريد الإلكتروني قريبًا.",
+  "bookingNotesPlaceholder": "أي طلبات خاصة أو ملاحظات لفريقنا...",
+  "bookingCreated": "تم إنشاء حجزك بنجاح. سيتصل بك فريقنا للتأكيد.",
+  "bookingCreateError": "تعذر إنشاء حجزك. يرجى المحاولة مرة أخرى.",
+  "bookingSeatsExceeded": "عدد الضيوف يتجاوز المقاعد المتاحة.",
+  "availableBookingDates": "تواريخ الحجز المتاحة",
+  "availableBookingDateRange": "من {{from}} إلى {{to}}",
+  "bookingStatusPending": "قيد الانتظار",
+  "bookingStatusConfirmed": "مؤكد",
+  "bookingStatusCancelled": "ملغي",
+  "bookingStatusCompleted": "مكتمل",
+  "confirmBooking": "تأكيد",
+  "completeBooking": "إكمال",
+  "cancelBooking": "إلغاء الحجز",
+  "cancelBookingConfirm": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟",
+  "bookingStatusUpdated": "تم تحديث حالة الحجز.",
+  "bookingStatusUpdateError": "تعذر تحديث حالة الحجز.",
+  "filterByStatus": "تصفية حسب الحالة",
+  "allStatuses": "كل الحالات",
+  "bookingProduct": "الجولة / الباقة",
+  "customerPhone": "هاتف العميل",
+  "confirmBookingByPhone": "تأكيد الحجز بعد الاتصال بالعميل",
+  "customerContactedConfirm": "تم الاتصال بالعميل — تأكيد",
+  "statusNoteOptional": "ملاحظة المكالمة (اختياري)",
+  "phoneConfirmationNotePlaceholder": "أضف أي تفاصيل من مكالمة التأكيد...",
+  "notAvailable": "غير متاح",
+  "cancellationFee": "رسوم الإلغاء",
+  "enterCancellationFee": "أدخل مبلغ رسوم الإلغاء. استخدم 0 إذا لم توجد رسوم.",
+  "freeCancellationNoFee": "هذا الحجز يتيح إلغاءً مجانيًا، لذلك لن تُفرض رسوم.",
+  "cancellationFeeInvalid": "لا يمكن أن تكون رسوم الإلغاء سالبة.",
+  "packageUnavailableForBooking": "هذه الباقة غير متاحة للحجز.",
+  "assignAgent": "تعيين وكيل",
+  "assignBookingAgent": "تعيين الحجز لوكيل",
+  "hideAssignBooking": "إخفاء نموذج التعيين",
+  "bookingAssigned": "تم تعيين الحجز للوكيل.",
+  "bookingAssignError": "تعذر تعيين الحجز.",
+  "packageTitleRequired": "يرجى إضافة عنوان للباقة.",
+  "packageUpdated": "تم تحديث الباقة بنجاح.",
+  "packageCreated": "تم إنشاء الباقة بنجاح.",
+  "packageDeactivated": "تم إلغاء تفعيل الباقة بنجاح.",
+  "packageSaveError": "تعذر حفظ الباقة. يرجى المحاولة مرة أخرى.",
+  "confirmDeactivatePackage": "هل تريد إلغاء تفعيل هذه الباقة؟",
+  "confirmActivatePackage": "هل تريد تفعيل هذه الباقة؟",
+  "languageEnglish": "الإنجليزية",
+  "languageArabic": "العربية",
+  "travelAgency": "وكالة سفر",
+  "homeLinkLabel": "الصفحة الرئيسية لسي وورلد هوليدايز",
+  "openAccountMenu": "فتح قائمة الحساب",
+  "toggleAdminNavigation": "تبديل قائمة تنقل الإدارة",
+  "airlineLogo": "شعار شركة الطيران",
+  "manageCityDetails": "إدارة المدن وربط كل مدينة بالوجهة التابعة لها.",
+  "hideAddCity": "إخفاء إضافة مدينة",
+  "showAddCity": "إظهار إضافة مدينة",
+  "editCity": "تعديل المدينة",
+  "addCity": "إضافة مدينة",
+  "cityRecords": "سجلات المدن",
+  "noCitiesFound": "لا توجد مدن.",
+  "citySaveError": "تعذر حفظ المدينة.",
+  "cityServiceUnavailable": "خدمة المدن غير متاحة.",
+  "cityCreated": "تم إنشاء المدينة بنجاح.",
+  "cityUpdated": "تم تحديث المدينة بنجاح.",
+  "confirmDeactivateCity": "هل أنت متأكد من إلغاء تفعيل هذه المدينة؟",
+  "confirmActivateCity": "هل أنت متأكد من تفعيل هذه المدينة؟",
+  "cityStatusUpdated": "تم تحديث حالة المدينة بنجاح.",
+  "saving": "جارٍ الحفظ...",
+  "forgotPasswordError": "تعذر إرسال بريد إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.",
+  "searchDestinations": "البحث في الوجهات",
+  "noMatchingDestinations": "لا توجد وجهات مطابقة لبحثك.",
+  "pricePerPerson": "سعر الفرد",
+  "pricePerChild": "سعر الطفل",
+  "maxSeats": "الحد الأقصى للمقاعد",
+  "durationDays": "المدة بالأيام",
+  "durationHours": "الساعات الإضافية",
+  "startDate": "تاريخ البدء",
+  "endDate": "تاريخ الانتهاء",
+  "startDateRequired": "تاريخ البدء مطلوب.",
+  "endDateRequired": "تاريخ الانتهاء مطلوب.",
+  "endDateBeforeStart": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء أو مساويًا له.",
+  "fullDescription": "الوصف الكامل",
+  "coverImageUrl": "رابط صورة الغلاف",
+  "cancellationPolicy": "سياسة الإلغاء",
+  "freeCancellation": "إلغاء مجاني",
+  "nileCruise": "رحلة نيلية",
+  "positiveValueRequired": "أدخل قيمة أكبر من صفر.",
+  "valueShouldBeMoreThanZero": "أدخل صفرًا أو قيمة موجبة.",
+  "durationHoursRange": "يجب أن تكون الساعات بين 0 و23.",
+  "validUrlRequired": "أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://.",
+  "search": "بحث",
+  "clear": "مسح",
+  "pageSize": "حجم الصفحة",
+  "totalRecords": "إجمالي السجلات",
+  "addImage": "إضافة صورة",
+  "noImagesAdded": "لم تتم إضافة صور للمعرض بعد.",
+  "tourHighlights": "أبرز مميزات الجولة",
+  "tourHighlightsHint": "أهم النقاط التي يراها المسافر بسرعة، مثل \"دخول بدون طابور\" أو \"مرشد سياحي مرافق\".",
+  "addHighlight": "إضافة ميزة",
+  "highlightPlaceholder": "مثال: نقل خاص من وإلى المطار",
+  "noHighlightsAdded": "لم تتم إضافة مميزات بعد.",
+  "whatsIncludedExcluded": "ما هو مشمول / غير مشمول",
+  "whatsIncludedExcludedHint": "أخبر المسافر بدقة بما هو مشمول وغير مشمول ضمن السعر.",
+  "addIncluded": "إضافة عنصر مشمول",
+  "addExcluded": "إضافة عنصر غير مشمول",
+  "includePlaceholder": "مثال: الإقامة الفندقية، الوجبات، تذاكر الدخول",
+  "noIncludesAdded": "لم تتم إضافة عناصر مشمولة أو غير مشمولة بعد.",
+  "included": "مشمول",
+  "excluded": "غير مشمول",
+  "itineraryHint": "أضف كل خطوة رئيسية واحفظها، ثم أضف إليها خطوات فرعية اختيارية.",
+  "addStep": "إضافة خطوة",
+  "addChild": "إضافة خطوة فرعية",
+  "step": "الخطوة",
+  "stepTitle": "عنوان الخطوة",
+  "stepTitlePlaceholder": "مثال: الانتقال من الفندق وزيارة المتحف",
+  "stepTitleRequired": "عنوان الخطوة مطلوب.",
+  "itineraryValue": "قيمة الخطوة",
+  "itineraryValuePlaceholder": "مثال: المتحف المصري",
+  "startTime": "وقت البدء",
+  "endTime": "وقت الانتهاء",
+  "childStep": "خطوة فرعية",
+  "parentStepId": "معرّف الخطوة الرئيسية",
+  "stepDescriptionPlaceholder": "صف ما يحدث خلال هذه الخطوة...",
+  "itinerarySteps": "خطوات خط السير",
+  "stepDetails": "تفاصيل الخطوة",
+  "childStepDetails": "تفاصيل الخطوة الفرعية",
+  "saveStep": "حفظ الخطوة",
+  "clickAddStepToStart": "اضغط على إضافة خطوة لفتح بطاقة إدخال خط السير.",
+  "saveItineraryStepFirst": "احفظ أو ألغِ خطوة خط السير المفتوحة قبل المتابعة.",
+  "addDay": "إضافة يوم",
+  "day": "اليوم",
+  "dayTitlePlaceholder": "مثال: الوصول وجولة في المدينة",
+  "dayTitleRequired": "عنوان اليوم مطلوب.",
+  "dayDescriptionPlaceholder": "صف الأنشطة المخطط لها في هذا اليوم...",
+  "dayDescriptionRequired": "وصف اليوم مطلوب.",
+  "noItineraryAdded": "لم تتم إضافة خطوات إلى خط السير بعد.",
+  "seatsAvailable": "مقعد متاح",
+  "toursLoadError": "تعذر تحميل الجولات.",
+  "nileCruisesLoadError": "تعذر تحميل الرحلات النيلية.",
+  "destinationNotFound": "الوجهة غير موجودة.",
+  "tourNotFound": "الجولة غير موجودة.",
+  "toursInDestination": "الجولات في هذه الوجهة",
+  "tourCount": "{{count}} جولات",
+  "noToursForDestination": "لا توجد جولات متاحة لهذه الوجهة.",
+  "exploreNow": "استكشف الآن",
+  "backToDestinations": "العودة إلى الوجهات",
+  "type": "النوع",
+  "groupSize": "حجم المجموعة",
+  "languages": "اللغات",
+  "tourDescriptions": "وصف الجولة",
+  "days": "أيام",
+  "hours": "ساعات",
+  "people": "أشخاص",
+  "person": "فرد",
+  "yourJourney": "رحلتك",
+  "tripItinerary": "خط سير الرحلة",
+  "tripItineraryDescription": "تابع الرحلة خطوة بخطوة مع تنظيم واضح لكل محطة ونشاط.",
+  "journeyStep": "خطوة الرحلة",
+  "packageNotFound": "الباقة غير موجودة.",
+  "backToHome": "العودة إلى الرئيسية",
+  "travelPackage": "باقة سفر",
+  "packageOverview": "نظرة عامة على الباقة",
+  "packageHighlights": "أبرز مميزات الباقة",
+  "toursInPackage": "الجولات المشمولة في الباقة",
+  "viewDetails": "عرض التفاصيل",
+  "packageSummary": "ملخص الباقة",
+  "viewDestination": "عرض الوجهة",
+  "tourCreationSteps": "خطوات إنشاء الجولة",
+  "tourStepperHint": "احفظ بيانات الجولة أولاً، ثم أضف الصور وأنشئ خط السير.",
+  "tourDetailsStep": "بيانات الجولة",
+  "tourImagesStep": "صور الجولة",
+  "tourItineraryStep": "خط سير الجولة",
+  "detailsStepHint": "أدخل البيانات الأساسية واحفظها لإنشاء سجل الجولة.",
+  "imagesStepHint": "اختر صور الجولة، وستكون الصورة الأولى هي صورة الغلاف.",
+  "itineraryStepHint": "أنشئ الرحلة باستخدام خطوات رئيسية ومستوى واحد من الأنشطة الفرعية.",
+  "savedTourNumber": "الجولة المحفوظة",
+  "saveDetailsAndContinue": "حفظ البيانات والمتابعة",
+  "continueToItinerary": "المتابعة إلى خط السير",
+  "finishTour": "حفظ وإنهاء الجولة",
+  "imagesStagedHint": "الصور المختارة جاهزة وسيتم رفعها مع خط السير عند إنهاء الجولة.",
+  "completeTourDetailsFirst": "أكمل بيانات الجولة المطلوبة قبل المتابعة.",
+  "tourIdMissingAfterCreate": "تم حفظ الجولة، لكن واجهة البرمجة لم تُرجع رقمها. يجب إرجاع رقم الجولة المنشأة للمتابعة إلى الصور وخط السير.",
+  "tourDetailsCreated": "تم حفظ بيانات الجولة. يمكنك الآن إضافة الصور.",
+  "tourDetailsUpdated": "تم تحديث بيانات الجولة. يمكنك الآن مراجعة الصور.",
+  "saveImagesAndContinue": "رفع الصور والمتابعة",
+  "saveItineraryAndFinish": "حفظ خط السير والإنهاء",
+  "imagesUploadStepHint": "ترسل هذه الخطوة طلب بيانات متعدد الأجزاء يحتوي فقط على رقم الجولة والصور.",
+  "tourImagesSaved": "تم رفع صور الجولة بنجاح.",
+  "tourImagesSaveError": "تعذر رفع صور الجولة.",
+  "tourItinerarySaveError": "تعذر حفظ خط سير الجولة.",
+  "dayNumber": "رقم اليوم",
+  "dayNumberPositive": "يجب أن يكون رقم اليوم عددًا صحيحًا أكبر من صفر.",
+  "stepTitleMaxLength": "يجب ألا يتجاوز عنوان الخطوة 200 حرف.",
+  "stepDescriptionMaxLength": "يجب ألا يتجاوز وصف الخطوة 2000 حرف.",
+  "endTimeAfterStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء.",
+  "itineraryTimesRequired": "وقت البدء ووقت الانتهاء مطلوبان.",
+  "itineraryTitleAndTimesRequired": "أضف خطوة واحدة على الأقل إلى خط السير. يجب أن تحتوي كل خطوة على عنوان ووقت بدء ووقت انتهاء.",
+  "itineraryTimeQuarterHour": "اختر وقتًا بدقائق 00 أو 15 أو 30 أو 45.",
+  "itineraryTimeConflict": "يتداخل هذا الوقت مع خطوة أخرى في خط سير اليوم نفسه. اختر نطاقًا زمنيًا مختلفًا.",
+  "savingTourDetails": "جارٍ حفظ بيانات الجولة...",
+  "uploadingTourImages": "جارٍ رفع صور الجولة...",
+  "savingTourItinerary": "جارٍ حفظ خط سير الجولة...",
+  "deletingTourImage": "جارٍ حذف صورة الجولة...",
+  "pleaseWaitForRequest": "يرجى الانتظار حتى يكتمل الطلب.",
+  "tourImagesAlreadySaved": "صور الجولة محفوظة بالفعل.",
+  "tourIncludes": "العناصر المشمولة في الجولة",
+  "tourExcludes": "العناصر غير المشمولة في الجولة",
+  "includeValuePlaceholder": "مثال: مرشد سياحي محترف",
+  "excludeValuePlaceholder": "مثال: المصروفات الشخصية",
+  "noTourIncludesAdded": "لم تتم إضافة عناصر مشمولة بعد.",
+  "noTourExcludesAdded": "لم تتم إضافة عناصر غير مشمولة بعد.",
+  "listValueRequired": "أدخل قيمة أو احذف هذا الصف.",
+  "confirmDeactivateTour": "هل تريد إلغاء تفعيل هذه الجولة؟ يمكن تعديلها بعد أن تصبح غير نشطة.",
+  "confirmActivateTour": "هل تريد تفعيل هذه الجولة؟ لا يمكن تعديل الجولات النشطة.",
+  "tourStatusUpdated": "تم تحديث حالة الجولة بنجاح.",
+  "tourStatusUpdateError": "تعذر تحديث حالة الجولة.",
+  "creatingBooking": "جارٍ إنشاء حجزك...",
+  "dateFrom": "تاريخ البدء",
+  "dateTo": "تاريخ الانتهاء",
+  "dateFromRequired": "تاريخ البدء مطلوب.",
+  "dateToRequired": "تاريخ الانتهاء مطلوب.",
+  "bookingDateRangeInvalid": "يجب أن يكون تاريخ الانتهاء في تاريخ البدء أو بعده.",
+  "bookingDateOutsideAvailability": "اختر تواريخ ضمن فترة الحجز المتاحة.",
+  "duplicateBookingDates": "لقد حجزت هذه الجولة أو الباقة بالفعل لنفس التواريخ.",
+  "travelersWholeNumber": "أدخل عددًا صحيحًا للمسافرين.",
+  "atLeastOneAdult": "مطلوب شخص بالغ واحد على الأقل.",
+  "childrenCannotBeNegative": "لا يمكن أن يكون عدد الأطفال سالبًا.",
+  "specialRequests": "طلبات خاصة",
+  "specialRequestsPlaceholder": "أخبرنا عن متطلبات الطعام أو سهولة الوصول أو الاستلام أو أي طلبات أخرى...",
+  "specialRequestsMaxLength": "يجب ألا تتجاوز الطلبات الخاصة 1000 حرف.",
+  "travelers": "مسافر",
+  "tourUnavailableForBooking": "هذه الجولة غير متاحة للحجز.",
+  "addProfileImage": "إضافة صورة",
+  "changeProfileImage": "تغيير الصورة",
+  "profileImageHint": "صورة JPG أو PNG أو WEBP أو GIF بحجم أقصى 5 ميجابايت.",
+  "uploadingProfileImage": "جارٍ رفع صورة ملفك الشخصي...",
+  "removingProfileImage": "جارٍ إزالة صورة ملفك الشخصي...",
+  "profileImageUpdated": "تم تحديث صورة الملف الشخصي بنجاح.",
+  "profileImageRemoved": "تمت إزالة صورة الملف الشخصي بنجاح.",
+  "profileImageUploadError": "تعذر رفع صورة الملف الشخصي.",
+  "profileImageRemoveError": "تعذر إزالة صورة الملف الشخصي.",
+  "confirmRemoveProfileImage": "هل تريد إزالة صورة ملفك الشخصي؟",
+  "removeProfileImageWarning": "سيتم عرض صورة رمزية تحتوي على الأحرف الأولى من اسمك بدلاً منها.",
+  "confirmSignOut": "تأكيد تسجيل الخروج",
+  "confirmSignOutQuestion": "هل أنت متأكد من رغبتك في تسجيل الخروج من حسابك؟",
+  "myBookings": "حجوزاتي",
+  "settings": "الإعدادات",
+  "noAgentsFound": "لا يوجد وكلاء متاحون حاليًا.",
+  "packageImages": "صور الباقة",
+  "packageImagesHint": "اختر معرض صور الباقة؛ سيتم استخدام الصورة الأولى كغلاف.",
+  "packageImagesUploadStepHint": "ترفع هذه الخطوة صور الباقة المحددة، ويمكنك معاينتها أو إزالتها قبل المتابعة.",
+  "packageImageRules": "صور JPG أو PNG أو WebP، وبحد أقصى 5 ميجابايت",
+  "packageImageLimit": "يمكن أن تحتوي الباقة على 5 صور كحد أقصى.",
+  "packageImagesSaveError": "تعذر رفع صور الباقة.",
+  "packageIdMissingAfterCreate": "تم حفظ الباقة، لكن الواجهة البرمجية لم تُرجع رقمها لرفع الصور.",
+  "packageCreationSteps": "خطوات إنشاء الباقة",
+  "packageStepperHint": "احفظ تفاصيل الباقة، ثم ارفع الصور وأنشئ خط السير.",
+  "packageDetailsStep": "تفاصيل الباقة",
+  "packageImagesStep": "صور الباقة",
+  "packageItineraryStep": "خط سير الباقة",
+  "packageDetailsHint": "أدخل بيانات الباقة والوجهات ثم احفظ للمتابعة.",
+  "selectDestinations": "اختر وجهة واحدة على الأقل",
+  "selectedDestinationsCount": "الوجهات المختارة",
+  "maxCapacity": "السعة القصوى",
+  "fieldRequired": "هذا الحقل مطلوب.",
+  "cancellationPolicyRequired": "سياسة الإلغاء مطلوبة عندما لا يكون الإلغاء مجانياً.",
+  "savedPackageNumber": "الباقة المحفوظة",
+  "packageDetailsCreated": "تم حفظ تفاصيل الباقة. يمكنك الآن إضافة الصور.",
+  "packageDetailsUpdated": "تم تحديث تفاصيل الباقة. يمكنك الآن مراجعة الصور.",
+  "packageImagesSaved": "تم رفع صور الباقة بنجاح.",
+  "packageItineraryRequired": "أضف خطوة صحيحة واحدة على الأقل إلى خط السير.",
+  "validItineraryStepRequired": "أدخل عنوانًا ويومًا صحيحًا ووقتي بدء وانتهاء بدقائق 00 أو 15 أو 30 أو 45.",
+  "savingPackageDetails": "جارٍ حفظ تفاصيل الباقة...",
+  "uploadingPackageImages": "جارٍ رفع صور الباقة...",
+  "savingPackageItinerary": "جارٍ حفظ خط سير الباقة...",
+  "deletingPackageImage": "جارٍ حذف صورة الباقة...",
+  "packageItinerarySaveError": "تعذر حفظ خط سير الباقة.",
+  "loadingHomePage": "جارٍ تحميل الصفحة الرئيسية لسي وورلد هوليدايز",
+  "travelAroundWorld": "سافر حول العالم مع سي وورلد هوليدايز",
+  "homeHeroPackagesTitle": "سافر أبعد مع باقة صُممت خصيصاً لك",
+  "homeHeroPackagesDescription": "اكتشف عطلات مخططة بعناية تجمع بين الوجهات المميزة والإقامة المريحة والدعم من لحظة المغادرة حتى العودة.",
+  "explorePackages": "استكشف باقات العطلات",
+  "homeHeroDestinationsTitle": "وجهتك القادمة التي لا تُنسى بانتظارك",
+  "homeHeroDestinationsDescription": "من العطلات الهادئة إلى المغامرات الثقافية، نساعدك على اختيار وتخطيط رحلة تناسب اهتماماتك وميزانيتك.",
+  "exploreDestinations": "استكشف الوجهات",
+  "seaworldTravelConsultants": "مستشارو السفر في سي وورلد هوليدايز",
+  "visitors": "الزوار",
+  "travelPackages": "باقات السفر",
+  "aboutseaworldHolidays": "عن سي وورلد هوليدايز",
+  "trustedTravelPartnerTitle": "شريكك الموثوق لرحلات مخططة بعناية",
+  "trustedTravelPartnerDescription": "تجمع سي وورلد هوليدايز بين الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات وخطط السفر المخصصة في خدمة متكاملة. يخطط فريقنا الخبير لكل تفصيل بوضوح وعناية لتسافر بثقة.",
+  "learnMoreAboutUs": "اعرف المزيد عنا",
+  "ourTravelPromise": "وعدنا لك في كل رحلة",
+  "whyTravelersChooseUs": "تخطيط سفر يركز على ما يهمك",
+  "whyTravelersChooseUsDescription": "خبرة عملية وخدمة مهتمة وترتيبات موثوقة منذ استفسارك الأول وحتى عودتك إلى المنزل.",
+  "personalizedTravelPlanning": "تخطيط سفر مخصص",
+  "personalizedTravelPlanningDescription": "نصمم كل برنامج وفق وتيرتك المفضلة واهتماماتك ومواعيد سفرك وميزانيتك.",
+  "supportThroughoutJourney": "دعم طوال رحلتك",
+  "supportThroughoutJourneyDescription": "يبقى فريقنا متاحاً قبل الرحلة وأثناءها وبعدها كلما احتجت إلى المساعدة.",
+  "trustedTravelArrangements": "ترتيبات سفر موثوقة",
+  "trustedTravelArrangementsDescription": "ننسق الرحلات والإقامة والجولات والتنقلات الموثوقة مع معلومات واضحة في كل خطوة.",
+  "seaworldHolidaysLogo": "شعار سي وورلد هوليدايز",
+  "mainNavigation": "التنقل الرئيسي",
+  "mobileNavigation": "قائمة التنقل على الهاتف",
+  "toggleHomeNavigation": "فتح أو إغلاق قائمة الموقع",
+  "footerTravelDescription": "من باقات العطلات المخصصة إلى الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات، نهتم بالتفاصيل لتسافر بثقة.",
+  "emailseaworldHolidays": "مراسلة سي وورلد هوليدايز بالبريد الإلكتروني",
+  "callseaworldHolidays": "الاتصال بسي وورلد هوليدايز",
+  "office": "المكتب",
+  "officeAddress": "الهرم، برج الرحاب، 7 شارع المريوطية، أبراج السعد، أعلى بنك مصر، الدور الأول.",
+  "footerCompanyLinks": "روابط الشركة",
+  "waysYouCanPay": "طرق الدفع المتاحة",
+  "aboutUs": "من نحن",
+  "contactUs": "اتصل بنا",
+  "newsletter": "النشرة البريدية",
+  "newsletterDescription": "استقبل أفكار السفر وإلهام الوجهات وأحدث عروض العطلات عبر البريد الإلكتروني.",
+  "writeYourEmail": "أدخل بريدك الإلكتروني",
+  "subscribe": "اشترك",
+  "subscribing": "جارٍ الاشتراك...",
+  "newsletterEmailRequired": "البريد الإلكتروني مطلوب.",
+  "newsletterEmailInvalid": "أدخل عنوان بريد إلكتروني صالحًا.",
+  "newsletterEmailTooLong": "يجب ألا يزيد البريد الإلكتروني عن 254 حرفًا.",
+  "newsletterSubscribedSuccess": "شكرًا لاشتراكك في نشرتنا البريدية.",
+  "newsletterAlreadySubscribed": "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا البريدية.",
+  "newsletterSubscribeError": "تعذر إتمام اشتراكك. يرجى المحاولة مرة أخرى.",
+  "allRightsReserved": "جميع الحقوق محفوظة.",
+  "activateAccount": "تفعيل حسابك",
+  "activationInProgress": "جارٍ تفعيل حسابك، يرجى الانتظار...",
+  "activationLinkInvalid": "رابط التفعيل غير صالح أو غير مكتمل.",
+  "activationFailed": "تعذر تفعيل الحساب. يرجى المحاولة مرة أخرى.",
+  "returnToSignup": "العودة إلى إنشاء الحساب",
+  "accountActivatedRedirecting": "تم تفعيل حسابك. جارٍ إعادة التوجيه...",
+  "emailSentSuccessfully": "تم إرسال البريد الإلكتروني بنجاح",
+  "passwordResetEmailSentDescription": "تم إرسال رسالة إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. تحقق من صندوق الوارد والرسائل غير المرغوب فيها إذا لم تصل خلال بضع دقائق.",
+  "resetPasswordTitle": "إعادة تعيين كلمة المرور",
+  "resetPasswordInstructions": "أدخل بريدك الإلكتروني وسنرسل إليك رابطًا لإنشاء كلمة مرور جديدة.",
+  "rememberPassword": "هل تذكرت كلمة المرور",
+  "forgotPassword": "نسيت كلمة المرور",
+  "signupCompleted": "تم إنشاء حسابك بنجاح.",
+  "signupFailed": "تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+  "registrationFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
+  "firstNamePlaceholder": "الاسم الأول",
+  "lastNamePlaceholder": "اسم العائلة",
+  "mobilePlaceholder": "+20 101 060 737",
+  "success": "تم بنجاح",
+  "activated": "تم التفعيل",
+  "accountCreatedActivationRequired": "تم إنشاء حسابك. يرجى التحقق من بريدك الإلكتروني لتفعيله.",
+  "accountActivatedSignin": "تم تفعيل حسابك بنجاح. يمكنك الآن تسجيل الدخول.",
+  "continue": "متابعة",
+  "bookingHistoryDescription": "راجع حجوزاتك الحالية وسجل الحجوزات السابق.",
+  "rows": "الصفوف",
+  "loadingBookings": "جارٍ تحميل حجوزاتك",
+  "noBookingsFound": "لا توجد حجوزات.",
+  "tourOrPackage": "جولة / باقة",
+  "bookedOn": "تاريخ الحجز",
+  "userBookingsLoadError": "تعذر تحميل حجوزاتك. يرجى المحاولة مرة أخرى لاحقًا.",
+  "showingBookings": "عرض {{shown}} من أصل {{total}} حجز",
+  "pageOf": "الصفحة {{page}} من {{total}}",
+  "date": "التاريخ",
+  "selectYourDate": "اختر التاريخ",
+  "numberOfPeople": "عدد الأشخاص",
+  "numberOfChildren": "عدد الأطفال",
+  "searchNow": "ابحث الآن",
+  "tourMap": "خريطة الجولة",
+  "destinationNumber": "الوجهة رقم {{id}}",
+  "durationDaysHours": "{{days}} يوم، {{hours}} ساعة",
+  "destinationImageNumber": "صورة الوجهة {{number}}",
+  "packageImageNumber": "صورة الباقة {{number}}",
+  "tourCover": "غلاف الجولة",
+  "tourImageNumber": "صورة الجولة {{number}}",
+  "agent": "الوكيل",
+  "back": "رجوع",
+  "home": "الرئيسية",
+  "nonNegativeValueRequired": "يجب ألا تكون القيمة سالبة.",
+  "whatsappseaworldHolidays": "تواصل مع سي وورلد هوليدايز عبر واتساب",
+  "instagramseaworldHolidays": "زيارة سي وورلد هوليدايز على إنستغرام",
+  "facebookseaworldHolidays": "زيارة سي وورلد هوليدايز على فيسبوك",
+  "showPassword": "إظهار كلمة المرور",
+  "hidePassword": "إخفاء كلمة المرور",
+  "showConfirmPassword": "إظهار تأكيد كلمة المرور",
+  "hideConfirmPassword": "إخفاء تأكيد كلمة المرور",
+  "aboutseaworld": {
+    "eyebrow": "سي وورلد هوليدايز",
+    "pageTitle": "عن سي وورلد هوليدايز",
+    "tagline": "اكتشف العالم بثقة وراحة وعناية استثنائية.",
+    "home": "سي وورلد",
+    "breadcrumb": "من نحن",
+    "introduction": {
+      "eyebrow": "من نحن",
+      "title": "اكتشف العالم بثقة",
+      "paragraphOne": "في سي وورلد هوليدايز، نؤمن بأن السفر لا يقتصر على الوصول إلى وجهة، بل يتعلق بصناعة تجارب لا تُنسى، واكتشاف ثقافات جديدة، وتكوين ذكريات تدوم مدى الحياة. سواء كنت تخطط لعطلة هادئة على الشاطئ، أو جولة مليئة بالمغامرات، أو إجازة عائلية، أو شهر عسل، أو رحلة عمل، فإن فريقنا المتخصص هنا ليجعل كل رحلة سلسة وممتعة.",
+      "paragraphTwo": "بشغفنا بتقديم خدمة استثنائية واهتمامنا بأدق التفاصيل، نوفر حلول سفر مصممة بعناية لتناسب احتياجات كل مسافر. بدءًا من حجوزات الطيران والفنادق ووصولًا إلى باقات العطلات المتكاملة، والمساعدة في التأشيرات، وخدمات النقل من وإلى المطار، وبرامج الرحلات المخصصة، نهتم بكل تفاصيل رحلتك لتتمكن من التركيز على الاستمتاع بالتجربة."
     },
-    "markAllAsRead": "تحديد الكل كمقروء",
-    "noNotifications": "لا توجد إشعارات",
-    "taskType": "نوع المهمة",
-    "taskTypeFollowUpCustomer": "متابعة العميل",
-    "taskTypePrepareQuotation": "إعداد عرض سعر",
-    "taskTypeConfirmBooking": "تأكيد الحجز",
-    "taskTypeCollectPayment": "تحصيل الدفعة",
-    "taskTypeDocumentRequest": "طلب مستندات",
-    "taskTypeCustomerSupport": "دعم العملاء",
-    "taskTypeGeneral": "عام",
-    "priority": "الأولوية",
-    "priorityLow": "منخفضة",
-    "priorityMedium": "متوسطة",
-    "priorityHigh": "مرتفعة",
-    "priorityUrgent": "عاجلة",
-    "confirmDeleteRecord": "هل تريد حذف هذا السجل؟",
-    "recordDeleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
-    "recordDeleteError": "تعذر حذف السجل.",
-    "confirmActivateFlight": "هل تريد تفعيل هذه الرحلة؟",
-    "confirmDeactivateFlight": "هل تريد إلغاء تفعيل هذه الرحلة؟",
-    "quotationNoGenerated": "يتم إنشاؤه تلقائياً بعد الحفظ",
-    "quotationTravelItems": "خدمات السفر",
-    "adultPrice": "سعر البالغ",
-    "childPrice": "سعر الطفل",
-    "flightPricePerTraveler": "السعر لكل مسافر",
-    "selectAtLeastOneTravelItem": "اختر باقة أو جولة أو رحلة جوية أو خدمة نقل واحدة على الأقل.",
-    "quotationTransfers": "خدمات النقل",
-    "quotationTransfersHint": "أضف كل نقطة استلام ووصول مشمولة في عرض السعر.",
-    "addTransfer": "إضافة خدمة نقل",
-    "transfer": "انتقال",
-    "noTransfersAdded": "لم تتم إضافة خدمات نقل بعد.",
-    "transferFrom": "من",
-    "transferTo": "إلى",
-    "fromTime": "وقت الانطلاق",
-    "transferFromPlaceholder": "مثال: مطار القاهرة الدولي",
-    "transferToPlaceholder": "مثال: فندق وسط المدينة",
-    "transferFieldsRequired": "التاريخ ومكانا الانطلاق والوصول ووقتا الانطلاق والوصول مطلوبة.",
-    "transferTimeInPast": "لا يمكن أن يكون تاريخ ووقت انطلاق الانتقال في الماضي.",
-    "invalidTransferTimeRange": "يجب أن يكون وقت الوصول بعد وقت الانطلاق.",
-    "quotationPolicies": "سياسات عرض السعر",
-    "quotationPoliciesHint": "أضف الشروط والسياسات التي تنطبق على عرض السعر.",
-    "addPolicy": "إضافة سياسة",
-    "quotationPolicyPlaceholder": "مثال: الأسعار خاضعة للتوافر",
-    "noQuotationPoliciesAdded": "لم تتم إضافة سياسات لعرض السعر بعد.",
-    "discountAmount": "قيمة الخصم",
-    "discountAppliedBeforeTax": "يتم تطبيق الخصم قبل الضريبة.",
-    "finalPriceAfterDiscount": "السعر النهائي بعد الخصم",
-    "discountExceedsSubtotal": "لا يمكن أن يتجاوز الخصم المجموع الفرعي.",
-    "quotationPdfInvalid": "لم يُرجع الخادم ملف عرض سعر صالحاً.",
-    "city": "المدينة",
-    "citiesInDestination": "مدن للاستكشاف",
-    "citiesBrowseHint": "اختر مدينة لعرض جولاتها المميزة.",
-    "cityDisplayOptions": "خيارات عرض المدن",
-    "carouselView": "شريط متحرك",
-    "gridView": "شبكة",
-    "noCitiesForDestination": "لا توجد مدن متاحة لهذه الوجهة حتى الآن.",
-    "cityNotFound": "المدينة غير موجودة.",
-    "backToDestination": "العودة إلى الوجهة",
-    "exploreCity": "استكشف المدينة",
-    "cityToursSidebarHint": "استعرض أفضل التجارب في هذه المدينة واكتشف المزيد من الجولات القريبة.",
-    "moreDestinationTours": "المزيد من جولات الوجهة",
-    "topTours": "أفضل الجولات",
-    "topToursInCity": "أفضل الجولات في {{city}}",
-    "noToursForCity": "لا توجد جولات متاحة لهذه المدينة حتى الآن.",
-    "selectCity": "اختر مدينة",
-    "loadingCities": "جارٍ تحميل المدن...",
-    "cityRequired": "المدينة مطلوبة.",
-    "citiesLoadError": "تعذر تحميل المدن.",
-    "quotationOptionsLoadError": "تعذر تحميل العملاء أو الباقات أو الجولات أو الرحلات الجوية. تحقق من صلاحية الوصول ثم أعد المحاولة.",
-    "quotationValidityBeforeTravel": "يجب أن يكون تاريخ صلاحية عرض السعر في أو قبل تاريخ بداية السفر.",
-    "retry": "إعادة المحاولة",
-    "whatsappFloatingLabel": "تواصل مع سي وورلد هوليدايز عبر واتساب",
-    "leaveSiteTitle": "أنت على وشك مغادرة سي وورلد هوليدايز",
-    "leaveSiteMessage": "قبل أن تغادر، يسعد فريق السفر لدينا مساعدتك في التخطيط لرحلتك القادمة وحجزها.",
-    "bookingContactPrompt": "للحجز والاستفسار اتصل بنا على",
-    "thanksForVisiting": "شكرًا لزيارة سي وورلد هوليدايز. نتمنى لك وقتًا رائعًا! 😊 :D",
-    "stayOnSite": "البقاء في سي وورلد",
-    "continueBrowsing": "متابعة التصفح",
-    "leaveSite": "مغادرة الموقع",
-    "items": "عناصر",
-    "invoices": "الفواتير",
-    "vouchers": "القسائم",
-    "manageInvoices": "إنشاء فواتير تفصيلية للجولات والباقات والرحلات الجوية والانتقالات.",
-    "manageVouchers": "إنشاء قسائم تفصيلية قابلة للطباعة للطيران والفنادق والجولات والباقات والانتقالات.",
-    "invoiceNo": "رقم الفاتورة",
-    "invoiceDate": "تاريخ الفاتورة",
-    "dueDate": "تاريخ الاستحقاق",
-    "invoiceItems": "بنود الفاتورة",
-    "noInvoicesFound": "لا توجد فواتير.",
-    "invalidInvoiceData": "أكمل بيانات الفاتورة وأضف بنداً صحيحاً واحداً على الأقل.",
-    "invoiceSaveError": "تعذر حفظ الفاتورة.",
-    "voucherNo": "رقم القسيمة",
-    "voucherType": "نوع القسيمة",
-    "service": "الخدمة",
-    "serviceDate": "تاريخ الخدمة",
-    "endDateOptional": "تاريخ الانتهاء (اختياري)",
-    "voucherMinimalDetailsHelp": "تحتوي القسيمة المطبوعة على شعار سي وورلد والتاريخ واسم العميل ورقمه مع عنوان نوع القسيمة المحدد.",
-    "noVouchersFound": "لا توجد قسائم.",
-    "invalidVoucherData": "اختر العميل ونوع القسيمة.",
-    "voucherSaveError": "تعذر حفظ القسيمة.",
-    "save": "حفظ",
-    "createVoucher": "إنشاء قسيمة",
-    "createInvoice": "إنشاء فاتورة",
-    "customerRequired": "اختر عميلاً.",
-    "currencyRequired": "اختر العملة.",
-    "invoiceDateRequired": "تاريخ الفاتورة مطلوب.",
-    "dueDateRequired": "تاريخ الاستحقاق مطلوب.",
-    "dateRequired": "التاريخ مطلوب.",
-    "transferFromRequired": "مكان انطلاق الانتقال مطلوب.",
-    "transferToRequired": "وجهة الانتقال مطلوبة.",
-    "transferDateRequired": "تاريخ الانتقال مطلوب.",
-    "fromTimeRequired": "وقت الانطلاق مطلوب.",
-    "quantityInvalid": "يجب أن تكون الكمية عدداً صحيحاً لا يقل عن 1.",
-    "unitPriceInvalid": "يجب أن يكون سعر الوحدة صفراً أو أكثر.",
-    "discountInvalid": "يجب أن يكون الخصم صفراً أو أكثر وألا يتجاوز المبلغ المتاح.",
-    "adultsInvalid": "يجب إضافة شخص بالغ واحد على الأقل.",
-    "nonNegativeValueRequired": "أدخل صفراً أو رقماً موجباً.",
-    "voucherOptionsLoadError": "تعذر تحميل العملاء أو خدمات السفر. تحقق من صلاحية الوصول ثم أعد المحاولة.",
-    "invoiceOptionsLoadError": "تعذر تحميل العملاء أو العملات أو الجولات أو الباقات أو الرحلات الجوية. تظهر البيانات الاحتياطية المتاحة؛ أعد المحاولة قبل الحفظ.",
-    "noServicesAvailable": "لا توجد خدمات متاحة لهذا النوع من القسائم.",
-    "serviceRequired": "اختر خدمة سفر.",
-    "serviceDateRequired": "تاريخ الخدمة مطلوب.",
-    "invalidVoucherDates": "يجب أن يكون تاريخ الانتهاء في تاريخ الخدمة أو بعده.",
-    "voucherDetailsHelp": "تتضمن القسيمة القابلة للطباعة مواعيد الخدمة والمسار والبرنامج وما يشمله الحجز والتفاصيل التشغيلية المتاحة.",
-    "serviceDates": "تواريخ الخدمة",
-    "to": "إلى",
-    "downloadPdf": "تنزيل PDF",
-    "pdfDownloadError": "تعذر تنزيل ملف PDF.",
-    "voucherListLoadError": "تعذر تحميل القسائم.",
-    "invoiceListLoadError": "تعذر تحميل الفواتير.",
-    "quantity": "الكمية",
-    "unitPrice": "سعر الوحدة",
-    "lineDiscount": "خصم البند",
-    "lineTotal": "إجمالي البند",
-    "lineDiscountExceedsTotal": "لا يمكن أن يتجاوز خصم البند حاصل ضرب الكمية في سعر الوحدة.",
-    "removeInvoiceItem": "إزالة بند الفاتورة",
-    "addInvoiceItemHint": "أضف جولة أو باقة أو رحلة جوية أو انتقالاً واحداً على الأقل إلى الفاتورة.",
-    "taxRateInvalid": "يجب أن تكون نسبة الضريبة بين 0٪ و100٪.",
-    "invoiceDueDateInvalid": "يجب أن يكون تاريخ الاستحقاق في تاريخ الفاتورة أو بعده.",
-    "serverCalculatedTotalsHint": "الإجماليات المعروضة تقديرية؛ يحسب الخادم إجماليات الفاتورة المحفوظة."
-    ,"viewDestinationDetails": "استكشف الوجهة"
-    ,"getInTouch": "تواصل معنا"
-    ,"contactNumber": "رقم التواصل"
-    ,"contactNumberRequired": "رقم التواصل مطلوب."
-    ,"contactNumberInvalid": "أدخل رقم تواصل صحيحًا."
-    ,"question": "السؤال"
-    ,"questionRequired": "يرجى كتابة سؤالك."
-    ,"sending": "جارٍ الإرسال..."
-    ,"sendMessage": "إرسال الرسالة"
-    ,"contactQuestionSent": "تم إرسال سؤالك بنجاح. سيتواصل معك فريقنا قريبًا."
-    ,"contactQuestionSendError": "لم نتمكن من إرسال سؤالك. يرجى المحاولة مرة أخرى."
-    ,"customerQuestions": "أسئلة العملاء"
-    ,"manageCustomerQuestions": "راجع الأسئلة التي أرسلها العملاء من صفحة التواصل."
-    ,"contactMessagesLoadError": "لم نتمكن من تحميل أسئلة العملاء."
-    ,"contactMessageUpdateError": "لم نتمكن من تحديث سؤال العميل."
-    ,"contactMessageDeleteError": "لم نتمكن من حذف سؤال العميل."
-    ,"noContactMessagesFound": "لا توجد أسئلة من العملاء."
-    ,"submittedAt": "تاريخ الإرسال"
-    ,"read": "مقروء"
-    ,"unread": "غير مقروء"
-    ,"markAsRead": "تحديد كمقروء"
-    ,"confirmDelete": "تأكيد الحذف"
-    ,"confirmDeleteContactMessage": "هل أنت متأكد من حذف سؤال العميل هذا؟"
-    ,"refresh": "تحديث"
-    ,"contactMessagesFilter_all": "الكل"
-    ,"contactMessagesFilter_unread": "غير المقروءة"
-    ,"contactMessagesFilter_read": "المقروءة"
-    ,"photos": "صور"
+    "mission": {
+      "title": "مهمتنا",
+      "description": "مهمتنا هي تقديم تجارب سفر متميزة من خلال خدمات موثوقة وشخصية وبأسعار مناسبة. ونسعى إلى بناء علاقات دائمة مع عملائنا من خلال الاحترافية والشفافية والعناية الاستثنائية بالعملاء."
+    },
+    "vision": {
+      "title": "رؤيتنا",
+      "description": "أن نصبح إحدى وكالات السفر الأكثر ثقة في المنطقة، من خلال ربط الناس بوجهات استثنائية وتقديم حلول سفر مبتكرة وخدمة عملاء عالمية المستوى."
+    },
+    "offer": {
+      "title": "ما نقدمه",
+      "items": [
+        "باقات عطلات دولية ومحلية",
+        "جولات خاصة وجماعية مصممة حسب الطلب",
+        "حجوزات طيران مع شركات الطيران الرائدة",
+        "حجوزات فنادق حول العالم",
+        "المساعدة في التأشيرات والاستشارات السياحية",
+        "خدمات النقل من وإلى المطار وخدمات المواصلات",
+        "باقات شهر العسل والعطلات العائلية",
+        "إدارة رحلات الشركات",
+        "رحلات بحرية وتجارب سفر فاخرة",
+        "المساعدة في تأمين السفر"
+      ]
+    },
+    "whyChooseUs": {
+      "title": "لماذا تختار سي وورلد هوليدايز؟",
+      "items": [
+        "مستشارو سفر ذوو خبرة مكرسون لرضاك",
+        "برامج رحلات شخصية تناسب تفضيلاتك وميزانيتك",
+        "أسعار تنافسية وقيمة استثنائية",
+        "شراكات موثوقة مع شركات الطيران والفنادق ومزودي الخدمات السياحية",
+        "دعم سريع ومتجاوب قبل رحلتك وأثناءها وبعدها",
+        "التزام بالجودة والموثوقية ورضا العملاء"
+      ]
+    },
+    "commitment": {
+      "title": "التزامنا",
+      "description": "كل مسافر فريد، وكل رحلة تستحق اهتمامًا خاصًا. في سي وورلد هوليدايز، نلتزم بتقديم خدمة شخصية ونصائح سفر متخصصة وتجارب مخططة بعناية تتجاوز التوقعات. من استفسارك الأول وحتى عودتك سالمًا، نكون معك في كل خطوة."
+    },
+    "closing": "دع سي وورلد هوليدايز تحول أحلامك في السفر إلى مغامرات لا تُنسى. استكشف العالم بثقة وراحة، واطمئن إلى أن كل التفاصيل قد تم ترتيبها بعناية من فريق يهتم حقًا برحلتك."
+  },
+  "markAllAsRead": "تحديد الكل كمقروء",
+  "noNotifications": "لا توجد إشعارات",
+  "taskType": "نوع المهمة",
+  "taskTypeFollowUpCustomer": "متابعة العميل",
+  "taskTypePrepareQuotation": "إعداد عرض سعر",
+  "taskTypeConfirmBooking": "تأكيد الحجز",
+  "taskTypeCollectPayment": "تحصيل الدفعة",
+  "taskTypeDocumentRequest": "طلب مستندات",
+  "taskTypeCustomerSupport": "دعم العملاء",
+  "taskTypeGeneral": "عام",
+  "priority": "الأولوية",
+  "priorityLow": "منخفضة",
+  "priorityMedium": "متوسطة",
+  "priorityHigh": "مرتفعة",
+  "priorityUrgent": "عاجلة",
+  "confirmDeleteRecord": "هل تريد حذف هذا السجل؟",
+  "recordDeleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
+  "recordDeleteError": "تعذر حذف السجل.",
+  "confirmActivateFlight": "هل تريد تفعيل هذه الرحلة؟",
+  "confirmDeactivateFlight": "هل تريد إلغاء تفعيل هذه الرحلة؟",
+  "quotationNoGenerated": "يتم إنشاؤه تلقائياً بعد الحفظ",
+  "quotationTravelItems": "خدمات السفر",
+  "adultPrice": "سعر البالغ",
+  "childPrice": "سعر الطفل",
+  "flightPricePerTraveler": "السعر لكل مسافر",
+  "selectAtLeastOneTravelItem": "اختر باقة أو جولة أو رحلة جوية أو خدمة نقل واحدة على الأقل.",
+  "quotationTransfers": "خدمات النقل",
+  "quotationTransfersHint": "أضف كل نقطة استلام ووصول مشمولة في عرض السعر.",
+  "addTransfer": "إضافة خدمة نقل",
+  "transfer": "انتقال",
+  "noTransfersAdded": "لم تتم إضافة خدمات نقل بعد.",
+  "transferFrom": "من",
+  "transferTo": "إلى",
+  "fromTime": "وقت الانطلاق",
+  "transferFromPlaceholder": "مثال: مطار القاهرة الدولي",
+  "transferToPlaceholder": "مثال: فندق وسط المدينة",
+  "transferFieldsRequired": "التاريخ ومكانا الانطلاق والوصول ووقتا الانطلاق والوصول مطلوبة.",
+  "transferTimeInPast": "لا يمكن أن يكون تاريخ ووقت انطلاق الانتقال في الماضي.",
+  "invalidTransferTimeRange": "يجب أن يكون وقت الوصول بعد وقت الانطلاق.",
+  "quotationPolicies": "سياسات عرض السعر",
+  "quotationPoliciesHint": "أضف الشروط والسياسات التي تنطبق على عرض السعر.",
+  "addPolicy": "إضافة سياسة",
+  "quotationPolicyPlaceholder": "مثال: الأسعار خاضعة للتوافر",
+  "noQuotationPoliciesAdded": "لم تتم إضافة سياسات لعرض السعر بعد.",
+  "discountAmount": "قيمة الخصم",
+  "discountAppliedBeforeTax": "يتم تطبيق الخصم قبل الضريبة.",
+  "finalPriceAfterDiscount": "السعر النهائي بعد الخصم",
+  "discountExceedsSubtotal": "لا يمكن أن يتجاوز الخصم المجموع الفرعي.",
+  "quotationPdfInvalid": "لم يُرجع الخادم ملف عرض سعر صالحاً.",
+  "city": "المدينة",
+  "citiesInDestination": "مدن للاستكشاف",
+  "citiesBrowseHint": "اختر مدينة لعرض جولاتها المميزة.",
+  "cityDisplayOptions": "خيارات عرض المدن",
+  "carouselView": "شريط متحرك",
+  "gridView": "شبكة",
+  "noCitiesForDestination": "لا توجد مدن متاحة لهذه الوجهة حتى الآن.",
+  "cityNotFound": "المدينة غير موجودة.",
+  "backToDestination": "العودة إلى الوجهة",
+  "exploreCity": "استكشف المدينة",
+  "cityToursSidebarHint": "استعرض أفضل التجارب في هذه المدينة واكتشف المزيد من الجولات القريبة.",
+  "moreDestinationTours": "المزيد من جولات الوجهة",
+  "topTours": "أفضل الجولات",
+  "topToursInCity": "أفضل الجولات في {{city}}",
+  "noToursForCity": "لا توجد جولات متاحة لهذه المدينة حتى الآن.",
+  "selectCity": "اختر مدينة",
+  "loadingCities": "جارٍ تحميل المدن...",
+  "cityRequired": "المدينة مطلوبة.",
+  "citiesLoadError": "تعذر تحميل المدن.",
+  "quotationOptionsLoadError": "تعذر تحميل العملاء أو الباقات أو الجولات أو الرحلات الجوية. تحقق من صلاحية الوصول ثم أعد المحاولة.",
+  "quotationValidityBeforeTravel": "يجب أن يكون تاريخ صلاحية عرض السعر في أو قبل تاريخ بداية السفر.",
+  "retry": "إعادة المحاولة",
+  "whatsappFloatingLabel": "تواصل مع سي وورلد هوليدايز عبر واتساب",
+  "leaveSiteTitle": "أنت على وشك مغادرة سي وورلد هوليدايز",
+  "leaveSiteMessage": "قبل أن تغادر، يسعد فريق السفر لدينا مساعدتك في التخطيط لرحلتك القادمة وحجزها.",
+  "bookingContactPrompt": "للحجز والاستفسار اتصل بنا على",
+  "thanksForVisiting": "شكرًا لزيارة سي وورلد هوليدايز. نتمنى لك وقتًا رائعًا! 😊 :D",
+  "stayOnSite": "البقاء في سي وورلد",
+  "continueBrowsing": "متابعة التصفح",
+  "leaveSite": "مغادرة الموقع",
+  "items": "عناصر",
+  "invoices": "الفواتير",
+  "vouchers": "القسائم",
+  "manageInvoices": "إنشاء فواتير تفصيلية للجولات والباقات والرحلات الجوية والانتقالات.",
+  "manageVouchers": "إنشاء قسائم تفصيلية قابلة للطباعة للطيران والفنادق والجولات والباقات والانتقالات.",
+  "invoiceNo": "رقم الفاتورة",
+  "invoiceDate": "تاريخ الفاتورة",
+  "dueDate": "تاريخ الاستحقاق",
+  "invoiceItems": "بنود الفاتورة",
+  "noInvoicesFound": "لا توجد فواتير.",
+  "invalidInvoiceData": "أكمل بيانات الفاتورة وأضف بنداً صحيحاً واحداً على الأقل.",
+  "invoiceSaveError": "تعذر حفظ الفاتورة.",
+  "voucherNo": "رقم القسيمة",
+  "voucherType": "نوع القسيمة",
+  "service": "الخدمة",
+  "serviceDate": "تاريخ الخدمة",
+  "endDateOptional": "تاريخ الانتهاء (اختياري)",
+  "voucherMinimalDetailsHelp": "تحتوي القسيمة المطبوعة على شعار سي وورلد والتاريخ واسم العميل ورقمه مع عنوان نوع القسيمة المحدد.",
+  "noVouchersFound": "لا توجد قسائم.",
+  "invalidVoucherData": "اختر العميل ونوع القسيمة.",
+  "voucherSaveError": "تعذر حفظ القسيمة.",
+  "save": "حفظ",
+  "createVoucher": "إنشاء قسيمة",
+  "createInvoice": "إنشاء فاتورة",
+  "customerRequired": "اختر عميلاً.",
+  "currencyRequired": "اختر العملة.",
+  "invoiceDateRequired": "تاريخ الفاتورة مطلوب.",
+  "dueDateRequired": "تاريخ الاستحقاق مطلوب.",
+  "dateRequired": "التاريخ مطلوب.",
+  "transferFromRequired": "مكان انطلاق الانتقال مطلوب.",
+  "transferToRequired": "وجهة الانتقال مطلوبة.",
+  "transferDateRequired": "تاريخ الانتقال مطلوب.",
+  "fromTimeRequired": "وقت الانطلاق مطلوب.",
+  "quantityInvalid": "يجب أن تكون الكمية عدداً صحيحاً لا يقل عن 1.",
+  "unitPriceInvalid": "يجب أن يكون سعر الوحدة صفراً أو أكثر.",
+  "discountInvalid": "يجب أن يكون الخصم صفراً أو أكثر وألا يتجاوز المبلغ المتاح.",
+  "adultsInvalid": "يجب إضافة شخص بالغ واحد على الأقل.",
+  "nonNegativeValueRequired": "أدخل صفراً أو رقماً موجباً.",
+  "voucherOptionsLoadError": "تعذر تحميل العملاء أو خدمات السفر. تحقق من صلاحية الوصول ثم أعد المحاولة.",
+  "invoiceOptionsLoadError": "تعذر تحميل العملاء أو العملات أو الجولات أو الباقات أو الرحلات الجوية. تظهر البيانات الاحتياطية المتاحة؛ أعد المحاولة قبل الحفظ.",
+  "noServicesAvailable": "لا توجد خدمات متاحة لهذا النوع من القسائم.",
+  "serviceRequired": "اختر خدمة سفر.",
+  "serviceDateRequired": "تاريخ الخدمة مطلوب.",
+  "invalidVoucherDates": "يجب أن يكون تاريخ الانتهاء في تاريخ الخدمة أو بعده.",
+  "voucherDetailsHelp": "تتضمن القسيمة القابلة للطباعة مواعيد الخدمة والمسار والبرنامج وما يشمله الحجز والتفاصيل التشغيلية المتاحة.",
+  "serviceDates": "تواريخ الخدمة",
+  "to": "إلى",
+  "downloadPdf": "تنزيل PDF",
+  "pdfDownloadError": "تعذر تنزيل ملف PDF.",
+  "voucherListLoadError": "تعذر تحميل القسائم.",
+  "invoiceListLoadError": "تعذر تحميل الفواتير.",
+  "quantity": "الكمية",
+  "unitPrice": "سعر الوحدة",
+  "lineDiscount": "خصم البند",
+  "lineTotal": "إجمالي البند",
+  "lineDiscountExceedsTotal": "لا يمكن أن يتجاوز خصم البند حاصل ضرب الكمية في سعر الوحدة.",
+  "removeInvoiceItem": "إزالة بند الفاتورة",
+  "addInvoiceItemHint": "أضف جولة أو باقة أو رحلة جوية أو انتقالاً واحداً على الأقل إلى الفاتورة.",
+  "taxRateInvalid": "يجب أن تكون نسبة الضريبة بين 0٪ و100٪.",
+  "invoiceDueDateInvalid": "يجب أن يكون تاريخ الاستحقاق في تاريخ الفاتورة أو بعده.",
+  "serverCalculatedTotalsHint": "الإجماليات المعروضة تقديرية؛ يحسب الخادم إجماليات الفاتورة المحفوظة.",
+  "viewDestinationDetails": "استكشف الوجهة",
+  "getInTouch": "تواصل معنا",
+  "contactNumber": "رقم التواصل",
+  "contactNumberRequired": "رقم التواصل مطلوب.",
+  "contactNumberInvalid": "أدخل رقم تواصل صحيحًا.",
+  "question": "السؤال",
+  "questionRequired": "يرجى كتابة سؤالك.",
+  "sending": "جارٍ الإرسال...",
+  "sendMessage": "إرسال الرسالة",
+  "contactQuestionSent": "تم إرسال سؤالك بنجاح. سيتواصل معك فريقنا قريبًا.",
+  "contactQuestionSendError": "لم نتمكن من إرسال سؤالك. يرجى المحاولة مرة أخرى.",
+  "customerQuestions": "أسئلة العملاء",
+  "manageCustomerQuestions": "راجع الأسئلة التي أرسلها العملاء من صفحة التواصل.",
+  "contactMessagesLoadError": "لم نتمكن من تحميل أسئلة العملاء.",
+  "contactMessageUpdateError": "لم نتمكن من تحديث سؤال العميل.",
+  "contactMessageDeleteError": "لم نتمكن من حذف سؤال العميل.",
+  "noContactMessagesFound": "لا توجد أسئلة من العملاء.",
+  "submittedAt": "تاريخ الإرسال",
+  "read": "مقروء",
+  "unread": "غير مقروء",
+  "markAsRead": "تحديد كمقروء",
+  "confirmDelete": "تأكيد الحذف",
+  "confirmDeleteContactMessage": "هل أنت متأكد من حذف سؤال العميل هذا؟",
+  "refresh": "تحديث",
+  "contactMessagesFilter_all": "الكل",
+  "contactMessagesFilter_unread": "غير المقروءة",
+  "contactMessagesFilter_read": "المقروءة",
+  "photos": "صور"
 }

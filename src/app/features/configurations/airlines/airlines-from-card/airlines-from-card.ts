@@ -240,6 +240,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
       toast: true,
       position: 'top-end',
       icon: 'success',
+      iconColor: '#00d492',
       title: this.translate.instant('imageDeleted'),
       showConfirmButton: false,
       timer: 2200,

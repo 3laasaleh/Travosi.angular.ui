@@ -68,7 +68,9 @@
           <app-tour-detail [tour]="previewTour" />
 
           @if (getItinerary(previewTour).length) {
+          <div class="mt-5 ">
             <app-itinerary-timeline [items]="getItinerary(previewTour)" />
+            </div>
           }
 
           @if (previewTour.cancellationPolicy) {

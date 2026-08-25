@@ -153,6 +153,7 @@ export class AirlinesList implements OnInit, OnChanges {
         toast: true,
         position: 'top-end',
         icon: 'success',
+        iconColor: '#00d492',
         title: this.translate.instant('airlineStatusUpdated'),
         showConfirmButton: false,
         timer: 2200,

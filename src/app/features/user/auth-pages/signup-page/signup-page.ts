@@ -62,7 +62,7 @@ export class SignupPage implements AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       dateOfBirth: ['', Validators.required],
       gender: [0, Validators.required],
-      passportNumber: ['', [Validators.required, Validators.maxLength(20)]],
+      passportNumber: ['', [Validators.maxLength(20),Validators.minLength(8)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       acceptTerms: [false, Validators.requiredTrue],

@@ -207,6 +207,7 @@ export class AccountTab implements AfterViewInit, OnDestroy {
       toast: true,
       position: 'top-end',
       icon,
+      iconColor: icon === 'success' ? '#00d492' : undefined,
       title: this.translate.instant(message),
       showConfirmButton: false,
       timer: icon === 'success' ? 2600 : 4200,

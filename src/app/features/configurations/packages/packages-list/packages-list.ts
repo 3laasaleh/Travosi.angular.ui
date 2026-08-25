@@ -136,7 +136,7 @@ export class PackagesList implements OnInit, OnChanges {
     ).subscribe((response: any) => {
       if (response?.statusToggleFailed) return;
       travelPackage.isActive = !isActive;
-      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('statusUpdated'), showConfirmButton: false, timer: 2200, timerProgressBar: true });
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', iconColor: '#00d492', title: this.translate.instant('statusUpdated'), showConfirmButton: false, timer: 2200, timerProgressBar: true });
       this.cdr.markForCheck();
     });
   }

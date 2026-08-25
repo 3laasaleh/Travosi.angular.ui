@@ -235,6 +235,7 @@ export class BookingsList implements OnInit, OnChanges {
           toast: true,
           position: 'top-end',
           icon: 'success',
+          iconColor: '#00d492',
           title: response?.message || this.translate.instant('bookingStatusUpdated'),
           showConfirmButton: false,
           timer: 2200,

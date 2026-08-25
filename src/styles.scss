@@ -55,3 +55,44 @@ input,textarea,select {
  body{
   overflow-x: hidden;
  }
+
+/* SweetAlert2 success icon brand color. */
+div:where(.swal2-icon).swal2-success {
+  border-color: #00d492 !important;
+  color: #00d492 !important;
+}
+
+div:where(.swal2-icon).swal2-success .swal2-success-ring {
+  border-color: #00d492 !important;
+}
+
+div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
+  background-color: #00d492 !important;
+}
+
+/* Booking loader is attached to body so sticky cards and itinerary icons cannot overlap it. */
+.booking-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100dvh;
+  background: rgb(15 23 42 / 55%);
+}
+
+.booking-loader-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgb(255 255 255 / 35%);
+  border-top-color: #00d492;
+  border-radius: 9999px;
+  animation: booking-loader-spin 700ms linear infinite;
+}
+
+@keyframes booking-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

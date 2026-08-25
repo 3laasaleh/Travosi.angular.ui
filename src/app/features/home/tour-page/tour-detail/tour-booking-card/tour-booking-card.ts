@@ -7,6 +7,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -42,6 +43,8 @@ export class TourBookingCard implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
+  private bookingLoaderElement: HTMLElement | null = null;
 
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
@@ -144,9 +147,11 @@ export class TourBookingCard implements OnInit {
 
   ngOnInit(): void {
     this.setDefaultDates();
+    this.destroyRef.onDestroy(() => this.hideBookingLoader());
     this.bookingForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.resetAvailability());
+
   }
 
   checkAvailability(): void {
@@ -237,6 +242,7 @@ export class TourBookingCard implements OnInit {
     if (!payload) return;
 
     this.isSubmitting = true;
+    this.showBookingLoader();
     this.errorMessage = '';
     this.successMessage = '';
     this.apiService.post('Bookings', payload).pipe(
@@ -247,6 +253,7 @@ export class TourBookingCard implements OnInit {
       }),
       finalize(() => {
         this.isSubmitting = false;
+        this.hideBookingLoader();
         this.cdr.markForCheck();
       }),
     ).subscribe((response: any) => {
@@ -284,6 +291,27 @@ export class TourBookingCard implements OnInit {
       Children: form.children,
       Notes: form.specialRequests.trim() || null,
     };
+  }
+
+  private showBookingLoader(): void {
+    if (this.bookingLoaderElement || !this.document.body) return;
+
+    const overlay = this.document.createElement('div');
+    const spinner = this.document.createElement('span');
+    overlay.className = 'booking-loader-overlay';
+    overlay.setAttribute('role', 'status');
+    overlay.setAttribute('aria-live', 'assertive');
+    overlay.setAttribute('aria-label', this.translate.instant('creatingBooking'));
+    spinner.className = 'booking-loader-spinner';
+    spinner.setAttribute('aria-hidden', 'true');
+    overlay.appendChild(spinner);
+    this.document.body.appendChild(overlay);
+    this.bookingLoaderElement = overlay;
+  }
+
+  private hideBookingLoader(): void {
+    this.bookingLoaderElement?.remove();
+    this.bookingLoaderElement = null;
   }
 
   private static dateRangeValidator(control: AbstractControl): ValidationErrors | null {
@@ -336,6 +364,7 @@ export class TourBookingCard implements OnInit {
       toast: true,
       position: 'top-end',
       icon,
+      iconColor: icon === 'success' ? '#00d492' : undefined,
       title: this.translate.instant(message),
       showConfirmButton: false,
       timer: icon === 'success' ? 3000 : 4200,
@@ -356,6 +385,7 @@ export class TourBookingCard implements OnInit {
 
     Swal.fire({
       icon: 'success',
+      iconColor: '#00d492',
       title: this.translate.instant('bookingRequestReceived'),
       text: this.translate.instant(messageKey, { time: bookingTime }),
       confirmButtonText: this.translate.instant('ok'),

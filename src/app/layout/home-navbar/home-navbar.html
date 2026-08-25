@@ -17,7 +17,7 @@
       <app-destinations-menu (navigated)="closeMenus()" />
       <app-tours-menu (navigated)="closeMenus()" />
       <app-tours-menu [nileCruisesOnly]="true" (navigated)="closeMenus()" />
-      <app-packages-menu (navigated)="closeMenus()" />
+      <!-- <app-packages-menu (navigated)="closeMenus()" /> -->
     </nav>
 
     <div class="hidden h-8 w-px bg-slate-200 lg:block "></div>
@@ -195,18 +195,21 @@
       </div>
 
       <ul class="flex flex-col font-medium">
-        <li>
-          <app-destinations-menu layout="mobile" (navigated)="closeMenus()" />
+        <li (mouseenter)="openMobileCatalogMenu('destinations')">
+          <app-destinations-menu #mobileDestinationsMenu layout="mobile"
+            (opened)="openMobileCatalogMenu('destinations')" (navigated)="closeMenus()" />
         </li>
-        <li>
-          <app-tours-menu layout="mobile" (navigated)="closeMenus()" />
+        <li (mouseenter)="openMobileCatalogMenu('tours')">
+          <app-tours-menu #mobileToursMenu layout="mobile"
+            (opened)="openMobileCatalogMenu('tours')" (navigated)="closeMenus()" />
         </li>
-        <li>
-          <app-tours-menu layout="mobile" [nileCruisesOnly]="true" (navigated)="closeMenus()" />
+        <li (mouseenter)="openMobileCatalogMenu('nileCruises')">
+          <app-tours-menu #mobileNileCruisesMenu layout="mobile" [nileCruisesOnly]="true"
+            (opened)="openMobileCatalogMenu('nileCruises')" (navigated)="closeMenus()" />
         </li>
-        <li>
+        <!-- <li>
           <app-packages-menu layout="mobile" (navigated)="closeMenus()" />
-        </li>
+        </li> -->
       </ul>
 
       @if (canAccessConfigurations) {

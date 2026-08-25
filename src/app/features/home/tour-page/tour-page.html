@@ -63,7 +63,9 @@
         <div class="space-y-8">
           <app-tour-detail [tour]="tour" />
           @if (itinerary.length) {
+                    <div class="pt-6">
             <app-itinerary-timeline [items]="itinerary" />
+            </div>
           }
         </div>
         <aside class="lg:sticky lg:top-24">

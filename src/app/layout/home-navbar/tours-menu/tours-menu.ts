@@ -30,6 +30,7 @@ export class ToursMenu {
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
   @Input() nileCruisesOnly = false;
   @Output() navigated = new EventEmitter<void>();
+  @Output() opened = new EventEmitter<void>();
 
   menuOpen = false;
   isLoading = false;
@@ -53,13 +54,17 @@ export class ToursMenu {
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
-    if (this.menuOpen && !this.loaded && !this.isLoading) this.loadTours();
+    if (this.menuOpen) {
+      this.opened.emit();
+      if (!this.loaded && !this.isLoading) this.loadTours();
+    }
   }
 
   openMenu(): void {
     if (this.isMobile) return;
     this.cancelClose();
     this.menuOpen = true;
+    this.opened.emit();
     if (!this.loaded && !this.isLoading) this.loadTours();
   }
 
@@ -79,6 +84,7 @@ export class ToursMenu {
   closeMenu(): void {
     this.cancelClose();
     this.menuOpen = false;
+    this.cdr.markForCheck();
   }
 
   onNavigate(): void {

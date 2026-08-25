@@ -28,6 +28,7 @@ export class DestinationsMenu {
   /** `desktop` renders a full-width mega menu bar, `mobile` renders an inline collapsible panel. */
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
   @Output() navigated = new EventEmitter<void>();
+  @Output() opened = new EventEmitter<void>();
 
   menuOpen = false;
   isLoading = false;
@@ -51,13 +52,17 @@ export class DestinationsMenu {
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
-    if (this.menuOpen && !this.loaded && !this.isLoading) this.loadHierarchy();
+    if (this.menuOpen) {
+      this.opened.emit();
+      if (!this.loaded && !this.isLoading) this.loadHierarchy();
+    }
   }
 
   openMenu(): void {
     if (this.isMobile) return;
     this.cancelClose();
     this.menuOpen = true;
+    this.opened.emit();
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
   }
 
@@ -90,6 +95,7 @@ export class DestinationsMenu {
     this.menuOpen = false;
     this.activeDestinationId = null;
     this.activeCityId = null;
+    this.cdr.markForCheck();
   }
 
   onNavigate(): void {

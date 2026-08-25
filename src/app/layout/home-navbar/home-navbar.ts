@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -38,6 +39,10 @@ export class HomeNavbar implements AfterViewInit {
   languageMenuOpen = false;
   currencyMenuOpen = false;
   switchingLanguage: string | null = null;
+
+  @ViewChild('mobileDestinationsMenu') private mobileDestinationsMenu?: DestinationsMenu;
+  @ViewChild('mobileToursMenu') private mobileToursMenu?: ToursMenu;
+  @ViewChild('mobileNileCruisesMenu') private mobileNileCruisesMenu?: ToursMenu;
 
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
@@ -129,6 +134,12 @@ export class HomeNavbar implements AfterViewInit {
     this.mobileMenuOpen = false;
     this.languageMenuOpen = false;
     this.currencyMenuOpen = false;
+  }
+
+  openMobileCatalogMenu(menu: 'destinations' | 'tours' | 'nileCruises'): void {
+    if (menu !== 'destinations') this.mobileDestinationsMenu?.closeMenu();
+    if (menu !== 'tours') this.mobileToursMenu?.closeMenu();
+    if (menu !== 'nileCruises') this.mobileNileCruisesMenu?.closeMenu();
   }
 
   logout(): void {
