@@ -30,6 +30,7 @@ describe('Invoices', () => {
     component.items.at(1).patchValue({
       from: 'Cairo Airport',
       to: 'Downtown Hotel',
+      transferDate: '2030-05-10',
       fromTime: '09:30',
       arrivalTime: '10:45',
       unitPrice: 30,
@@ -45,8 +46,25 @@ describe('Invoices', () => {
       description: 'Cairo Airport - Downtown Hotel',
       from: 'Cairo Airport',
       to: 'Downtown Hotel',
+      transferDate: '2030-05-10',
       fromTime: '09:30:00',
       arrivalTime: '10:45:00',
     });
+  });
+
+  it('rejects a past transfer pickup and an arrival before pickup', () => {
+    const component = new Invoices(
+      { get: vi.fn().mockReturnValue(of({ data: [] })) } as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    component.addItem(5);
+    const row = component.items.at(0);
+
+    row.patchValue({ transferDate: '2020-01-01', fromTime: '09:30', arrivalTime: '10:30' });
+    expect(row.hasError('transferTimeInPast')).toBe(true);
+
+    row.patchValue({ transferDate: '2030-05-10', fromTime: '11:00', arrivalTime: '10:30' });
+    expect(row.hasError('invalidTransferTimeRange')).toBe(true);
   });
 });

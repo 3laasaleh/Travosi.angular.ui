@@ -45,6 +45,7 @@ export class Vouchers implements OnInit {
   isSaving = false;
   deletingId: number | null = null;
   downloadingId: number | null = null;
+  readonly today = this.localDate(new Date());
 
   readonly types: VoucherTypeOption[] = [
     { id: 1, key: 'flight', referenceKey: 'flightId' },
@@ -64,13 +65,16 @@ export class Vouchers implements OnInit {
     arrivalTime: new FormControl(this.currentTime(), { nonNullable: true }),
     serviceDate: new FormControl(this.localDate(new Date()), { nonNullable: true, validators: [Validators.required] }),
     endDate: new FormControl(this.localDate(new Date()), { nonNullable: true }),
-  }, { validators: [Vouchers.dateRangeValidator, Vouchers.serviceDetailsValidator] });
+  }, { validators: [Vouchers.dateRangeValidator, Vouchers.serviceDetailsValidator, Vouchers.transferScheduleValidator] });
 
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    this.configureServiceValidators();
+    this.form.controls.serviceType.valueChanges.subscribe(() => this.configureServiceValidators());
+  }
 
   ngOnInit(): void {
     this.load();
@@ -94,9 +98,19 @@ export class Vouchers implements OnInit {
   }
 
   serviceTypeChanged(): void {
+    const schedule = this.defaultTransferSchedule();
     this.form.controls.serviceId.reset(null);
     this.form.controls.from.reset('');
     this.form.controls.to.reset('');
+    if (this.form.controls.serviceType.value === 5) {
+      this.form.patchValue({
+        serviceDate: schedule.date,
+        endDate: schedule.date,
+        fromTime: schedule.fromTime,
+        arrivalTime: schedule.arrivalTime,
+      });
+    }
+    this.configureServiceValidators();
     this.errorMessage = '';
     this.form.updateValueAndValidity();
   }
@@ -187,6 +201,7 @@ export class Vouchers implements OnInit {
       serviceDate: this.dateOnly(voucher.serviceDate),
       endDate: this.dateOnly(voucher.endDate),
     });
+    this.configureServiceValidators();
     this.showForm = true;
   }
 
@@ -318,6 +333,24 @@ export class Vouchers implements OnInit {
     this.selectedId = 0;
     this.errorMessage = '';
     this.form.reset({ customerId: null, serviceType: 1, serviceId: null, from: '', to: '', fromTime: time, arrivalTime: time, serviceDate: today, endDate: today });
+    this.configureServiceValidators();
+  }
+
+  minTimeForTransferDate(): string | null {
+    return this.form.controls.serviceDate.value === this.today ? this.currentTime() : null;
+  }
+
+  private configureServiceValidators(): void {
+    const transfer = this.form.controls.serviceType.value === 5;
+    this.form.controls.serviceId.setValidators(transfer ? [] : [Validators.required, Validators.min(1)]);
+    this.form.controls.from.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
+    this.form.controls.to.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
+    this.form.controls.fromTime.setValidators(transfer ? [Validators.required] : []);
+    this.form.controls.arrivalTime.setValidators(transfer ? [Validators.required] : []);
+    [this.form.controls.serviceId, this.form.controls.from, this.form.controls.to,
+      this.form.controls.fromTime, this.form.controls.arrivalTime]
+      .forEach((control) => control.updateValueAndValidity({ emitEvent: false }));
+    this.form.updateValueAndValidity({ emitEvent: false });
   }
 
   private referenceId(voucher: any, serviceType: number): number | null {
@@ -357,6 +390,18 @@ export class Vouchers implements OnInit {
   private currentTime(): string {
     const now = new Date();
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  private defaultTransferSchedule(): { date: string; fromTime: string; arrivalTime: string } {
+    const pickup = new Date(Date.now() + 15 * 60_000);
+    const arrival = new Date(pickup.getTime() + 60 * 60_000);
+    if (pickup.getDate() !== arrival.getDate()) {
+      pickup.setDate(pickup.getDate() + 1);
+      pickup.setHours(9, 0, 0, 0);
+      arrival.setTime(pickup.getTime() + 60 * 60_000);
+    }
+    const time = (value: Date) => `${value.getHours().toString().padStart(2, '0')}:${value.getMinutes().toString().padStart(2, '0')}`;
+    return { date: this.localDate(pickup), fromTime: time(pickup), arrivalTime: time(arrival) };
   }
 
   private toApiTime(value: unknown): string | null {
@@ -407,5 +452,18 @@ export class Vouchers implements OnInit {
         ? null : { transferDetailsRequired: true };
     }
     return Number(control.get('serviceId')?.value) > 0 ? null : { serviceRequired: true };
+  }
+
+  private static transferScheduleValidator(control: AbstractControl): ValidationErrors | null {
+    if (Number(control.get('serviceType')?.value) !== 5) return null;
+    const date = String(control.get('serviceDate')?.value ?? '');
+    const fromTime = String(control.get('fromTime')?.value ?? '');
+    const arrivalTime = String(control.get('arrivalTime')?.value ?? '');
+    if (!date || !fromTime || !arrivalTime) return null;
+    const pickup = new Date(`${date}T${fromTime}:00`);
+    const arrival = new Date(`${date}T${arrivalTime}:00`);
+    if (Number.isNaN(pickup.getTime()) || Number.isNaN(arrival.getTime())) return { invalidTransferSchedule: true };
+    if (pickup.getTime() < Date.now()) return { transferTimeInPast: true };
+    return arrival.getTime() <= pickup.getTime() ? { invalidTransferTimeRange: true } : null;
   }
 }

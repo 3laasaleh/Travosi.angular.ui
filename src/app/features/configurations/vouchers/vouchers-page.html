@@ -56,6 +56,9 @@
                 <option [ngValue]="type.id">{{ type.key | translate }}</option>
               }
             </select>
+            @if (form.controls.serviceType.touched && form.controls.serviceType.invalid) {
+              <small class="mt-1 block text-red-600">{{ 'fieldRequired' | translate }}</small>
+            }
           </label>
 
           @if (form.controls.serviceType.value === 5) {
@@ -63,21 +66,35 @@
               <label class="text-sm font-medium">
                 {{ 'transferFrom' | translate }}
                 <input formControlName="from" type="text" maxlength="250" class="mt-2 w-full rounded-xl border-slate-300" [placeholder]="'transferFromPlaceholder' | translate">
+                @if (form.controls.from.touched && form.controls.from.invalid) {
+                  <small class="mt-1 block text-red-600">{{ 'transferFromRequired' | translate }}</small>
+                }
               </label>
               <label class="text-sm font-medium">
                 {{ 'transferTo' | translate }}
                 <input formControlName="to" type="text" maxlength="250" class="mt-2 w-full rounded-xl border-slate-300" [placeholder]="'transferToPlaceholder' | translate">
+                @if (form.controls.to.touched && form.controls.to.invalid) {
+                  <small class="mt-1 block text-red-600">{{ 'transferToRequired' | translate }}</small>
+                }
               </label>
               <label class="text-sm font-medium">
                 {{ 'fromTime' | translate }}
-                <app-time-picker formControlName="fromTime" class="mt-2 block" id="voucher-transfer-from-time" [ariaLabel]="'fromTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+                <app-time-picker formControlName="fromTime" class="mt-2 block" id="voucher-transfer-from-time" [min]="minTimeForTransferDate()" [ariaLabel]="'fromTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+                @if (form.controls.fromTime.touched && form.controls.fromTime.invalid) {
+                  <small class="mt-1 block text-red-600">{{ 'fromTimeRequired' | translate }}</small>
+                }
               </label>
               <label class="text-sm font-medium">
                 {{ 'arrivalTime' | translate }}
-                <app-time-picker formControlName="arrivalTime" class="mt-2 block" id="voucher-transfer-arrival-time" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+                <app-time-picker formControlName="arrivalTime" class="mt-2 block" id="voucher-transfer-arrival-time" [min]="form.controls.fromTime.value" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-xl border border-slate-300 px-3 py-2" />
+                @if (form.controls.arrivalTime.touched && form.controls.arrivalTime.invalid) {
+                  <small class="mt-1 block text-red-600">{{ 'arrivalTimeRequired' | translate }}</small>
+                }
               </label>
-              @if (form.hasError('transferDetailsRequired') && (form.controls.from.touched || form.controls.to.touched)) {
-                <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferFieldsRequired' | translate }}</small>
+              @if (form.touched && form.hasError('transferTimeInPast')) {
+                <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferTimeInPast' | translate }}</small>
+              } @else if (form.touched && form.hasError('invalidTransferTimeRange')) {
+                <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'invalidTransferTimeRange' | translate }}</small>
               }
             </div>
           } @else {
@@ -91,20 +108,21 @@
               </select>
               @if (!isOptionsLoading && !serviceOptions.length) {
                 <small class="mt-1 block text-amber-700">{{ 'noServicesAvailable' | translate }}</small>
-              } @else if (form.hasError('serviceRequired') && form.controls.serviceId.touched) {
+              } @else if (form.controls.serviceId.touched && form.controls.serviceId.invalid) {
                 <small class="mt-1 block text-red-600">{{ 'serviceRequired' | translate }}</small>
               }
             </label>
           }
 
           <label class="text-sm font-medium">
-            {{ 'serviceDate' | translate }}
+            {{ (form.controls.serviceType.value === 5 ? 'date' : 'serviceDate') | translate }}
             <app-date-picker
               formControlName="serviceDate"
               class="mt-2 block"
-              [ariaLabel]="'serviceDate' | translate" />
+              [min]="form.controls.serviceType.value === 5 ? today : null"
+              [ariaLabel]="(form.controls.serviceType.value === 5 ? 'date' : 'serviceDate') | translate" />
             @if (form.controls.serviceDate.touched && form.controls.serviceDate.invalid) {
-              <small class="mt-1 block text-red-600">{{ 'serviceDateRequired' | translate }}</small>
+              <small class="mt-1 block text-red-600">{{ (form.controls.serviceType.value === 5 ? 'transferDateRequired' : 'serviceDateRequired') | translate }}</small>
             }
           </label>
 

@@ -54,6 +54,9 @@
                 <option [ngValue]="currency.id">{{ currencyLabel(currency) }}</option>
               }
             </select>
+            @if (form.controls.currencyId.touched && form.controls.currencyId.invalid) {
+              <small class="mt-1 block text-red-600">{{ 'currencyRequired' | translate }}</small>
+            }
           </label>
 
           <label class="text-sm font-medium">
@@ -62,6 +65,9 @@
               formControlName="invoiceDate"
               class="mt-2 block"
               [ariaLabel]="'invoiceDate' | translate" />
+            @if (form.controls.invoiceDate.touched && form.controls.invoiceDate.invalid) {
+              <small class="mt-1 block text-red-600">{{ 'invoiceDateRequired' | translate }}</small>
+            }
           </label>
 
           <label class="text-sm font-medium">
@@ -71,7 +77,9 @@
               class="mt-2 block"
               [min]="form.controls.invoiceDate.value || null"
               [ariaLabel]="'dueDate' | translate" />
-            @if (form.hasError('invalidInvoiceDates') && form.controls.dueDate.touched) {
+            @if (form.controls.dueDate.touched && form.controls.dueDate.hasError('required')) {
+              <small class="mt-1 block text-red-600">{{ 'dueDateRequired' | translate }}</small>
+            } @else if (form.hasError('invalidInvoiceDates') && form.controls.dueDate.touched) {
               <small class="mt-1 block text-red-600">{{ 'invoiceDueDateInvalid' | translate }}</small>
             }
           </label>
@@ -113,21 +121,42 @@
                   <label class="text-xs">
                     {{ 'transferFrom' | translate }}
                     <input type="text" formControlName="from" class="mt-1 w-full rounded-lg border-slate-300" [placeholder]="'transferFromPlaceholder' | translate">
+                    @if (row.controls.from.touched && row.controls.from.invalid) {
+                      <small class="mt-1 block text-red-600">{{ 'transferFromRequired' | translate }}</small>
+                    }
                   </label>
                   <label class="text-xs">
                     {{ 'transferTo' | translate }}
                     <input type="text" formControlName="to" class="mt-1 w-full rounded-lg border-slate-300" [placeholder]="'transferToPlaceholder' | translate">
+                    @if (row.controls.to.touched && row.controls.to.invalid) {
+                      <small class="mt-1 block text-red-600">{{ 'transferToRequired' | translate }}</small>
+                    }
+                  </label>
+                  <label class="text-xs">
+                    {{ 'date' | translate }}
+                    <app-date-picker formControlName="transferDate" [id]="'invoice-transfer-date-' + $index" [min]="localToday" [ariaLabel]="'date' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                    @if (row.controls.transferDate.touched && row.controls.transferDate.invalid) {
+                      <small class="mt-1 block text-red-600">{{ 'transferDateRequired' | translate }}</small>
+                    }
                   </label>
                   <label class="text-xs">
                     {{ 'fromTime' | translate }}
-                    <app-time-picker formControlName="fromTime" [id]="'invoice-transfer-from-time-' + $index" [ariaLabel]="'fromTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                    <app-time-picker formControlName="fromTime" [id]="'invoice-transfer-from-time-' + $index" [min]="minTimeForTransferDate(row.controls.transferDate.value)" [ariaLabel]="'fromTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                    @if (row.controls.fromTime.touched && row.controls.fromTime.invalid) {
+                      <small class="mt-1 block text-red-600">{{ 'fromTimeRequired' | translate }}</small>
+                    }
                   </label>
                   <label class="text-xs">
                     {{ 'arrivalTime' | translate }}
-                    <app-time-picker formControlName="arrivalTime" [id]="'invoice-transfer-arrival-time-' + $index" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                    <app-time-picker formControlName="arrivalTime" [id]="'invoice-transfer-arrival-time-' + $index" [min]="row.controls.fromTime.value" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-lg border border-slate-300 px-3 py-2" />
+                    @if (row.controls.arrivalTime.touched && row.controls.arrivalTime.invalid) {
+                      <small class="mt-1 block text-red-600">{{ 'arrivalTimeRequired' | translate }}</small>
+                    }
                   </label>
-                  @if (itemDetailsInvalid(row) && (row.controls.from.touched || row.controls.to.touched)) {
-                    <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferFieldsRequired' | translate }}</small>
+                  @if (row.touched && row.hasError('transferTimeInPast')) {
+                    <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'transferTimeInPast' | translate }}</small>
+                  } @else if (row.touched && row.hasError('invalidTransferTimeRange')) {
+                    <small class="text-red-600 md:col-span-2 xl:col-span-4">{{ 'invalidTransferTimeRange' | translate }}</small>
                   }
                 } @else {
                   <label class="text-xs">
@@ -155,17 +184,25 @@
                 <label class="text-xs">
                   {{ 'quantity' | translate }}
                   <input type="number" formControlName="quantity" min="1" step="1" inputmode="numeric" class="mt-1 w-full rounded-lg border-slate-300">
+                  @if (row.controls.quantity.touched && row.controls.quantity.invalid) {
+                    <small class="mt-1 block text-red-600">{{ 'quantityInvalid' | translate }}</small>
+                  }
                 </label>
 
                 <label class="text-xs">
                   {{ 'unitPrice' | translate }}
                   <input type="number" formControlName="unitPrice" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-slate-300">
+                  @if (row.controls.unitPrice.touched && row.controls.unitPrice.invalid) {
+                    <small class="mt-1 block text-red-600">{{ 'unitPriceInvalid' | translate }}</small>
+                  }
                 </label>
 
                 <label class="text-xs">
                   {{ 'lineDiscount' | translate }}
                   <input type="number" formControlName="discount" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-slate-300">
-                  @if (lineDiscountInvalid(row)) {
+                  @if (row.controls.discount.touched && row.controls.discount.invalid) {
+                    <small class="mt-1 block text-red-600">{{ 'discountInvalid' | translate }}</small>
+                  } @else if (lineDiscountInvalid(row)) {
                     <small class="mt-1 block text-red-600">{{ 'lineDiscountExceedsTotal' | translate }}</small>
                   }
                 </label>
@@ -200,7 +237,9 @@
               <label class="text-xs">
                 {{ 'discount' | translate }}
                 <input type="number" formControlName="discount" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border-0 text-slate-900">
-                @if (invoiceDiscountInvalid) {
+                @if (form.controls.discount.touched && form.controls.discount.invalid) {
+                  <small class="mt-1 block text-red-300">{{ 'discountInvalid' | translate }}</small>
+                } @else if (invoiceDiscountInvalid) {
                   <small class="mt-1 block text-red-300">{{ 'discountExceedsSubtotal' | translate }}</small>
                 }
               </label>

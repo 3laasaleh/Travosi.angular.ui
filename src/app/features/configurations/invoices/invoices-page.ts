@@ -30,6 +30,7 @@ interface InvoiceItemForm {
   discount: FormControl<number>;
   from: FormControl<string>;
   to: FormControl<string>;
+  transferDate: FormControl<string>;
   fromTime: FormControl<string>;
   arrivalTime: FormControl<string>;
 }
@@ -64,6 +65,7 @@ export class Invoices implements OnInit {
   selectedId = 0;
   deletingId: number | null = null;
   downloadingId: number | null = null;
+  readonly localToday = this.localDate(new Date());
 
   readonly form = new FormGroup({
     customerId: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
@@ -144,7 +146,7 @@ export class Invoices implements OnInit {
   }
 
   itemTypeChanged(row: InvoiceItemGroup): void {
-    const time = this.currentTime();
+    const schedule = this.defaultTransferSchedule();
     row.patchValue({
       serviceId: null,
       description: '',
@@ -152,9 +154,11 @@ export class Invoices implements OnInit {
       discount: 0,
       from: '',
       to: '',
-      fromTime: time,
-      arrivalTime: time,
+      transferDate: schedule.date,
+      fromTime: schedule.fromTime,
+      arrivalTime: schedule.arrivalTime,
     });
+    this.configureItemValidators(row);
     row.controls.serviceId.markAsUntouched();
     this.errorMessage = '';
   }
@@ -187,6 +191,7 @@ export class Invoices implements OnInit {
     if (this.isTransfer(row)) {
       return !row.controls.from.value.trim()
         || !row.controls.to.value.trim()
+        || !row.controls.transferDate.value
         || !row.controls.fromTime.value
         || !row.controls.arrivalTime.value;
     }
@@ -252,6 +257,7 @@ export class Invoices implements OnInit {
         flightId: type === 4 ? Number(item.serviceId) : null,
         from: type === 5 ? from : null,
         to: type === 5 ? to : null,
+        transferDate: type === 5 ? item.transferDate : null,
         fromTime: type === 5 ? this.toApiTime(item.fromTime) : null,
         arrivalTime: type === 5 ? this.toApiTime(item.arrivalTime) : null,
       };
@@ -314,6 +320,7 @@ export class Invoices implements OnInit {
         discount: this.numberValue(item.discount),
         from: item.from ?? '',
         to: item.to ?? '',
+        transferDate: this.dateOnly(item.transferDate) || row.controls.transferDate.value,
         fromTime: this.toInputTime(item.fromTime),
         arrivalTime: this.toInputTime(item.arrivalTime),
       });
@@ -444,8 +451,8 @@ export class Invoices implements OnInit {
   }
 
   private createItemGroup(type: number, source?: any): InvoiceItemGroup {
-    const time = this.currentTime();
-    return new FormGroup<InvoiceItemForm>({
+    const schedule = this.defaultTransferSchedule();
+    const row = new FormGroup<InvoiceItemForm>({
       itemType: new FormControl(type, { nonNullable: true, validators: [Validators.required] }),
       serviceId: new FormControl<number | null>(source?.id ?? null),
       description: new FormControl(this.name(source), {
@@ -465,9 +472,31 @@ export class Invoices implements OnInit {
       }),
       from: new FormControl(String(source?.from ?? ''), { nonNullable: true }),
       to: new FormControl(String(source?.to ?? ''), { nonNullable: true }),
-      fromTime: new FormControl(this.toInputTime(source?.fromTime) || time, { nonNullable: true }),
-      arrivalTime: new FormControl(this.toInputTime(source?.arrivalTime) || time, { nonNullable: true }),
-    });
+      transferDate: new FormControl(this.dateOnly(source?.transferDate) || schedule.date, { nonNullable: true }),
+      fromTime: new FormControl(this.toInputTime(source?.fromTime) || schedule.fromTime, { nonNullable: true }),
+      arrivalTime: new FormControl(this.toInputTime(source?.arrivalTime) || schedule.arrivalTime, { nonNullable: true }),
+    }, { validators: Invoices.transferScheduleValidator });
+    this.configureItemValidators(row);
+    return row;
+  }
+
+  minTimeForTransferDate(value: unknown): string | null {
+    return this.dateOnly(value) === this.localDate(new Date()) ? this.currentTime() : null;
+  }
+
+  private configureItemValidators(row: InvoiceItemGroup): void {
+    const transfer = this.isTransfer(row);
+    row.controls.serviceId.setValidators(transfer ? [] : [Validators.required, Validators.min(1)]);
+    row.controls.description.setValidators(transfer ? [] : [Validators.required, Validators.maxLength(500)]);
+    row.controls.from.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
+    row.controls.to.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
+    row.controls.transferDate.setValidators(transfer ? [Validators.required] : []);
+    row.controls.fromTime.setValidators(transfer ? [Validators.required] : []);
+    row.controls.arrivalTime.setValidators(transfer ? [Validators.required] : []);
+    [row.controls.serviceId, row.controls.description, row.controls.from, row.controls.to,
+      row.controls.transferDate, row.controls.fromTime, row.controls.arrivalTime]
+      .forEach((control) => control.updateValueAndValidity({ emitEvent: false }));
+    row.updateValueAndValidity({ emitEvent: false });
   }
 
   private serviceOptionsForType(type: number): any[] {
@@ -559,6 +588,18 @@ export class Invoices implements OnInit {
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
   }
 
+  private defaultTransferSchedule(): { date: string; fromTime: string; arrivalTime: string } {
+    const pickup = new Date(Date.now() + 15 * 60_000);
+    const arrival = new Date(pickup.getTime() + 60 * 60_000);
+    if (pickup.getDate() !== arrival.getDate()) {
+      pickup.setDate(pickup.getDate() + 1);
+      pickup.setHours(9, 0, 0, 0);
+      arrival.setTime(pickup.getTime() + 60 * 60_000);
+    }
+    const time = (value: Date) => `${value.getHours().toString().padStart(2, '0')}:${value.getMinutes().toString().padStart(2, '0')}`;
+    return { date: this.localDate(pickup), fromTime: time(pickup), arrivalTime: time(arrival) };
+  }
+
   private responseError(response: any, fallback: string): string {
     const errors = Array.isArray(response?.errors)
       ? response.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
@@ -585,6 +626,19 @@ export class Invoices implements OnInit {
     const invoiceDate = String(control.get('invoiceDate')?.value ?? '');
     const dueDate = String(control.get('dueDate')?.value ?? '');
     return invoiceDate && dueDate && dueDate < invoiceDate ? { invalidInvoiceDates: true } : null;
+  }
+
+  private static transferScheduleValidator(control: AbstractControl): ValidationErrors | null {
+    if (Number(control.get('itemType')?.value) !== 5) return null;
+    const date = String(control.get('transferDate')?.value ?? '');
+    const fromTime = String(control.get('fromTime')?.value ?? '');
+    const arrivalTime = String(control.get('arrivalTime')?.value ?? '');
+    if (!date || !fromTime || !arrivalTime) return null;
+    const pickup = new Date(`${date}T${fromTime}:00`);
+    const arrival = new Date(`${date}T${arrivalTime}:00`);
+    if (Number.isNaN(pickup.getTime()) || Number.isNaN(arrival.getTime())) return { invalidTransferSchedule: true };
+    if (pickup.getTime() < Date.now()) return { transferTimeInPast: true };
+    return arrival.getTime() <= pickup.getTime() ? { invalidTransferTimeRange: true } : null;
   }
 
   private static integerValidator(control: AbstractControl): ValidationErrors | null {

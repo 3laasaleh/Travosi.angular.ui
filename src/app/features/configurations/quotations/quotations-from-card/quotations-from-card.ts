@@ -554,7 +554,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       children: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       infants: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       discount: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
-      taxRate: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
+      taxRate: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(100)] }),
       status: new FormControl(QuotationStatusEnum.Draft, { nonNullable: true, validators: [Validators.required] }),
       validUntil: new FormControl(today, { nonNullable: true, validators: [Validators.required] }),
       notes: new FormControl('', { nonNullable: true }),

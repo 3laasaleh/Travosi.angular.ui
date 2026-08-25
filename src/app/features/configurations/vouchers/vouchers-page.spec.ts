@@ -44,4 +44,18 @@ describe('Vouchers', () => {
       arrivalTime: '10:45:00',
     });
   });
+
+  it('rejects invalid transfer schedules', () => {
+    const component = new Vouchers(
+      { get: vi.fn().mockReturnValue(of({ data: [] })) } as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+
+    component.form.patchValue({ serviceType: 5, serviceDate: '2020-01-01', fromTime: '09:30', arrivalTime: '10:30' });
+    expect(component.form.hasError('transferTimeInPast')).toBe(true);
+
+    component.form.patchValue({ serviceDate: '2030-05-10', fromTime: '11:00', arrivalTime: '10:30' });
+    expect(component.form.hasError('invalidTransferTimeRange')).toBe(true);
+  });
 });
