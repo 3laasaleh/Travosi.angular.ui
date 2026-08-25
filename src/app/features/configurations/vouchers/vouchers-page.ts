@@ -13,6 +13,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../shared/components/time-picker/time-picker';
+import { environment } from '../../../../environments/environment';
 
 type VoucherReferenceKey = 'flightId' | 'hotelId' | 'tourId' | 'packageId';
 
@@ -89,6 +90,30 @@ export class Vouchers implements OnInit {
       case 4: return this.packages;
       default: return [];
     }
+  }
+
+  selectServiceType(type: number): void {
+    if (Number(this.form.controls.serviceType.value) === Number(type)) return;
+    this.form.controls.serviceType.setValue(type);
+    this.serviceTypeChanged();
+  }
+
+  serviceTypeIcon(type: number): string {
+    if (type === 1) return 'mdi-airplane';
+    if (type === 2) return 'mdi-bed-outline';
+    if (type === 3) return 'mdi-map-marker-path';
+    if (type === 4) return 'mdi-bag-suitcase-outline';
+    return 'mdi-car-outline';
+  }
+
+  selectService(service: any): void {
+    this.form.controls.serviceId.setValue(Number(service?.id));
+    this.form.controls.serviceId.markAsTouched();
+    this.errorMessage = '';
+  }
+
+  isServiceSelected(id: unknown): boolean {
+    return Number(this.form.controls.serviceId.value) === Number(id);
   }
 
   toggleForm(): void {
@@ -265,6 +290,35 @@ export class Vouchers implements OnInit {
       case 4: return service?.nameEng ?? service?.nameAr ?? service?.name ?? '';
       default: return '';
     }
+  }
+
+  serviceMeta(service: any): string {
+    if (this.form.controls.serviceType.value === 1) {
+      return [service?.airlineName ?? service?.airline?.name, service?.departureAirport, service?.arrivalAirport]
+        .filter(Boolean).join(' · ');
+    }
+    return service?.cityName
+      ?? service?.destinationName
+      ?? service?.location
+      ?? service?.address
+      ?? '';
+  }
+
+  thumbnail(service: any): string {
+    const images = Array.isArray(service?.images) ? service.images : [];
+    const image = images.find((candidate: any) => candidate?.isCover) ?? images[0];
+    const raw = service?.airlineLogoUrl
+      ?? service?.airline?.logoUrl
+      ?? service?.coverImageUrl
+      ?? service?.mainImageUrl
+      ?? service?.imageUrl
+      ?? service?.logoUrl
+      ?? image?.imageUrl
+      ?? image?.url
+      ?? '';
+    if (!raw || /^(blob:|data:|https?:\/\/)/i.test(String(raw))) return String(raw ?? '');
+    const path = String(raw).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
   voucherTypeKey(value: unknown): string {

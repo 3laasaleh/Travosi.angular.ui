@@ -14,6 +14,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../shared/components/time-picker/time-picker';
+import { environment } from '../../../../environments/environment';
 
 interface CurrencyOption {
   id: number;
@@ -66,6 +67,11 @@ export class Invoices implements OnInit {
   deletingId: number | null = null;
   downloadingId: number | null = null;
   readonly localToday = this.localDate(new Date());
+  readonly catalogSections = [
+    { type: 1, labelKey: 'packages', emptyKey: 'noPackagesFound', icon: 'mdi-bag-suitcase-outline' },
+    { type: 2, labelKey: 'tours', emptyKey: 'noToursFound', icon: 'mdi-map-marker-path' },
+    { type: 4, labelKey: 'flights', emptyKey: 'noFlightsFound', icon: 'mdi-airplane' },
+  ];
 
   readonly form = new FormGroup({
     customerId: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
@@ -121,6 +127,14 @@ export class Invoices implements OnInit {
     return this.currencies.find((currency) => currency.id === Number(this.form.controls.currencyId.value))?.sign ?? '';
   }
 
+  get catalogItemCount(): number {
+    return this.items.controls.filter((row) => !this.isTransfer(row)).length;
+  }
+
+  get transferItemCount(): number {
+    return this.items.controls.filter((row) => this.isTransfer(row)).length;
+  }
+
   toggleForm(): void {
     if (this.isSaving) return;
     this.showForm = !this.showForm;
@@ -130,6 +144,25 @@ export class Invoices implements OnInit {
   addItem(type = 2, source?: any): void {
     this.items.push(this.createItemGroup(type, source));
     this.errorMessage = '';
+  }
+
+  catalogOptions(type: number): any[] {
+    return this.serviceOptionsForType(type);
+  }
+
+  isCatalogItemSelected(type: number, id: unknown): boolean {
+    return this.items.controls.some((row) =>
+      Number(row.controls.itemType.value) === type
+      && Number(row.controls.serviceId.value) === Number(id));
+  }
+
+  toggleCatalogItem(type: number, source: any, checked: boolean): void {
+    const index = this.items.controls.findIndex((row) =>
+      Number(row.controls.itemType.value) === type
+      && Number(row.controls.serviceId.value) === Number(source?.id));
+
+    if (checked && index < 0) this.addItem(type, source);
+    if (!checked && index >= 0) this.removeItem(index);
   }
 
   removeItem(index: number): void {
@@ -418,6 +451,34 @@ export class Invoices implements OnInit {
     return item?.nameEng ?? item?.titleEng ?? item?.nameAr ?? item?.titleAr ?? item?.name ?? '';
   }
 
+  itemTypeKey(type: unknown): string {
+    if (Number(type) === 1) return 'package';
+    if (Number(type) === 2) return 'tour';
+    if (Number(type) === 4) return 'flight';
+    return 'transfer';
+  }
+
+  catalogPrice(item: any): number {
+    return this.numberValue(item?.pricePerPerson ?? item?.price ?? item?.adultPrice ?? item?.totalAmount);
+  }
+
+  thumbnail(item: any): string {
+    const images = Array.isArray(item?.images) ? item.images : [];
+    const image = images.find((candidate: any) => candidate?.isCover) ?? images[0];
+    const raw = item?.airlineLogoUrl
+      ?? item?.airline?.logoUrl
+      ?? item?.coverImageUrl
+      ?? item?.mainImageUrl
+      ?? item?.imageUrl
+      ?? item?.logoUrl
+      ?? image?.imageUrl
+      ?? image?.url
+      ?? '';
+    if (!raw || /^(blob:|data:|https?:\/\/)/i.test(String(raw))) return String(raw ?? '');
+    const path = String(raw).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
   customerName(customer: any): string {
     return customer?.companyName ?? `${customer?.firstName ?? ''} ${customer?.lastName ?? ''}`.trim();
   }
@@ -462,7 +523,7 @@ export class Invoices implements OnInit {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1), Invoices.integerValidator],
       }),
-      unitPrice: new FormControl(this.numberValue(source?.pricePerPerson ?? source?.price), {
+      unitPrice: new FormControl(this.catalogPrice(source), {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),

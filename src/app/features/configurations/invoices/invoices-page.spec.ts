@@ -67,4 +67,26 @@ describe('Invoices', () => {
     row.patchValue({ transferDate: '2030-05-10', fromTime: '11:00', arrivalTime: '10:30' });
     expect(row.hasError('invalidTransferTimeRange')).toBe(true);
   });
+
+  it('adds and removes catalog services through the quotation-style selector', () => {
+    const component = new Invoices(
+      { get: vi.fn().mockReturnValue(of({ data: [] })) } as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    const tour = { id: 12, titleEng: 'Cairo highlights', pricePerPerson: 85 };
+
+    component.toggleCatalogItem(2, tour, true);
+
+    expect(component.isCatalogItemSelected(2, 12)).toBe(true);
+    expect(component.items.at(0).getRawValue()).toMatchObject({
+      itemType: 2,
+      serviceId: 12,
+      description: 'Cairo highlights',
+      unitPrice: 85,
+    });
+
+    component.toggleCatalogItem(2, tour, false);
+    expect(component.items.length).toBe(0);
+  });
 });
