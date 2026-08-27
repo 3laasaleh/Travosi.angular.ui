@@ -18,9 +18,15 @@ export interface CityDTO {
   id: number;
   nameEng: string;
   nameAr: string;
+  descriptionEng: string;
+  descriptionAr: string;
   destinationId?: number | null;
   destinationNameEng?: string;
   destinationNameAr?: string;
+  metaTitleEng: string;
+  metaTitleAr: string;
+  metaDescriptionEng: string;
+  metaDescriptionAr: string;
   isActive: boolean;
 }
 
@@ -69,7 +75,13 @@ export class CitiesFromCard implements OnInit, OnChanges {
     const payload: any = {
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
+      descriptionEng: form.descriptionEng.trim(),
+      descriptionAr: form.descriptionAr.trim(),
       destinationId: Number(form.destinationId),
+      metaTitleEng: form.metaTitleEng.trim(),
+      metaTitleAr: form.metaTitleAr.trim(),
+      metaDescriptionEng: form.metaDescriptionEng.trim(),
+      metaDescriptionAr: form.metaDescriptionAr.trim(),
     };
     if (this.selectedCity?.id) payload.id = this.selectedCity.id;
 
@@ -128,12 +140,28 @@ export class CitiesFromCard implements OnInit, OnChanges {
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '',
       nameAr: city.nameAr ?? '',
+      descriptionEng: city.descriptionEng ?? '',
+      descriptionAr: city.descriptionAr ?? '',
       destinationId: city.destinationId ?? null,
+      metaTitleEng: city.metaTitleEng ?? city.nameEng ?? '',
+      metaTitleAr: city.metaTitleAr ?? city.nameAr ?? '',
+      metaDescriptionEng: city.metaDescriptionEng ?? '',
+      metaDescriptionAr: city.metaDescriptionAr ?? '',
     });
   }
 
   private resetForm(emitCancel: boolean): void {
-    this.cityForm.reset({ nameEng: '', nameAr: '', destinationId: null });
+    this.cityForm.reset({
+      nameEng: '',
+      nameAr: '',
+      descriptionEng: '',
+      descriptionAr: '',
+      destinationId: null,
+      metaTitleEng: '',
+      metaTitleAr: '',
+      metaDescriptionEng: '',
+      metaDescriptionAr: '',
+    });
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -147,7 +175,19 @@ export class CitiesFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150)],
       }),
+      descriptionEng: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(4000)],
+      }),
+      descriptionAr: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(4000)],
+      }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
+      metaTitleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaTitleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
+      metaDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
     });
   }
 }

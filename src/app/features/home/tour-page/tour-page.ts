@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
@@ -18,6 +18,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -31,6 +32,8 @@ export class HomeTourPage implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
+  private readonly seo = inject(SeoService);
 
   tour: any = null;
   isLoading = true;
@@ -70,13 +73,17 @@ export class HomeTourPage implements OnInit {
   }
 
   get title(): string {
-    return (
-      this.tour?.titleEng ??
-      this.tour?.nameEng ??
-      this.tour?.title ??
-      this.tour?.name ??
-      ''
-    );
+    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return arabic
+      ? (this.tour?.titleAr || this.tour?.nameAr || this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
+      : (this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.titleAr || this.tour?.nameAr || '');
+  }
+
+  get destinationName(): string {
+    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return arabic
+      ? (this.tour?.destinationNameAr || this.tour?.destination?.nameAr || this.tour?.destinationNameEng || this.tour?.destinationName || this.tour?.destination?.nameEng || '')
+      : (this.tour?.destinationNameEng || this.tour?.destinationName || this.tour?.destination?.nameEng || this.tour?.destinationNameAr || this.tour?.destination?.nameAr || '');
   }
 
   ngOnInit(): void {
@@ -91,6 +98,7 @@ export class HomeTourPage implements OnInit {
           this.tour = null;
           this.isLoading = false;
           this.errorMessage = 'tourNotFound';
+          this.seo.noIndex(this.translate.instant('tourNotFound'));
           this.cdr.markForCheck();
           return;
         }
@@ -170,8 +178,45 @@ export class HomeTourPage implements OnInit {
       )
       .subscribe((tour) => {
         this.tour = tour;
-        if (!tour) this.errorMessage = 'tourNotFound';
+        if (!tour) {
+          this.errorMessage = 'tourNotFound';
+          this.seo.noIndex(this.translate.instant('tourNotFound'));
+          return;
+        }
+        this.updateSeo(tourId);
       });
+  }
+
+  private updateSeo(tourId: number): void {
+    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    const title = arabic
+      ? (this.tour?.metaTitleAr || this.tour?.titleAr || this.tour?.metaTitleEng || this.title)
+      : (this.tour?.metaTitleEng || this.tour?.titleEng || this.title);
+    const description = arabic
+      ? (this.tour?.metaDescriptionAr || this.tour?.descriptionAr || this.tour?.metaDescriptionEng || this.tour?.description || '')
+      : (this.tour?.metaDescriptionEng || this.tour?.descriptionEng || this.tour?.description || this.tour?.fullDescription || '');
+    const price = Number(this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ?? this.tour?.price);
+    this.seo.update({
+      title,
+      description,
+      canonicalPath: `/tours/${tourId}`,
+      image: this.resolvedImages[0],
+      type: 'product',
+      structuredData: {
+        '@type': 'TouristTrip',
+        name: title,
+        description,
+        image: this.resolvedImages,
+        ...(Number.isFinite(price) ? {
+          offers: {
+            '@type': 'Offer',
+            price,
+            priceCurrency: this.tour?.currencyCode ?? this.tour?.currency?.code ?? 'USD',
+            availability: 'https://schema.org/InStock',
+          },
+        } : {}),
+      },
+    });
   }
 
   private tourRequest(tourId: number): Observable<any> {

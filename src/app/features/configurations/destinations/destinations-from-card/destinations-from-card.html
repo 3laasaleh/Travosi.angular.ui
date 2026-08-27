@@ -22,13 +22,28 @@
         destinationForm.get('nameAr')?.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameInvalid' | translate }}</p> }</div>
     </div>
-    <div><label class="mb-2 block text-sm font-medium">{{ 'shortDescription' | translate }} <span
-          class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="subDescription"
-        type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-    <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span
-          class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
-        formControlName="description" rows="4"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div><label class="mb-2 block text-sm font-medium">{{ 'englishShortDescription' | translate }} <span
+            class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="subDescriptionEng"
+          maxlength="500" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arabicShortDescription' | translate }} <span
+            class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="subDescriptionAr"
+          maxlength="500" type="text" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label><textarea
+          formControlName="descriptionEng" rows="4" maxlength="4000"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+        @if (destinationForm.controls.descriptionEng.touched && destinationForm.controls.descriptionEng.hasError('required')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+        }
+      </div>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }}</label><textarea
+          formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+        @if (destinationForm.controls.descriptionAr.touched && destinationForm.controls.descriptionAr.hasError('required')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+        }
+      </div>
+    </div>
     <div>
       <div class="mb-2 flex justify-between"><label for="destinationImages" class="text-sm font-medium">{{
           'destinationImages' | translate }}</label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{

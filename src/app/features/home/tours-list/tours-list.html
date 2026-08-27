@@ -132,7 +132,7 @@
               </div>
               <div class="flex flex-1 flex-col p-4">
                 <h2 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ tourTitle(tour) }}</h2>
-                @if (tour.subDescription ?? tour.description) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ tour.subDescription ?? tour.description }}</p> }
+                @if (tourDescription(tour); as description) { <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ description }}</p> }
                 <div class="mt-auto pt-4">
                   @if (durationDays(tour); as duration) { <p class="mb-3 flex items-center gap-2 text-sm text-slate-500"><i class="mdi mdi-calendar-range text-primary"></i>{{ duration }} {{ 'days' | translate }}</p> }
                   <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">

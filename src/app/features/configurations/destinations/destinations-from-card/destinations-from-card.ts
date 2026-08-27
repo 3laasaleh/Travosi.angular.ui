@@ -38,8 +38,14 @@ export interface DestinationDTO {
   id: number;
   nameEng: string;
   nameAr: string;
-  subDescription?: string;
-  description?: string;
+  subDescriptionEng?: string;
+  subDescriptionAr?: string;
+  descriptionEng?: string;
+  descriptionAr?: string;
+  metaTitleEng: string;
+  metaTitleAr: string;
+  metaDescriptionEng: string;
+  metaDescriptionAr: string;
   isActive: boolean;
   images: DestinationImageDto[];
 }
@@ -99,8 +105,16 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
     payload.append('NameEng', form.nameEng.trim());
     payload.append('NameAr', form.nameAr.trim());
-    payload.append('SubDescription', form.subDescription);
-    payload.append('Description', form.description);
+    payload.append('SubDescriptionEng', form.subDescriptionEng.trim());
+    payload.append('SubDescriptionAr', form.subDescriptionAr.trim());
+    payload.append('DescriptionEng', form.descriptionEng.trim());
+    payload.append('DescriptionAr', form.descriptionAr.trim());
+    payload.append('SubDescription', form.subDescriptionEng.trim());
+    payload.append('Description', form.descriptionEng.trim());
+    payload.append('MetaTitleEng', form.metaTitleEng.trim());
+    payload.append('MetaTitleAr', form.metaTitleAr.trim());
+    payload.append('MetaDescriptionEng', form.metaDescriptionEng.trim());
+    payload.append('MetaDescriptionAr', form.metaDescriptionAr.trim());
     payload.append('IsActive', String(form.isActive));
     this.imageUploads
       .filter((image) => image.file)
@@ -237,8 +251,14 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.setValue({
       nameEng: destination.nameEng ?? destination.name ?? '',
       nameAr: destination.nameAr ?? '',
-      subDescription: destination.subDescription ?? '',
-      description: destination.description ?? '',
+      subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
+      subDescriptionAr: destination.subDescriptionAr ?? '',
+      descriptionEng: destination.descriptionEng ?? destination.description ?? '',
+      descriptionAr: destination.descriptionAr ?? '',
+      metaTitleEng: destination.metaTitleEng ?? destination.nameEng ?? '',
+      metaTitleAr: destination.metaTitleAr ?? destination.nameAr ?? '',
+      metaDescriptionEng: destination.metaDescriptionEng ?? destination.subDescriptionEng ?? destination.subDescription ?? '',
+      metaDescriptionAr: destination.metaDescriptionAr ?? '',
       images: this.imageUploads.map((image) => image.url),
       isActive: destination.isActive !== false,
     });
@@ -251,8 +271,14 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.reset({
       nameEng: '',
       nameAr: '',
-      subDescription: '',
-      description: '',
+      subDescriptionEng: '',
+      subDescriptionAr: '',
+      descriptionEng: '',
+      descriptionAr: '',
+      metaTitleEng: '',
+      metaTitleAr: '',
+      metaDescriptionEng: '',
+      metaDescriptionAr: '',
       images: [],
       isActive: true,
     });
@@ -297,8 +323,14 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/),
         ],
       }),
-      subDescription: new FormControl('', { nonNullable: true }),
-      description: new FormControl('', { nonNullable: true }),
+      subDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
+      subDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
+      descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      metaTitleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaTitleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
+      metaDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
       images: new FormControl<string[]>([], {
         nonNullable: true,
         validators: [Validators.required],

@@ -30,30 +30,7 @@
     </div>
   </main>
 } @else {
-  <section
-    class="relative flex min-h-[480px] items-end bg-cover bg-center bg-no-repeat py-16"
-    [style.background-image]="'url(' + destinationImage() + ')'"
-  >
-    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-900/15"></div>
-    <div class="container relative text-white">
-      <a routerLink="/destinations" class="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-white/75 hover:text-white">
-        <i class="mdi mdi-arrow-left rtl:rotate-180"></i>
-        {{ 'backToDestinations' | translate }}
-      </a>
-      <div class="max-w-3xl">
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{{ 'destination' | translate }}</p>
-        <h1 class="mt-3 text-4xl font-semibold md:text-6xl">
-          {{ destination.nameEng ?? destination.name }}
-        </h1>
-        @if (destination.nameAr) {
-          <p dir="rtl" class="mt-3 text-2xl text-white/75">{{ destination.nameAr }}</p>
-        }
-        @if (destination.subDescription) {
-          <p class="mt-5 max-w-2xl text-lg leading-8 text-white/85">{{ destination.subDescription }}</p>
-        }
-      </div>
-    </div>
-  </section>
+
 
   <main class="py-16 md:py-24">
     <div class="container">
@@ -61,14 +38,14 @@
         <div class="min-w-0">
           <div class="mb-6">
             <p class="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{{ 'destination' | translate }}</p>
-            <h2 class="mt-2 text-3xl font-semibold">{{ destination.nameEng ?? destination.name }}</h2>
+            <h2 class="mt-2 text-3xl font-semibold">{{ destinationTitle() }}</h2>
           </div>
 
           @if (images.length) {
             <div class="relative overflow-hidden rounded-3xl bg-slate-100 shadow-sm ">
               <img
                 [src]="imageUrl(images[selectedImageIndex])"
-                [alt]="destination.nameEng ?? destination.name"
+                [alt]="destinationTitle()"
                 class="aspect-[16/10] max-h-[620px] w-full cursor-zoom-in object-cover transition-opacity duration-300"
                 (click)="openImageViewer()"
               />
@@ -119,7 +96,7 @@
                   >
                     <img
                       [src]="imageUrl(image)"
-                      [alt]="destination.nameEng ?? destination.name"
+                      [alt]="destinationTitle()"
                       class="h-24 w-36 object-cover sm:h-28 sm:w-44"
                     />
                   </button>
@@ -169,8 +146,8 @@
                         </div>
                         <div class="flex flex-1 flex-col p-5">
                           <h3 class="line-clamp-2 text-xl font-semibold transition group-hover:text-primary">{{ tourTitle(tour) }}</h3>
-                          @if (tour.subDescription ?? tour.description) {
-                            <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ tour.subDescription ?? tour.description }}</p>
+                          @if (tourDescription(tour); as description) {
+                            <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ description }}</p>
                           }
                           <div class="mt-auto pt-5">
                             <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
@@ -202,10 +179,10 @@
         </aside>
       </section>
 
-      @if (destination.description) {
+      @if (destinationDescription(); as description) {
         <section class="mx-auto mb-16 max-w-4xl">
           <p class="whitespace-pre-line text-base leading-8 text-slate-600 ">
-            {{ destination.description }}
+            {{ description }}
           </p>
         </section>
       }
@@ -231,7 +208,7 @@
 @if (imageViewerOpen) {
   <app-image-viewer-modal
     [images]="resolvedImages"
-    [title]="destination.nameEng ?? destination.name"
+    [title]="destinationTitle()"
     [(selectedIndex)]="selectedImageIndex"
     (closed)="closeImageViewer()"
   />

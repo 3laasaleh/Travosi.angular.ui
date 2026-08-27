@@ -34,6 +34,21 @@
         <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p>
       }
     </div>
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label>
+      <textarea formControlName="descriptionEng" rows="4" maxlength="4000" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+      }
+    </div>
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }}</label>
+      <textarea formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('required')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+      }
+    </div>
+    
     <div class="flex gap-3">
       <button type="submit" [disabled]="cityForm.invalid || isLoading || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedCity ? 'update' : 'add') | translate }} }</button>
       @if (selectedCity) {

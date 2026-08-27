@@ -19,8 +19,13 @@ describe('PackagesFromCard validation', () => {
 
     component.packageForm.patchValue({
       nameEng: 'Cairo Discovery',
+      metaTitleEng: 'Cairo Discovery Travel Package',
+      metaTitleAr: 'باقة اكتشاف القاهرة السياحية',
+      metaDescriptionEng: 'Book a complete Cairo travel package with guided tours, flexible dates and expert support.',
+      metaDescriptionAr: 'احجز باقة سياحية متكاملة لاكتشاف القاهرة مع جولات منظمة ودعم من خبراء السفر.',
       nameAr: 'اكتشاف القاهرة',
-      description: 'A complete Cairo travel package.',
+      descriptionEng: 'A complete Cairo travel package.',
+      descriptionAr: 'باقة سفر متكاملة إلى القاهرة.',
       durationDays: 3,
       durationHours: 0,
       pricePerPerson: 200,

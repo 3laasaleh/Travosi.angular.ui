@@ -1,1135 +1,1162 @@
 {
-    "blogs": "Blogs",
-    "blogsLoadError": "Blogs could not be loaded. Please try again.",
-    "tryAgain": "Try again",
-    "noBlogsFound": "No published blogs are available yet.",
-    "readMore": "Read more",
-    "viewAllBlogs": "View all blogs",
-    "previousBlog": "Previous blogs",
-    "nextBlog": "Next blogs",
-    "manageBlogDetails": "Create and publish travel news, guides, and stories.",
-    "showAddBlog": "Add a blog",
-    "hideAddBlog": "Hide the blog form",
-    "blogsData": "Blogs data",
-    "publishDate": "Publish date",
-    "editBlog": "Edit blog",
-    "confirmDeactivateBlog": "Are you sure you want to deactivate this blog?",
-    "confirmActivateBlog": "Are you sure you want to activate this blog?",
-    "blogStatusUpdated": "Blog status updated successfully.",
-    "blogStatusUpdateError": "Unable to update the blog status.",
-    "noBlogsCreated": "No blogs have been created yet.",
-    "blogImages": "Blog images",
-    "blogImageRules": "JPG, PNG or WebP, maximum 5 MB",
-    "blogImageLimit": "A blog can have a maximum of 5 images.",
-    "blogImageNumber": "Blog image {{number}}",
-    "processingImages": "Processing images...",
-    "delete": "Delete",
-    "removeImage": "Remove image",
-    "confirmImageDelete": "Delete this image?",
-    "imageDeleteWarning": "This action will permanently remove the image.",
-    "imageDeleted": "Image deleted successfully.",
-    "viewLargerImage": "View larger image",
-    "previousImage": "Previous image",
-    "nextImage": "Next image",
-    "imageDeleteError": "Unable to delete the image.",
-    "image": "Image",
-    "status": "Status",
-    "actions": "Actions",
-    "activate": "Activate",
-    "confirm": "Confirm",
-    "confirmStatusChange": "Confirm status change",
-    "statusChangeConfirmation": "Are you sure you want to change the status to {{status}}?",
-    "confirmDeactivateDestination": "Are you sure you want to deactivate this destination?",
-    "confirmActivateDestination": "Are you sure you want to activate this destination?",
-    "statusUpdated": "Destination status updated successfully.",
-    "statusUpdateError": "Unable to update destination status.",
-    "view": "View",
-    "close": "Close",
-    "active": "Active",
-    "inactive": "Inactive",
-    "tour": "Tour",
-    "admin": "Admin",
-    "destinations": "Destinations",
-    "tours": "Tours",
-    "nileCruises": "Nile Cruises",
-    "manageDestinationDetails": "Manage destination details and images.",
-    "manageTourDetails": "Manage tour details, images, and itinerary.",
-    "backToDashboard": "Back to dashboard",
-    "switchToGrid": "Switch to grid",
-    "switchToTable": "Switch to table",
-    "collapseMenu": "Collapse menu",
-    "expandMenu": "Expand menu",
-    "hideAddDestination": "Hide add destination",
-    "showAddDestination": "Show add destination",
-    "hotels": "Hotels",
-    "room": "Room",
-    "night": "night",
-    "manageHotelDetails": "Manage hotel details and contacts.",
-    "hideAddHotel": "Hide add hotel",
-    "showAddHotel": "Show add hotel",
-    "editHotel": "Edit hotel",
-    "addHotel": "Add hotel",
-    "hotelName": "Hotel name",
-    "hotelNameRequired": "Hotel name is required.",
-    "starRating": "Star rating",
-    "starRatingRequired": "Star rating is required.",
-    "address": "Address",
-    "activeHotel": "Active hotel",
-    "hotelRecords": "Hotel records",
-    "loadingHotels": "Loading hotels...",
-    "noHotelsFound": "No hotels found.",
-    "hotelSaveError": "The hotel could not be saved.",
-    "hotelServiceUnavailable": "The hotel service is unavailable.",
-    "confirmDeactivateHotel": "Are you sure you want to deactivate this hotel?",
-    "confirmActivateHotel": "Are you sure you want to activate this hotel?",
-    "airlines": "Airlines",
-    "manageAirlineDetails": "Manage airline details and logos.",
-    "hideAddAirline": "Hide add airline",
-    "showAddAirline": "Show add airline",
-    "editAirline": "Edit airline",
-    "addAirline": "Add airline",
-    "airlineName": "Airline name",
-    "airlineNameRequired": "Airline name is required.",
-    "airlineCode": "IATA code",
-    "airlineCodeRequired": "IATA code is required.",
-    "airlineCodeInvalid": "Use 2 or 3 letters or digits.",
-    "logoUrl": "Logo URL",
-    "logo": "Logo",
-    "airlineRecords": "Airline records",
-    "noAirlinesFound": "No airlines found.",
-    "airlineSaveError": "The airline could not be saved.",
-    "airlineServiceUnavailable": "The airline service is unavailable.",
-    "airlineLogoRules": "JPG, PNG or WebP, maximum 5 MB",
-    "airlineLogoRequired": "An airline logo is required.",
-    "chooseImage": "Choose image",
-    "replaceImage": "Replace image",
-    "confirmDeactivateAirline": "Are you sure you want to deactivate this airline?",
-    "confirmActivateAirline": "Are you sure you want to activate this airline?",
-    "airlineStatusUpdated": "Airline status updated.",
-    "airlineStatusUpdateError": "The airline status could not be updated.",
-    "airline": "Airline",
-    "selectAirline": "Select an airline",
-    "airlineRequired": "Airline is required.",
-    "flights": "Flights",
-    "flight": "Flight",
-    "manageFlightDetails": "Manage flight schedules, prices, and seats.",
-    "hideAddFlight": "Hide add flight",
-    "showAddFlight": "Show add flight",
-    "editFlight": "Edit flight",
-    "addFlight": "Add flight",
-    "flightNumber": "Flight number",
-    "flightNumberRequired": "Flight number is required.",
-    "flightNumberMaxLength": "Flight number cannot exceed 20 characters.",
-    "departureAirport": "Departure airport",
-    "departureAirportRequired": "Departure airport is required.",
-    "arrivalAirport": "Arrival airport",
-    "arrivalAirportRequired": "Arrival airport is required.",
-    "searchAirportPlaceholder": "Search airport, city, or code",
-    "noAirportsFound": "No matching airports found.",
-    "airportSearchUnavailable": "Airport search is temporarily unavailable. Please try again.",
-    "airportSelectionRequired": "Select an airport from the search results.",
-    "airportNameMaxLength": "Airport name cannot exceed 250 characters.",
-    "departureArrivalDifferent": "Departure and arrival airports must be different.",
-    "departureTime": "Departure time",
-    "departureTimeRequired": "Departure time is required.",
-    "arrivalTime": "Arrival time",
-    "arrivalTimeRequired": "Arrival time is required.",
-    "arrivalTimeAfterDeparture": "Arrival time must be after departure time.",
-    "availableSeats": "Available seats",
-    "availableSeatsRequired": "Available seats is required.",
-    "flightClass": "Flight class",
-    "flightClassEconomy": "Economy",
-    "flightClassBusiness": "Business",
-    "flightClassFirst": "First",
-    "route": "Route",
-    "flightRecords": "Flight records",
-    "noFlightsFound": "No flights found.",
-    "flightSaveError": "The flight could not be saved.",
-    "flightServiceUnavailable": "The flight service is unavailable.",
-    "customers": "Customers",
-    "manageCustomerDetails": "Manage customer accounts and contacts.",
-    "hideAddCustomer": "Hide add customer",
-    "showAddCustomer": "Show add customer",
-    "editCustomer": "Edit customer",
-    "addCustomer": "Add customer",
-    "customerName": "Customer name",
-    "customerNameRequired": "Customer name is required.",
-    "activeCustomer": "Active customer",
-    "customerRecords": "Customer records",
-    "noCustomersFound": "No customers found.",
-    "customerSaveError": "The customer could not be saved.",
-    "customerFormInvalid": "Complete all required customer and traveler fields.",
-    "customerSavedWithTravelers": "Customer, travelers, and assignment saved successfully.",
-    "customerProfile": "Customer profile",
-    "leadTraveler": "Lead traveler",
-    "leadTravelerHint": "The customer is saved as the primary traveler.",
-    "dateOfBirth": "Date of birth",
-    "dateOfBirthRequired": "Date of birth is required.",
-    "createAccount": "Create account",
-    "gender": "Gender",
-    "male": "Male",
-    "female": "Female",
-    "customerAgentNotificationHint": "The selected agent will receive a notification after saving.",
-    "customerAutoAssignedToAgent": "This customer will be assigned to you automatically.",
-    "requiredTravelerFieldsHint": "All identity, contact, passport, and birth date fields are required.",
-    "companionTravelers": "Companion travelers",
-    "companionTravelersHint": "Add the spouse, children, infants, babysitter, or other companions traveling with this customer.",
-    "addSpouse": "Add spouse",
-    "addAdult": "Add adult",
-    "addInfant": "Add infant",
-    "addBabysitter": "Add babysitter",
-    "adult": "Adult",
-    "child": "Child",
-    "infant": "Infant",
-    "traveler": "Traveler",
-    "travelerType": "Traveler type",
-    "relationship": "Relationship",
-    "removeTraveler": "Remove traveler",
-    "noCompanionTravelers": "No companion travelers added.",
-    "bookingAssignment": "Booking assignment",
-    "assignmentSuccessful": "Assignment successful",
-    "agentNotificationConfirmed": "{{agent}} was assigned and notified.",
-    "bookingAgentNotificationHint": "Saving will assign the booking and notify the selected agent.",
-    "assignAndNotify": "Assign and notify",
-    "done": "Done",
-    "customerServiceUnavailable": "The customer service is unavailable.",
-    "confirmDeactivateCustomer": "Are you sure you want to deactivate this customer?",
-    "confirmActivateCustomer": "Are you sure you want to activate this customer?",
-    "quotations": "Quotations",
-    "manageQuotationDetails": "Manage quotations and pricing offers.",
-    "hideAddQuotation": "Hide add quotation",
-    "showAddQuotation": "Show add quotation",
-    "editQuotation": "Edit quotation",
-    "addQuotation": "Add quotation",
-    "quotationRecords": "Quotation records",
-    "noQuotationsFound": "No quotations found.",
-    "quotationSaveError": "The quotation could not be saved.",
-    "quotationServiceUnavailable": "The quotation service is unavailable.",
-    "tasks": "Tasks",
-    "manageTaskDetails": "Assign tasks to agents and track their progress.",
-    "hideAddTask": "Hide add task",
-    "showAddTask": "Show add task",
-    "editTask": "Edit task",
-    "addTask": "Add task",
-    "taskTitle": "Task title",
-    "taskTitleRequired": "Task title is required.",
-    "assignedAgent": "Assigned agent",
-    "selectAgent": "Select an agent",
-    "agentRequired": "Agent is required.",
-    "dueDate": "Due date",
-    "taskStatus": "Task status",
-    "taskStatusPending": "Pending",
-    "taskStatusInProgress": "In progress",
-    "taskStatusCompleted": "Completed",
-    "taskStatusReturned": "Returned",
-    "taskStatusClosed": "Closed",
-    "startTask": "Start",
-    "finishTask": "Finish",
-    "closeTask": "Close",
-    "returnTask": "Return",
-    "agentCompletionNote": "Completion note",
-    "agentCompletionNotePlaceholder": "Describe what was done to complete this task...",
-    "agentCompletionNoteRequired": "A completion note is required.",
-    "returnReason": "Return reason",
-    "returnReasonPlaceholder": "Explain why the task is being returned...",
-    "taskStatusUpdated": "Task status updated.",
-    "taskStatusUpdateError": "The task status could not be updated.",
-    "taskRecords": "Task records",
-    "noTasksFound": "No tasks found.",
-    "taskSaveError": "The task could not be saved.",
-    "taskServiceUnavailable": "The task service is unavailable.",
-    "myTasks": "My tasks",
-    "viewAllTasks": "View all tasks",
-    "packages": "Packages",
-    "noPackagesFound": "No packages found.",
-    "viewAllDestinations": "View all destinations",
-    "viewAllTours": "View all tours",
-    "viewAllNileCruises": "View all Nile cruises",
-    "viewAllPackages": "View all packages",
-    "exploreMore": "Explore more",
-    "showMore": "Show more",
-    "loading": "Loading...",
-    "searchPlaceholder": "Search destinations, tours, packages...",
-    "clearSearch": "Clear search",
-    "noSearchResults": "No results found.",
-    "searchLoadError": "Search results could not be loaded. Please try again.",
-    "language": "Language",
-    "currency": "Currency",
-    "currencyUsd": "US Dollar",
-    "currencyEur": "Euro",
-    "currencyEgp": "Egyptian Pound",
-    "currencySar": "Saudi Riyal",
-    "editDestination": "Edit destination",
-    "addDestination": "Add destination",
-    "englishName": "English name",
-    "arabicName": "Arabic name",
-    "englishNameRequired": "English name is required.",
-    "arabicNameRequired": "Arabic name is required.",
-    "englishNameInvalid": "Use English letters and start with a letter.",
-    "arabicNameInvalid": "Use Arabic letters only and start with an Arabic letter.",
-    "shortDescription": "Short description",
-    "optional": "Optional",
-    "description": "Description",
-    "descriptionRequired": "Description is required.",
-    "destinationImages": "Destination images",
-    "tourImages": "Tour images",
-    "chooseImages": "Choose images",
-    "destinationImageRules": "JPG, PNG or WebP, maximum 5 MB",
-    "tourImageRules": "JPG, PNG or WebP, maximum 5 MB",
-    "tourImageLimit": "A tour can have a maximum of 5 images.",
-    "imagesRequired": "At least one image is required.",
-    "remove": "Remove",
-    "cover": "Cover",
-    "activeDestination": "Active destination",
-    "activeTour": "Active tour",
-    "update": "Update",
-    "add": "Add",
-    "cancel": "Cancel",
-    "destinationsData": "Destinations",
-    "previous": "Previous",
-    "next": "Next",
-    "loadingDestinations": "Loading destinations...",
-    "edit": "Edit",
-    "deactivate": "Deactivate",
-    "noDestinationsFound": "No destinations found.",
-    "editTour": "Edit tour",
-    "addTour": "Add tour",
-    "englishTitle": "English title",
-    "arabicTitle": "Arabic title",
-    "englishTitleRequired": "English title is required.",
-    "arabicTitleRequired": "Arabic title is required.",
-    "destination": "Destination",
-    "selectDestination": "Select a destination",
-    "destinationRequired": "Destination is required.",
-    "duration": "Duration",
-    "durationRequired": "Duration is required.",
-    "price": "Price",
-    "priceRequired": "Price is required.",
-    "itinerary": "Itinerary",
-    "itineraryRequired": "Itinerary is required.",
-    "updateTour": "Update tour",
-    "createTour": "Create tour",
-    "tourList": "Tour list",
-    "loadingTours": "Loading tours...",
-    "noToursFound": "No tours found.",
-    "noNileCruisesFound": "No Nile cruises found.",
-    "destinationServiceUnavailable": "The destination service is unavailable.",
-    "destinationSaveError": "The destination could not be saved.",
-    "destinationUpdated": "Destination updated successfully.",
-    "destinationCreated": "Destination created successfully.",
-    "destinationImageLimit": "A destination can have a maximum of 5 images.",
-    "invalidImageType": "Please select image files only.",
-    "imageTooLarge": "Each image must be 5 MB or smaller.",
-    "imageReadError": "An image could not be read.",
-    "imageResolutionTooSmall": "Image resolution is too low. Use an image of at least 1200 x 675 pixels.",
-    "imageAspectRatioInvalid": "The image must be landscape with an aspect ratio between 4:3 and 16:9.",
-    "destinationDeactivated": "Destination deactivated successfully.",
-    "destinationsLoadError": "Destinations could not be loaded. Please try again.",
-    "packagesLoadError": "Packages could not be loaded. Please try again.",
-    "tourSaveError": "The tour could not be saved.",
-    "tourUpdated": "Tour updated successfully.",
-    "tourCreated": "Tour created successfully.",
-    "tourDeactivated": "Tour deactivated successfully.",
-    "send": "Send",
-    "submit": "Submit",
-    "emailAddress": "Email Address",
-    "emailPlaceholder": "name@example.com",
-    "passwordPlaceholder": "Password",
-    "emailRequired": "Email is required.",
-    "emailInvalid": "Enter a valid email address.",
-    "passwordRequired": "Password is required.",
-    "passwordMin": "Password must be at least 6 characters.",
-    "submittingSignin": "Signing in...",
-    "signin": "Sign in",
-    "noAccount": "Don't have an account?",
-    "signup": "Sign Up",
-    "firstName": "First Name",
-    "firstNameRequired": "First name is required.",
-    "firstNameMin": "First name must be at least 2 characters.",
-    "lastNameRequired": "Last name is required.",
-    "lastNameMin": "Last name must be at least 2 characters.",
-    "mobileRequired": "Mobile number is required.",
-    "mobileInvalid": "Enter a valid mobile number.",
-    "confirmMismatch": "Passwords do not match.",
-    "acceptTerms": "You must accept the terms and conditions.",
-    "lastName": "Last Name",
-    "mobile": "Mobile Number",
-    "email": "Email Address",
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "iaccept": "I Accept",
-    "terms": "Terms And Condition",
-    "submittingSignUp": "Creating account...",
-    "alreadyHave": "Already have an account?",
-    "personalDetails": "Personal Details",
-    "createChangeSaveData": "Edit the fields below and press Save Changes to update your profile.",
-    "saveChanges": "Save Changes",
-    "changePassword": "Change password",
-    "phone": "Phone Number",
-    "website": "Website",
-    "oldPassword": "Old password",
-    "newPassword": "New password",
-    "confirmNewPassword": "Confirm New password",
-    "savePassword": "Save password",
-    "personalSaveSuccess": "Personal details updated successfully.",
-    "personalSaveError": "Unable to save personal details. Please try again.",
-    "passwordSaveSuccess": "Password updated successfully.",
-    "passwordSaveError": "Unable to change password. Please try again.",
-    "resetPassword": "Reset Password",
-    "resetInvalidLink": "Invalid reset link. Please request a new password reset.",
-    "resetTokenExpired": "Your reset token has expired. Please request a new password reset.",
-    "passwordMinLength": "Password must be at least 8 characters.",
-    "passwordComplexity": "Password must include an uppercase letter, a number, and a symbol.",
-    "resetPasswordSuccess": "Your password has been reset successfully.",
-    "resetPasswordError": "Unable to reset password. Please try again."
-    ,"adults": "Adults"
-    ,"amount": "Amount"
-    ,"bookingDate": "Booking Date"
-    ,"bookingId": "Booking ID"
-    ,"bookingRecords": "Booking Records"
-    ,"bookings": "Bookings"
-    ,"children": "Children"
-    ,"companyName": "Company Name"
-    ,"companyNameRequired": "Company name is required."
-    ,"Configurations": "Configurations"
-    ,"confirmRequired": "Please confirm your password."
-    ,"customer": "Customer"
-    ,"customerType": "Customer Type"
-    ,"discount": "Discount"
-    ,"exchangeRate": "Exchange Rate"
-    ,"guests": "Guests"
-    ,"infants": "Infants"
-    ,"manageBookings": "Manage agent bookings and reservation records."
-    ,"notes": "Notes"
-    ,"passportNumber": "Passport Number"
-    ,"passportNumberRequired": "Passport number is required."
-    ,"passportNumberMaxLength": "Passport Number max length is 20"
-    ,"passportNumberMinLength": "Passport Number min length is 8"
-    ,"quotationNo": "Quotation Number"
-    ,"selectCurrency": "Select currency"
-    ,"selectCustomer": "Select customer"
-    ,"selectedPackages": "Selected Packages"
-    ,"sendAndDownloadPdf": "Download PDF"
-    ,"submitting": "Submitting..."
-    ,"subTotal": "Subtotal"
-    ,"tax": "Tax"
-    ,"taxRate": "Tax Rate"
-    ,"totalAmount": "Total Amount"
-    ,"totalCost": "Total Cost"
-    ,"travelDates": "Travel Dates"
-    ,"travelEndDate": "Travel End Date"
-    ,"travelStartDate": "Travel Start Date"
-    ,"validUntil": "Valid Until"
-    ,"individual": "Individual"
-    ,"couple": "Couple"
-    ,"family": "Family"
-    ,"company": "Company"
-    ,"selectAtLeastOnePackage": "Select at least one package."
-    ,"quotationSaved": "Quotation saved successfully."
-    ,"quotationSendError": "Unable to send the quotation."
-    ,"quotationPdfDownloaded": "Quotation PDF downloaded successfully."
-    ,"quotationSent": "Quotation sent successfully."
-    ,"hideAddTour": "Hide add tour section"
-    ,"showAddTour": "Show add tour section"
-    ,"hideAddPackage": "Hide add package section"
-    ,"showAddPackage": "Show add package section"
-    ,"contentManagement": "Content Management"
-    ,"manageTravelContent": "Manage travel content and bookings"
-    ,"viewWebsite": "View Website"
-    ,"administrator": "Administrator"
-    ,"myProfile": "My Profile"
-    ,"signOut": "Sign Out"
-    ,"notifications": "Notifications"
-    ,"adminNavigation": "Admin Navigation"
-    ,"adminAgentMenu": "Admin / Agent Menu"
-    ,"packageList": "Package List"
-    ,"destinationId": "Destination ID"
-    ,"draft": "Draft"
-    ,"sent": "Sent"
-    ,"accepted": "Accepted"
-    ,"rejected": "Rejected"
-    ,"expired": "Expired"
-    ,"managePackageDetails": "Create and manage travel packages for the website."
-    ,"editPackage": "Edit Package"
-    ,"addPackage": "Add Package"
-    ,"title": "Title"
-    ,"imageUrl": "Image URL"
-    ,"activePackage": "Active Package"
-    ,"updatePackage": "Update Package"
-    ,"createPackage": "Create Package"
-    ,"loadingPackages": "Loading packages"
-    ,"quickAccessManagement": "Quick access to management sections."
-    ,"Booking": "Booking"
-    ,"Cities": "Cities"
-    ,"submitSignIn": "Signing in..."
-    ,"cities": "Cities"
-    ,"bookingsLoadError": "Bookings could not be loaded. Please try again."
-    ,"total": "Total"
-    ,"travelDate": "Travel date"
-    ,"travelDateRequired": "Travel date is required."
-    ,"bookNow": "Book now"
-    ,"loginToBook": "Log in to book"
-    ,"checkAvailability": "Check availability"
-    ,"checkingAvailability": "Checking availability..."
-    ,"selectionAvailable": "Your selection is available"
-    ,"selectionUnavailable": "Your selection is not currently available"
-    ,"availabilityCanChange": "Availability is checked again when you submit the booking."
-    ,"onlySeatsAvailable": "Only {{seats}} seats are currently available."
-    ,"availabilityCheckError": "Availability could not be checked. Please try again."
-    ,"bookingRequestReceived": "Booking request received"
-    ,"bookingConfirmationMessage": "Your booking request was received at {{time}}. A confirmation email has been sent to you. Our representative will get in touch with you as soon as possible to confirm the booking."
-    ,"bookingConfirmationEmailPending": "Your booking request was received at {{time}}. Our representative will get in touch with you as soon as possible to confirm the booking. Your email acknowledgement will be sent shortly."
-    ,"bookingNotesPlaceholder": "Any special requests or notes for our team..."
-    ,"bookingCreated": "Your booking was created successfully. Our team will call you to confirm."
-    ,"bookingCreateError": "Your booking could not be created. Please try again."
-    ,"bookingSeatsExceeded": "The number of guests exceeds the available seats."
-    ,"availableBookingDates": "Available booking dates"
-    ,"availableBookingDateRange": "From {{from}} to {{to}}"
-    ,"bookingStatusPending": "Pending"
-    ,"bookingStatusConfirmed": "Confirmed"
-    ,"bookingStatusCancelled": "Cancelled"
-    ,"bookingStatusCompleted": "Completed"
-    ,"confirmBooking": "Confirm"
-    ,"completeBooking": "Complete"
-    ,"cancelBooking": "Cancel booking"
-    ,"cancelBookingConfirm": "Are you sure you want to cancel this booking?"
-    ,"bookingStatusUpdated": "Booking status updated."
-    ,"bookingStatusUpdateError": "The booking status could not be updated."
-    ,"filterByStatus": "Filter by status"
-    ,"allStatuses": "All statuses"
-    ,"bookingProduct": "Tour / Package"
-    ,"customerPhone": "Customer phone"
-    ,"confirmBookingByPhone": "Confirm after calling the customer"
-    ,"customerContactedConfirm": "Customer contacted — confirm"
-    ,"statusNoteOptional": "Call note (optional)"
-    ,"phoneConfirmationNotePlaceholder": "Add any details from the confirmation call..."
-    ,"notAvailable": "Not available"
-    ,"cancellationFee": "Cancellation fee"
-    ,"enterCancellationFee": "Enter the cancellation fee amount. Use 0 when no fee applies."
-    ,"freeCancellationNoFee": "This booking has free cancellation, so no fee will be charged."
-    ,"cancellationFeeInvalid": "The cancellation fee cannot be negative."
-    ,"packageUnavailableForBooking": "This package is not available for booking."
-    ,"assignAgent": "Assign agent"
-    ,"assignBookingAgent": "Assign booking to agent"
-    ,"hideAssignBooking": "Hide assignment form"
-    ,"bookingAssigned": "The booking was assigned to the agent."
-    ,"bookingAssignError": "The booking could not be assigned."
-    ,"packageTitleRequired": "Please add a package title."
-    ,"packageUpdated": "Package updated successfully."
-    ,"packageCreated": "Package created successfully."
-    ,"packageDeactivated": "Package deactivated successfully."
-    ,"packageSaveError": "The package could not be saved. Please try again."
-    ,"confirmDeactivatePackage": "Do you want to deactivate this package?"
-    ,"confirmActivatePackage": "Do you want to activate this package?"
-    ,"languageEnglish": "English"
-    ,"languageArabic": "Arabic"
-    ,"travelAgency": "Travel agency"
-    ,"homeLinkLabel": "Sea World Holidays home"
-    ,"openAccountMenu": "Open account menu"
-    ,"toggleAdminNavigation": "Toggle admin navigation"
-    ,"airlineLogo": "Airline logo"
-    ,"manageCityDetails": "Manage cities and connect each city to its destination."
-    ,"hideAddCity": "Hide add city"
-    ,"showAddCity": "Show add city"
-    ,"editCity": "Edit city"
-    ,"addCity": "Add city"
-    ,"cityRecords": "City records"
-    ,"noCitiesFound": "No cities found."
-    ,"citySaveError": "The city could not be saved."
-    ,"cityServiceUnavailable": "The city service is unavailable."
-    ,"cityCreated": "City created successfully."
-    ,"cityUpdated": "City updated successfully."
-    ,"confirmDeactivateCity": "Are you sure you want to deactivate this city?"
-    ,"confirmActivateCity": "Are you sure you want to activate this city?"
-    ,"cityStatusUpdated": "City status updated successfully."
-    ,"saving": "Saving..."
-    ,"forgotPasswordError": "Unable to send the password reset email. Please try again."
-    ,"searchDestinations": "Search destinations"
-    ,"noMatchingDestinations": "No destinations match your search."
-    ,"pricePerPerson": "Price per person"
-    ,"pricePerChild": "Price per child"
-    ,"maxSeats": "Maximum seats"
-    ,"durationDays": "Duration in days"
-    ,"durationHours": "Additional hours"
-    ,"startDate": "Start date"
-    ,"endDate": "End date"
-    ,"startDateRequired": "Start date is required."
-    ,"endDateRequired": "End date is required."
-    ,"endDateBeforeStart": "End date must be after or equal to the start date."
-    ,"fullDescription": "Full description"
-    ,"coverImageUrl": "Cover image URL"
-    ,"cancellationPolicy": "Cancellation policy"
-    ,"freeCancellation": "Free cancellation"
-    ,"nileCruise": "Nile cruise"
-    ,"positiveValueRequired": "Enter a value greater than zero."
-    ,"nonNegativeValueRequired": "Enter zero or a positive value."
-    ,"durationHoursRange": "Hours must be between 0 and 23."
-    ,"validUrlRequired": "Enter a valid URL beginning with http:// or https://."
-    ,"search": "Search"
-    ,"clear": "Clear"
-    ,"pageSize": "Page size"
-    ,"totalRecords": "Total records"
-    ,"addImage": "Add image"
-    ,"noImagesAdded": "No gallery images added yet."
-    ,"tourHighlights": "Tour highlights"
-    ,"tourHighlightsHint": "Key selling points travelers sea at a glance, e.g. \"Skip-the-line entry\", \"Professional guide included\"."
-    ,"addHighlight": "Add highlight"
-    ,"highlightPlaceholder": "e.g. Private airport transfer"
-    ,"noHighlightsAdded": "No highlights added yet."
-    ,"whatsIncludedExcluded": "What's included / excluded"
-    ,"whatsIncludedExcludedHint": "Let travelers know exactly what is and isn't covered by the price."
-    ,"addIncluded": "Add included"
-    ,"addExcluded": "Add excluded"
-    ,"includePlaceholder": "e.g. Hotel accommodation, meals, entry tickets"
-    ,"noIncludesAdded": "No inclusions or exclusions added yet."
-    ,"included": "Included"
-    ,"excluded": "Not included"
-    ,"itineraryHint": "Add and save each main step, then attach optional child steps."
-    ,"addStep": "Add step"
-    ,"addChild": "Add child"
-    ,"step": "Step"
-    ,"stepTitle": "Step title"
-    ,"stepTitlePlaceholder": "e.g. Hotel pickup and museum visit"
-    ,"stepTitleRequired": "Step title is required."
-    ,"itineraryValue": "Step value"
-    ,"itineraryValuePlaceholder": "e.g. Cairo Museum"
-    ,"startTime": "Start time"
-    ,"endTime": "End time"
-    ,"childStep": "Child step"
-    ,"parentStepId": "Parent step ID"
-    ,"stepDescriptionPlaceholder": "Describe what happens during this step..."
-    ,"itinerarySteps": "Itinerary steps"
-    ,"stepDetails": "Step details"
-    ,"childStepDetails": "Child step details"
-    ,"saveStep": "Save step"
-    ,"clickAddStepToStart": "Click Add step to open the itinerary input card."
-    ,"saveItineraryStepFirst": "Save or cancel the open itinerary step before continuing."
-    ,"addDay": "Add day"
-    ,"day": "Day"
-    ,"dayTitlePlaceholder": "e.g. Arrival and city tour"
-    ,"dayTitleRequired": "Day title is required."
-    ,"dayDescriptionPlaceholder": "Describe the activities planned for this day..."
-    ,"dayDescriptionRequired": "Day description is required."
-    ,"noItineraryAdded": "No itinerary steps added yet."
-    ,"seatsAvailable": "seats available"
-    ,"toursLoadError": "Unable to load tours."
-    ,"nileCruisesLoadError": "Unable to load Nile cruises."
-    ,"destinationNotFound": "Destination not found."
-    ,"tourNotFound": "Tour not found."
-    ,"toursInDestination": "Tours in this destination"
-    ,"tourCount": "{{count}} tours"
-    ,"noToursForDestination": "No tours are available for this destination."
-    ,"exploreNow": "Explore now"
-    ,"backToDestinations": "Back to destinations"
-    ,"type": "Type"
-    ,"groupSize": "Group size"
-    ,"languages": "Languages"
-    ,"tourDescriptions": "Tour description"
-    ,"days": "days"
-    ,"hours": "hours"
-    ,"people": "people"
-    ,"person": "person"
-    ,"yourJourney": "Your journey"
-    ,"tripItinerary": "Trip itinerary"
-    ,"tripItineraryDescription": "Follow the itinerary step by step, with every stop and activity clearly organized."
-    ,"journeyStep": "Journey step"
-    ,"packageNotFound": "Package not found."
-    ,"backToHome": "Back to home"
-    ,"travelPackage": "Travel package"
-    ,"packageOverview": "Package overview"
-    ,"packageHighlights": "Package highlights"
-    ,"toursInPackage": "Tours included in this package"
-    ,"viewDetails": "View details"
-    ,"packageSummary": "Package summary"
-    ,"viewDestination": "View destination"
-    ,"tourCreationSteps": "Tour creation steps"
-    ,"tourStepperHint": "Save the tour details first, then add images and build the itinerary."
-    ,"tourDetailsStep": "Tour details"
-    ,"tourImagesStep": "Tour images"
-    ,"tourItineraryStep": "Tour itinerary"
-    ,"detailsStepHint": "Add the main tour information and save it to create the tour record."
-    ,"imagesStepHint": "Choose the tour gallery and select the first image as the cover."
-    ,"itineraryStepHint": "Build the journey with main steps and one level of child activities."
-    ,"savedTourNumber": "Saved tour"
-    ,"saveDetailsAndContinue": "Save details & continue"
-    ,"continueToItinerary": "Continue to itinerary"
-    ,"finishTour": "Save & finish tour"
-    ,"imagesStagedHint": "Selected images are staged and will be uploaded with the itinerary when you finish the tour."
-    ,"completeTourDetailsFirst": "Complete the required tour details before continuing."
-    ,"tourIdMissingAfterCreate": "The tour was saved, but the API did not return its ID. Return the created tour ID to continue with images and itinerary."
-    ,"tourDetailsCreated": "Tour details saved. You can now add images."
-    ,"tourDetailsUpdated": "Tour details updated. You can now review the images."
-    ,"saveImagesAndContinue": "Upload images & continue"
-    ,"saveItineraryAndFinish": "Save itinerary & finish"
-    ,"imagesUploadStepHint": "This step uploads a multipart request containing only TourId and Images."
-    ,"tourImagesSaved": "Tour images uploaded successfully."
-    ,"tourImagesSaveError": "Unable to upload the tour images."
-    ,"tourItinerarySaveError": "Unable to save the tour itinerary."
-    ,"dayNumber": "Day number"
-    ,"dayNumberPositive": "Day number must be a whole number greater than zero."
-    ,"stepTitleMaxLength": "Step title cannot exceed 200 characters."
-    ,"stepDescriptionMaxLength": "Step description cannot exceed 2,000 characters."
-    ,"endTimeAfterStart": "End time must be after start time."
-    ,"itineraryTimesRequired": "Start and end times are required."
-    ,"itineraryTitleAndTimesRequired": "Add at least one itinerary step. Every step requires a title, start time, and end time."
-    ,"itineraryTimeQuarterHour": "Choose a time using 00, 15, 30, or 45 minutes."
-    ,"itineraryTimeConflict": "This time overlaps another itinerary step on the same day. Choose a different time range."
-    ,"savingTourDetails": "Saving tour details..."
-    ,"uploadingTourImages": "Uploading tour images..."
-    ,"savingTourItinerary": "Saving tour itinerary..."
-    ,"deletingTourImage": "Deleting tour image..."
-    ,"pleaseWaitForRequest": "Please wait until the request is complete."
-    ,"tourImagesAlreadySaved": "Tour images are already saved."
-    ,"tourIncludes": "Tour includes"
-    ,"tourExcludes": "Tour excludes"
-    ,"includeValuePlaceholder": "e.g. Professional tour guide"
-    ,"excludeValuePlaceholder": "e.g. Personal expenses"
-    ,"noTourIncludesAdded": "No included items added yet."
-    ,"noTourExcludesAdded": "No excluded items added yet."
-    ,"listValueRequired": "Enter a value or remove this row."
-    ,"confirmDeactivateTour": "Deactivate this tour? It can be edited after it becomes inactive."
-    ,"confirmActivateTour": "Activate this tour? Active tours cannot be edited."
-    ,"tourStatusUpdated": "Tour status updated successfully."
-    ,"tourStatusUpdateError": "Unable to update the tour status."
-    ,"creatingBooking": "Creating your booking..."
-    ,"dateFrom": "From date"
-    ,"dateTo": "To date"
-    ,"dateFromRequired": "Start date is required."
-    ,"dateToRequired": "End date is required."
-    ,"bookingDateRangeInvalid": "The end date must be on or after the start date."
-    ,"bookingDateOutsideAvailability": "Select dates within the available booking range."
-    ,"duplicateBookingDates": "You already booked this tour or package for the same dates."
-    ,"travelersWholeNumber": "Enter a whole number of travelers."
-    ,"atLeastOneAdult": "At least one adult is required."
-    ,"childrenCannotBeNegative": "Children cannot be negative."
-    ,"specialRequests": "Special requests"
-    ,"specialRequestsPlaceholder": "Tell us about dietary, accessibility, pickup, or other requests..."
-    ,"specialRequestsMaxLength": "Special requests cannot exceed 1,000 characters."
-    ,"travelers": "travelers"
-    ,"tourUnavailableForBooking": "This tour is not available for booking."
-    ,"addProfileImage": "Add photo"
-    ,"changeProfileImage": "Change photo"
-    ,"profileImageHint": "JPG, PNG, WEBP, or GIF up to 5 MB."
-    ,"uploadingProfileImage": "Uploading your profile photo..."
-    ,"removingProfileImage": "Removing your profile photo..."
-    ,"profileImageUpdated": "Profile photo updated successfully."
-    ,"profileImageRemoved": "Profile photo removed successfully."
-    ,"profileImageUploadError": "Unable to upload the profile photo."
-    ,"profileImageRemoveError": "Unable to remove the profile photo."
-    ,"confirmRemoveProfileImage": "Remove your profile photo?"
-    ,"removeProfileImageWarning": "Your initials avatar will be displayed instead."
-    ,"confirmSignOut": "Confirm sign out"
-    ,"confirmSignOutQuestion": "Are you sure you want to sign out of your account?"
-    ,"myBookings": "My bookings"
-    ,"settings": "Settings"
-    ,"noAgentsFound": "No agents are available right now."
-    ,"packageImages": "Package images"
-    ,"packageImagesHint": "Choose the package gallery; the first image is used as the cover."
-    ,"packageImagesUploadStepHint": "This step uploads the selected package images. You can preview and remove them before continuing."
-    ,"packageImageRules": "JPG, PNG or WebP, maximum 5 MB"
-    ,"packageImageLimit": "A package can have a maximum of 5 images."
-    ,"packageImagesSaveError": "Unable to upload the package images."
-    ,"packageIdMissingAfterCreate": "The package was saved, but the API did not return its ID for image upload."
-    ,"packageCreationSteps": "Package creation steps"
-    ,"packageStepperHint": "Save package details, upload its images, then build the itinerary."
-    ,"packageDetailsStep": "Package details"
-    ,"packageImagesStep": "Package images"
-    ,"packageItineraryStep": "Package itinerary"
-    ,"packageDetailsHint": "Enter the package information and destinations, then save to continue."
-    ,"selectDestinations": "Select at least one destination"
-    ,"selectedDestinationsCount": "Selected destinations"
-    ,"maxCapacity": "Maximum capacity"
-    ,"fieldRequired": "This field is required."
-    ,"maximumCharacters": "Maximum {{count}} characters."
-    ,"cancellationPolicyRequired": "A cancellation policy is required when cancellation is not free."
-    ,"savedPackageNumber": "Saved package"
-    ,"packageDetailsCreated": "Package details saved. You can now add images."
-    ,"packageDetailsUpdated": "Package details updated. You can now review the images."
-    ,"packageImagesSaved": "Package images uploaded successfully."
-    ,"packageItineraryRequired": "Add at least one valid itinerary step."
-    ,"validItineraryStepRequired": "Enter a title, a valid day, and required start/end times using 00, 15, 30, or 45 minutes."
-    ,"savingPackageDetails": "Saving package details..."
-    ,"uploadingPackageImages": "Uploading package images..."
-    ,"savingPackageItinerary": "Saving package itinerary..."
-    ,"deletingPackageImage": "Deleting package image..."
-    ,"packageItinerarySaveError": "Unable to save the package itinerary."
-    ,"loadingHomePage": "Loading the Sea World Holidays home page"
-    ,"travelAroundWorld": "Travel around the world with Sea World Holidays"
-    ,"homeHeroPackagesTitle": "Travel farther with a package designed around you"
-    ,"homeHeroPackagesDescription": "Discover carefully planned holidays with memorable destinations, comfortable stays, and support from departure to return."
-    ,"explorePackages": "Explore holiday packages"
-    ,"homeHeroDestinationsTitle": "Your next unforgettable destination is waiting"
-    ,"homeHeroDestinationsDescription": "From relaxing escapes to cultural adventures, we help you choose and plan a journey that fits your interests and budget."
-    ,"exploreDestinations": "Explore destinations"
-    ,"seaworldTravelConsultants": "Sea World Holidays travel consultants"
-    ,"visitors": "Visitors"
-    ,"travelPackages": "Travel packages"
-    ,"aboutseaworldHolidays": "About Sea World Holidays"
-    ,"trustedTravelPartnerTitle": "Your trusted partner for thoughtfully planned journeys"
-    ,"trustedTravelPartnerDescription": "Sea World Holidays brings flights, hotels, tours, transfers, visa assistance, and personalized itineraries together in one seamless service. Our experienced team plans every detail with clarity and care, so you can travel with confidence."
-    ,"learnMoreAboutUs": "Learn more about us"
-    ,"ourTravelPromise": "Our travel promise"
-    ,"whyTravelersChooseUs": "Travel planning built around what matters to you"
-    ,"whyTravelersChooseUsDescription": "Practical expertise, attentive service, and dependable arrangements from your first inquiry until you return home."
-    ,"personalizedTravelPlanning": "Personalized travel planning"
-    ,"personalizedTravelPlanningDescription": "We shape each itinerary around your preferred pace, interests, travel dates, and budget."
-    ,"supportThroughoutJourney": "Support throughout your journey"
-    ,"supportThroughoutJourneyDescription": "Our team stays available before, during, and after your trip whenever you need assistance."
-    ,"trustedTravelArrangements": "Reliable travel arrangements"
-    ,"trustedTravelArrangementsDescription": "We coordinate trusted flights, stays, tours, and transfers with clear information at every step."
-    ,"seaworldHolidaysLogo": "Sea World Holidays logo"
-    ,"mainNavigation": "Main navigation"
-    ,"mobileNavigation": "Mobile navigation"
-    ,"toggleHomeNavigation": "Toggle website navigation"
-    ,"footerTravelDescription": "From tailored holiday packages to flights, hotels, tours, transfers, and visa assistance, we take care of the details so you can travel with confidence."
-    ,"emailseaworldHolidays": "Email Sea World Holidays"
-    ,"callseaworldHolidays": "Call Sea World Holidays"
-    ,"office": "Office"
-    ,"officeAddress": "Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor."
-    ,"footerCompanyLinks": "Company links"
-    ,"waysYouCanPay": "Ways You Can Pay"
-    ,"aboutUs": "About us"
-    ,"contactUs": "Contact us"
-    ,"newsletter": "Newsletter"
-    ,"newsletterDescription": "Receive travel ideas, destination inspiration, and our latest holiday offers by email."
-    ,"writeYourEmail": "Enter your email"
-    ,"subscribe": "Subscribe"
-    ,"subscribing": "Subscribing..."
-    ,"newsletterEmailRequired": "Email is required."
-    ,"newsletterEmailInvalid": "Enter a valid email address."
-    ,"newsletterEmailTooLong": "Email must be 254 characters or fewer."
-    ,"newsletterSubscribedSuccess": "Thank you for subscribing to our newsletter."
-    ,"newsletterAlreadySubscribed": "This email is already subscribed to our newsletter."
-    ,"newsletterSubscribeError": "We could not complete your subscription. Please try again."
-    ,"allRightsReserved": "All rights reserved."
-    ,"activateAccount": "Activate your account"
-    ,"activationInProgress": "Activating your account, please wait..."
-    ,"activationLinkInvalid": "The activation link is invalid or incomplete."
-    ,"activationFailed": "Account activation failed. Please try again."
-    ,"returnToSignup": "Return to create account"
-    ,"accountActivatedRedirecting": "Your account is activated. Redirecting..."
-    ,"emailSentSuccessfully": "Email sent successfully"
-    ,"passwordResetEmailSentDescription": "A password reset email has been sent to your mailbox. Check your inbox and spam folder if it does not arrive within a few minutes."
-    ,"resetPasswordTitle": "Reset your password"
-    ,"resetPasswordInstructions": "Enter your email address and we will send you a link to create a new password."
-    ,"rememberPassword": "Remember your password"
-    ,"forgotPassword": "Forgot password"
-    ,"signupCompleted": "Your account was created successfully."
-    ,"signupFailed": "Account creation failed. Please try again."
-    ,"registrationFailed": "Registration failed. Please try again."
-    ,"firstNamePlaceholder": "First name"
-    ,"lastNamePlaceholder": "Last name"
-    ,"mobilePlaceholder": "+20 101 060 737"
-    ,"success": "Success"
-    ,"activated": "Activated"
-    ,"accountCreatedActivationRequired": "Your account has been created. Please check your email to activate it."
-    ,"accountActivatedSignin": "Your account has been activated successfully. You can now sign in."
-    ,"continue": "Continue"
-    ,"bookingHistoryDescription": "Review your current reservations and booking history."
-    ,"rows": "Rows"
-    ,"loadingBookings": "Loading your bookings"
-    ,"noBookingsFound": "No bookings found."
-    ,"tourOrPackage": "Tour / Package"
-    ,"bookedOn": "Booked on"
-    ,"userBookingsLoadError": "Unable to load your bookings. Please try again later."
-    ,"showingBookings": "Showing {{shown}} of {{total}} bookings"
-    ,"pageOf": "Page {{page}} of {{total}}"
-    ,"date": "Date"
-    ,"selectYourDate": "Select your date"
-    ,"numberOfPeople": "Number of people"
-    ,"numberOfChildren": "Number of children"
-    ,"searchNow": "Search now"
-    ,"tourMap": "Tour map"
-    ,"destinationNumber": "Destination #{{id}}"
-    ,"durationDaysHours": "{{days}}d {{hours}}h"
-    ,"destinationImageNumber": "Destination image {{number}}"
-    ,"packageImageNumber": "Package image {{number}}"
-    ,"tourCover": "Tour cover"
-    ,"tourImageNumber": "Tour image {{number}}"
-    ,"agent": "Agent"
-    ,"back": "Back"
-    ,"home": "Home"
-    ,"valueShouldBeMoreThanZero": "The value must be greater than zero."
-    ,"whatsappseaworldHolidays": "Contact Sea World Holidays on WhatsApp"
-    ,"instagramseaworldHolidays": "Visit Sea World Holidays on Instagram"
-    ,"facebookseaworldHolidays": "Visit Sea World Holidays on Facebook"
-    ,"showPassword": "Show password"
-    ,"hidePassword": "Hide password"
-    ,"showConfirmPassword": "Show confirmation password"
-    ,"hideConfirmPassword": "Hide confirmation password"
-    ,"aboutseaworld": {
-      "eyebrow": "Sea World Holidays",
-      "pageTitle": "About Sea World Holidays",
-      "tagline": "Discover the world with confidence, comfort, and exceptional care.",
-      "home": "Sea World",
-      "breadcrumb": "About Us",
-      "introduction": {
-        "eyebrow": "Who we are",
-        "title": "Discover the World with Confidence",
-        "paragraphOne": "At Sea World Holidays, we believe that travel is more than reaching a destination—it's about creating unforgettable experiences, discovering new cultures, and making memories that last a lifetime. Whether you're planning a relaxing beach getaway, an adventurous tour, a family vacation, a honeymoon, or a corporate business trip, our dedicated team is here to make every journey seamless and enjoyable.",
-        "paragraphTwo": "With a passion for exceptional service and attention to detail, we provide carefully designed travel solutions tailored to every traveler's needs. From flight bookings and hotel reservations to complete holiday packages, visa assistance, airport transfers, and customized itineraries, we take care of every aspect of your trip so you can focus on enjoying the experience."
-      },
-      "mission": {
-        "title": "Our Mission",
-        "description": "Our mission is to deliver outstanding travel experiences by offering reliable, personalized, and affordable travel services. We strive to build lasting relationships with our clients through professionalism, transparency, and exceptional customer care."
-      },
-      "vision": {
-        "title": "Our Vision",
-        "description": "To become one of the region's most trusted travel agencies by connecting people with extraordinary destinations while delivering innovative travel solutions and world-class customer service."
-      },
-      "offer": {
-        "title": "What We Offer",
-        "items": [
-          "International and domestic holiday packages",
-          "Customized private and group tours",
-          "Flight reservations with leading airlines",
-          "Hotel bookings worldwide",
-          "Visa assistance and travel consultation",
-          "Airport transfers and transportation services",
-          "Honeymoon and family vacation packages",
-          "Corporate travel management",
-          "Cruise and luxury travel experiences",
-          "Travel insurance assistance"
-        ]
-      },
-      "whyChooseUs": {
-        "title": "Why Choose Sea World Holidays?",
-        "items": [
-          "Experienced travel consultants dedicated to your satisfaction",
-          "Personalized itineraries tailored to your preferences and budget",
-          "Competitive pricing with exceptional value",
-          "Trusted partnerships with airlines, hotels, and tourism providers",
-          "Fast, responsive customer support before, during, and after your trip",
-          "Commitment to quality, reliability, and customer satisfaction"
-        ]
-      },
-      "commitment": {
-        "title": "Our Commitment",
-        "description": "Every traveler is unique, and every journey deserves special attention. At Sea World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
-      },
-      "closing": "Let Sea World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
+  "blogs": "Blogs",
+  "blogsLoadError": "Blogs could not be loaded. Please try again.",
+  "tryAgain": "Try again",
+  "noBlogsFound": "No published blogs are available yet.",
+  "readMore": "Read more",
+  "viewAllBlogs": "View all blogs",
+  "previousBlog": "Previous blogs",
+  "nextBlog": "Next blogs",
+  "manageBlogDetails": "Create and publish travel news, guides, and stories.",
+  "showAddBlog": "Add a blog",
+  "hideAddBlog": "Hide the blog form",
+  "blogsData": "Blogs data",
+  "publishDate": "Publish date",
+  "editBlog": "Edit blog",
+  "confirmDeactivateBlog": "Are you sure you want to deactivate this blog?",
+  "confirmActivateBlog": "Are you sure you want to activate this blog?",
+  "blogStatusUpdated": "Blog status updated successfully.",
+  "blogStatusUpdateError": "Unable to update the blog status.",
+  "noBlogsCreated": "No blogs have been created yet.",
+  "blogImages": "Blog images",
+  "blogImageRules": "JPG, PNG or WebP, maximum 5 MB",
+  "blogImageLimit": "A blog can have a maximum of 5 images.",
+  "blogImageNumber": "Blog image {{number}}",
+  "processingImages": "Processing images...",
+  "delete": "Delete",
+  "removeImage": "Remove image",
+  "confirmImageDelete": "Delete this image?",
+  "imageDeleteWarning": "This action will permanently remove the image.",
+  "imageDeleted": "Image deleted successfully.",
+  "viewLargerImage": "View larger image",
+  "previousImage": "Previous image",
+  "nextImage": "Next image",
+  "imageDeleteError": "Unable to delete the image.",
+  "image": "Image",
+  "status": "Status",
+  "actions": "Actions",
+  "activate": "Activate",
+  "confirm": "Confirm",
+  "confirmStatusChange": "Confirm status change",
+  "statusChangeConfirmation": "Are you sure you want to change the status to {{status}}?",
+  "confirmDeactivateDestination": "Are you sure you want to deactivate this destination?",
+  "confirmActivateDestination": "Are you sure you want to activate this destination?",
+  "statusUpdated": "Destination status updated successfully.",
+  "statusUpdateError": "Unable to update destination status.",
+  "view": "View",
+  "close": "Close",
+  "active": "Active",
+  "inactive": "Inactive",
+  "tour": "Tour",
+  "admin": "Admin",
+  "destinations": "Destinations",
+  "tours": "Tours",
+  "nileCruises": "Nile Cruises",
+  "manageDestinationDetails": "Manage destination details and images.",
+  "manageTourDetails": "Manage tour details, images, and itinerary.",
+  "backToDashboard": "Back to dashboard",
+  "switchToGrid": "Switch to grid",
+  "switchToTable": "Switch to table",
+  "collapseMenu": "Collapse menu",
+  "expandMenu": "Expand menu",
+  "hideAddDestination": "Hide add destination",
+  "showAddDestination": "Show add destination",
+  "hotels": "Hotels",
+  "room": "Room",
+  "night": "night",
+  "manageHotelDetails": "Manage hotel details and contacts.",
+  "hideAddHotel": "Hide add hotel",
+  "showAddHotel": "Show add hotel",
+  "editHotel": "Edit hotel",
+  "addHotel": "Add hotel",
+  "hotelName": "Hotel name",
+  "hotelNameRequired": "Hotel name is required.",
+  "starRating": "Star rating",
+  "starRatingRequired": "Star rating is required.",
+  "address": "Address",
+  "activeHotel": "Active hotel",
+  "hotelRecords": "Hotel records",
+  "loadingHotels": "Loading hotels...",
+  "noHotelsFound": "No hotels found.",
+  "hotelSaveError": "The hotel could not be saved.",
+  "hotelServiceUnavailable": "The hotel service is unavailable.",
+  "confirmDeactivateHotel": "Are you sure you want to deactivate this hotel?",
+  "confirmActivateHotel": "Are you sure you want to activate this hotel?",
+  "airlines": "Airlines",
+  "manageAirlineDetails": "Manage airline details and logos.",
+  "hideAddAirline": "Hide add airline",
+  "showAddAirline": "Show add airline",
+  "editAirline": "Edit airline",
+  "addAirline": "Add airline",
+  "airlineName": "Airline name",
+  "airlineNameRequired": "Airline name is required.",
+  "airlineCode": "IATA code",
+  "airlineCodeRequired": "IATA code is required.",
+  "airlineCodeInvalid": "Use 2 or 3 letters or digits.",
+  "logoUrl": "Logo URL",
+  "logo": "Logo",
+  "airlineRecords": "Airline records",
+  "noAirlinesFound": "No airlines found.",
+  "airlineSaveError": "The airline could not be saved.",
+  "airlineServiceUnavailable": "The airline service is unavailable.",
+  "airlineLogoRules": "JPG, PNG or WebP, maximum 5 MB",
+  "airlineLogoRequired": "An airline logo is required.",
+  "chooseImage": "Choose image",
+  "replaceImage": "Replace image",
+  "confirmDeactivateAirline": "Are you sure you want to deactivate this airline?",
+  "confirmActivateAirline": "Are you sure you want to activate this airline?",
+  "airlineStatusUpdated": "Airline status updated.",
+  "airlineStatusUpdateError": "The airline status could not be updated.",
+  "airline": "Airline",
+  "selectAirline": "Select an airline",
+  "airlineRequired": "Airline is required.",
+  "flights": "Flights",
+  "flight": "Flight",
+  "manageFlightDetails": "Manage flight schedules, prices, and seats.",
+  "hideAddFlight": "Hide add flight",
+  "showAddFlight": "Show add flight",
+  "editFlight": "Edit flight",
+  "addFlight": "Add flight",
+  "flightNumber": "Flight number",
+  "flightNumberRequired": "Flight number is required.",
+  "flightNumberMaxLength": "Flight number cannot exceed 20 characters.",
+  "departureAirport": "Departure airport",
+  "departureAirportRequired": "Departure airport is required.",
+  "arrivalAirport": "Arrival airport",
+  "arrivalAirportRequired": "Arrival airport is required.",
+  "searchAirportPlaceholder": "Search airport, city, or code",
+  "noAirportsFound": "No matching airports found.",
+  "airportSearchUnavailable": "Airport search is temporarily unavailable. Please try again.",
+  "airportSelectionRequired": "Select an airport from the search results.",
+  "airportNameMaxLength": "Airport name cannot exceed 250 characters.",
+  "departureArrivalDifferent": "Departure and arrival airports must be different.",
+  "departureTime": "Departure time",
+  "departureTimeRequired": "Departure time is required.",
+  "arrivalTime": "Arrival time",
+  "arrivalTimeRequired": "Arrival time is required.",
+  "arrivalTimeAfterDeparture": "Arrival time must be after departure time.",
+  "availableSeats": "Available seats",
+  "availableSeatsRequired": "Available seats is required.",
+  "flightClass": "Flight class",
+  "flightClassEconomy": "Economy",
+  "flightClassBusiness": "Business",
+  "flightClassFirst": "First",
+  "route": "Route",
+  "flightRecords": "Flight records",
+  "noFlightsFound": "No flights found.",
+  "flightSaveError": "The flight could not be saved.",
+  "flightServiceUnavailable": "The flight service is unavailable.",
+  "customers": "Customers",
+  "manageCustomerDetails": "Manage customer accounts and contacts.",
+  "hideAddCustomer": "Hide add customer",
+  "showAddCustomer": "Show add customer",
+  "editCustomer": "Edit customer",
+  "addCustomer": "Add customer",
+  "customerName": "Customer name",
+  "customerNameRequired": "Customer name is required.",
+  "activeCustomer": "Active customer",
+  "customerRecords": "Customer records",
+  "noCustomersFound": "No customers found.",
+  "customerSaveError": "The customer could not be saved.",
+  "customerFormInvalid": "Complete all required customer and traveler fields.",
+  "customerSavedWithTravelers": "Customer, travelers, and assignment saved successfully.",
+  "customerProfile": "Customer profile",
+  "leadTraveler": "Lead traveler",
+  "leadTravelerHint": "The customer is saved as the primary traveler.",
+  "dateOfBirth": "Date of birth",
+  "dateOfBirthRequired": "Date of birth is required.",
+  "createAccount": "Create account",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "customerAgentNotificationHint": "The selected agent will receive a notification after saving.",
+  "customerAutoAssignedToAgent": "This customer will be assigned to you automatically.",
+  "requiredTravelerFieldsHint": "All identity, contact, passport, and birth date fields are required.",
+  "companionTravelers": "Companion travelers",
+  "companionTravelersHint": "Add the spouse, children, infants, babysitter, or other companions traveling with this customer.",
+  "addSpouse": "Add spouse",
+  "addAdult": "Add adult",
+  "addInfant": "Add infant",
+  "addBabysitter": "Add babysitter",
+  "adult": "Adult",
+  "child": "Child",
+  "infant": "Infant",
+  "traveler": "Traveler",
+  "travelerType": "Traveler type",
+  "relationship": "Relationship",
+  "removeTraveler": "Remove traveler",
+  "noCompanionTravelers": "No companion travelers added.",
+  "bookingAssignment": "Booking assignment",
+  "assignmentSuccessful": "Assignment successful",
+  "agentNotificationConfirmed": "{{agent}} was assigned and notified.",
+  "bookingAgentNotificationHint": "Saving will assign the booking and notify the selected agent.",
+  "assignAndNotify": "Assign and notify",
+  "done": "Done",
+  "customerServiceUnavailable": "The customer service is unavailable.",
+  "confirmDeactivateCustomer": "Are you sure you want to deactivate this customer?",
+  "confirmActivateCustomer": "Are you sure you want to activate this customer?",
+  "quotations": "Quotations",
+  "manageQuotationDetails": "Manage quotations and pricing offers.",
+  "hideAddQuotation": "Hide add quotation",
+  "showAddQuotation": "Show add quotation",
+  "editQuotation": "Edit quotation",
+  "addQuotation": "Add quotation",
+  "quotationRecords": "Quotation records",
+  "noQuotationsFound": "No quotations found.",
+  "quotationSaveError": "The quotation could not be saved.",
+  "quotationServiceUnavailable": "The quotation service is unavailable.",
+  "tasks": "Tasks",
+  "manageTaskDetails": "Assign tasks to agents and track their progress.",
+  "hideAddTask": "Hide add task",
+  "showAddTask": "Show add task",
+  "editTask": "Edit task",
+  "addTask": "Add task",
+  "taskTitle": "Task title",
+  "taskTitleRequired": "Task title is required.",
+  "assignedAgent": "Assigned agent",
+  "selectAgent": "Select an agent",
+  "agentRequired": "Agent is required.",
+  "dueDate": "Due date",
+  "taskStatus": "Task status",
+  "taskStatusPending": "Pending",
+  "taskStatusInProgress": "In progress",
+  "taskStatusCompleted": "Completed",
+  "taskStatusReturned": "Returned",
+  "taskStatusClosed": "Closed",
+  "startTask": "Start",
+  "finishTask": "Finish",
+  "closeTask": "Close",
+  "returnTask": "Return",
+  "agentCompletionNote": "Completion note",
+  "agentCompletionNotePlaceholder": "Describe what was done to complete this task...",
+  "agentCompletionNoteRequired": "A completion note is required.",
+  "returnReason": "Return reason",
+  "returnReasonPlaceholder": "Explain why the task is being returned...",
+  "taskStatusUpdated": "Task status updated.",
+  "taskStatusUpdateError": "The task status could not be updated.",
+  "taskRecords": "Task records",
+  "noTasksFound": "No tasks found.",
+  "taskSaveError": "The task could not be saved.",
+  "taskServiceUnavailable": "The task service is unavailable.",
+  "myTasks": "My tasks",
+  "viewAllTasks": "View all tasks",
+  "packages": "Packages",
+  "noPackagesFound": "No packages found.",
+  "viewAllDestinations": "View all destinations",
+  "viewAllTours": "View all tours",
+  "viewAllNileCruises": "View all Nile cruises",
+  "viewAllPackages": "View all packages",
+  "exploreMore": "Explore more",
+  "showMore": "Show more",
+  "loading": "Loading...",
+  "searchPlaceholder": "Search destinations, tours, packages...",
+  "clearSearch": "Clear search",
+  "noSearchResults": "No results found.",
+  "searchLoadError": "Search results could not be loaded. Please try again.",
+  "language": "Language",
+  "currency": "Currency",
+  "currencyUsd": "US Dollar",
+  "currencyEur": "Euro",
+  "currencyEgp": "Egyptian Pound",
+  "currencySar": "Saudi Riyal",
+  "editDestination": "Edit destination",
+  "addDestination": "Add destination",
+  "englishName": "English name",
+  "arabicName": "Arabic name",
+  "englishNameRequired": "English name is required.",
+  "arabicNameRequired": "Arabic name is required.",
+  "englishNameInvalid": "Use English letters and start with a letter.",
+  "arabicNameInvalid": "Use Arabic letters only and start with an Arabic letter.",
+  "shortDescription": "Short description",
+  "optional": "Optional",
+  "description": "Description",
+  "descriptionRequired": "Description is required.",
+  "destinationImages": "Destination images",
+  "tourImages": "Tour images",
+  "chooseImages": "Choose images",
+  "destinationImageRules": "JPG, PNG or WebP, maximum 5 MB",
+  "tourImageRules": "JPG, PNG or WebP, maximum 5 MB",
+  "tourImageLimit": "A tour can have a maximum of 5 images.",
+  "imagesRequired": "At least one image is required.",
+  "remove": "Remove",
+  "cover": "Cover",
+  "activeDestination": "Active destination",
+  "activeTour": "Active tour",
+  "update": "Update",
+  "add": "Add",
+  "cancel": "Cancel",
+  "destinationsData": "Destinations",
+  "previous": "Previous",
+  "next": "Next",
+  "loadingDestinations": "Loading destinations...",
+  "edit": "Edit",
+  "deactivate": "Deactivate",
+  "noDestinationsFound": "No destinations found.",
+  "editTour": "Edit tour",
+  "addTour": "Add tour",
+  "englishTitle": "English title",
+  "arabicTitle": "Arabic title",
+  "englishTitleRequired": "English title is required.",
+  "arabicTitleRequired": "Arabic title is required.",
+  "destination": "Destination",
+  "selectDestination": "Select a destination",
+  "destinationRequired": "Destination is required.",
+  "duration": "Duration",
+  "durationRequired": "Duration is required.",
+  "price": "Price",
+  "priceRequired": "Price is required.",
+  "itinerary": "Itinerary",
+  "itineraryRequired": "Itinerary is required.",
+  "updateTour": "Update tour",
+  "createTour": "Create tour",
+  "tourList": "Tour list",
+  "loadingTours": "Loading tours...",
+  "noToursFound": "No tours found.",
+  "noNileCruisesFound": "No Nile cruises found.",
+  "destinationServiceUnavailable": "The destination service is unavailable.",
+  "destinationSaveError": "The destination could not be saved.",
+  "destinationUpdated": "Destination updated successfully.",
+  "destinationCreated": "Destination created successfully.",
+  "destinationImageLimit": "A destination can have a maximum of 5 images.",
+  "invalidImageType": "Please select image files only.",
+  "imageTooLarge": "Each image must be 5 MB or smaller.",
+  "imageReadError": "An image could not be read.",
+  "imageResolutionTooSmall": "Image resolution is too low. Use an image of at least 1200 x 675 pixels.",
+  "imageAspectRatioInvalid": "The image must be landscape with an aspect ratio between 4:3 and 16:9.",
+  "destinationDeactivated": "Destination deactivated successfully.",
+  "destinationsLoadError": "Destinations could not be loaded. Please try again.",
+  "packagesLoadError": "Packages could not be loaded. Please try again.",
+  "tourSaveError": "The tour could not be saved.",
+  "tourUpdated": "Tour updated successfully.",
+  "tourCreated": "Tour created successfully.",
+  "tourDeactivated": "Tour deactivated successfully.",
+  "send": "Send",
+  "submit": "Submit",
+  "emailAddress": "Email Address",
+  "emailPlaceholder": "name@example.com",
+  "passwordPlaceholder": "Password",
+  "emailRequired": "Email is required.",
+  "emailInvalid": "Enter a valid email address.",
+  "passwordRequired": "Password is required.",
+  "passwordMin": "Password must be at least 6 characters.",
+  "submittingSignin": "Signing in...",
+  "signin": "Sign in",
+  "noAccount": "Don't have an account?",
+  "signup": "Sign Up",
+  "firstName": "First Name",
+  "firstNameRequired": "First name is required.",
+  "firstNameMin": "First name must be at least 2 characters.",
+  "lastNameRequired": "Last name is required.",
+  "lastNameMin": "Last name must be at least 2 characters.",
+  "mobileRequired": "Mobile number is required.",
+  "mobileInvalid": "Enter a valid mobile number.",
+  "confirmMismatch": "Passwords do not match.",
+  "acceptTerms": "You must accept the terms and conditions.",
+  "lastName": "Last Name",
+  "mobile": "Mobile Number",
+  "email": "Email Address",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "iaccept": "I Accept",
+  "terms": "Terms And Condition",
+  "submittingSignUp": "Creating account...",
+  "alreadyHave": "Already have an account?",
+  "personalDetails": "Personal Details",
+  "createChangeSaveData": "Edit the fields below and press Save Changes to update your profile.",
+  "saveChanges": "Save Changes",
+  "changePassword": "Change password",
+  "phone": "Phone Number",
+  "website": "Website",
+  "oldPassword": "Old password",
+  "newPassword": "New password",
+  "confirmNewPassword": "Confirm New password",
+  "savePassword": "Save password",
+  "personalSaveSuccess": "Personal details updated successfully.",
+  "personalSaveError": "Unable to save personal details. Please try again.",
+  "passwordSaveSuccess": "Password updated successfully.",
+  "passwordSaveError": "Unable to change password. Please try again.",
+  "resetPassword": "Reset Password",
+  "resetInvalidLink": "Invalid reset link. Please request a new password reset.",
+  "resetTokenExpired": "Your reset token has expired. Please request a new password reset.",
+  "passwordMinLength": "Password must be at least 8 characters.",
+  "passwordComplexity": "Password must include an uppercase letter, a number, and a symbol.",
+  "resetPasswordSuccess": "Your password has been reset successfully.",
+  "resetPasswordError": "Unable to reset password. Please try again.",
+  "adults": "Adults",
+  "amount": "Amount",
+  "bookingDate": "Booking Date",
+  "bookingId": "Booking ID",
+  "bookingRecords": "Booking Records",
+  "bookings": "Bookings",
+  "children": "Children",
+  "companyName": "Company Name",
+  "companyNameRequired": "Company name is required.",
+  "Configurations": "Configurations",
+  "confirmRequired": "Please confirm your password.",
+  "customer": "Customer",
+  "customerType": "Customer Type",
+  "discount": "Discount",
+  "exchangeRate": "Exchange Rate",
+  "guests": "Guests",
+  "infants": "Infants",
+  "manageBookings": "Manage agent bookings and reservation records.",
+  "notes": "Notes",
+  "passportNumber": "Passport Number",
+  "passportNumberRequired": "Passport number is required.",
+  "passportNumberMaxLength": "Passport Number max length is 20",
+  "passportNumberMinLength": "Passport Number min length is 8",
+  "quotationNo": "Quotation Number",
+  "selectCurrency": "Select currency",
+  "selectCustomer": "Select customer",
+  "selectedPackages": "Selected Packages",
+  "sendAndDownloadPdf": "Download PDF",
+  "submitting": "Submitting...",
+  "subTotal": "Subtotal",
+  "tax": "Tax",
+  "taxRate": "Tax Rate",
+  "totalAmount": "Total Amount",
+  "totalCost": "Total Cost",
+  "travelDates": "Travel Dates",
+  "travelEndDate": "Travel End Date",
+  "travelStartDate": "Travel Start Date",
+  "validUntil": "Valid Until",
+  "individual": "Individual",
+  "couple": "Couple",
+  "family": "Family",
+  "company": "Company",
+  "selectAtLeastOnePackage": "Select at least one package.",
+  "quotationSaved": "Quotation saved successfully.",
+  "quotationSendError": "Unable to send the quotation.",
+  "quotationPdfDownloaded": "Quotation PDF downloaded successfully.",
+  "quotationSent": "Quotation sent successfully.",
+  "hideAddTour": "Hide add tour section",
+  "showAddTour": "Show add tour section",
+  "hideAddPackage": "Hide add package section",
+  "showAddPackage": "Show add package section",
+  "contentManagement": "Content Management",
+  "manageTravelContent": "Manage travel content and bookings",
+  "viewWebsite": "View Website",
+  "administrator": "Administrator",
+  "myProfile": "My Profile",
+  "signOut": "Sign Out",
+  "notifications": "Notifications",
+  "adminNavigation": "Admin Navigation",
+  "adminAgentMenu": "Admin / Agent Menu",
+  "packageList": "Package List",
+  "destinationId": "Destination ID",
+  "draft": "Draft",
+  "sent": "Sent",
+  "accepted": "Accepted",
+  "rejected": "Rejected",
+  "expired": "Expired",
+  "managePackageDetails": "Create and manage travel packages for the website.",
+  "editPackage": "Edit Package",
+  "addPackage": "Add Package",
+  "title": "Title",
+  "imageUrl": "Image URL",
+  "activePackage": "Active Package",
+  "updatePackage": "Update Package",
+  "createPackage": "Create Package",
+  "loadingPackages": "Loading packages",
+  "quickAccessManagement": "Quick access to management sections.",
+  "Booking": "Booking",
+  "Cities": "Cities",
+  "submitSignIn": "Signing in...",
+  "cities": "Cities",
+  "bookingsLoadError": "Bookings could not be loaded. Please try again.",
+  "total": "Total",
+  "travelDate": "Travel date",
+  "travelDateRequired": "Travel date is required.",
+  "bookNow": "Book now",
+  "loginToBook": "Log in to book",
+  "checkAvailability": "Check availability",
+  "checkingAvailability": "Checking availability...",
+  "selectionAvailable": "Your selection is available",
+  "selectionUnavailable": "Your selection is not currently available",
+  "availabilityCanChange": "Availability is checked again when you submit the booking.",
+  "onlySeatsAvailable": "Only {{seats}} seats are currently available.",
+  "availabilityCheckError": "Availability could not be checked. Please try again.",
+  "bookingRequestReceived": "Booking request received",
+  "bookingConfirmationMessage": "Your booking request was received at {{time}}. A confirmation email has been sent to you. Our representative will get in touch with you as soon as possible to confirm the booking.",
+  "bookingConfirmationEmailPending": "Your booking request was received at {{time}}. Our representative will get in touch with you as soon as possible to confirm the booking. Your email acknowledgement will be sent shortly.",
+  "bookingNotesPlaceholder": "Any special requests or notes for our team...",
+  "bookingCreated": "Your booking was created successfully. Our team will call you to confirm.",
+  "bookingCreateError": "Your booking could not be created. Please try again.",
+  "bookingSeatsExceeded": "The number of guests exceeds the available seats.",
+  "availableBookingDates": "Available booking dates",
+  "availableBookingDateRange": "From {{from}} to {{to}}",
+  "bookingStatusPending": "Pending",
+  "bookingStatusConfirmed": "Confirmed",
+  "bookingStatusCancelled": "Cancelled",
+  "bookingStatusCompleted": "Completed",
+  "confirmBooking": "Confirm",
+  "completeBooking": "Complete",
+  "cancelBooking": "Cancel booking",
+  "cancelBookingConfirm": "Are you sure you want to cancel this booking?",
+  "bookingStatusUpdated": "Booking status updated.",
+  "bookingStatusUpdateError": "The booking status could not be updated.",
+  "filterByStatus": "Filter by status",
+  "allStatuses": "All statuses",
+  "bookingProduct": "Tour / Package",
+  "customerPhone": "Customer phone",
+  "confirmBookingByPhone": "Confirm after calling the customer",
+  "customerContactedConfirm": "Customer contacted — confirm",
+  "statusNoteOptional": "Call note (optional)",
+  "phoneConfirmationNotePlaceholder": "Add any details from the confirmation call...",
+  "notAvailable": "Not available",
+  "cancellationFee": "Cancellation fee",
+  "enterCancellationFee": "Enter the cancellation fee amount. Use 0 when no fee applies.",
+  "freeCancellationNoFee": "This booking has free cancellation, so no fee will be charged.",
+  "cancellationFeeInvalid": "The cancellation fee cannot be negative.",
+  "packageUnavailableForBooking": "This package is not available for booking.",
+  "assignAgent": "Assign agent",
+  "assignBookingAgent": "Assign booking to agent",
+  "hideAssignBooking": "Hide assignment form",
+  "bookingAssigned": "The booking was assigned to the agent.",
+  "bookingAssignError": "The booking could not be assigned.",
+  "packageTitleRequired": "Please add a package title.",
+  "packageUpdated": "Package updated successfully.",
+  "packageCreated": "Package created successfully.",
+  "packageDeactivated": "Package deactivated successfully.",
+  "packageSaveError": "The package could not be saved. Please try again.",
+  "confirmDeactivatePackage": "Do you want to deactivate this package?",
+  "confirmActivatePackage": "Do you want to activate this package?",
+  "languageEnglish": "English",
+  "languageArabic": "Arabic",
+  "travelAgency": "Travel agency",
+  "homeLinkLabel": "Sea World Holidays home",
+  "openAccountMenu": "Open account menu",
+  "toggleAdminNavigation": "Toggle admin navigation",
+  "airlineLogo": "Airline logo",
+  "manageCityDetails": "Manage cities and connect each city to its destination.",
+  "hideAddCity": "Hide add city",
+  "showAddCity": "Show add city",
+  "editCity": "Edit city",
+  "addCity": "Add city",
+  "cityRecords": "City records",
+  "noCitiesFound": "No cities found.",
+  "citySaveError": "The city could not be saved.",
+  "cityServiceUnavailable": "The city service is unavailable.",
+  "cityCreated": "City created successfully.",
+  "cityUpdated": "City updated successfully.",
+  "confirmDeactivateCity": "Are you sure you want to deactivate this city?",
+  "confirmActivateCity": "Are you sure you want to activate this city?",
+  "cityStatusUpdated": "City status updated successfully.",
+  "saving": "Saving...",
+  "forgotPasswordError": "Unable to send the password reset email. Please try again.",
+  "searchDestinations": "Search destinations",
+  "noMatchingDestinations": "No destinations match your search.",
+  "pricePerPerson": "Price per person",
+  "pricePerChild": "Price per child",
+  "maxSeats": "Maximum seats",
+  "durationDays": "Duration in days",
+  "durationHours": "Additional hours",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "startDateRequired": "Start date is required.",
+  "endDateRequired": "End date is required.",
+  "endDateBeforeStart": "End date must be after or equal to the start date.",
+  "fullDescription": "Full description",
+  "coverImageUrl": "Cover image URL",
+  "cancellationPolicy": "Cancellation policy",
+  "cancellationPolicies": "Cancellation policies",
+  "addCancellationPolicy": "Add policy",
+  "cancellationPolicyPlaceholder": "Describe a cancellation rule",
+  "noCancellationPoliciesAdded": "No cancellation policies added yet.",
+  "freeCancellation": "Free cancellation",
+  "nileCruise": "Nile cruise",
+  "positiveValueRequired": "Enter a value greater than zero.",
+  "nonNegativeValueRequired": "Enter zero or a positive value.",
+  "durationHoursRange": "Hours must be zero or more; one-day tours require at least one hour.",
+  "validUrlRequired": "Enter a valid URL beginning with http:// or https://.",
+  "search": "Search",
+  "clear": "Clear",
+  "pageSize": "Page size",
+  "totalRecords": "Total records",
+  "addImage": "Add image",
+  "noImagesAdded": "No gallery images added yet.",
+  "tourHighlights": "Tour highlights",
+  "tourHighlightsHint": "Key selling points travelers sea at a glance, e.g. \"Skip-the-line entry\", \"Professional guide included\".",
+  "addHighlight": "Add highlight",
+  "highlightPlaceholder": "e.g. Private airport transfer",
+  "noHighlightsAdded": "No highlights added yet.",
+  "whatsIncludedExcluded": "What's included / excluded",
+  "whatsIncludedExcludedHint": "Let travelers know exactly what is and isn't covered by the price.",
+  "addIncluded": "Add included",
+  "addExcluded": "Add excluded",
+  "includePlaceholder": "e.g. Hotel accommodation, meals, entry tickets",
+  "noIncludesAdded": "No inclusions or exclusions added yet.",
+  "included": "Included",
+  "excluded": "Not included",
+  "itineraryHint": "Add and save each main step, then attach optional child steps.",
+  "addStep": "Add step",
+  "addChild": "Add child",
+  "step": "Step",
+  "stepTitle": "Step title",
+  "stepTitlePlaceholder": "e.g. Hotel pickup and museum visit",
+  "stepTitleRequired": "Step title is required.",
+  "itineraryValue": "Step value",
+  "itineraryValuePlaceholder": "e.g. Cairo Museum",
+  "startTime": "Start time",
+  "endTime": "End time",
+  "childStep": "Child step",
+  "parentStepId": "Parent step ID",
+  "stepDescriptionPlaceholder": "Describe what happens during this step...",
+  "itinerarySteps": "Itinerary steps",
+  "stepDetails": "Step details",
+  "childStepDetails": "Child step details",
+  "saveStep": "Save step",
+  "clickAddStepToStart": "Click Add step to open the itinerary input card.",
+  "saveItineraryStepFirst": "Save or cancel the open itinerary step before continuing.",
+  "addDay": "Add day",
+  "day": "Day",
+  "dayTitlePlaceholder": "e.g. Arrival and city tour",
+  "dayTitleRequired": "Day title is required.",
+  "dayDescriptionPlaceholder": "Describe the activities planned for this day...",
+  "dayDescriptionRequired": "Day description is required.",
+  "noItineraryAdded": "No itinerary steps added yet.",
+  "seatsAvailable": "seats available",
+  "toursLoadError": "Unable to load tours.",
+  "nileCruisesLoadError": "Unable to load Nile cruises.",
+  "destinationNotFound": "Destination not found.",
+  "tourNotFound": "Tour not found.",
+  "toursInDestination": "Tours in this destination",
+  "tourCount": "{{count}} tours",
+  "noToursForDestination": "No tours are available for this destination.",
+  "exploreNow": "Explore now",
+  "backToDestinations": "Back to destinations",
+  "type": "Type",
+  "groupSize": "Group size",
+  "languages": "Languages",
+  "tourDescriptions": "Tour description",
+  "days": "days",
+  "hours": "hours",
+  "people": "people",
+  "person": "person",
+  "yourJourney": "Your journey",
+  "tripItinerary": "Trip itinerary",
+  "tripItineraryDescription": "Follow the itinerary step by step, with every stop and activity clearly organized.",
+  "journeyStep": "Journey step",
+  "packageNotFound": "Package not found.",
+  "backToHome": "Back to home",
+  "travelPackage": "Travel package",
+  "packageOverview": "Package overview",
+  "packageHighlights": "Package highlights",
+  "toursInPackage": "Tours included in this package",
+  "viewDetails": "View details",
+  "packageSummary": "Package summary",
+  "viewDestination": "View destination",
+  "tourCreationSteps": "Tour creation steps",
+  "tourStepperHint": "Save the tour details first, then add images and build the itinerary.",
+  "tourDetailsStep": "Tour details",
+  "tourImagesStep": "Tour images",
+  "tourItineraryStep": "Tour itinerary",
+  "detailsStepHint": "Add the main tour information and save it to create the tour record.",
+  "imagesStepHint": "Choose the tour gallery and select the first image as the cover.",
+  "itineraryStepHint": "Build the journey with main steps and one level of child activities.",
+  "savedTourNumber": "Saved tour",
+  "saveDetailsAndContinue": "Save details & continue",
+  "continueToItinerary": "Continue to itinerary",
+  "finishTour": "Save & finish tour",
+  "imagesStagedHint": "Selected images are staged and will be uploaded with the itinerary when you finish the tour.",
+  "completeTourDetailsFirst": "Complete the required tour details before continuing.",
+  "tourIdMissingAfterCreate": "The tour was saved, but the API did not return its ID. Return the created tour ID to continue with images and itinerary.",
+  "tourDetailsCreated": "Tour details saved. You can now add images.",
+  "tourDetailsUpdated": "Tour details updated. You can now review the images.",
+  "saveImagesAndContinue": "Upload images & continue",
+  "saveItineraryAndFinish": "Save itinerary & finish",
+  "imagesUploadStepHint": "This step uploads a multipart request containing only TourId and Images.",
+  "tourImagesSaved": "Tour images uploaded successfully.",
+  "tourImagesSaveError": "Unable to upload the tour images.",
+  "tourItinerarySaveError": "Unable to save the tour itinerary.",
+  "stepTitleMaxLength": "Step title cannot exceed 200 characters.",
+  "stepDescriptionMaxLength": "Step description cannot exceed 2,000 characters.",
+  "endTimeAfterStart": "End time must be after start time.",
+  "itineraryTimesRequired": "Start and end times are required.",
+  "itineraryTitleAndTimesRequired": "Add at least one itinerary step. Every step requires a title, start time, and end time.",
+  "itineraryTimeQuarterHour": "Choose a time using 00, 15, 30, or 45 minutes.",
+  "itineraryTimeConflict": "This time overlaps another itinerary step on the same day. Choose a different time range.",
+  "savingTourDetails": "Saving tour details...",
+  "uploadingTourImages": "Uploading tour images...",
+  "savingTourItinerary": "Saving tour itinerary...",
+  "deletingTourImage": "Deleting tour image...",
+  "pleaseWaitForRequest": "Please wait until the request is complete.",
+  "tourImagesAlreadySaved": "Tour images are already saved.",
+  "tourIncludes": "Tour includes",
+  "tourExcludes": "Tour excludes",
+  "includeValuePlaceholder": "e.g. Professional tour guide",
+  "excludeValuePlaceholder": "e.g. Personal expenses",
+  "noTourIncludesAdded": "No included items added yet.",
+  "noTourExcludesAdded": "No excluded items added yet.",
+  "listValueRequired": "Enter a value or remove this row.",
+  "confirmDeactivateTour": "Deactivate this tour? It can be edited after it becomes inactive.",
+  "confirmActivateTour": "Activate this tour? Active tours cannot be edited.",
+  "tourStatusUpdated": "Tour status updated successfully.",
+  "tourStatusUpdateError": "Unable to update the tour status.",
+  "creatingBooking": "Creating your booking...",
+  "dateFrom": "From date",
+  "dateTo": "To date",
+  "dateFromRequired": "Start date is required.",
+  "dateToRequired": "End date is required.",
+  "bookingDateRangeInvalid": "The end date must be on or after the start date.",
+  "bookingDateOutsideAvailability": "Select dates within the available booking range.",
+  "duplicateBookingDates": "You already booked this tour or package for the same dates.",
+  "travelersWholeNumber": "Enter a whole number of travelers.",
+  "atLeastOneAdult": "At least one adult is required.",
+  "childrenCannotBeNegative": "Children cannot be negative.",
+  "specialRequests": "Special requests",
+  "specialRequestsPlaceholder": "Tell us about dietary, accessibility, pickup, or other requests...",
+  "specialRequestsMaxLength": "Special requests cannot exceed 1,000 characters.",
+  "travelers": "travelers",
+  "tourUnavailableForBooking": "This tour is not available for booking.",
+  "addProfileImage": "Add photo",
+  "changeProfileImage": "Change photo",
+  "profileImageHint": "JPG, PNG, WEBP, or GIF up to 5 MB.",
+  "uploadingProfileImage": "Uploading your profile photo...",
+  "removingProfileImage": "Removing your profile photo...",
+  "profileImageUpdated": "Profile photo updated successfully.",
+  "profileImageRemoved": "Profile photo removed successfully.",
+  "profileImageUploadError": "Unable to upload the profile photo.",
+  "profileImageRemoveError": "Unable to remove the profile photo.",
+  "confirmRemoveProfileImage": "Remove your profile photo?",
+  "removeProfileImageWarning": "Your initials avatar will be displayed instead.",
+  "confirmSignOut": "Confirm sign out",
+  "confirmSignOutQuestion": "Are you sure you want to sign out of your account?",
+  "myBookings": "My bookings",
+  "settings": "Settings",
+  "noAgentsFound": "No agents are available right now.",
+  "packageImages": "Package images",
+  "packageImagesHint": "Choose the package gallery; the first image is used as the cover.",
+  "packageImagesUploadStepHint": "This step uploads the selected package images. You can preview and remove them before continuing.",
+  "packageImageRules": "JPG, PNG or WebP, maximum 5 MB",
+  "packageImageLimit": "A package can have a maximum of 5 images.",
+  "packageImagesSaveError": "Unable to upload the package images.",
+  "packageIdMissingAfterCreate": "The package was saved, but the API did not return its ID for image upload.",
+  "packageCreationSteps": "Package creation steps",
+  "packageStepperHint": "Save package details, upload its images, then build the itinerary.",
+  "packageDetailsStep": "Package details",
+  "packageImagesStep": "Package images",
+  "packageItineraryStep": "Package itinerary",
+  "packageDetailsHint": "Enter the package information and destinations, then save to continue.",
+  "selectDestinations": "Select at least one destination",
+  "selectedDestinationsCount": "Selected destinations",
+  "maxCapacity": "Maximum capacity",
+  "fieldRequired": "This field is required.",
+  "maximumCharacters": "Maximum {{count}} characters.",
+  "seoMetadata": "Search engine metadata",
+  "seoMetadataHint": "Used by Google and social sharing. Keep each title specific and each description useful.",
+  "seoTitleEnglish": "SEO title (English)",
+  "seoTitleArabic": "SEO title (Arabic)",
+  "seoDescriptionEnglish": "SEO description (English)",
+  "seoDescriptionArabic": "SEO description (Arabic)",
+  "seoTitleRequired": "The SEO title is required.",
+  "seoTitleMaxLength": "The SEO title cannot exceed 60 characters.",
+  "seoDescriptionRequired": "The SEO description is required.",
+  "seoDescriptionMaxLength": "The SEO description cannot exceed 160 characters.",
+  "homeSeoTitle": "Sea World Holidays | Tours, Packages & Destinations",
+  "homeSeoDescription": "Discover curated tours, travel packages, cities and destinations with Sea World Holidays. Plan your next journey with local travel experts.",
+  "englishDescription": "Description (English)",
+  "arabicDescription": "Description (Arabic)",
+  "englishFullDescription": "Full description (English)",
+  "arabicFullDescription": "Full description (Arabic)",
+  "englishShortDescription": "Short description (English)",
+  "arabicShortDescription": "Short description (Arabic)",
+  "isOneDayTour": "One-day tour",
+  "tourHours": "Tour hours",
+  "oneDayHoursRequired": "A one-day tour must have at least one hour and uses zero duration days.",
+  "multiDayDurationRequired": "A multi-day tour must have at least one day; additional hours can be zero or more.",
+  "dateRequired": "Date is required.",
+  "notes": "Notes",
+  "itineraryNotesPlaceholder": "Add meeting notes or useful instructions",
+  "cancellationPolicyRequired": "A cancellation policy is required when cancellation is not free.",
+  "savedPackageNumber": "Saved package",
+  "packageDetailsCreated": "Package details saved. You can now add images.",
+  "packageDetailsUpdated": "Package details updated. You can now review the images.",
+  "packageImagesSaved": "Package images uploaded successfully.",
+  "packageItineraryRequired": "Add at least one valid itinerary step.",
+  "validItineraryStepRequired": "Enter a title, a valid date, and required start/end times using 00, 15, 30, or 45 minutes.",
+  "savingPackageDetails": "Saving package details...",
+  "uploadingPackageImages": "Uploading package images...",
+  "savingPackageItinerary": "Saving package itinerary...",
+  "deletingPackageImage": "Deleting package image...",
+  "packageItinerarySaveError": "Unable to save the package itinerary.",
+  "loadingHomePage": "Loading the Sea World Holidays home page",
+  "travelAroundWorld": "Travel around the world with Sea World Holidays",
+  "homeHeroPackagesTitle": "Travel farther with a package designed around you",
+  "homeHeroPackagesDescription": "Discover carefully planned holidays with memorable destinations, comfortable stays, and support from departure to return.",
+  "explorePackages": "Explore holiday packages",
+  "homeHeroDestinationsTitle": "Your next unforgettable destination is waiting",
+  "homeHeroDestinationsDescription": "From relaxing escapes to cultural adventures, we help you choose and plan a journey that fits your interests and budget.",
+  "exploreDestinations": "Explore destinations",
+  "seaworldTravelConsultants": "Sea World Holidays travel consultants",
+  "visitors": "Visitors",
+  "travelPackages": "Travel packages",
+  "aboutseaworldHolidays": "About Sea World Holidays",
+  "trustedTravelPartnerTitle": "Your trusted partner for thoughtfully planned journeys",
+  "trustedTravelPartnerDescription": "Sea World Holidays brings flights, hotels, tours, transfers, visa assistance, and personalized itineraries together in one seamless service. Our experienced team plans every detail with clarity and care, so you can travel with confidence.",
+  "learnMoreAboutUs": "Learn more about us",
+  "ourTravelPromise": "Our travel promise",
+  "whyTravelersChooseUs": "Travel planning built around what matters to you",
+  "whyTravelersChooseUsDescription": "Practical expertise, attentive service, and dependable arrangements from your first inquiry until you return home.",
+  "personalizedTravelPlanning": "Personalized travel planning",
+  "personalizedTravelPlanningDescription": "We shape each itinerary around your preferred pace, interests, travel dates, and budget.",
+  "supportThroughoutJourney": "Support throughout your journey",
+  "supportThroughoutJourneyDescription": "Our team stays available before, during, and after your trip whenever you need assistance.",
+  "trustedTravelArrangements": "Reliable travel arrangements",
+  "trustedTravelArrangementsDescription": "We coordinate trusted flights, stays, tours, and transfers with clear information at every step.",
+  "seaworldHolidaysLogo": "Sea World Holidays logo",
+  "mainNavigation": "Main navigation",
+  "mobileNavigation": "Mobile navigation",
+  "toggleHomeNavigation": "Toggle website navigation",
+  "footerTravelDescription": "From tailored holiday packages to flights, hotels, tours, transfers, and visa assistance, we take care of the details so you can travel with confidence.",
+  "emailseaworldHolidays": "Email Sea World Holidays",
+  "callseaworldHolidays": "Call Sea World Holidays",
+  "office": "Office",
+  "officeAddress": "Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor.",
+  "footerCompanyLinks": "Company links",
+  "waysYouCanPay": "Ways You Can Pay",
+  "aboutUs": "About us",
+  "contactUs": "Contact us",
+  "newsletter": "Newsletter",
+  "newsletterDescription": "Receive travel ideas, destination inspiration, and our latest holiday offers by email.",
+  "writeYourEmail": "Enter your email",
+  "subscribe": "Subscribe",
+  "subscribing": "Subscribing...",
+  "newsletterEmailRequired": "Email is required.",
+  "newsletterEmailInvalid": "Enter a valid email address.",
+  "newsletterEmailTooLong": "Email must be 254 characters or fewer.",
+  "newsletterSubscribedSuccess": "Thank you for subscribing to our newsletter.",
+  "newsletterAlreadySubscribed": "This email is already subscribed to our newsletter.",
+  "newsletterSubscribeError": "We could not complete your subscription. Please try again.",
+  "allRightsReserved": "All rights reserved.",
+  "activateAccount": "Activate your account",
+  "activationInProgress": "Activating your account, please wait...",
+  "activationLinkInvalid": "The activation link is invalid or incomplete.",
+  "activationFailed": "Account activation failed. Please try again.",
+  "returnToSignup": "Return to create account",
+  "accountActivatedRedirecting": "Your account is activated. Redirecting...",
+  "emailSentSuccessfully": "Email sent successfully",
+  "passwordResetEmailSentDescription": "A password reset email has been sent to your mailbox. Check your inbox and spam folder if it does not arrive within a few minutes.",
+  "resetPasswordTitle": "Reset your password",
+  "resetPasswordInstructions": "Enter your email address and we will send you a link to create a new password.",
+  "rememberPassword": "Remember your password",
+  "forgotPassword": "Forgot password",
+  "signupCompleted": "Your account was created successfully.",
+  "signupFailed": "Account creation failed. Please try again.",
+  "registrationFailed": "Registration failed. Please try again.",
+  "firstNamePlaceholder": "First name",
+  "lastNamePlaceholder": "Last name",
+  "mobilePlaceholder": "+20 101 060 737",
+  "success": "Success",
+  "activated": "Activated",
+  "accountCreatedActivationRequired": "Your account has been created. Please check your email to activate it.",
+  "accountActivatedSignin": "Your account has been activated successfully. You can now sign in.",
+  "continue": "Continue",
+  "bookingHistoryDescription": "Review your current reservations and booking history.",
+  "rows": "Rows",
+  "loadingBookings": "Loading your bookings",
+  "noBookingsFound": "No bookings found.",
+  "tourOrPackage": "Tour / Package",
+  "bookedOn": "Booked on",
+  "userBookingsLoadError": "Unable to load your bookings. Please try again later.",
+  "showingBookings": "Showing {{shown}} of {{total}} bookings",
+  "pageOf": "Page {{page}} of {{total}}",
+  "date": "Date",
+  "selectYourDate": "Select your date",
+  "numberOfPeople": "Number of people",
+  "numberOfChildren": "Number of children",
+  "searchNow": "Search now",
+  "tourMap": "Tour map",
+  "destinationNumber": "Destination #{{id}}",
+  "durationDaysHours": "{{days}}d {{hours}}h",
+  "destinationImageNumber": "Destination image {{number}}",
+  "packageImageNumber": "Package image {{number}}",
+  "tourCover": "Tour cover",
+  "tourImageNumber": "Tour image {{number}}",
+  "agent": "Agent",
+  "back": "Back",
+  "home": "Home",
+  "valueShouldBeMoreThanZero": "The value must be greater than zero.",
+  "whatsappseaworldHolidays": "Contact Sea World Holidays on WhatsApp",
+  "instagramseaworldHolidays": "Visit Sea World Holidays on Instagram",
+  "facebookseaworldHolidays": "Visit Sea World Holidays on Facebook",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "showConfirmPassword": "Show confirmation password",
+  "hideConfirmPassword": "Hide confirmation password",
+  "aboutseaworld": {
+    "eyebrow": "Sea World Holidays",
+    "pageTitle": "About Sea World Holidays",
+    "tagline": "Discover the world with confidence, comfort, and exceptional care.",
+    "home": "Sea World",
+    "breadcrumb": "About Us",
+    "introduction": {
+      "eyebrow": "Who we are",
+      "title": "Discover the World with Confidence",
+      "paragraphOne": "At Sea World Holidays, we believe that travel is more than reaching a destination—it's about creating unforgettable experiences, discovering new cultures, and making memories that last a lifetime. Whether you're planning a relaxing beach getaway, an adventurous tour, a family vacation, a honeymoon, or a corporate business trip, our dedicated team is here to make every journey seamless and enjoyable.",
+      "paragraphTwo": "With a passion for exceptional service and attention to detail, we provide carefully designed travel solutions tailored to every traveler's needs. From flight bookings and hotel reservations to complete holiday packages, visa assistance, airport transfers, and customized itineraries, we take care of every aspect of your trip so you can focus on enjoying the experience."
     },
-    "markAllAsRead": "Mark all as read",
-    "noNotifications": "No notifications",
-    "taskType": "Task type",
-    "taskTypeFollowUpCustomer": "Follow up customer",
-    "taskTypePrepareQuotation": "Prepare quotation",
-    "taskTypeConfirmBooking": "Confirm booking",
-    "taskTypeCollectPayment": "Collect payment",
-    "taskTypeDocumentRequest": "Document request",
-    "taskTypeCustomerSupport": "Customer support",
-    "taskTypeGeneral": "General",
-    "priority": "Priority",
-    "priorityLow": "Low",
-    "priorityMedium": "Medium",
-    "priorityHigh": "High",
-    "priorityUrgent": "Urgent",
-    "confirmDeleteRecord": "Delete this record?",
-    "recordDeleteWarning": "This action cannot be undone.",
-    "recordDeleteError": "The record could not be deleted.",
-    "confirmActivateFlight": "Activate this flight?",
-    "confirmDeactivateFlight": "Deactivate this flight?",
-    "quotationNoGenerated": "Generated automatically after saving",
-    "quotationTravelItems": "Travel services",
-    "adultPrice": "Adult price",
-    "childPrice": "Child price",
-    "flightPricePerTraveler": "Price per traveler",
-    "selectAtLeastOneTravelItem": "Select at least one package, tour, hotel, flight, or transfer.",
-    "quotationTransfers": "Transfers",
-    "quotationTransfersHint": "Add each pickup and drop-off included in this quotation.",
-    "addTransfer": "Add transfer",
-    "transfer": "Transfer",
-    "noTransfersAdded": "No transfers added yet.",
-    "transferFrom": "From",
-    "transferTo": "To",
-    "fromTime": "From time",
-    "transferFromPlaceholder": "e.g. Cairo International Airport",
-    "transferToPlaceholder": "e.g. Downtown hotel",
-    "transferFieldsRequired": "Date, from, to, from time, and arrival time are required.",
-    "transferTimeInPast": "The transfer pickup date and time cannot be in the past.",
-    "invalidTransferTimeRange": "Arrival time must be later than the pickup time.",
-    "quotationPolicies": "Quotation policies",
-    "quotationPoliciesHint": "Add the terms and policies that apply to this quotation.",
-    "addPolicy": "Add policy",
-    "quotationPolicyPlaceholder": "e.g. Prices are subject to availability",
-    "noQuotationPoliciesAdded": "No quotation policies added yet.",
-    "discountAmount": "Discount amount",
-    "discountAppliedBeforeTax": "The discount is applied before tax.",
-    "finalPriceAfterDiscount": "Final price after discount",
-    "discountExceedsSubtotal": "Discount cannot exceed the subtotal.",
-    "quotationPdfInvalid": "The server did not return a valid quotation PDF.",
-    "city": "City",
-    "citiesInDestination": "Cities to explore",
-    "citiesBrowseHint": "Choose a city to see its selected tours.",
-    "cityDisplayOptions": "City display options",
-    "carouselView": "Carousel",
-    "gridView": "Grid",
-    "noCitiesForDestination": "No cities are available for this destination yet.",
-    "cityNotFound": "City not found.",
-    "backToDestination": "Back to destination",
-    "exploreCity": "Explore city",
-    "cityToursSidebarHint": "Browse the best experiences in this city and discover more tours nearby.",
-    "moreDestinationTours": "More destination tours",
-    "topTours": "Top tours",
-    "topToursInCity": "Top tours in {{city}}",
-    "noToursForCity": "No tours are available for this city yet.",
-    "selectCity": "Select a city",
-    "loadingCities": "Loading cities...",
-    "cityRequired": "City is required.",
-    "citiesLoadError": "Cities could not be loaded.",
-    "quotationOptionsLoadError": "Customers, packages, tours, or flights could not be loaded. Check your access and try again.",
-    "quotationValidityBeforeTravel": "The quotation validity date must be on or before the travel start date.",
-    "retry": "Retry",
-    "whatsappFloatingLabel": "Chat with Sea World Holidays on WhatsApp",
-    "leaveSiteTitle": "You are about to leave Sea World Holidays",
-    "leaveSiteMessage": "Before you go, our travel team would love to help you plan and book your next trip.",
-    "bookingContactPrompt": "For bookings and enquiries, call us on",
-    "thanksForVisiting": "Thanks for visiting Sea World Holidays. Have a wonderful time! 😊",
-    "stayOnSite": "Stay on Sea World",
-    "continueBrowsing": "Continue browsing",
-    "leaveSite": "Leave website",
-    "items": "items",
-    "invoices": "Invoices",
-    "vouchers": "Vouchers",
-    "manageInvoices": "Create itemized invoices for tours, packages, flights, and transfers.",
-    "manageVouchers": "Create detailed printable flight, hotel, tour, package, and transfer vouchers.",
-    "invoiceNo": "Invoice no.",
-    "invoiceDate": "Invoice date",
-    "dueDate": "Due date",
-    "invoiceItems": "Invoice items",
-    "noInvoicesFound": "No invoices found.",
-    "invalidInvoiceData": "Complete the invoice and add at least one valid item.",
-    "invoiceSaveError": "The invoice could not be saved.",
-    "voucherNo": "Voucher no.",
-    "voucherType": "Voucher type",
-    "service": "Service",
-    "serviceDate": "Service date",
-    "endDateOptional": "End date (optional)",
-    "voucherMinimalDetailsHelp": "The printed voucher contains the Sea World logo, date, customer name and customer number, with the selected voucher type heading.",
-    "noVouchersFound": "No vouchers found.",
-    "invalidVoucherData": "Select a customer and voucher type.",
-    "voucherSaveError": "The voucher could not be saved.",
-    "save": "Save",
-    "createVoucher": "Create voucher",
-    "createInvoice": "Create invoice",
-    "editVoucher": "Edit voucher",
-    "editInvoice": "Edit invoice",
-    "voucherDetails": "Voucher details",
-    "invoiceDetails": "Invoice details",
-    "chooseVoucherType": "Choose the travel service type for this voucher.",
-    "selectVoucherServiceHint": "Select the service whose complete details will appear on the voucher.",
-    "invoiceTravelItemsHint": "Select tours, packages, hotels, and flights from the catalog, then add any required transfers.",
-    "selectedInvoiceItems": "Selected travel services",
-    "travelTransfersHint": "Add the pickup and drop-off details for each transfer.",
-    "customerRequired": "Select a customer.",
-    "currencyRequired": "Select a currency.",
-    "invoiceDateRequired": "Invoice date is required.",
-    "dueDateRequired": "Due date is required.",
-    "dateRequired": "Date is required.",
-    "transferFromRequired": "Transfer origin is required.",
-    "transferToRequired": "Transfer destination is required.",
-    "transferDateRequired": "Transfer date is required.",
-    "fromTimeRequired": "Pickup time is required.",
-    "quantityInvalid": "Quantity must be a whole number of at least 1.",
-    "unitPriceInvalid": "Unit price must be zero or greater.",
-    "discountInvalid": "Discount must be zero or greater and cannot exceed the available amount.",
-    "adultsInvalid": "At least one adult is required.",
-    "nonNegativeValueRequired": "Enter zero or a positive number.",
-    "voucherOptionsLoadError": "Customers or travel services could not be loaded. Check your access and try again.",
-    "invoiceOptionsLoadError": "Customers, currencies, tours, packages, or flights could not be loaded. Available fallback data is shown; retry before saving.",
-    "noServicesAvailable": "No services are available for this voucher type.",
-    "serviceRequired": "Select a travel service.",
-    "serviceDateRequired": "Service date is required.",
-    "invalidVoucherDates": "End date must be on or after the service date.",
-    "voucherDetailsHelp": "The printable voucher includes the selected service schedule, route, itinerary, inclusions, and other available operational details.",
-    "serviceDates": "Service dates",
-    "to": "to",
-    "downloadPdf": "Download PDF",
-    "downloading": "Downloading...",
-    "pdfDownloadError": "The PDF could not be downloaded.",
-    "voucherListLoadError": "The vouchers could not be loaded.",
-    "invoiceListLoadError": "The invoices could not be loaded.",
-    "quantity": "Quantity",
-    "unitPrice": "Unit price",
-    "lineDiscount": "Line discount",
-    "lineTotal": "Line total",
-    "lineDiscountExceedsTotal": "Line discount cannot exceed quantity multiplied by unit price.",
-    "removeInvoiceItem": "Remove invoice item",
-    "addInvoiceItemHint": "Add at least one tour, package, hotel, flight, or transfer to the invoice.",
-    "taxRateInvalid": "Tax rate must be between 0% and 100%.",
-    "invoiceDueDateInvalid": "Due date must be on or after the invoice date.",
-    "serverCalculatedTotalsHint": "Preview totals are estimates; the saved invoice totals are calculated by the server."
-    ,"viewDestinationDetails": "Explore the destination"
-    ,"getInTouch": "Get in touch"
-    ,"contactNumber": "Contact number"
-    ,"contactNumberRequired": "Contact number is required."
-    ,"contactNumberInvalid": "Enter a valid contact number."
-    ,"question": "Question"
-    ,"questionRequired": "Please write your question."
-    ,"sending": "Sending..."
-    ,"sendMessage": "Send message"
-    ,"contactQuestionSent": "Your question was sent successfully. Our team will contact you soon."
-    ,"contactQuestionSendError": "Your question could not be sent. Please try again."
-    ,"customerQuestions": "Customer questions"
-    ,"manageCustomerQuestions": "Review the questions customers sent from the contact page."
-    ,"contactMessagesLoadError": "The customer questions could not be loaded."
-    ,"contactMessageUpdateError": "Unable to update the customer question."
-    ,"contactMessageDeleteError": "Unable to delete the customer question."
-    ,"noContactMessagesFound": "No customer questions found."
-    ,"submittedAt": "Submitted at"
-    ,"read": "Read"
-    ,"unread": "Unread"
-    ,"markAsRead": "Mark as read"
-    ,"confirmDelete": "Confirm delete"
-    ,"confirmDeleteContactMessage": "Are you sure you want to delete this customer question?"
-    ,"refresh": "Refresh"
-    ,"contactMessagesFilter_all": "All"
-    ,"contactMessagesFilter_unread": "Unread"
-    ,"contactMessagesFilter_read": "Read"
-    ,"photos": "photos"
-    ,"discountManagement": "Discount management"
-    ,"discountEmailNotice": "Creating a period queues one private email for every registered user and active subscriber."
-    ,"createDiscount": "Create discount"
-    ,"restartDiscount": "Restart discount"
-    ,"cancelRestart": "Cancel restart"
-    ,"discountPercentage": "Discount percentage"
-    ,"discountHistory": "Discount period history"
-    ,"discountHistoryLoadError": "The discount history could not be loaded."
-    ,"discountPercentageInvalid": "Discount percentage must be greater than 0 and less than 100."
-    ,"discountDatesRequired": "Start and end dates are required."
-    ,"discountStartPast": "The discount start date cannot be in the past."
-    ,"discountEndInvalid": "The discount end date must be after its start date."
-    ,"discountSaveError": "The discount could not be saved."
-    ,"discountStopError": "The discount could not be stopped."
-    ,"discountCreated": "Discount created and customer emails queued"
-    ,"discountRestarted": "A new discount period was started"
-    ,"discountStopped": "Discount stopped"
-    ,"stopDiscount": "Stop discount?"
-    ,"confirmStopDiscount": "Customers will no longer see this discount and pending emails will be cancelled."
-    ,"stop": "Stop"
-    ,"restart": "Restart"
-    ,"startNewPeriod": "Start new period"
-    ,"discountStatusActive": "Active"
-    ,"discountStatusScheduled": "Scheduled"
-    ,"discountStatusStopped": "Stopped"
-    ,"discountStatusExpired": "Expired"
-    ,"emailsQueued": "{{count}} email(s) queued"
-    ,"noDiscountHistory": "No discount periods have been created yet."
-    ,"manageDiscount": "Manage discount"
-    ,"discountOff": "{{percentage}}% off"
-    ,"limitedTimeOffer": "Limited-time offer"
-    ,"invalidDate": "Enter a valid date."
-    ,"travelStartDatePast": "Travel start date cannot be in the past."
-    ,"travelEndDateAfterStart": "Travel end date must be after the travel start date."
-    ,"quotationValidityFuture": "The quotation validity date must be after today."
-    ,"quotationValidationError": "Complete every required field with valid values before saving."
-    ,"changeQuotationStatus": "Change status"
-    ,"chooseQuotationStatus": "Choose the new status"
-    ,"quotationStatusRequired": "Select a status to continue."
-    ,"quotationStatusChangePrompt": "Choose the next quotation status, then confirm the change."
-    ,"quotationStatusUpdated": "Quotation status updated successfully."
-    ,"quotationStatusUpdateError": "The quotation status could not be updated."
-    ,"confirmQuotationSend": "Send quotation?"
-    ,"confirmQuotationSendMessage": "This will change the quotation status from Draft to Sent before downloading its PDF."
-    ,"cancelled": "Cancelled"
+    "mission": {
+      "title": "Our Mission",
+      "description": "Our mission is to deliver outstanding travel experiences by offering reliable, personalized, and affordable travel services. We strive to build lasting relationships with our clients through professionalism, transparency, and exceptional customer care."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To become one of the region's most trusted travel agencies by connecting people with extraordinary destinations while delivering innovative travel solutions and world-class customer service."
+    },
+    "offer": {
+      "title": "What We Offer",
+      "items": [
+        "International and domestic holiday packages",
+        "Customized private and group tours",
+        "Flight reservations with leading airlines",
+        "Hotel bookings worldwide",
+        "Visa assistance and travel consultation",
+        "Airport transfers and transportation services",
+        "Honeymoon and family vacation packages",
+        "Corporate travel management",
+        "Cruise and luxury travel experiences",
+        "Travel insurance assistance"
+      ]
+    },
+    "whyChooseUs": {
+      "title": "Why Choose Sea World Holidays?",
+      "items": [
+        "Experienced travel consultants dedicated to your satisfaction",
+        "Personalized itineraries tailored to your preferences and budget",
+        "Competitive pricing with exceptional value",
+        "Trusted partnerships with airlines, hotels, and tourism providers",
+        "Fast, responsive customer support before, during, and after your trip",
+        "Commitment to quality, reliability, and customer satisfaction"
+      ]
+    },
+    "commitment": {
+      "title": "Our Commitment",
+      "description": "Every traveler is unique, and every journey deserves special attention. At Sea World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
+    },
+    "closing": "Let Sea World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
+  },
+  "markAllAsRead": "Mark all as read",
+  "noNotifications": "No notifications",
+  "taskType": "Task type",
+  "taskTypeFollowUpCustomer": "Follow up customer",
+  "taskTypePrepareQuotation": "Prepare quotation",
+  "taskTypeConfirmBooking": "Confirm booking",
+  "taskTypeCollectPayment": "Collect payment",
+  "taskTypeDocumentRequest": "Document request",
+  "taskTypeCustomerSupport": "Customer support",
+  "taskTypeGeneral": "General",
+  "priority": "Priority",
+  "priorityLow": "Low",
+  "priorityMedium": "Medium",
+  "priorityHigh": "High",
+  "priorityUrgent": "Urgent",
+  "confirmDeleteRecord": "Delete this record?",
+  "recordDeleteWarning": "This action cannot be undone.",
+  "recordDeleteError": "The record could not be deleted.",
+  "confirmActivateFlight": "Activate this flight?",
+  "confirmDeactivateFlight": "Deactivate this flight?",
+  "quotationNoGenerated": "Generated automatically after saving",
+  "quotationTravelItems": "Travel services",
+  "adultPrice": "Adult price",
+  "childPrice": "Child price",
+  "flightPricePerTraveler": "Price per traveler",
+  "selectAtLeastOneTravelItem": "Select at least one package, tour, hotel, flight, or transfer.",
+  "quotationTransfers": "Transfers",
+  "quotationTransfersHint": "Add each pickup and drop-off included in this quotation.",
+  "addTransfer": "Add transfer",
+  "transfer": "Transfer",
+  "noTransfersAdded": "No transfers added yet.",
+  "transferFrom": "From",
+  "transferTo": "To",
+  "fromTime": "From time",
+  "transferFromPlaceholder": "e.g. Cairo International Airport",
+  "transferToPlaceholder": "e.g. Downtown hotel",
+  "transferFieldsRequired": "Date, from, to, from time, and arrival time are required.",
+  "transferTimeInPast": "The transfer pickup date and time cannot be in the past.",
+  "invalidTransferTimeRange": "Arrival time must be later than the pickup time.",
+  "quotationPolicies": "Quotation policies",
+  "quotationPoliciesHint": "Add the terms and policies that apply to this quotation.",
+  "addPolicy": "Add policy",
+  "quotationPolicyPlaceholder": "e.g. Prices are subject to availability",
+  "noQuotationPoliciesAdded": "No quotation policies added yet.",
+  "discountAmount": "Discount amount",
+  "discountAppliedBeforeTax": "The discount is applied before tax.",
+  "finalPriceAfterDiscount": "Final price after discount",
+  "discountExceedsSubtotal": "Discount cannot exceed the subtotal.",
+  "quotationPdfInvalid": "The server did not return a valid quotation PDF.",
+  "city": "City",
+  "citiesInDestination": "Cities to explore",
+  "citiesBrowseHint": "Choose a city to see its selected tours.",
+  "cityDisplayOptions": "City display options",
+  "carouselView": "Carousel",
+  "gridView": "Grid",
+  "noCitiesForDestination": "No cities are available for this destination yet.",
+  "cityNotFound": "City not found.",
+  "backToDestination": "Back to destination",
+  "exploreCity": "Explore city",
+  "cityToursSidebarHint": "Browse the best experiences in this city and discover more tours nearby.",
+  "moreDestinationTours": "More destination tours",
+  "topTours": "Top tours",
+  "topToursInCity": "Top tours in {{city}}",
+  "noToursForCity": "No tours are available for this city yet.",
+  "selectCity": "Select a city",
+  "loadingCities": "Loading cities...",
+  "cityRequired": "City is required.",
+  "citiesLoadError": "Cities could not be loaded.",
+  "quotationOptionsLoadError": "Customers, packages, tours, or flights could not be loaded. Check your access and try again.",
+  "quotationValidityBeforeTravel": "The quotation validity date must be on or before the travel start date.",
+  "retry": "Retry",
+  "whatsappFloatingLabel": "Chat with Sea World Holidays on WhatsApp",
+  "leaveSiteTitle": "You are about to leave Sea World Holidays",
+  "leaveSiteMessage": "Before you go, our travel team would love to help you plan and book your next trip.",
+  "bookingContactPrompt": "For bookings and enquiries, call us on",
+  "thanksForVisiting": "Thanks for visiting Sea World Holidays. Have a wonderful time! 😊",
+  "stayOnSite": "Stay on Sea World",
+  "continueBrowsing": "Continue browsing",
+  "leaveSite": "Leave website",
+  "items": "items",
+  "invoices": "Invoices",
+  "vouchers": "Vouchers",
+  "manageInvoices": "Create itemized invoices for tours, packages, flights, and transfers.",
+  "manageVouchers": "Create detailed printable flight, hotel, tour, package, and transfer vouchers.",
+  "invoiceNo": "Invoice no.",
+  "invoiceDate": "Invoice date",
+  "dueDate": "Due date",
+  "invoiceItems": "Invoice items",
+  "noInvoicesFound": "No invoices found.",
+  "invalidInvoiceData": "Complete the invoice and add at least one valid item.",
+  "invoiceSaveError": "The invoice could not be saved.",
+  "voucherNo": "Voucher no.",
+  "voucherType": "Voucher type",
+  "service": "Service",
+  "serviceDate": "Service date",
+  "endDateOptional": "End date (optional)",
+  "voucherMinimalDetailsHelp": "The printed voucher contains the Sea World logo, date, customer name and customer number, with the selected voucher type heading.",
+  "noVouchersFound": "No vouchers found.",
+  "invalidVoucherData": "Select a customer and voucher type.",
+  "voucherSaveError": "The voucher could not be saved.",
+  "save": "Save",
+  "createVoucher": "Create voucher",
+  "createInvoice": "Create invoice",
+  "editVoucher": "Edit voucher",
+  "editInvoice": "Edit invoice",
+  "voucherDetails": "Voucher details",
+  "invoiceDetails": "Invoice details",
+  "chooseVoucherType": "Choose the travel service type for this voucher.",
+  "selectVoucherServiceHint": "Select the service whose complete details will appear on the voucher.",
+  "invoiceTravelItemsHint": "Select tours, packages, hotels, and flights from the catalog, then add any required transfers.",
+  "selectedInvoiceItems": "Selected travel services",
+  "travelTransfersHint": "Add the pickup and drop-off details for each transfer.",
+  "customerRequired": "Select a customer.",
+  "currencyRequired": "Select a currency.",
+  "invoiceDateRequired": "Invoice date is required.",
+  "dueDateRequired": "Due date is required.",
+  "dateRequired": "Date is required.",
+  "transferFromRequired": "Transfer origin is required.",
+  "transferToRequired": "Transfer destination is required.",
+  "transferDateRequired": "Transfer date is required.",
+  "fromTimeRequired": "Pickup time is required.",
+  "quantityInvalid": "Quantity must be a whole number of at least 1.",
+  "unitPriceInvalid": "Unit price must be zero or greater.",
+  "discountInvalid": "Discount must be zero or greater and cannot exceed the available amount.",
+  "adultsInvalid": "At least one adult is required.",
+  "nonNegativeValueRequired": "Enter zero or a positive number.",
+  "voucherOptionsLoadError": "Customers or travel services could not be loaded. Check your access and try again.",
+  "invoiceOptionsLoadError": "Customers, currencies, tours, packages, or flights could not be loaded. Available fallback data is shown; retry before saving.",
+  "noServicesAvailable": "No services are available for this voucher type.",
+  "serviceRequired": "Select a travel service.",
+  "serviceDateRequired": "Service date is required.",
+  "invalidVoucherDates": "End date must be on or after the service date.",
+  "voucherDetailsHelp": "The printable voucher includes the selected service schedule, route, itinerary, inclusions, and other available operational details.",
+  "serviceDates": "Service dates",
+  "to": "to",
+  "downloadPdf": "Download PDF",
+  "downloading": "Downloading...",
+  "pdfDownloadError": "The PDF could not be downloaded.",
+  "voucherListLoadError": "The vouchers could not be loaded.",
+  "invoiceListLoadError": "The invoices could not be loaded.",
+  "quantity": "Quantity",
+  "unitPrice": "Unit price",
+  "lineDiscount": "Line discount",
+  "lineTotal": "Line total",
+  "lineDiscountExceedsTotal": "Line discount cannot exceed quantity multiplied by unit price.",
+  "removeInvoiceItem": "Remove invoice item",
+  "addInvoiceItemHint": "Add at least one tour, package, hotel, flight, or transfer to the invoice.",
+  "taxRateInvalid": "Tax rate must be between 0% and 100%.",
+  "invoiceDueDateInvalid": "Due date must be on or after the invoice date.",
+  "serverCalculatedTotalsHint": "Preview totals are estimates; the saved invoice totals are calculated by the server.",
+  "viewDestinationDetails": "Explore the destination",
+  "getInTouch": "Get in touch",
+  "contactNumber": "Contact number",
+  "contactNumberRequired": "Contact number is required.",
+  "contactNumberInvalid": "Enter a valid contact number.",
+  "question": "Question",
+  "questionRequired": "Please write your question.",
+  "sending": "Sending...",
+  "sendMessage": "Send message",
+  "contactQuestionSent": "Your question was sent successfully. Our team will contact you soon.",
+  "contactQuestionSendError": "Your question could not be sent. Please try again.",
+  "customerQuestions": "Customer questions",
+  "manageCustomerQuestions": "Review the questions customers sent from the contact page.",
+  "contactMessagesLoadError": "The customer questions could not be loaded.",
+  "contactMessageUpdateError": "Unable to update the customer question.",
+  "contactMessageDeleteError": "Unable to delete the customer question.",
+  "noContactMessagesFound": "No customer questions found.",
+  "submittedAt": "Submitted at",
+  "read": "Read",
+  "unread": "Unread",
+  "markAsRead": "Mark as read",
+  "confirmDelete": "Confirm delete",
+  "confirmDeleteContactMessage": "Are you sure you want to delete this customer question?",
+  "refresh": "Refresh",
+  "contactMessagesFilter_all": "All",
+  "contactMessagesFilter_unread": "Unread",
+  "contactMessagesFilter_read": "Read",
+  "photos": "photos",
+  "discountManagement": "Discount management",
+  "discountEmailNotice": "Creating a period queues one private email for every registered user and active subscriber.",
+  "createDiscount": "Create discount",
+  "restartDiscount": "Restart discount",
+  "cancelRestart": "Cancel restart",
+  "discountPercentage": "Discount percentage",
+  "discountHistory": "Discount period history",
+  "discountHistoryLoadError": "The discount history could not be loaded.",
+  "discountPercentageInvalid": "Discount percentage must be greater than 0 and less than 100.",
+  "discountDatesRequired": "Start and end dates are required.",
+  "discountStartPast": "The discount start date cannot be in the past.",
+  "discountEndInvalid": "The discount end date must be after its start date.",
+  "discountSaveError": "The discount could not be saved.",
+  "discountStopError": "The discount could not be stopped.",
+  "discountCreated": "Discount created and customer emails queued",
+  "discountRestarted": "A new discount period was started",
+  "discountStopped": "Discount stopped",
+  "stopDiscount": "Stop discount?",
+  "confirmStopDiscount": "Customers will no longer see this discount and pending emails will be cancelled.",
+  "stop": "Stop",
+  "restart": "Restart",
+  "startNewPeriod": "Start new period",
+  "discountStatusActive": "Active",
+  "discountStatusScheduled": "Scheduled",
+  "discountStatusStopped": "Stopped",
+  "discountStatusExpired": "Expired",
+  "emailsQueued": "{{count}} email(s) queued",
+  "noDiscountHistory": "No discount periods have been created yet.",
+  "manageDiscount": "Manage discount",
+  "discountOff": "{{percentage}}% off",
+  "limitedTimeOffer": "Limited-time offer",
+  "invalidDate": "Enter a valid date.",
+  "travelStartDatePast": "Travel start date cannot be in the past.",
+  "travelEndDateAfterStart": "Travel end date must be after the travel start date.",
+  "quotationValidityFuture": "The quotation validity date must be after today.",
+  "quotationValidationError": "Complete every required field with valid values before saving.",
+  "changeQuotationStatus": "Change status",
+  "chooseQuotationStatus": "Choose the new status",
+  "quotationStatusRequired": "Select a status to continue.",
+  "quotationStatusChangePrompt": "Choose the next quotation status, then confirm the change.",
+  "quotationStatusUpdated": "Quotation status updated successfully.",
+  "quotationStatusUpdateError": "The quotation status could not be updated.",
+  "confirmQuotationSend": "Send quotation?",
+  "confirmQuotationSendMessage": "This will change the quotation status from Draft to Sent before downloading its PDF.",
+  "cancelled": "Cancelled"
 }

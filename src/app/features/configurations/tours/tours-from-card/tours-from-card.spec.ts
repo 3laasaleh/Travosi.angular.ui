@@ -19,6 +19,13 @@ describe('ToursFromCard validation', () => {
 
     component.tourForm.patchValue({
       titleEng: 'Cairo Highlights',
+      metaTitleEng: 'Best Cairo Highlights Tour',
+      metaTitleAr: 'أفضل جولة لمعالم القاهرة',
+      metaDescriptionEng:
+        'Explore Cairo highlights with an expert local guide on this carefully planned city tour.',
+      descriptionEng: 'Explore the most important Cairo landmarks.',
+      descriptionAr: 'استكشف أهم معالم القاهرة.',
+      metaDescriptionAr: 'استكشف أهم معالم القاهرة مع مرشد محلي خبير في جولة مدينة مخططة بعناية.',
       titleAr: 'معالم القاهرة',
       destinationId: 1,
       cityId: 2,
@@ -49,5 +56,35 @@ describe('ToursFromCard validation', () => {
 
     component.activeStep = 3;
     expect(component.currentStepInvalid).toBe(true);
+  });
+
+  it('uses hours only for a one-day tour and restores a minimum of one day', () => {
+    component.tourForm.controls.durationDays.setValue(4);
+    component.tourForm.controls.durationHours.setValue(0);
+    component.tourForm.controls.isOneDayTour.setValue(true);
+
+    component.onOneDayTourChanged();
+
+    expect(component.tourForm.controls.durationDays.disabled).toBe(true);
+    expect(component.tourForm.controls.durationDays.value).toBe(0);
+    expect(component.tourForm.controls.durationHours.value).toBe(1);
+    expect(component.tourForm.hasError('invalidTourDuration')).toBe(false);
+
+    component.tourForm.controls.isOneDayTour.setValue(false);
+    component.onOneDayTourChanged();
+
+    expect(component.tourForm.controls.durationDays.enabled).toBe(true);
+    expect(component.tourForm.controls.durationDays.value).toBe(1);
+    component.tourForm.controls.durationHours.setValue(0);
+    expect(component.tourForm.hasError('invalidTourDuration')).toBe(false);
+  });
+
+  it('allows the tour availability dates to remain empty', () => {
+    component.tourForm.controls.startDate.setValue('');
+    component.tourForm.controls.endDate.setValue('');
+
+    expect(component.tourForm.hasError('invalidDateRange')).toBe(false);
+    expect(component.tourForm.controls.startDate.hasError('required')).toBe(false);
+    expect(component.tourForm.controls.endDate.hasError('required')).toBe(false);
   });
 });

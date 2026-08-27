@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
 import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
@@ -22,6 +22,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { formatHomePrice } from '../home-price.util';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -36,6 +37,8 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
+  private readonly translate = inject(TranslateService);
+  private readonly seo = inject(SeoService);
 
   destination: any = null;
   tours: any[] = [];
@@ -60,6 +63,28 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     return this.images.map((image) => this.imageUrl(image));
   }
 
+  get isArabic(): boolean {
+    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+  }
+
+  destinationTitle(): string {
+    return this.isArabic
+      ? (this.destination?.nameAr || this.destination?.nameEng || this.destination?.name || '')
+      : (this.destination?.nameEng || this.destination?.name || this.destination?.nameAr || '');
+  }
+
+  destinationShortDescription(): string {
+    return this.isArabic
+      ? (this.destination?.subDescriptionAr || this.destination?.descriptionAr || this.destination?.subDescriptionEng || this.destination?.subDescription || '')
+      : (this.destination?.subDescriptionEng || this.destination?.subDescription || this.destination?.subDescriptionAr || '');
+  }
+
+  destinationDescription(): string {
+    return this.isArabic
+      ? (this.destination?.descriptionAr || this.destination?.descriptionEng || this.destination?.description || '')
+      : (this.destination?.descriptionEng || this.destination?.description || this.destination?.descriptionAr || '');
+  }
+
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
@@ -74,6 +99,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           this.cities = [];
           this.isLoading = false;
           this.errorMessage = 'destinationNotFound';
+          this.seo.noIndex(this.translate.instant('destinationNotFound'));
           this.cdr.markForCheck();
           return;
         }
@@ -140,7 +166,15 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   tourTitle(tour: any): string {
-    return tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '';
+    return this.isArabic
+      ? (tour?.titleAr || tour?.nameAr || tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || '')
+      : (tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || tour?.titleAr || tour?.nameAr || '');
+  }
+
+  tourDescription(tour: any): string {
+    return this.isArabic
+      ? (tour?.descriptionAr || tour?.fullDescriptionAr || tour?.descriptionEng || tour?.description || '')
+      : (tour?.descriptionEng || tour?.description || tour?.descriptionAr || '');
   }
 
   formattedTourPrice(tour: any): string {
@@ -188,8 +222,11 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
         this.destination = destination;
         if (!destination) {
           this.errorMessage = 'destinationNotFound';
+          this.seo.noIndex(this.translate.instant('destinationNotFound'));
           return;
         }
+
+        this.updateSeo(destinationId);
 
         const apiTours = this.extractCollection(tours, ['tours']);
         const nestedTours = Array.isArray(destination?.tours) ? destination.tours : [];
@@ -207,6 +244,29 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
         setTimeout(() => this.initializeTourCarousel());
       });
+  }
+
+  private updateSeo(destinationId: number): void {
+    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    const title = arabic
+      ? (this.destination?.metaTitleAr || this.destination?.nameAr || this.destination?.metaTitleEng || this.destination?.nameEng || '')
+      : (this.destination?.metaTitleEng || this.destination?.nameEng || this.destination?.metaTitleAr || this.destination?.nameAr || '');
+    const description = arabic
+      ? (this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.description || '')
+      : (this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.description || '');
+    this.seo.update({
+      title,
+      description,
+      canonicalPath: `/destinations/${destinationId}`,
+      image: this.resolvedImages[0],
+      type: 'website',
+      structuredData: {
+        '@type': 'TouristDestination',
+        name: title,
+        description,
+        image: this.resolvedImages,
+      },
+    });
   }
 
   private initializeTourCarousel(): void {

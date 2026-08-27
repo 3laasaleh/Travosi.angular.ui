@@ -4,7 +4,7 @@ import {
   Input,
   inject,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../../core/services/currency.service';
 import { formatHomePrice } from '../../../home-price.util';
 
@@ -16,16 +16,13 @@ import { formatHomePrice } from '../../../home-price.util';
 })
 export class TourDetail {
   private readonly currencyService = inject(CurrencyService);
+  private readonly translate = inject(TranslateService);
   @Input() tour: any = null;
 
   get title(): string {
-    return (
-      this.tour?.titleEng ??
-      this.tour?.nameEng ??
-      this.tour?.title ??
-      this.tour?.name ??
-      ''
-    );
+    return this.isArabic
+      ? (this.tour?.titleAr || this.tour?.nameAr || this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
+      : (this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.titleAr || this.tour?.nameAr || '');
   }
 
   get destinationName(): string {
@@ -83,7 +80,13 @@ export class TourDetail {
   }
 
   get description(): string {
-    return this.tour?.fullDescription ?? this.tour?.description ?? this.tour?.overview ?? '';
+    return this.isArabic
+      ? (this.tour?.fullDescriptionAr || this.tour?.descriptionAr || this.tour?.fullDescriptionEng || this.tour?.descriptionEng || this.tour?.fullDescription || this.tour?.description || '')
+      : (this.tour?.fullDescriptionEng || this.tour?.descriptionEng || this.tour?.fullDescription || this.tour?.description || this.tour?.fullDescriptionAr || this.tour?.descriptionAr || '');
+  }
+
+  private get isArabic(): boolean {
+    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
   }
 
   get highlightItems(): any[] {

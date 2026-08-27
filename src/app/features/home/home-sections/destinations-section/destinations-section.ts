@@ -70,6 +70,13 @@ export class DestinationsSection implements OnInit {
       : destination?.nameEng ?? destination?.name ?? destination?.nameAr ?? '';
   }
 
+  destinationDescription(destination: any): string {
+    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
+    return isArabic
+      ? (destination?.subDescriptionAr || destination?.descriptionAr || destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || '')
+      : (destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || destination?.subDescriptionAr || destination?.descriptionAr || '');
+  }
+
   imageUrl(destination: any): string {
     const image = Array.isArray(destination?.images) ? destination.images[0] : null;
     const url =

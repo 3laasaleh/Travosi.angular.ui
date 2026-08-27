@@ -2,71 +2,115 @@
   <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
     <header class="border-b border-primary/10 bg-primary/5 px-6 py-7 md:px-8 md:py-8">
       <div class="flex items-start gap-4">
-        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-2xl text-white shadow-md shadow-primary/20">
+        <span
+          class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-2xl text-white shadow-md shadow-primary/20"
+        >
           <i class="mdi mdi-map-marker-path"></i>
         </span>
         <div>
-          <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">Sea World Holidays</p>
-          <h2 class="mt-1 text-2xl font-semibold text-slate-900 md:text-3xl">{{ 'tripItinerary' | translate }}</h2>
-          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{{ 'tripItineraryDescription' | translate }}</p>
+          <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">
+            Sea World Holidays
+          </p>
+          <h2 class="mt-1 text-2xl font-semibold text-slate-900 md:text-3xl">
+            {{ 'tripItinerary' | translate }}
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            {{ 'tripItineraryDescription' | translate }}
+          </p>
         </div>
       </div>
     </header>
 
     <div class="p-6 md:p-8">
-      <ol class="relative space-y-6 before:absolute before:bottom-5 before:start-[1.125rem] before:top-5 before:w-0.5 before:bg-primary/20">
-        @for (step of itinerary; track step.id ?? $index; let stepIndex = $index; let last = $last) {
+      <ol
+        class="relative space-y-6 before:absolute before:bottom-5 before:start-[1.125rem] before:top-5 before:w-0.5 before:bg-primary/20"
+      >
+        @for (
+          step of itinerary;
+          track step.id ?? $index;
+          let stepIndex = $index;
+          let last = $last
+        ) {
           <li class="relative ps-14">
-            <span class="absolute start-0 top-0 z-10 grid h-9 w-9 place-items-center rounded-full border-4 border-white bg-primary text-sm font-bold text-white shadow-md shadow-primary/20">
+            <span
+              class="absolute start-0 top-0 z-10 grid h-9 w-9 place-items-center rounded-full border-4 border-white bg-primary text-sm font-bold text-white shadow-md shadow-primary/20"
+            >
               {{ stepIndex + 1 }}
             </span>
 
-            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-primary/30 hover:shadow-md sm:p-6" [class.mb-2]="!last">
+            <article
+              class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-primary/30 hover:shadow-md sm:p-6"
+              [class.mb-2]="!last"
+            >
               <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">{{ 'journeyStep' | translate }} {{ stepIndex + 1 }} · {{ 'day' | translate }} {{ dayNumber(step, stepIndex + 1) }}</p>
-                  <h3 class="mt-1 text-xl font-semibold text-slate-900 md:text-2xl">{{ title(step) }}</h3>
-                  @if (value(step)) {
-                    <p class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500">
-                      <i class="mdi mdi-map-marker-outline text-primary"></i>{{ value(step) }}
-                    </p>
-                  }
+                  <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">
+                    {{ 'journeyStep' | translate }} {{ stepIndex + 1 }} · {{ date(step) }}
+                  </p>
+                  <h3 class="mt-1 text-xl font-semibold text-slate-900 md:text-2xl">
+                    {{ title(step) }}
+                  </h3>
                 </div>
                 @if (time(step)) {
-                  <span class="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
+                  <span
+                    class="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary"
+                  >
                     <i class="mdi mdi-clock-outline"></i>{{ time(step) }}
                   </span>
                 }
               </div>
 
               @if (description(step)) {
-                <p class="mt-4 whitespace-pre-line text-sm leading-7 text-slate-600">{{ description(step) }}</p>
+                <p class="mt-4 whitespace-pre-line text-sm leading-7 text-slate-600">
+                  {{ description(step) }}
+                </p>
+              }
+              @if (notes(step)) {
+                <p class="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  <i class="mdi mdi-note-text-outline me-1"></i>{{ notes(step) }}
+                </p>
               }
 
               @if (children(step).length) {
-                <ol class="relative mt-6 space-y-4 border-t border-slate-100 pt-5 before:absolute before:bottom-3 before:start-[0.4375rem] before:top-8 before:w-px before:bg-primary/20">
-                  @for (child of children(step); track child.id ?? $index; let childIndex = $index) {
+                <ol
+                  class="relative mt-6 space-y-4 border-t border-slate-100 pt-5 before:absolute before:bottom-3 before:start-[0.4375rem] before:top-8 before:w-px before:bg-primary/20"
+                >
+                  @for (
+                    child of children(step);
+                    track child.id ?? $index;
+                    let childIndex = $index
+                  ) {
                     <li class="relative ps-8">
-                      <span class="absolute start-0 top-1.5 z-10 h-3.5 w-3.5 rounded-full border-[3px] border-primary bg-white shadow-sm"></span>
+                      <span
+                        class="absolute start-0 top-1.5 z-10 h-3.5 w-3.5 rounded-full border-[3px] border-primary bg-white shadow-sm"
+                      ></span>
                       <div class="rounded-xl bg-primary/[0.04] p-4">
-                        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div
+                          class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between"
+                        >
                           <div>
-                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{{ 'childStep' | translate }} {{ childIndex + 1 }} · {{ 'day' | translate }} {{ dayNumber(child, dayNumber(step, stepIndex + 1)) }}</p>
+                            <p
+                              class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary"
+                            >
+                              {{ 'childStep' | translate }} {{ childIndex + 1 }} · {{ date(child) }}
+                            </p>
                             <h4 class="mt-1 font-semibold text-slate-900">{{ title(child) }}</h4>
-                            @if (value(child)) {
-                              <p class="mt-1 flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                                <i class="mdi mdi-map-marker-outline text-primary"></i>{{ value(child) }}
-                              </p>
-                            }
                           </div>
                           @if (time(child)) {
-                            <span class="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-primary">
+                            <span
+                              class="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-primary"
+                            >
                               <i class="mdi mdi-clock-outline"></i>{{ time(child) }}
                             </span>
                           }
                         </div>
                         @if (description(child)) {
-                          <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ description(child) }}</p>
+                          <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">
+                            {{ description(child) }}
+                          </p>
+                        }
+                        @if (notes(child)) {
+                          <p class="mt-2 text-xs text-amber-700">{{ notes(child) }}</p>
                         }
                       </div>
                     </li>

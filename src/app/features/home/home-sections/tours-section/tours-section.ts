@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
@@ -16,6 +16,10 @@ export interface TourHomeDTO {
   destinationName: string;
   description?: string | null;
   fullDescription?: string | null;
+  descriptionEng?: string | null;
+  descriptionAr?: string | null;
+  fullDescriptionEng?: string | null;
+  fullDescriptionAr?: string | null;
   pricePerPerson?: number;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
@@ -32,6 +36,7 @@ export class ToursSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly currencyService = inject(CurrencyService);
+  private readonly translate = inject(TranslateService);
 
   tours: TourHomeDTO[] = [];
   isLoading = false;
@@ -75,4 +80,16 @@ export class ToursSection implements OnInit {
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
+
+  tourTitle(item: any): string {
+    return this.isArabic ? (item?.titleAr || item?.titleEng || '') : (item?.titleEng || item?.titleAr || '');
+  }
+
+  tourDescription(item: any): string {
+    return this.isArabic
+      ? (item?.descriptionAr || item?.fullDescriptionAr || item?.descriptionEng || item?.fullDescriptionEng || item?.description || item?.fullDescription || '')
+      : (item?.descriptionEng || item?.fullDescriptionEng || item?.description || item?.fullDescription || item?.descriptionAr || item?.fullDescriptionAr || '');
+  }
+
+  private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 }

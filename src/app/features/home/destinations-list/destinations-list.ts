@@ -114,6 +114,13 @@ export class HomeDestinationsList implements OnInit {
       : destination?.nameEng ?? destination?.name ?? destination?.nameAr ?? '';
   }
 
+  destinationDescription(destination: any): string {
+    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
+    return isArabic
+      ? (destination?.subDescriptionAr || destination?.descriptionAr || destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || '')
+      : (destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || destination?.subDescriptionAr || destination?.descriptionAr || '');
+  }
+
   imageItems(destination: any): any[] {
     const images = Array.isArray(destination?.images) ? destination.images : [];
     if (images.length) return images;

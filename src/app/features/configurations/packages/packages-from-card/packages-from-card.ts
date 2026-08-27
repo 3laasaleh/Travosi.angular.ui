@@ -11,7 +11,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -120,6 +120,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return this.destinations.filter((item) => selectedIds.has(this.destinationId(item)));
   }
 
+  get cancellationPoliciesArray(): FormArray<FormGroup> {
+    return this.packageForm.controls.cancellationPolicies;
+  }
+
   get screenLoaderVisible(): boolean { return this.isSaving || this.deletingImageIndex !== null; }
   get screenLoaderMessage(): string {
     return this.deletingImageIndex !== null ? 'deletingPackageImage' : (this.apiLoadingMessage || 'pleaseWaitForRequest');
@@ -130,7 +134,12 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const requiredControls = [
       controls.nameEng,
       controls.nameAr,
-      controls.description,
+      controls.descriptionEng,
+      controls.descriptionAr,
+      controls.metaTitleEng,
+      controls.metaTitleAr,
+      controls.metaDescriptionEng,
+      controls.metaDescriptionAr,
       controls.durationDays,
       controls.durationHours,
       controls.pricePerPerson,
@@ -141,7 +150,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.destinationIds,
     ];
     const cancellationPolicyMissing = !controls.isFreeCancelation.value
-      && !controls.cancellationPolicy.value.trim();
+      && !this.cancellationPoliciesArray.getRawValue().some((item: any) => String(item?.value ?? '').trim());
     const dateRangeInvalid = !!controls.dateFrom.value
       && !!controls.dateTo.value
       && controls.dateTo.value < controls.dateFrom.value;
@@ -157,7 +166,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return !this.currentPackageId
       || !!this.itineraryDraft
       || !itinerary.length
-      || hasInvalidItinerary(itinerary, Number(this.packageForm.controls.durationDays.value))
+      || hasInvalidItinerary(itinerary)
       || hasItineraryTimeOverlap(itinerary);
   }
 
@@ -255,7 +264,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.isSaving || !this.currentPackageId) return;
     if (this.itineraryDraft) { this.errorMessage = 'saveItineraryStepFirst'; return; }
     const itinerary = this.packageForm.controls.itinerary.value;
-    if (!itinerary.length || hasInvalidItinerary(itinerary, Number(this.packageForm.controls.durationDays.value))) {
+    if (!itinerary.length || hasInvalidItinerary(itinerary)) {
       this.errorMessage = 'itineraryTitleAndTimesRequired';
       return;
     }
@@ -396,7 +405,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   openItineraryStepEditor(): void {
     if (this.itineraryDraft) return;
     this.itineraryDraft = createEmptyTourItinerary(this.currentPackageId);
-    this.itineraryDraft.dayNumber = this.packageForm.controls.itinerary.value.length + 1;
     this.itineraryDraftCollection = this.packageForm.controls.itinerary.value;
     this.itineraryDraftIndex = null;
     this.itineraryDraftIsChild = false;
@@ -405,7 +413,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   openItineraryChildEditor(parent: TourItineraryItem): void {
     if (this.itineraryDraft) return;
     this.itineraryDraft = createEmptyTourItinerary(this.currentPackageId);
-    this.itineraryDraft.dayNumber = parent.dayNumber;
+    this.itineraryDraft.date = parent.date;
     this.itineraryDraft.isChildNode = true;
     this.itineraryDraftCollection = parent.childs;
     this.itineraryDraftIndex = null;
@@ -430,8 +438,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   get invalidDraft(): boolean {
     if (!this.itineraryDraft) return true;
-    const maxDay = Number(this.packageForm.controls.durationDays.value);
-    return hasInvalidItinerary([this.itineraryDraft], maxDay)
+    return hasInvalidItinerary([this.itineraryDraft])
       || this.itineraryDraftHasTimeOverlap;
   }
 
@@ -444,6 +451,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   cancelItineraryStep(): void { this.closeItineraryEditor(); }
   removeItineraryStep(collection: TourItineraryItem[], index: number): void { if (!this.itineraryDraft) collection.splice(index, 1); }
+  addCancellationPolicy(): void { this.cancellationPoliciesArray.push(this.createListItemGroup()); }
+  removeCancellationPolicy(index: number): void { this.cancellationPoliciesArray.removeAt(index); }
   cancelEdit(): void { this.resetForm(true); }
 
   getImageUrl(url: string): string {
@@ -455,13 +464,17 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup({
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
-      description: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      metaTitleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaTitleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+      metaDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
+      metaDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       durationHours: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(23)] }),
       pricePerPerson: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0.01)] }),
       pricePerChild: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
-      cancellationPolicy: new FormControl('', { nonNullable: true }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
       dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -469,17 +482,34 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
       itinerary: new FormControl<TourItineraryItem[]>([], { nonNullable: true }),
+      cancellationPolicies: new FormArray<FormGroup>([]),
     });
   }
 
+  private createListItemGroup(item: any = {}): FormGroup {
+    return new FormGroup({
+      id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
+      value: new FormControl(String(item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
+    });
+  }
+
+  private setCancellationPolicies(policies: any[]): void {
+    this.cancellationPoliciesArray.clear();
+    (Array.isArray(policies) ? policies : []).forEach((policy) =>
+      this.cancellationPoliciesArray.push(this.createListItemGroup(typeof policy === 'string' ? { value: policy } : policy)),
+    );
+  }
+
+  private toListPayload(items: any[]): { Id: number; Value: string }[] {
+    return (Array.isArray(items) ? items : [])
+      .map((item) => ({ Id: Number(item?.id) || 0, Value: String(item?.value ?? '').trim() }))
+      .filter((item) => !!item.Value);
+  }
+
   private validateDetailsStep(): boolean {
-    const names = ['nameEng', 'nameAr', 'description', 'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'cancellationPolicy', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
+    const names = ['nameEng', 'nameAr', 'descriptionEng', 'descriptionAr', 'metaTitleEng', 'metaTitleAr', 'metaDescriptionEng', 'metaDescriptionAr', 'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
     names.forEach((name) => this.packageForm.controls[name].markAsTouched());
-    if (!this.packageForm.controls.isFreeCancelation.value && !this.packageForm.controls.cancellationPolicy.value.trim()) {
-      this.packageForm.controls.cancellationPolicy.setErrors({ required: true });
-    } else if (this.packageForm.controls.cancellationPolicy.hasError('required')) {
-      this.packageForm.controls.cancellationPolicy.setErrors(null);
-    }
+    this.cancellationPoliciesArray.markAllAsTouched();
     const values = this.packageForm.getRawValue();
     if (values.dateFrom && values.dateTo && values.dateTo < values.dateFrom) {
       this.packageForm.controls.dateTo.setErrors({ dateRange: true });
@@ -490,10 +520,16 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private buildDetailsPayload(id: number | null): any {
     const value = this.packageForm.getRawValue();
     const payload: any = {
-      NameEng: value.nameEng.trim(), NameAr: value.nameAr.trim(), Description: value.description.trim(),
+      NameEng: value.nameEng.trim(), NameAr: value.nameAr.trim(),
+      DescriptionEng: value.descriptionEng.trim(), DescriptionAr: value.descriptionAr.trim(),
+      Description: value.descriptionEng.trim(),
+      MetaTitleEng: value.metaTitleEng.trim(), MetaTitleAr: value.metaTitleAr.trim(),
+      MetaDescriptionEng: value.metaDescriptionEng.trim(), MetaDescriptionAr: value.metaDescriptionAr.trim(),
       DurationDays: Number(value.durationDays), DurationHours: Number(value.durationHours),
       PricePerPerson: Number(value.pricePerPerson), PricePerChild: Number(value.pricePerChild),
-      MaxCapacity: Number(value.maxCapacity), CancellationPolicy: value.cancellationPolicy.trim(),
+      MaxCapacity: Number(value.maxCapacity),
+      CancellationPolicies: this.toListPayload(value.cancellationPolicies),
+      CancellationPolicy: this.toListPayload(value.cancellationPolicies)[0]?.Value ?? '',
       IsFreeCancelation: value.isFreeCancelation,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
       Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId, DisplayOrder: index })),
@@ -506,7 +542,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private toItineraryPayload(item: TourItineraryItem): any {
     return {
       Title: item.title.trim(), Value: item.value?.trim() ?? '', Description: item.description?.trim() ?? '',
-      DayNumber: Number(item.dayNumber), StartTime: item.startTime || null, EndTime: item.endTime || null,
+      Notes: item.notes?.trim() ?? '', Date: item.date, StartTime: item.startTime || null, EndTime: item.endTime || null,
       Childs: (item.childs ?? []).map((child) => this.toItineraryPayload(child)),
     };
   }
@@ -525,17 +561,22 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const destinationIds = (Array.isArray(item?.destinations) ? item.destinations : [])
       .sort((a: any, b: any) => Number(a.displayOrder) - Number(b.displayOrder))
       .map((destination: any) => Number(destination.destinationId ?? destination.id)).filter(Number.isFinite);
-    this.packageForm.setValue({
-      nameEng: item?.nameEng ?? '', nameAr: item?.nameAr ?? '', description: item?.description ?? '',
+    this.packageForm.patchValue({
+      nameEng: item?.nameEng ?? '', nameAr: item?.nameAr ?? '',
+      descriptionEng: item?.descriptionEng ?? item?.description ?? '', descriptionAr: item?.descriptionAr ?? '',
+      metaTitleEng: item?.metaTitleEng ?? item?.nameEng ?? '', metaTitleAr: item?.metaTitleAr ?? item?.nameAr ?? '',
+      metaDescriptionEng: item?.metaDescriptionEng ?? item?.description ?? '', metaDescriptionAr: item?.metaDescriptionAr ?? '',
       durationDays: Number(item?.durationDays) || 1, durationHours: Number(item?.durationHours) || 0,
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
-      maxCapacity: Number(item?.maxCapacity) || 1, cancellationPolicy: item?.cancellationPolicy ?? '',
+      maxCapacity: Number(item?.maxCapacity) || 1,
       isFreeCancelation: item?.isFreeCancelation === true,
       isActive: item?.isActive !== false,
       dateFrom: this.toDateInput(item?.dateFrom), dateTo: this.toDateInput(item?.dateTo), destinationIds,
       images: this.imageUploads.map((image) => image.url),
       itinerary: (Array.isArray(item?.itinerary) ? item.itinerary : []).map((step: any) => readTourItinerary(step)),
-    });
+      cancellationPolicies: [],
+    } as any);
+    this.setCancellationPolicies(item?.cancellationPolicies ?? (item?.cancellationPolicy ? [{ value: item.cancellationPolicy }] : []));
     this.activeStep = 1;
     this.completedStep = 0;
   }
@@ -545,9 +586,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
     this.imageValidationMessage = '';
     this.errorMessage = ''; this.successMessage = '';
-    this.packageForm.reset({ nameEng: '', nameAr: '', description: '', durationDays: 1, durationHours: 0,
-      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, cancellationPolicy: '', isFreeCancelation: false, isActive: true,
+    this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '', metaTitleEng: '', metaTitleAr: '', metaDescriptionEng: '', metaDescriptionAr: '', durationDays: 1, durationHours: 0,
+      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
       dateFrom: '', dateTo: '', destinationIds: [], images: [], itinerary: [] });
+    this.setCancellationPolicies([]);
     if (emitCancel) this.editCancelled.emit();
   }
 

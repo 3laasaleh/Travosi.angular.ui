@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
@@ -41,6 +41,7 @@ export class HomeToursList implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
   private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
@@ -167,8 +168,18 @@ export class HomeToursList implements OnInit {
   }
 
   tourTitle(tour: any): string {
-    return tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '';
+    return this.isArabic
+      ? (tour?.titleAr || tour?.nameAr || tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || '')
+      : (tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || tour?.titleAr || tour?.nameAr || '');
   }
+
+  tourDescription(tour: any): string {
+    return this.isArabic
+      ? (tour?.descriptionAr || tour?.fullDescriptionAr || tour?.descriptionEng || tour?.fullDescriptionEng || tour?.description || tour?.fullDescription || '')
+      : (tour?.descriptionEng || tour?.fullDescriptionEng || tour?.description || tour?.fullDescription || tour?.descriptionAr || tour?.fullDescriptionAr || '');
+  }
+
+  private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   destinationName(tour: any): string {
     return tour?.destinationName ?? tour?.destination?.nameEng ?? tour?.destination?.name ?? '';

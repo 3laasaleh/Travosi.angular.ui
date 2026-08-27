@@ -5,7 +5,8 @@ export interface TourItineraryItem {
   title: string;
   value: string;
   description: string;
-  dayNumber: number;
+  notes: string;
+  date: string;
   startTime: string | null;
   endTime: string | null;
   tourId: number | null;
@@ -20,7 +21,8 @@ export function createEmptyTourItinerary(tourId: number | null = null): TourItin
     title: '',
     value: '',
     description: '',
-    dayNumber: 1,
+    notes: '',
+    date: '',
     startTime: null,
     endTime: null,
     tourId,
@@ -39,7 +41,8 @@ export function readTourItinerary(
     title: String(item?.title ?? ''),
     value: String(item?.value ?? ''),
     description: String(item?.description ?? ''),
-    dayNumber: toDayNumber(item?.dayNumber ?? item?.DayNumber),
+    notes: String(item?.notes ?? item?.Notes ?? ''),
+    date: toDateInput(item?.date ?? item?.Date),
     startTime: toTimeInput(item?.startTime),
     endTime: toTimeInput(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
@@ -59,7 +62,8 @@ export function toTourItineraryPayload(
     title: String(item?.title ?? '').trim(),
     value: String(item?.value ?? '').trim(),
     description: String(item?.description ?? '').trim(),
-    dayNumber: toDayNumber(item?.dayNumber ?? item?.DayNumber),
+    notes: String(item?.notes ?? '').trim(),
+    date: toDateInput(item?.date ?? item?.Date),
     startTime: toApiTime(item?.startTime),
     endTime: toApiTime(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
@@ -82,9 +86,10 @@ function toOptionalId(value: unknown): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-function toDayNumber(value: unknown): number {
-  const dayNumber = Number(value);
-  return Number.isInteger(dayNumber) && dayNumber > 0 ? dayNumber : 1;
+function toDateInput(value: unknown): string {
+  if (!value) return '';
+  const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
+  return match?.[1] ?? '';
 }
 
 function toTimeInput(value: unknown): string | null {

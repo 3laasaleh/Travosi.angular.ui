@@ -19,6 +19,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { formatHomePrice } from '../home-price.util';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-package-page',
@@ -34,6 +35,7 @@ export class HomePackagePage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly seo = inject(SeoService);
 
   travelPackage: any = null;
   isLoading = true;
@@ -144,6 +146,7 @@ export class HomePackagePage implements OnInit {
       if (!Number.isFinite(packageId) || packageId <= 0) {
         this.isLoading = false;
         this.errorMessage = 'packageNotFound';
+        this.seo.noIndex(this.translate.instant('packageNotFound'));
         this.cdr.markForCheck();
         return;
       }
@@ -198,7 +201,44 @@ export class HomePackagePage implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((travelPackage) => {
       this.travelPackage = travelPackage;
-      if (!travelPackage) this.errorMessage = 'packageNotFound';
+      if (!travelPackage) {
+        this.errorMessage = 'packageNotFound';
+        this.seo.noIndex(this.translate.instant('packageNotFound'));
+        return;
+      }
+      this.updateSeo(packageId);
+    });
+  }
+
+  private updateSeo(packageId: number): void {
+    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    const title = arabic
+      ? (this.travelPackage?.metaTitleAr || this.travelPackage?.nameAr || this.travelPackage?.metaTitleEng || this.title)
+      : (this.travelPackage?.metaTitleEng || this.travelPackage?.nameEng || this.title);
+    const description = arabic
+      ? (this.travelPackage?.metaDescriptionAr || this.travelPackage?.descriptionAr || this.travelPackage?.metaDescriptionEng || this.description)
+      : (this.travelPackage?.metaDescriptionEng || this.travelPackage?.descriptionEng || this.description);
+    const price = Number(this.travelPackage?.discountedPricePerPerson ?? this.travelPackage?.pricePerPerson ?? this.travelPackage?.price);
+    this.seo.update({
+      title,
+      description,
+      canonicalPath: `/packages/${packageId}`,
+      image: this.resolvedImages[0],
+      type: 'product',
+      structuredData: {
+        '@type': 'Product',
+        name: title,
+        description,
+        image: this.resolvedImages,
+        ...(Number.isFinite(price) ? {
+          offers: {
+            '@type': 'Offer',
+            price,
+            priceCurrency: this.travelPackage?.currencyCode ?? this.travelPackage?.currency?.code ?? 'USD',
+            availability: 'https://schema.org/InStock',
+          },
+        } : {}),
+      },
     });
   }
 

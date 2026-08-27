@@ -20,9 +20,8 @@ export class ItineraryTimeline {
     return Array.isArray(children) ? children : [];
   }
 
-  dayNumber(item: any, fallback: number): number {
-    const value = Number(item?.dayNumber ?? item?.DayNumber);
-    return Number.isInteger(value) && value > 0 ? value : fallback;
+  date(item: any): string {
+    return String(item?.date ?? item?.Date ?? '').slice(0, 10);
   }
 
   title(item: any): string {
@@ -35,6 +34,10 @@ export class ItineraryTimeline {
 
   description(item: any): string {
     return String(item?.description ?? item?.Description ?? '');
+  }
+
+  notes(item: any): string {
+    return String(item?.notes ?? item?.Notes ?? '');
   }
 
   time(item: any): string {

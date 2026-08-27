@@ -63,8 +63,8 @@
                 <h2 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">
                   <i class="mdi mdi-map-marker-outline me-1 text-primary"></i>{{ destinationName(destination) }}
                 </h2>
-                @if (destination.subDescription ?? destination.description) {
-                  <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ destination.subDescription ?? destination.description }}</p>
+                @if (destinationDescription(destination); as description) {
+                  <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ description }}</p>
                 }
                 <div class="mt-auto pt-4">
                   <div class="flex items-center justify-end border-t border-slate-100 pt-3 dark:border-slate-800">
