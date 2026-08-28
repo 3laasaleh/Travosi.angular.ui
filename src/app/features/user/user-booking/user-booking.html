@@ -31,7 +31,7 @@
                     <div class="mt-6 overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700">
                         @if (isLoading) {
                             <div class="overflow-x-auto" aria-busy="true" [attr.aria-label]="'loadingBookings' | translate">
-                                <div class="min-w-[900px]">
+                                    <div class="min-w-[1040px]">
                                     <div class="grid grid-cols-8 gap-4 bg-slate-50 px-4 py-3 ">
                                         @for (column of [1, 2, 3, 4, 5, 6, 7, 8]; track column) {
                                             <div class="h-4 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700"></div>
@@ -62,6 +62,7 @@
                                             <th class="px-4 py-3 font-medium">{{ 'guests' | translate }}</th>
                                             <th class="px-4 py-3 font-medium">{{ 'amount' | translate }}</th>
                                             <th class="px-4 py-3 font-medium">{{ 'status' | translate }}</th>
+                                            <th class="px-4 py-3 font-medium">{{ 'review' | translate }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -75,6 +76,24 @@
                                                 <td class="px-4 py-4">${{ booking.totalPrice | number: '1.0-2' }} @if (booking.cancellationFeeAmount > 0) { <span class="block text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</span> }</td>
                                                 <td class="px-4 py-4">
                                                     <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" [class]="booking.statusName === 'Confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : booking.statusName === 'Pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : booking.statusName === 'Cancelled' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700  '">{{ bookingStatusKey(booking.statusName) | translate }}</span>
+                                                </td>
+                                                <td class="px-4 py-4 align-top">
+                                                    @if (canWriteReview(booking)) {
+                                                        <div class="min-w-64 space-y-2">
+                                                            <textarea [(ngModel)]="booking.reviewComment" maxlength="2000" rows="3" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'shareYourReview' | translate" [attr.aria-label]="'shareYourReview' | translate"></textarea>
+                                                            <div class="flex items-center justify-between gap-2">
+                                                                <span class="text-xs text-slate-400">{{ booking.reviewComment?.length ?? 0 }}/2000</span>
+                                                                <button type="button" class="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="booking.isSavingReview" (click)="submitReview(booking)">{{ (booking.isSavingReview ? 'savingReview' : 'submitReview') | translate }}</button>
+                                                            </div>
+                                                            @if (booking.reviewError) { <p class="text-xs text-rose-600">{{ booking.reviewError | translate }}</p> }
+                                                        </div>
+                                                    } @else if (booking.reviewEligibility?.alreadyReviewed) {
+                                                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><i class="mdi mdi-check-circle"></i>{{ 'alreadyReviewedBooking' | translate }}</span>
+                                                    } @else if (booking.reviewEligibility?.message) {
+                                                        <span class="text-xs text-slate-400">{{ booking.reviewEligibility?.message }}</span>
+                                                    } @else {
+                                                        <span class="text-xs text-slate-400">{{ 'reviewUnavailable' | translate }}</span>
+                                                    }
                                                 </td>
                                             </tr>
                                         }

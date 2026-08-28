@@ -71,7 +71,7 @@
         </div>
       }
 
-      <div class="mt-8 whitespace-pre-line text-lg leading-8 text-slate-700" [dir]="isArabic ? 'rtl' : 'ltr'">{{ content }}</div>
+      <div class="mt-8 text-lg leading-8 text-slate-700 [&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4" [dir]="isArabic ? 'rtl' : 'ltr'" [innerHTML]="content"></div>
     </article>
   }
 </main>

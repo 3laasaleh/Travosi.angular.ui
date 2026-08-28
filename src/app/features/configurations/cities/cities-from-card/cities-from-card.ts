@@ -13,6 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 export interface CityDTO {
   id: number;
@@ -107,6 +108,10 @@ export class CitiesFromCard implements OnInit, OnChanges {
     });
   }
 
+  markFormTouched(): void {
+    this.cityForm.markAllAsTouched();
+  }
+
   cancelEdit(): void {
     this.resetForm(true);
   }
@@ -161,7 +166,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
       }),
       nameAr: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(150)],
+        validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()],
       }),
       descriptionEng: new FormControl('', {
         nonNullable: true,
@@ -169,7 +174,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
       }),
       descriptionAr: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(4000)],
+        validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()],
       }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
     });

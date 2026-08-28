@@ -9,6 +9,7 @@
   }
 
   <form class="space-y-4" [formGroup]="form" (ngSubmit)="save()">
+    @if (form.touched && form.invalid) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         English title
@@ -27,6 +28,7 @@
         } @else if (form.controls.titleAr.touched && form.controls.titleAr.hasError('maxlength')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         }
+        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>
 
@@ -44,28 +46,46 @@
         @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('maxlength')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
         }
+        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
-      <label class="text-sm font-medium">
-        English content
-        <textarea formControlName="contentEng" maxlength="15000" rows="8" class="mt-1 w-full rounded-xl border p-2"></textarea>
+      <div class="text-sm font-medium">
+        <label for="blog-contentEng-editor">English content</label>
+        <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white">
+          <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'bold')" class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'insertUnorderedList')" class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i class="mdi mdi-format-list-bulleted"></i></button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentEng')" class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{ 'insertLink' | translate }}</button>
+          </div>
+          <div id="blog-contentEng-editor" contenteditable="true" role="textbox" aria-multiline="true" [innerHTML]="form.controls.contentEng.value" (input)="onContentInput('contentEng', $event)" class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
+        </div>
         @if (form.controls.contentEng.touched && form.controls.contentEng.hasError('required')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentEng.touched && form.controls.contentEng.hasError('maxlength')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
         }
-      </label>
-      <label class="text-sm font-medium">
-        Arabic content
-        <textarea formControlName="contentAr" maxlength="15000" rows="8" dir="rtl" class="mt-1 w-full rounded-xl border p-2"></textarea>
+      </div>
+      <div class="text-sm font-medium">
+        <label for="blog-contentAr-editor">Arabic content</label>
+        <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white" dir="rtl">
+          <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'bold')" class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'insertUnorderedList')" class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i class="mdi mdi-format-list-bulleted"></i></button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentAr')" class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{ 'insertLink' | translate }}</button>
+          </div>
+          <div id="blog-contentAr-editor" contenteditable="true" role="textbox" aria-multiline="true" [innerHTML]="form.controls.contentAr.value" (input)="onContentInput('contentAr', $event)" class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
+        </div>
         @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('required')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentAr.touched && form.controls.contentAr.hasError('maxlength')) {
           <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
         }
-      </label>
+        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
+      </div>
     </div>
 
     <div>
@@ -156,7 +176,7 @@
 
     <button
       type="submit"
-      [disabled]="isSaving || isProcessingImages || deletingImageIndex !== null || form.invalid"
+      [disabled]="isSaving || isProcessingImages || deletingImageIndex !== null"
       class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
     >
       @if (isSaving) {

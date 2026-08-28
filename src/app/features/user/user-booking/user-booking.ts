@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AccountTab } from '../account-tab/account-tab';
@@ -8,6 +9,13 @@ import { ApiService } from '../../../core/services/apiservice.service';
 import { AuthService } from '../_services/auth.service';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { catchError, finalize, forkJoin, map, of } from 'rxjs';
+
+interface ReviewEligibility {
+  canReview: boolean;
+  alreadyReviewed: boolean;
+  message: string;
+}
 
 interface UserBookingItem {
   id: number;
@@ -20,12 +28,16 @@ interface UserBookingItem {
   statusName: string;
   totalPrice: number;
   cancellationFeeAmount: number;
+  reviewEligibility?: ReviewEligibility;
+  reviewComment?: string;
+  reviewError?: string;
+  isSavingReview?: boolean;
 }
 
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
+  imports: [CommonModule, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })
@@ -72,6 +84,7 @@ export class UserBooking implements OnInit {
         this.bookings = Array.isArray(data) ? data : [];
         this.page = 1;
         this.isLoading = false;
+        this.loadReviewEligibility();
         this.cdr.markForCheck();
       },
       error: () => {
@@ -94,6 +107,66 @@ export class UserBooking implements OnInit {
       completed: 'bookingStatusCompleted',
     };
     return keys[(statusName ?? '').toLowerCase()] ?? statusName;
+  }
+
+  canWriteReview(booking: UserBookingItem): boolean {
+    return booking.reviewEligibility?.canReview === true && !booking.isSavingReview;
+  }
+
+  submitReview(booking: UserBookingItem): void {
+    const comment = booking.reviewComment?.trim() ?? '';
+    booking.reviewError = '';
+    if (!comment) {
+      booking.reviewError = 'reviewTextRequired';
+      this.cdr.markForCheck();
+      return;
+    }
+    if (comment.length > 2000) {
+      booking.reviewError = 'reviewTextTooLong';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    booking.isSavingReview = true;
+    this.apiService.post('Reviews', { bookingId: booking.id, comment }).pipe(
+      finalize(() => {
+        booking.isSavingReview = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
+      next: (response) => {
+        if (response?.isSuccess === false) {
+          booking.reviewError = response.message || 'reviewSaveError';
+          return;
+        }
+        booking.reviewComment = '';
+        booking.reviewEligibility = {
+          canReview: false,
+          alreadyReviewed: true,
+          message: 'alreadyReviewedBooking',
+        };
+      },
+      error: (error) => {
+        booking.reviewError = error?.error?.message || 'reviewSaveError';
+      },
+    });
+  }
+
+  private loadReviewEligibility(): void {
+    const requests = this.bookings.map((booking) =>
+      this.apiService.get(`Reviews/eligibility/${booking.id}`).pipe(
+        map((response: any) => response?.data as ReviewEligibility | undefined),
+        catchError(() => of(undefined)),
+      ),
+    );
+    if (!requests.length) return;
+
+    forkJoin(requests).subscribe((eligibilities) => {
+      this.bookings.forEach((booking, index) => {
+        booking.reviewEligibility = eligibilities[index];
+      });
+      this.cdr.markForCheck();
+    });
   }
 
   prevPage(): void {

@@ -68,7 +68,7 @@
     }
   </ol>
 
-  <form [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
+  <form [formGroup]="packageForm" (focusout)="markCurrentStepTouched()" (ngSubmit)="saveCurrentStep()">
     @if (activeStep === 1) {
       <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
         <div>
@@ -119,6 +119,7 @@
                 {{ 'maximumCharacters' | translate: { count: 200 } }}
               </p>
             }
+            @if (packageForm.controls.nameAr.touched && packageForm.controls.nameAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
           </div>
         </div>
 
@@ -387,7 +388,7 @@
               packageForm.controls.descriptionAr.hasError('required')
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
-            } @else if (packageForm.controls.descriptionAr.touched && packageForm.controls.descriptionAr.hasError('pattern')) {
+            } @else if (packageForm.controls.descriptionAr.touched && packageForm.controls.descriptionAr.hasError('arabicText')) {
               <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>

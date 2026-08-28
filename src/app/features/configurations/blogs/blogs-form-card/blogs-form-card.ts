@@ -20,6 +20,7 @@ import {
   normalizeImageUpload,
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 interface BlogImageUpload {
   id?: number;
@@ -28,6 +29,8 @@ interface BlogImageUpload {
   name: string;
   existing: boolean;
 }
+
+type BlogContentControl = 'contentEng' | 'contentAr';
 
 @Component({
   selector: 'app-blogs-form-card',
@@ -58,7 +61,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }),
     titleAr: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(200)],
+      validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
     summaryEng: new FormControl('', {
       nonNullable: true,
@@ -66,7 +69,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }),
     summaryAr: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(500)],
+      validators: [Validators.maxLength(500), arabicTextValidator()],
     }),
     contentEng: new FormControl('', {
       nonNullable: true,
@@ -74,7 +77,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }),
     contentAr: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(15000)],
+      validators: [Validators.required, Validators.maxLength(15000), arabicTextValidator()],
     }),
     publishedAt: new FormControl('', { nonNullable: true }),
   });
@@ -293,11 +296,85 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       });
   }
 
+  formatContent(controlName: BlogContentControl, command: 'bold' | 'italic' | 'insertUnorderedList'): void {
+    const editor = this.contentEditor(controlName);
+    if (!editor) return;
+    editor.focus();
+    document.execCommand(command);
+    this.syncContentEditor(controlName, editor);
+  }
+
+  insertLink(controlName: BlogContentControl): void {
+    const editor = this.contentEditor(controlName);
+    if (!editor) return;
+
+    const input = window.prompt(this.translate.instant('blogLinkPrompt'));
+    if (!input) return;
+    const href = this.safeLinkUrl(input);
+    if (!href) {
+      this.errorMessage = 'blogLinkInvalid';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    editor.focus();
+    document.execCommand('createLink', false, href);
+    this.secureEditorLinks(editor);
+    this.syncContentEditor(controlName, editor);
+  }
+
+  onContentInput(controlName: BlogContentControl, event: Event): void {
+    const editor = event.target as HTMLElement;
+    this.secureEditorLinks(editor);
+    this.syncContentEditor(controlName, editor);
+  }
+
+  preventToolbarFocus(event: MouseEvent): void {
+    event.preventDefault();
+  }
+
   getImageUrl(url: string): string {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
 
     const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  private contentEditor(controlName: BlogContentControl): HTMLElement | null {
+    return document.getElementById(`blog-${controlName}-editor`);
+  }
+
+  private syncContentEditor(controlName: BlogContentControl, editor: HTMLElement): void {
+    const control = this.form.controls[controlName];
+    control.setValue(editor.innerHTML);
+    control.markAsTouched();
+    control.markAsDirty();
+  }
+
+  private secureEditorLinks(editor: HTMLElement): void {
+    editor.querySelectorAll('a').forEach((anchor) => {
+      const href = this.safeLinkUrl(anchor.getAttribute('href') ?? '');
+      if (!href) {
+        anchor.replaceWith(...Array.from(anchor.childNodes));
+        return;
+      }
+      anchor.href = href;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+    });
+  }
+
+  private safeLinkUrl(value: string): string | null {
+    const raw = value.trim();
+    if (!raw) return null;
+    if (raw.startsWith('/')) return raw;
+    const withProtocol = /^[a-z][a-z\d+.-]*:/i.test(raw) ? raw : `https://${raw}`;
+    try {
+      const url = new URL(withProtocol);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+    } catch {
+      return null;
+    }
   }
 
   private removeLocal(index: number): void {

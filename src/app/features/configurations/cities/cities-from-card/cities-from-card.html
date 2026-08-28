@@ -1,58 +1,79 @@
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
   @if (errorMessage) {
-    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage | translate }}</div>
+  <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ errorMessage |
+    translate }}</div>
   }
   @if (successMessage) {
-    <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div>
+  <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
+    successMessage | translate }}</div>
   }
 
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedCity ? 'editCity' : 'addCity') | translate }}</h2>
-  <form class="space-y-4" [formGroup]="cityForm" (ngSubmit)="saveCity()">
-    <div>
-      <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }}</label>
-      <input formControlName="nameEng" type="text" maxlength="150" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p>
-      }
-    </div>
-    <div>
-      <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>
-      <input formControlName="nameAr" type="text" maxlength="150" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p>
-      }
-    </div>
-    <div>
+  <form class="space-y-4" [formGroup]="cityForm" (focusout)="markFormTouched()" (ngSubmit)="saveCity()">
+    @if (cityForm.touched && cityForm.invalid) { <p
+      class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' |
+      translate }}</p> }
+          <div>
       <label class="mb-2 block text-sm font-medium">{{ 'destination' | translate }}</label>
       <select formControlName="destinationId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
-        <option [ngValue]="null" disabled>{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') | translate }}</option>
+        <option [ngValue]="null" disabled>{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') |
+          translate }}</option>
         @for (destination of destinations; track destination.id) {
-          <option [ngValue]="destination.id">{{ destination.nameEng }} — {{ destination.nameAr }}</option>
+        <option [ngValue]="destination.id">{{ destination.nameEng }} — {{ destination.nameAr }}</option>
         }
       </select>
       @if (cityForm.controls.destinationId.touched && cityForm.controls.destinationId.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p>
+      <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p>
       }
     </div>
     <div>
-      <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label>
-      <textarea formControlName="descriptionEng" rows="4" maxlength="4000" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
-        <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+      <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }}</label>
+      <input formControlName="nameEng" type="text" maxlength="150"
+        class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.hasError('required')) {
+      <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p>
       }
+      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
+    </div>
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>
+      <input formControlName="nameAr" type="text" maxlength="150" dir="rtl"
+        class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('required')) {
+      <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p>
+      }
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
+    </div>
+
+    <div>
+      <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label>
+      <textarea formControlName="descriptionEng" rows="4" maxlength="4000"
+        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
+      <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+      }
+      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }}</label>
-      <textarea formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
+      <textarea formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl"
+        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
       @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('required')) {
-        <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+      <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
       }
+      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
     </div>
-    
+
     <div class="flex gap-3">
-      <button type="submit" [disabled]="cityForm.invalid || isLoading || destinationsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span> } @else { {{ (selectedCity ? 'update' : 'add') | translate }} }</button>
+      <button type="submit" [disabled]="cityForm.invalid || isLoading"
+        class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+        @if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate
+          }}</span> } @else { {{ (selectedCity ? 'update' : 'add') | translate }} }</button>
       @if (selectedCity) {
-        <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
+      <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium"
+        [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button>
       }
     </div>
   </form>

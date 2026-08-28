@@ -64,7 +64,7 @@
     }
   </nav>
 
-  <form [formGroup]="tourForm" (ngSubmit)="saveCurrentStep()">
+  <form [formGroup]="tourForm" (focusout)="markCurrentStepTouched()" (ngSubmit)="saveCurrentStep()">
     @if (activeStep === 1) {
     <section class="space-y-5">
       <div class="rounded-2xl border border-slate-200 bg-white p-5">
@@ -102,7 +102,7 @@
             <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p>
             }
             @if (
-            tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('pattern')
+            tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('arabicText')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
@@ -118,13 +118,13 @@
                 [disabled]="destinationsLoading" [attr.aria-expanded]="destinationMenuOpen" aria-haspopup="listbox"
                 aria-labelledby="tourDestinationLabel" aria-controls="tourDestinationOptions"
                 (click)="toggleDestinationMenu($event)">
+
+                <span class="text-slate-500">{{ selectedDestination ? destinationLabel(selectedDestination):
+                  'selectDestination' | translate }}</span>
+
                 @if (destinationsLoading) {
                 <span class="flex items-center gap-2 text-slate-500"><i class="mdi mdi-loading mdi-spin"></i>{{
                   'loadingDestinations' | translate }}</span>
-                } @else if (selectedDestination) {
-                <span class="truncate">{{ destinationLabel(selectedDestination) }}</span>
-                } @else {
-                <span class="text-slate-500">{{ 'selectDestination' | translate }}</span>
                 }
                 <i class="mdi text-lg text-slate-500" [class.mdi-chevron-down]="!destinationMenuOpen"
                   [class.mdi-chevron-up]="destinationMenuOpen"></i>
@@ -284,8 +284,8 @@
             <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label>
             <div class="group relative">
-              <app-date-picker formControlName="startDate" id="tour-start-date"
-                [min]="today" [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
+              <app-date-picker formControlName="startDate" id="tour-start-date" [min]="today"
+                [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
                 inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
             </div>
           </div>
@@ -315,9 +315,6 @@
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
             }
-            @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('pattern')) {
-            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-            }
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{
@@ -329,7 +326,8 @@
             tourForm.controls.descriptionAr.hasError('required')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
-            } @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('pattern')) {
+            } @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('arabicText'))
+            {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
@@ -338,16 +336,14 @@
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
               formControlName="fullDescriptionEng" rows="4" maxlength="8000"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
-            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('pattern')) {
-            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-            }
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'arabicFullDescription' | translate }}
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
               formControlName="fullDescriptionAr" rows="4" maxlength="8000" dir="rtl"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
-            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('pattern')) {
+            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('arabicText'))
+            {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
@@ -384,7 +380,8 @@
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) ||
+              (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
@@ -423,7 +420,8 @@
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) ||
+              (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
@@ -465,7 +463,8 @@
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) ||
+              (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
@@ -490,17 +489,15 @@
           </div>
           <div class="space-y-2">
             @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
-            <div [formGroupName]="index" class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-              <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
-                class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
-              <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
+            <div [formGroupName]="index" class="flex items-center gap-2">
+              <input formControlName="value" type="text" [placeholder]="'cancellationPolicyPlaceholder' | translate"
                 class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
               <button type="button"
                 class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50"
                 (click)="removeCancellationPolicy(index)" [attr.aria-label]="'remove' | translate"><i
                   class="mdi mdi-close"></i></button>
             </div>
-            @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) { <p
+            @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p
               class="text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
             } @empty { <p
               class="rounded-xl border border-dashed border-slate-300 px-3 py-5 text-center text-xs text-slate-500">{{
@@ -636,31 +633,31 @@
           <div [formGroup]="itineraryDraft" class="space-y-3">
             <div class="grid gap-3 md:grid-cols-2">
               <div>
-                <label class="mb-1 block text-xs font-medium">{{ 'arrivalDate' | translate }} ({{ 'optional' | translate }})</label>
-                <app-date-picker formControlName="arrivalDate" [ariaLabel]="'arrivalDate' | translate"
+                <label class="mb-1 block text-xs font-medium">{{ 'date' | translate }}</label>
+                <app-date-picker formControlName="date" [ariaLabel]="'date' | translate"
                   [min]="tourForm.controls.startDate.value || null" [max]="tourForm.controls.endDate.value || null"
                   inputClass="cursor-pointer rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12" />
                 @if (
-                itineraryDraft.controls['arrivalDate'].touched &&
-                itineraryDraft.controls['arrivalDate'].hasError('required')
+                itineraryDraft.controls['date'].touched &&
+                itineraryDraft.controls['date'].hasError('required')
                 ) {
                 <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
                 }
               </div>
               <div>
                 <label class="mb-1 block text-xs font-medium">{{
-                  'englishTitle' | translate
-                  }}</label><input formControlName="titleEng" type="text" maxlength="200"
-                  class="w-full rounded-2xl border px-3 py-2" />
+                  'stepTitle' | translate
+                  }}</label><input formControlName="title" type="text" maxlength="200"
+                  [placeholder]="'stepTitlePlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2" />
                 @if (
-                itineraryDraft.controls['titleEng'].touched &&
-                itineraryDraft.controls['titleEng'].hasError('required')
+                itineraryDraft.controls['title'].touched &&
+                itineraryDraft.controls['title'].hasError('required')
                 ) {
                 <p class="mt-1 text-xs text-red-600">{{ 'stepTitleRequired' | translate }}</p>
                 }
                 @if (
-                itineraryDraft.controls['titleEng'].touched &&
-                itineraryDraft.controls['titleEng'].hasError('maxlength')
+                itineraryDraft.controls['title'].touched &&
+                itineraryDraft.controls['title'].hasError('maxlength')
                 ) {
                 <p class="mt-1 text-xs text-red-600">
                   {{ 'stepTitleMaxLength' | translate }}
@@ -722,19 +719,25 @@
                 }
               </div>
             </div>
-            <div>
-              <label class="mb-1 block text-xs font-medium">{{ 'arabicTitle' | translate }}</label>
-              <input formControlName="titleAr" type="text" dir="rtl" maxlength="200" class="w-full rounded-2xl border px-3 py-2" />
-              @if (itineraryDraft.controls['titleAr'].touched && itineraryDraft.controls['titleAr'].invalid) { <p class="mt-1 text-xs text-red-600">{{ itineraryDraft.controls['titleAr'].hasError('pattern') ? ('arabicNameInvalid' | translate) : ('arabicTitleRequired' | translate) }}</p> }
-            </div>
             @if (itineraryDraft.hasError('itineraryTimeOverlap')) {
             <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
               <i class="mdi mdi-clock-alert-outline me-1"></i>{{ 'itineraryTimeConflict' | translate }}
             </p>
             }
-            <div class="grid gap-3 md:grid-cols-2">
-              <div><label class="mb-1 block text-xs font-medium">{{ 'englishValue' | translate }}</label><textarea formControlName="valueEng" rows="3" maxlength="2000" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
-              <div><label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }}</label><textarea formControlName="valueAr" dir="rtl" rows="3" maxlength="2000" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (itineraryDraft.controls['valueAr'].touched && itineraryDraft.controls['valueAr'].hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
+            <div>
+              <label class="mb-1 block text-xs font-medium">{{
+                'description' | translate
+                }}</label><textarea formControlName="description" rows="3" maxlength="2000"
+                [placeholder]="'stepDescriptionPlaceholder' | translate"
+                class="w-full rounded-2xl border px-3 py-2"></textarea>
+              @if (
+              itineraryDraft.controls['description'].touched &&
+              itineraryDraft.controls['description'].hasError('maxlength')
+              ) {
+              <p class="mt-1 text-xs text-red-600">
+                {{ 'stepDescriptionMaxLength' | translate }}
+              </p>
+              }
             </div>
             <div>
               <label class="mb-1 block text-xs font-medium">{{ 'notes' | translate }}</label><textarea
@@ -783,10 +786,10 @@
                     <div>
                       <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-600">
                         {{ 'journeyStep' | translate }} {{ stepIndex + 1 }} ·
-                        {{ 'arrivalDate' | translate }} {{ stepGroup.controls['arrivalDate'].value || '-' }}
+                        {{ 'date' | translate }} {{ stepGroup.controls['date'].value }}
                       </p>
                       <h4 class="mt-1 font-semibold">
-                        {{ stepGroup.controls['titleEng'].value }}
+                        {{ stepGroup.controls['title'].value }}
                       </h4>
                     </div>
                     <div class="flex gap-1">
@@ -814,9 +817,9 @@
                     {{ stepGroup.controls['endTime'].value || '--:--' }}
                   </p>
                   }
-                  @if (stepGroup.controls['valueEng'].value) {
+                  @if (stepGroup.controls['description'].value) {
                   <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">
-                    {{ stepGroup.controls['valueEng'].value }}
+                    {{ stepGroup.controls['description'].value }}
                   </p>
                   }
                   @if (stepGroup.controls['notes'].value) {
@@ -840,11 +843,11 @@
                         <div>
                           <p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-600">
                             {{ 'childStep' | translate }} {{ childIndex + 1 }} ·
-                            {{ 'arrivalDate' | translate }}
-                            {{ childGroup.controls['arrivalDate'].value || '-' }}
+                            {{ 'date' | translate }}
+                            {{ childGroup.controls['date'].value }}
                           </p>
                           <h5 class="mt-1 font-medium">
-                            {{ childGroup.controls['titleEng'].value }}
+                            {{ childGroup.controls['title'].value }}
                           </h5>
                         </div>
                         <div class="flex gap-1">
@@ -869,9 +872,9 @@
                         {{ childGroup.controls['endTime'].value || '--:--' }}
                       </p>
                       }
-                      @if (childGroup.controls['valueEng'].value) {
+                      @if (childGroup.controls['description'].value) {
                       <p class="mt-1 text-sm leading-6 text-slate-600">
-                        {{ childGroup.controls['valueEng'].value }}
+                        {{ childGroup.controls['description'].value }}
                       </p>
                       }
                       @if (childGroup.controls['notes'].value) {

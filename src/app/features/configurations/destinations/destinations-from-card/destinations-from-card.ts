@@ -21,6 +21,7 @@ import {
   normalizeImageUpload,
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 interface DestinationImageUpload {
   id?: number;
@@ -139,6 +140,10 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         this.resetForm(false);
         this.destinationSaved.emit();
       });
+  }
+
+  markFormTouched(): void {
+    this.destinationForm.markAllAsTouched();
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -304,15 +309,12 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       }),
       nameAr: new FormControl('', {
         nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/),
-        ],
+        validators: [Validators.required, arabicTextValidator()],
       }),
       subDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
-      subDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
+      subDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500), arabicTextValidator()] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
-      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       images: new FormControl<string[]>([], {
         nonNullable: true,
         validators: [Validators.required],

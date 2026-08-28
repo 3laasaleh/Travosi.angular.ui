@@ -19,6 +19,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { formatHomePrice } from '../home-price.util';
+import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 
 @Component({
   selector: 'app-home-package-page',
@@ -31,6 +32,7 @@ import { formatHomePrice } from '../home-price.util';
     ItineraryTimeline,
     TourBookingCard,
     ImageViewerModal,
+    ProductReviews,
   ],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

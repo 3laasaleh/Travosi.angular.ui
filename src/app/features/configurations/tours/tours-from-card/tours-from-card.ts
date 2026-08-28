@@ -35,6 +35,7 @@ import {
   isQuarterHourTime,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 
 interface TourImageUpload {
@@ -144,7 +145,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get selectedDestination(): any | null {
     const selectedId = this.tourForm.controls.destinationId.value;
-    if (selectedId === '') return null;
+    if (selectedId === '') return false;
 
     const destinationId = Number(selectedId);
     if (!Number.isInteger(destinationId) || destinationId <= 0) return null;
@@ -247,6 +248,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return of(null);
         }),
         finalize(() => {
+          debugger
           this.destinationsLoading = false;
           this.cdr.markForCheck();
         }),
@@ -309,6 +311,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
     this.saveTour();
+  }
+
+  markCurrentStepTouched(): void {
+    if (this.activeStep === 1) this.tourForm.markAllAsTouched();
   }
 
   saveTourDetails(): void {
@@ -971,10 +977,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         titleAr: new FormControl('', {
           nonNullable: true,
-          validators: [
-            Validators.required,
-            Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'-]*$/),
-          ],
+          validators: [Validators.required, arabicTextValidator()],
         }),
         destinationId: new FormControl<number | ''>('', {
           nonNullable: true,
@@ -990,7 +993,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         descriptionAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(4000), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
+          validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()],
         }),
         fullDescriptionEng: new FormControl('', {
           nonNullable: true,
@@ -998,7 +1001,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         fullDescriptionAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.maxLength(8000), Validators.pattern(/^(?:[\u0600-\u06FF][\u0600-\u06FF\s'"-]*)?$/)],
+          validators: [Validators.maxLength(8000), arabicTextValidator()],
         }),
  
         pricePerPerson: new FormControl(0, {
@@ -1054,7 +1057,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       }),
       valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
+        validators: [Validators.required, arabicTextValidator()],
       }),
     });
   }
@@ -1073,12 +1076,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         titleAr: new FormControl(itinerary.titleAr, {
           nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
+          validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
         }),
         valueEng: new FormControl(itinerary.valueEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
         valueAr: new FormControl(itinerary.valueAr, {
           nonNullable: true,
-          validators: [Validators.maxLength(2000), Validators.pattern(/^(?:[\u0600-\u06FF][\u0600-\u06FF\s'"-]*)?$/)],
+          validators: [Validators.maxLength(2000), arabicTextValidator()],
         }),
         notes: new FormControl(itinerary.notes, {
           nonNullable: true,

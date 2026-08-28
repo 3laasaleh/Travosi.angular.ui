@@ -1,8 +1,59 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/gaurds/auth.guard';
 import { adminGuard } from './core/gaurds/admin.guard';
+import { languageUrlGuard } from './core/gaurds/language-url.guard';
+
+const localizedCatalogueRoutes: Routes = [
+  {
+    path: 'destinations',
+    loadComponent: () => import('./features/home/destinations-list/destinations-list').then((m) => m.HomeDestinationsList),
+  },
+  {
+    path: 'destinations/:destinationId/cities/:cityId',
+    loadComponent: () => import('./features/home/city-page/city-page').then((m) => m.CityPage),
+  },
+  {
+    path: 'destinations/:id',
+    loadComponent: () => import('./features/home/destination-detail/destination-detail').then((m) => m.HomeDestinationDetail),
+  },
+  {
+    path: 'tours',
+    loadComponent: () => import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
+  },
+  {
+    path: 'nile-cruises',
+    data: { nileCruisesOnly: true },
+    loadComponent: () => import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
+  },
+  {
+    path: 'tours/:id',
+    loadComponent: () => import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
+  },
+  {
+    path: 'packages',
+    loadComponent: () => import('./features/home/packages-list/packages-list').then((m) => m.HomePackagesList),
+  },
+  {
+    path: 'packages/:id',
+    loadComponent: () => import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
+  },
+  { path: 'home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+  {
+    path: 'blogs/:id',
+    loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
+  },
+  {
+    path: 'blogs',
+    loadComponent: () => import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
+  },
+];
 
 export const routes: Routes = [
+  {
+    path: ':lang',
+    canActivate: [languageUrlGuard],
+    children: localizedCatalogueRoutes,
+  },
   {
     path: 'user-setting',
     canActivate: [authGuard],
@@ -12,6 +63,7 @@ export const routes: Routes = [
 
   {
     path: 'destinations',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/destinations-list/destinations-list').then(
         (m) => m.HomeDestinationsList,
@@ -19,11 +71,13 @@ export const routes: Routes = [
   },
   {
     path: 'destinations/:destinationId/cities/:cityId',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/city-page/city-page').then((m) => m.CityPage),
   },
   {
     path: 'destinations/:id',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/destination-detail/destination-detail').then(
         (m) => m.HomeDestinationDetail,
@@ -31,22 +85,26 @@ export const routes: Routes = [
   },
   {
     path: 'tours',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
     path: 'nile-cruises',
+    canActivate: [languageUrlGuard],
     data: { nileCruisesOnly: true },
     loadComponent: () =>
       import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
     path: 'tours/:id',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
   },
   {
     path: 'packages',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/packages-list/packages-list').then(
         (m) => m.HomePackagesList,
@@ -54,6 +112,7 @@ export const routes: Routes = [
   },
   {
     path: 'packages/:id',
+    canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
   },
@@ -183,7 +242,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/user/auth-pages/reset-password/reset-password').then((m) => m.ResetPassword),
   },
-  { path: 'home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+  { path: 'home', canActivate: [languageUrlGuard], loadComponent: () => import('./features/home/home').then((m) => m.Home) },
   {
     path: 'user-profile',
     canActivate: [authGuard],
@@ -277,10 +336,12 @@ export const routes: Routes = [
  
   {
     path: 'blogs/:id',
+    canActivate: [languageUrlGuard],
     loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
   },
   {
     path: 'blogs',
+    canActivate: [languageUrlGuard],
     loadComponent: () => import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
   },
   {

@@ -18,11 +18,12 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
+import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

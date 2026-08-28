@@ -53,8 +53,39 @@ export class LanguageService {
   }
 
   setLanguageAndReload(lang?: string): void {
+    const language = this.applyLanguageSelection(lang);
+    const location = this.document.defaultView?.location;
+    if (!location?.pathname) {
+      this.reloadPage();
+      return;
+    }
+
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const firstSegment = pathSegments[0]?.toLowerCase();
+    const localizablePaths = new Set([
+      'home', 'destinations', 'tours', 'nile-cruises', 'packages', 'blogs',
+    ]);
+
+    if (firstSegment === 'en' || firstSegment === 'ar') {
+      pathSegments[0] = language;
+    } else if (pathSegments.length === 0 || localizablePaths.has(firstSegment)) {
+      pathSegments.unshift(language);
+    } else {
+      this.reloadPage();
+      return;
+    }
+
+    const target = `/${pathSegments.join('/')}${location.search ?? ''}${location.hash ?? ''}`;
+    if (target === `${location.pathname}${location.search ?? ''}${location.hash ?? ''}`) {
+      this.reloadPage();
+      return;
+    }
+    location.assign(target);
+  }
+
+  /** Applies the language selected by a canonical /en or /ar route without reloading. */
+  setLanguage(lang?: string): void {
     this.applyLanguageSelection(lang);
-    this.reloadPage();
   }
 
   reloadPage(): void {

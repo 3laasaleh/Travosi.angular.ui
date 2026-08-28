@@ -25,6 +25,7 @@ import {
   hasItineraryTimeOverlap,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 interface PackageImageUpload {
   id?: number;
@@ -190,6 +191,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.activeStep === 1) this.savePackageDetails();
     else if (this.activeStep === 2) this.savePackageImages();
     else this.savePackageItinerary();
+  }
+
+  markCurrentStepTouched(): void {
+    if (this.activeStep === 1) this.packageForm.markAllAsTouched();
   }
 
   savePackageDetails(): void {
@@ -472,9 +477,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private createForm() {
     return new FormGroup({
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
-      nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+      nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
-      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       durationHours: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(23)] }),
       pricePerPerson: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0.01)] }),
@@ -505,7 +510,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
       valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
-      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
+      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required, arabicTextValidator()] }),
     });
   }
 
