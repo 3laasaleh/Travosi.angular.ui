@@ -136,10 +136,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.nameAr,
       controls.descriptionEng,
       controls.descriptionAr,
-      controls.metaTitleEng,
-      controls.metaTitleAr,
-      controls.metaDescriptionEng,
-      controls.metaDescriptionAr,
       controls.durationDays,
       controls.durationHours,
       controls.pricePerPerson,
@@ -466,10 +462,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
-      metaTitleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
-      metaTitleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
-      metaDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
-      metaDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       durationHours: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(23)] }),
       pricePerPerson: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0.01)] }),
@@ -507,7 +499,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private validateDetailsStep(): boolean {
-    const names = ['nameEng', 'nameAr', 'descriptionEng', 'descriptionAr', 'metaTitleEng', 'metaTitleAr', 'metaDescriptionEng', 'metaDescriptionAr', 'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
+    const names = ['nameEng', 'nameAr', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
     names.forEach((name) => this.packageForm.controls[name].markAsTouched());
     this.cancellationPoliciesArray.markAllAsTouched();
     const values = this.packageForm.getRawValue();
@@ -523,8 +515,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       NameEng: value.nameEng.trim(), NameAr: value.nameAr.trim(),
       DescriptionEng: value.descriptionEng.trim(), DescriptionAr: value.descriptionAr.trim(),
       Description: value.descriptionEng.trim(),
-      MetaTitleEng: value.metaTitleEng.trim(), MetaTitleAr: value.metaTitleAr.trim(),
-      MetaDescriptionEng: value.metaDescriptionEng.trim(), MetaDescriptionAr: value.metaDescriptionAr.trim(),
       DurationDays: Number(value.durationDays), DurationHours: Number(value.durationHours),
       PricePerPerson: Number(value.pricePerPerson), PricePerChild: Number(value.pricePerChild),
       MaxCapacity: Number(value.maxCapacity),
@@ -564,8 +554,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.packageForm.patchValue({
       nameEng: item?.nameEng ?? '', nameAr: item?.nameAr ?? '',
       descriptionEng: item?.descriptionEng ?? item?.description ?? '', descriptionAr: item?.descriptionAr ?? '',
-      metaTitleEng: item?.metaTitleEng ?? item?.nameEng ?? '', metaTitleAr: item?.metaTitleAr ?? item?.nameAr ?? '',
-      metaDescriptionEng: item?.metaDescriptionEng ?? item?.description ?? '', metaDescriptionAr: item?.metaDescriptionAr ?? '',
       durationDays: Number(item?.durationDays) || 1, durationHours: Number(item?.durationHours) || 0,
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
       maxCapacity: Number(item?.maxCapacity) || 1,
@@ -586,7 +574,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
     this.imageValidationMessage = '';
     this.errorMessage = ''; this.successMessage = '';
-    this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '', metaTitleEng: '', metaTitleAr: '', metaDescriptionEng: '', metaDescriptionAr: '', durationDays: 1, durationHours: 0,
+    this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
       dateFrom: '', dateTo: '', destinationIds: [], images: [], itinerary: [] });
     this.setCancellationPolicies([]);

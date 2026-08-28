@@ -179,21 +179,10 @@ export class HomeTourPage implements OnInit {
           this.errorMessage = 'tourNotFound';
           return;
         }
-        this.updateSeo(tourId);
       });
   }
 
-  private updateSeo(tourId: number): void {
-    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    const title = arabic
-      ? (this.tour?.metaTitleAr || this.tour?.titleAr || this.tour?.metaTitleEng || this.title)
-      : (this.tour?.metaTitleEng || this.tour?.titleEng || this.title);
-    const description = arabic
-      ? (this.tour?.metaDescriptionAr || this.tour?.descriptionAr || this.tour?.metaDescriptionEng || this.tour?.description || '')
-      : (this.tour?.metaDescriptionEng || this.tour?.descriptionEng || this.tour?.description || this.tour?.fullDescription || '');
-    const price = Number(this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ?? this.tour?.price);
-
-  }
+ 
 
   private tourRequest(tourId: number): Observable<any> {
     return this.apiService.getUnauthntecated(`Tours/${tourId}`).pipe(

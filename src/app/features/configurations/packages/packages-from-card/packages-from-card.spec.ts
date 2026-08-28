@@ -19,10 +19,6 @@ describe('PackagesFromCard validation', () => {
 
     component.packageForm.patchValue({
       nameEng: 'Cairo Discovery',
-      metaTitleEng: 'Cairo Discovery Travel Package',
-      metaTitleAr: 'باقة اكتشاف القاهرة السياحية',
-      metaDescriptionEng: 'Book a complete Cairo travel package with guided tours, flexible dates and expert support.',
-      metaDescriptionAr: 'احجز باقة سياحية متكاملة لاكتشاف القاهرة مع جولات منظمة ودعم من خبراء السفر.',
       nameAr: 'اكتشاف القاهرة',
       descriptionEng: 'A complete Cairo travel package.',
       descriptionAr: 'باقة سفر متكاملة إلى القاهرة.',
@@ -31,7 +27,6 @@ describe('PackagesFromCard validation', () => {
       pricePerPerson: 200,
       pricePerChild: 100,
       maxCapacity: 20,
-      cancellationPolicy: 'Cancellation is allowed up to 48 hours before departure.',
       dateFrom: '2030-01-01',
       dateTo: '2030-01-05',
       destinationIds: [1],

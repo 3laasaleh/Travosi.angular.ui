@@ -158,27 +158,19 @@ export class CityPage implements OnInit {
   }
   private updateSeo(destinationId: number, cityId: number): void {
     const title = this.isArabic
-      ? this.city?.metaTitleAr ||
+      ? 
         this.city?.nameAr ||
-        this.city?.metaTitleEng ||
         this.city?.nameEng ||
         ''
-      : this.city?.metaTitleEng ||
+      : 
         this.city?.nameEng ||
-        this.city?.metaTitleAr ||
         this.city?.nameAr ||
         '';
     const description = this.isArabic
-      ? this.city?.metaDescriptionAr ||
+      ? 
         this.city?.descriptionAr ||
-        this.city?.metaDescriptionEng ||
-        this.city?.descriptionEng ||
-        ''
-      : this.city?.metaDescriptionEng ||
-        this.city?.descriptionEng ||
-        this.city?.metaDescriptionAr ||
-        this.city?.descriptionAr ||
-        '';
+        this.city?.descriptionEng ||'': this.city?.descriptionEng ||
+        this.city?.descriptionAr ||'';
 
   }
   private entity(response: any, key: string): any {

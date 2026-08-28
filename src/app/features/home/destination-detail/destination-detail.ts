@@ -26,7 +26,14 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ImageViewerModal, DestinationCitiesCarousel],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    HomeNavbar,
+    FooterOne,
+    ImageViewerModal,
+    DestinationCitiesCarousel,
+  ],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -67,20 +74,33 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   destinationTitle(): string {
     return this.isArabic
-      ? (this.destination?.nameAr || this.destination?.nameEng || this.destination?.name || '')
-      : (this.destination?.nameEng || this.destination?.name || this.destination?.nameAr || '');
+      ? this.destination?.nameAr || this.destination?.nameEng || this.destination?.name || ''
+      : this.destination?.nameEng || this.destination?.name || this.destination?.nameAr || '';
   }
 
   destinationShortDescription(): string {
     return this.isArabic
-      ? (this.destination?.subDescriptionAr || this.destination?.descriptionAr || this.destination?.subDescriptionEng || this.destination?.subDescription || '')
-      : (this.destination?.subDescriptionEng || this.destination?.subDescription || this.destination?.subDescriptionAr || '');
+      ? this.destination?.subDescriptionAr ||
+          this.destination?.descriptionAr ||
+          this.destination?.subDescriptionEng ||
+          this.destination?.subDescription ||
+          ''
+      : this.destination?.subDescriptionEng ||
+          this.destination?.subDescription ||
+          this.destination?.subDescriptionAr ||
+          '';
   }
 
   destinationDescription(): string {
     return this.isArabic
-      ? (this.destination?.descriptionAr || this.destination?.descriptionEng || this.destination?.description || '')
-      : (this.destination?.descriptionEng || this.destination?.description || this.destination?.descriptionAr || '');
+      ? this.destination?.descriptionAr ||
+          this.destination?.descriptionEng ||
+          this.destination?.description ||
+          ''
+      : this.destination?.descriptionEng ||
+          this.destination?.description ||
+          this.destination?.descriptionAr ||
+          '';
   }
 
   ngOnInit(): void {
@@ -116,9 +136,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   imageUrl(source: any, fallback = 'assets/images/bg/2.jpg'): string {
     const url =
-      typeof source === 'string'
-        ? source
-        : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
+      typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
 
     if (!url) return fallback;
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
@@ -156,26 +174,43 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   tourImage(tour: any): string {
     const image = Array.isArray(tour?.images) ? tour.images[0] : null;
-    return this.imageUrl(
-      tour?.coverImageUrl ?? image ?? tour?.imageUrl,
-      'assets/images/bg/3.jpg',
-    );
+    return this.imageUrl(tour?.coverImageUrl ?? image ?? tour?.imageUrl, 'assets/images/bg/3.jpg');
   }
 
   tourTitle(tour: any): string {
     return this.isArabic
-      ? (tour?.titleAr || tour?.nameAr || tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || '')
-      : (tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || tour?.titleAr || tour?.nameAr || '');
+      ? tour?.titleAr ||
+          tour?.nameAr ||
+          tour?.titleEng ||
+          tour?.nameEng ||
+          tour?.title ||
+          tour?.name ||
+          ''
+      : tour?.titleEng ||
+          tour?.nameEng ||
+          tour?.title ||
+          tour?.name ||
+          tour?.titleAr ||
+          tour?.nameAr ||
+          '';
   }
 
   tourDescription(tour: any): string {
     return this.isArabic
-      ? (tour?.descriptionAr || tour?.fullDescriptionAr || tour?.descriptionEng || tour?.description || '')
-      : (tour?.descriptionEng || tour?.description || tour?.descriptionAr || '');
+      ? tour?.descriptionAr ||
+          tour?.fullDescriptionAr ||
+          tour?.descriptionEng ||
+          tour?.description ||
+          ''
+      : tour?.descriptionEng || tour?.description || tour?.descriptionAr || '';
   }
 
   formattedTourPrice(tour: any): string {
-    return formatHomePrice(this.currencyService, tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price, tour);
+    return formatHomePrice(
+      this.currencyService,
+      tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price,
+      tour,
+    );
   }
 
   tourDestinationName(tour: any): string {
@@ -226,9 +261,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
         const apiTours = this.extractCollection(tours, ['tours']);
         const nestedTours = Array.isArray(destination?.tours) ? destination.tours : [];
-        const hasDestinationIds = apiTours.some(
-          (tour) => this.resolveDestinationId(tour) !== null,
-        );
+        const hasDestinationIds = apiTours.some((tour) => this.resolveDestinationId(tour) !== null);
         const matchingTours = hasDestinationIds
           ? apiTours.filter(
               (tour) => Number(this.resolveDestinationId(tour)) === Number(destinationId),
@@ -245,12 +278,19 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private updateSeo(destinationId: number): void {
     const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
     const title = arabic
-      ? (this.destination?.metaTitleAr || this.destination?.nameAr || this.destination?.metaTitleEng || this.destination?.nameEng || '')
-      : (this.destination?.metaTitleEng || this.destination?.nameEng || this.destination?.metaTitleAr || this.destination?.nameAr || '');
+      ? this.destination?.nameAr || this.destination?.nameEng || ''
+      : this.destination?.nameEng || this.destination?.nameAr || '';
     const description = arabic
-      ? (this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.description || '')
-      : (this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.description || '');
-
+      ?
+        this.destination?.descriptionAr ||
+        this.destination?.descriptionEng ||
+        this.destination?.description ||
+        ''
+      : 
+        this.destination?.descriptionEng ||
+        this.destination?.descriptionAr ||
+        this.destination?.description ||
+        '';
   }
 
   private initializeTourCarousel(): void {
@@ -268,13 +308,14 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
       spaceBetween: 18,
       watchOverflow: true,
       loop: this.tours.length > 1,
-      autoplay: this.tours.length > 1
-        ? {
-            delay: 2000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }
-        : false,
+      autoplay:
+        this.tours.length > 1
+          ? {
+              delay: 2000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }
+          : false,
       navigation: {
         nextEl: '#destination-tours-carousel .tours-next',
         prevEl: '#destination-tours-carousel .tours-prev',
@@ -291,11 +332,12 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
       map((response) => this.extractEntity(response, 'destination')),
       catchError(() =>
         this.apiService.getUnauthntecated('destinations?page=1&pageSize=100').pipe(
-          map((response) =>
-            this.extractCollection(response, ['destinations']).find(
-              (destination) =>
-                Number(destination?.id ?? destination?.destinationId) === Number(destinationId),
-            ) ?? null,
+          map(
+            (response) =>
+              this.extractCollection(response, ['destinations']).find(
+                (destination) =>
+                  Number(destination?.id ?? destination?.destinationId) === Number(destinationId),
+              ) ?? null,
           ),
           catchError(() => of(null)),
         ),
@@ -306,9 +348,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private extractEntity(response: any, key: string): any {
     if (response?.isSuccess === false) return null;
     const data =
-      response && Object.prototype.hasOwnProperty.call(response, 'data')
-        ? response.data
-        : response;
+      response && Object.prototype.hasOwnProperty.call(response, 'data') ? response.data : response;
     return data?.[key] ?? data;
   }
 

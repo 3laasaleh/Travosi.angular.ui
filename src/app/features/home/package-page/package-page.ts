@@ -23,7 +23,15 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, ItineraryTimeline, TourBookingCard, ImageViewerModal],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    HomeNavbar,
+    FooterOne,
+    ItineraryTimeline,
+    TourBookingCard,
+    ImageViewerModal,
+  ],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -44,19 +52,42 @@ export class HomePackagePage implements OnInit {
   get title(): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
     return arabic
-      ? (this.travelPackage?.nameAr ?? this.travelPackage?.titleAr ?? this.travelPackage?.nameEng ?? this.travelPackage?.titleEng ?? this.travelPackage?.name ?? this.travelPackage?.title ?? '')
-      : (this.travelPackage?.nameEng ?? this.travelPackage?.titleEng ?? this.travelPackage?.name ?? this.travelPackage?.title ?? this.travelPackage?.nameAr ?? this.travelPackage?.titleAr ?? '');
+      ? (this.travelPackage?.nameAr ??
+          this.travelPackage?.titleAr ??
+          this.travelPackage?.nameEng ??
+          this.travelPackage?.titleEng ??
+          this.travelPackage?.name ??
+          this.travelPackage?.title ??
+          '')
+      : (this.travelPackage?.nameEng ??
+          this.travelPackage?.titleEng ??
+          this.travelPackage?.name ??
+          this.travelPackage?.title ??
+          this.travelPackage?.nameAr ??
+          this.travelPackage?.titleAr ??
+          '');
   }
 
   get description(): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
     return arabic
-      ? (this.travelPackage?.descriptionAr ?? this.travelPackage?.fullDescriptionAr ?? this.travelPackage?.description ?? this.travelPackage?.fullDescription ?? this.travelPackage?.subDescription ?? '')
-      : (this.travelPackage?.descriptionEng ?? this.travelPackage?.fullDescriptionEng ?? this.travelPackage?.fullDescription ?? this.travelPackage?.description ?? this.travelPackage?.subDescription ?? '');
+      ? (this.travelPackage?.descriptionAr ??
+          this.travelPackage?.fullDescriptionAr ??
+          this.travelPackage?.description ??
+          this.travelPackage?.fullDescription ??
+          this.travelPackage?.subDescription ??
+          '')
+      : (this.travelPackage?.descriptionEng ??
+          this.travelPackage?.fullDescriptionEng ??
+          this.travelPackage?.fullDescription ??
+          this.travelPackage?.description ??
+          this.travelPackage?.subDescription ??
+          '');
   }
 
   get images(): any[] {
-    if (Array.isArray(this.travelPackage?.images) && this.travelPackage.images.length) return this.travelPackage.images;
+    if (Array.isArray(this.travelPackage?.images) && this.travelPackage.images.length)
+      return this.travelPackage.images;
     const fallback = this.travelPackage?.coverImageUrl ?? this.travelPackage?.imageUrl;
     return fallback ? [fallback] : [];
   }
@@ -66,7 +97,10 @@ export class HomePackagePage implements OnInit {
   }
 
   get itinerary(): any[] {
-    const value = this.travelPackage?.itinerary ?? this.travelPackage?.itineraries ?? this.travelPackage?.packageItinerary;
+    const value =
+      this.travelPackage?.itinerary ??
+      this.travelPackage?.itineraries ??
+      this.travelPackage?.packageItinerary;
     return Array.isArray(value) ? value : [];
   }
 
@@ -92,25 +126,40 @@ export class HomePackagePage implements OnInit {
   }
 
   get destinationId(): number | null {
-    const id = this.travelPackage?.destinationId ?? this.travelPackage?.destination?.id ?? this.travelPackage?.destinations?.[0]?.destinationId;
+    const id =
+      this.travelPackage?.destinationId ??
+      this.travelPackage?.destination?.id ??
+      this.travelPackage?.destinations?.[0]?.destinationId;
     const parsed = Number(id);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
   get destinationName(): string {
-    return this.travelPackage?.destinationName ?? this.travelPackage?.destination?.nameEng ?? this.travelPackage?.destination?.name ?? this.travelPackage?.destinations?.[0]?.destinationName ?? '';
+    return (
+      this.travelPackage?.destinationName ??
+      this.travelPackage?.destination?.nameEng ??
+      this.travelPackage?.destination?.name ??
+      this.travelPackage?.destinations?.[0]?.destinationName ??
+      ''
+    );
   }
 
   get formattedPrice(): string {
     return formatHomePrice(
       this.currencyService,
-      this.travelPackage?.discountedPricePerPerson ?? this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
+      this.travelPackage?.discountedPricePerPerson ??
+        this.travelPackage?.pricePerPerson ??
+        this.travelPackage?.price,
       this.travelPackage,
     );
   }
 
   get formattedOriginalPrice(): string {
-    return formatHomePrice(this.currencyService, this.travelPackage?.pricePerPerson ?? this.travelPackage?.price, this.travelPackage);
+    return formatHomePrice(
+      this.currencyService,
+      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
+      this.travelPackage,
+    );
   }
 
   get hasDiscount(): boolean {
@@ -124,7 +173,7 @@ export class HomePackagePage implements OnInit {
   get duration(): string {
     const days = this.travelPackage?.durationDays ?? this.travelPackage?.days;
     const duration = this.travelPackage?.duration;
-    return days ? `${days}` : (duration ? String(duration) : '-');
+    return days ? `${days}` : duration ? String(duration) : '-';
   }
 
   get durationHours(): number {
@@ -136,19 +185,21 @@ export class HomePackagePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(
-      map((params) => Number(params.get('id'))),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((packageId) => {
-      if (!Number.isFinite(packageId) || packageId <= 0) {
-        this.isLoading = false;
-        this.errorMessage = 'packageNotFound';
-        this.cdr.markForCheck();
-        return;
-      }
-      this.loadPackage(packageId);
-    });
+    this.route.paramMap
+      .pipe(
+        map((params) => Number(params.get('id'))),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((packageId) => {
+        if (!Number.isFinite(packageId) || packageId <= 0) {
+          this.isLoading = false;
+          this.errorMessage = 'packageNotFound';
+          this.cdr.markForCheck();
+          return;
+        }
+        this.loadPackage(packageId);
+      });
   }
 
   selectImage(index: number): void {
@@ -166,22 +217,39 @@ export class HomePackagePage implements OnInit {
   }
 
   imageUrl(source: any): string {
-    const url = typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
+    const url =
+      typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
     if (!url) return 'assets/images/bg/2.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    const path = String(url)
+      .replace(/^\/+/, '')
+      .replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
   itemText(item: any): string {
-    return typeof item === 'string' ? item : (item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
+    return typeof item === 'string'
+      ? item
+      : (item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
   }
 
   tourTitle(tour: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
     return arabic
-      ? (tour?.titleAr ?? tour?.nameAr ?? tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? '')
-      : (tour?.titleEng ?? tour?.nameEng ?? tour?.title ?? tour?.name ?? tour?.titleAr ?? tour?.nameAr ?? '');
+      ? (tour?.titleAr ??
+          tour?.nameAr ??
+          tour?.titleEng ??
+          tour?.nameEng ??
+          tour?.title ??
+          tour?.name ??
+          '')
+      : (tour?.titleEng ??
+          tour?.nameEng ??
+          tour?.title ??
+          tour?.name ??
+          tour?.titleAr ??
+          tour?.nameAr ??
+          '');
   }
 
   private loadPackage(packageId: number): void {
@@ -190,55 +258,72 @@ export class HomePackagePage implements OnInit {
     this.travelPackage = null;
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
-    this.packageRequest(packageId).pipe(
-      finalize(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((travelPackage) => {
-      this.travelPackage = travelPackage;
-      if (!travelPackage) {
-        this.errorMessage = 'packageNotFound';
-        return;
-      }
-      this.updateSeo(packageId);
-    });
+    this.packageRequest(packageId)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((travelPackage) => {
+        this.travelPackage = travelPackage;
+        if (!travelPackage) {
+          this.errorMessage = 'packageNotFound';
+          return;
+        }
+        this.updateSeo(packageId);
+      });
   }
 
   private updateSeo(packageId: number): void {
     const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
     const title = arabic
-      ? (this.travelPackage?.metaTitleAr || this.travelPackage?.nameAr || this.travelPackage?.metaTitleEng || this.title)
-      : (this.travelPackage?.metaTitleEng || this.travelPackage?.nameEng || this.title);
+      ? this.travelPackage?.nameAr || this.title
+      : this.travelPackage?.nameEng || this.title;
     const description = arabic
-      ? (this.travelPackage?.metaDescriptionAr || this.travelPackage?.descriptionAr || this.travelPackage?.metaDescriptionEng || this.description)
-      : (this.travelPackage?.metaDescriptionEng || this.travelPackage?.descriptionEng || this.description);
-    const price = Number(this.travelPackage?.discountedPricePerPerson ?? this.travelPackage?.pricePerPerson ?? this.travelPackage?.price);
-
+      ? 
+        this.travelPackage?.descriptionAr ||
+        
+        this.description
+      :
+        this.travelPackage?.descriptionEng ||
+        this.description;
+    const price = Number(
+      this.travelPackage?.discountedPricePerPerson ??
+        this.travelPackage?.pricePerPerson ??
+        this.travelPackage?.price,
+    );
   }
 
   private packageRequest(packageId: number): Observable<any> {
     return this.apiService.getUnauthntecated(`Packages/${packageId}`).pipe(
       map((response) => this.extractEntity(response, 'package')),
-      catchError(() => this.apiService.getUnauthntecated('Packages?page=1&pageSize=100').pipe(
-        map((response) => this.extractCollection(response, ['packages']).find(
-          (item) => Number(item?.id ?? item?.packageId) === packageId,
-        ) ?? null),
-        catchError(() => of(null)),
-      )),
+      catchError(() =>
+        this.apiService.getUnauthntecated('Packages?page=1&pageSize=100').pipe(
+          map(
+            (response) =>
+              this.extractCollection(response, ['packages']).find(
+                (item) => Number(item?.id ?? item?.packageId) === packageId,
+              ) ?? null,
+          ),
+          catchError(() => of(null)),
+        ),
+      ),
     );
   }
 
   private extractEntity(response: any, key: string): any {
     if (response?.isSuccess === false) return null;
-    const data = response && Object.prototype.hasOwnProperty.call(response, 'data') ? response.data : response;
+    const data =
+      response && Object.prototype.hasOwnProperty.call(response, 'data') ? response.data : response;
     return data?.[key] ?? data;
   }
 
   private extractCollection(response: any, keys: string[]): any[] {
     const data = response?.data ?? response;
-    const rows = data?.data ?? data?.items ?? keys.map((key) => data?.[key]).find(Array.isArray) ?? data;
+    const rows =
+      data?.data ?? data?.items ?? keys.map((key) => data?.[key]).find(Array.isArray) ?? data;
     return Array.isArray(rows) ? rows : [];
   }
 }

@@ -19,13 +19,9 @@ describe('ToursFromCard validation', () => {
 
     component.tourForm.patchValue({
       titleEng: 'Cairo Highlights',
-      metaTitleEng: 'Best Cairo Highlights Tour',
-      metaTitleAr: 'أفضل جولة لمعالم القاهرة',
-      metaDescriptionEng:
-        'Explore Cairo highlights with an expert local guide on this carefully planned city tour.',
+
       descriptionEng: 'Explore the most important Cairo landmarks.',
       descriptionAr: 'استكشف أهم معالم القاهرة.',
-      metaDescriptionAr: 'استكشف أهم معالم القاهرة مع مرشد محلي خبير في جولة مدينة مخططة بعناية.',
       titleAr: 'معالم القاهرة',
       destinationId: 1,
       cityId: 2,
