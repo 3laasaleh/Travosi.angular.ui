@@ -1,12 +1,14 @@
 export interface TourItineraryItem {
   id: number;
+  orderNumber: number;
   parentId: number | null;
   isChildNode: boolean;
-  title: string;
-  value: string;
-  description: string;
+  titleAr: string;
+  titleEng: string;
+  valueAr: string;
+  valueEng: string;
   notes: string;
-  date: string;
+  arrivalDate: string;
   startTime: string | null;
   endTime: string | null;
   tourId: number | null;
@@ -16,13 +18,15 @@ export interface TourItineraryItem {
 export function createEmptyTourItinerary(tourId: number | null = null): TourItineraryItem {
   return {
     id: 0,
+    orderNumber: 0,
     parentId: null,
     isChildNode: false,
-    title: '',
-    value: '',
-    description: '',
+    titleAr: '',
+    titleEng: '',
+    valueAr: '',
+    valueEng: '',
     notes: '',
-    date: '',
+    arrivalDate: '',
     startTime: null,
     endTime: null,
     tourId,
@@ -36,13 +40,15 @@ export function readTourItinerary(
 ): TourItineraryItem {
   return {
     id: toRequiredId(item?.id),
+    orderNumber: Number(item?.orderNumber) || 0,
     parentId: toOptionalId(item?.parentId),
     isChildNode: item?.isChildNode === true,
-    title: String(item?.title ?? ''),
-    value: String(item?.value ?? ''),
-    description: String(item?.description ?? ''),
+    titleAr: String(item?.titleAr ?? item?.title ?? ''),
+    titleEng: String(item?.titleEng ?? item?.title ?? ''),
+    valueAr: String(item?.valueAr ?? item?.value ?? ''),
+    valueEng: String(item?.valueEng ?? item?.value ?? ''),
     notes: String(item?.notes ?? item?.Notes ?? ''),
-    date: toDateInput(item?.date ?? item?.Date),
+    arrivalDate: toDateInput(item?.arrivalDate ?? item?.ArrivalDate ?? item?.date ?? item?.Date),
     startTime: toTimeInput(item?.startTime),
     endTime: toTimeInput(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
@@ -57,13 +63,15 @@ export function toTourItineraryPayload(
   const isChildNode = item?.isChildNode === true;
   return {
     id: toRequiredId(item?.id),
+    orderNumber: Number(item?.orderNumber) || 0,
     parentId: isChildNode ? toOptionalId(item?.parentId) : null,
     isChildNode,
-    title: String(item?.title ?? '').trim(),
-    value: String(item?.value ?? '').trim(),
-    description: String(item?.description ?? '').trim(),
+    titleAr: String(item?.titleAr ?? item?.title ?? '').trim(),
+    titleEng: String(item?.titleEng ?? item?.title ?? '').trim(),
+    valueAr: String(item?.valueAr ?? item?.value ?? '').trim(),
+    valueEng: String(item?.valueEng ?? item?.value ?? '').trim(),
     notes: String(item?.notes ?? '').trim(),
-    date: toDateInput(item?.date ?? item?.Date),
+    arrivalDate: toDateInput(item?.arrivalDate ?? item?.ArrivalDate ?? item?.date ?? item?.Date),
     startTime: toApiTime(item?.startTime),
     endTime: toApiTime(item?.endTime),
     tourId: toOptionalId(item?.tourId) ?? fallbackTourId,

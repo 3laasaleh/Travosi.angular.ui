@@ -595,7 +595,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   addCancellationPolicy(): void {
-    this.cancellationPoliciesArray.push(this.createListItemGroup());
+    this.cancellationPoliciesArray.push(this.createLocalizedListItemGroup());
   }
 
   removeCancellationPolicy(index: number): void {
@@ -620,7 +620,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const child = createEmptyTourItinerary(tourId);
     child.parentId = parentId;
     child.isChildNode = true;
-    child.date = String(parentGroup.controls['date'].value ?? '');
+    child.arrivalDate = String(parentGroup.controls['arrivalDate'].value ?? '');
     this.itineraryDraft = this.createItineraryGroup(child);
     this.itineraryDraftCollection = this.itineraryChildrenArray(parentGroup);
     this.itineraryDraftIndex = null;
@@ -909,7 +909,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.setHighlights(tour.highlights ?? []);
     this.setIncludes(tour.includes ?? []);
     this.setExcludes(tour.excludes ?? []);
-    this.setCancellationPolicies(tour.cancellationPolicies ?? (tour.cancellationPolicy ? [{ value: tour.cancellationPolicy }] : []));
+    this.setCancellationPolicies(tour.cancellationPolicies ?? (tour.cancellationPolicy ? [{ valueAr: tour.cancellationPolicy, valueEng: tour.cancellationPolicy }] : []));
     this.setItinerary(tour.itinerary ?? tour.itineraries ?? []);
     this.syncImagesControl();
     const destinationId = Number(tour.destinationId);
@@ -1045,16 +1045,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  private createListItemGroup(item: any = {}): FormGroup {
-    return new FormGroup({
-      id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
-      value: new FormControl(String(item?.value ?? item?.text ?? item?.title ?? ''), {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-    });
-  }
-
   private createLocalizedListItemGroup(item: any = {}): FormGroup {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
@@ -1064,7 +1054,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       }),
       valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
       }),
     });
   }
@@ -1074,25 +1064,27 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup(
       {
         id: new FormControl(itinerary.id, { nonNullable: true }),
+        orderNumber: new FormControl(itinerary.orderNumber, { nonNullable: true }),
         parentId: new FormControl<number | null>(itinerary.parentId),
         isChildNode: new FormControl(itinerary.isChildNode, { nonNullable: true }),
-        title: new FormControl(itinerary.title, {
+        titleEng: new FormControl(itinerary.titleEng, {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(200)],
         }),
-        value: new FormControl(itinerary.value, { nonNullable: true }),
-        description: new FormControl(itinerary.description, {
+        titleAr: new FormControl(itinerary.titleAr, {
           nonNullable: true,
-          validators: [Validators.maxLength(2000)],
+          validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
+        }),
+        valueEng: new FormControl(itinerary.valueEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
+        valueAr: new FormControl(itinerary.valueAr, {
+          nonNullable: true,
+          validators: [Validators.maxLength(2000), Validators.pattern(/^(?:[\u0600-\u06FF][\u0600-\u06FF\s'"-]*)?$/)],
         }),
         notes: new FormControl(itinerary.notes, {
           nonNullable: true,
           validators: [Validators.maxLength(2000)],
         }),
-        date: new FormControl(itinerary.date, {
-          nonNullable: true,
-          validators: [Validators.required],
-        }),
+        arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true }),
         startTime: new FormControl<string | null>(itinerary.startTime, {
           validators: [Validators.required, this.quarterHourTimeValidator],
         }),
@@ -1121,15 +1113,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private setCancellationPolicies(policies: any[]): void {
-    this.setListItems(this.cancellationPoliciesArray, policies);
-  }
-
-  private setListItems(collection: FormArray<FormGroup>, values: any[]): void {
-    collection.clear();
-    const items = Array.isArray(values) ? values : [];
-    items.forEach((item) =>
-      collection.push(this.createListItemGroup(typeof item === 'string' ? { value: item } : item)),
-    );
+    this.setLocalizedListItems(this.cancellationPoliciesArray, policies);
   }
 
   private setLocalizedListItems(collection: FormArray<FormGroup>, values: any[]): void {
@@ -1214,7 +1198,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       Highlights: this.toLocalizedListPayload(form.highlights),
       Includes: this.toLocalizedListPayload(form.includes),
       Excludes: this.toLocalizedListPayload(form.excludes),
-      CancellationPolicies: this.toListPayload(form.cancellationPolicies),
+      CancellationPolicies: this.toLocalizedListPayload(form.cancellationPolicies),
       IsActive: false,
     };
   }
@@ -1229,30 +1213,29 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       .filter((item) => !!item.ValueEng && !!item.ValueAr);
   }
 
-  private toListPayload(items: any[]): { Id: number; Value: string }[] {
-    return items
-      .map((item) => ({ Id: Number(item?.id) || 0, Value: String(item?.value ?? '').trim() }))
-      .filter((item) => !!item.Value);
-  }
-
   private buildItineraryPayload(): Record<string, unknown>[] {
     return this.itineraryArray
       .getRawValue()
-      .filter((item: any) => !!item.title || !!item.value || !!item.description)
-      .map((item: any) => this.mapItineraryItem(item));
+      .filter((item: any) => !!item.titleEng || !!item.titleAr || !!item.valueEng || !!item.valueAr)
+      .map((item: any, index: number) => this.mapItineraryItem(item, index + 1));
   }
 
-  private mapItineraryItem(item: any): Record<string, unknown> {
+  private mapItineraryItem(item: any, orderNumber: number): Record<string, unknown> {
     const children = Array.isArray(item?.childs) ? item.childs : [];
     return {
-      Title: String(item?.title ?? '').trim(),
-      Value: String(item?.value ?? '').trim(),
-      Description: String(item?.description ?? '').trim(),
+      Id: Number(item?.id) || 0,
+      OrderNumber: Number(item?.orderNumber) || orderNumber,
+      ParentId: this.toOptionalId(item?.parentId),
+      IsChildNode: item?.isChildNode === true,
+      TitleAr: String(item?.titleAr ?? '').trim(),
+      TitleEng: String(item?.titleEng ?? '').trim(),
+      ValueAr: String(item?.valueAr ?? '').trim(),
+      ValueEng: String(item?.valueEng ?? '').trim(),
       Notes: String(item?.notes ?? '').trim(),
-      Date: String(item?.date ?? ''),
+      ArrivalDate: String(item?.arrivalDate ?? '') || null,
       StartTime: this.toApiTime(item?.startTime),
       EndTime: this.toApiTime(item?.endTime),
-      Childs: children.map((child: any) => this.mapItineraryItem(child)),
+      Childs: children.map((child: any, index: number) => this.mapItineraryItem(child, index + 1)),
     };
   }
 
@@ -1446,8 +1429,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   ): ValidationErrors | null => {
     const startTime = control.get('startTime')?.value;
     const endTime = control.get('endTime')?.value;
-    const date = String(control.get('date')?.value ?? '');
-    if (!startTime || !endTime || !date || !this.itineraryDraftCollection) {
+    const arrivalDate = String(control.get('arrivalDate')?.value ?? '');
+    if (!startTime || !endTime || !arrivalDate || !this.itineraryDraftCollection) {
       return null;
     }
 

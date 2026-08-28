@@ -416,7 +416,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   openItineraryChildEditor(parent: TourItineraryItem): void {
     if (this.itineraryDraft) return;
     this.itineraryDraft = createEmptyTourItinerary(this.currentPackageId);
-    this.itineraryDraft.date = parent.date;
+    this.itineraryDraft.arrivalDate = parent.arrivalDate;
     this.itineraryDraft.isChildNode = true;
     this.itineraryDraftCollection = parent.childs;
     this.itineraryDraftIndex = null;
@@ -577,8 +577,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private toItineraryPayload(item: TourItineraryItem): any {
     return {
-      Title: item.title.trim(), Value: item.value?.trim() ?? '', Description: item.description?.trim() ?? '',
-      Notes: item.notes?.trim() ?? '', Date: item.date, StartTime: item.startTime || null, EndTime: item.endTime || null,
+      Id: item.id, OrderNumber: item.orderNumber, ParentId: item.parentId, IsChildNode: item.isChildNode,
+      TitleAr: item.titleAr.trim(), TitleEng: item.titleEng.trim(), ValueAr: item.valueAr.trim(), ValueEng: item.valueEng.trim(),
+      Notes: item.notes?.trim() ?? '', ArrivalDate: item.arrivalDate || null, StartTime: item.startTime || null, EndTime: item.endTime || null,
       Childs: (item.childs ?? []).map((child) => this.toItineraryPayload(child)),
     };
   }

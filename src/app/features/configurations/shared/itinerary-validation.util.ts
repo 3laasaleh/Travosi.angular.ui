@@ -1,6 +1,7 @@
 interface ItineraryScheduleItem {
-  title?: unknown;
-  date?: unknown;
+  titleEng?: unknown;
+  titleAr?: unknown;
+  arrivalDate?: unknown;
   startTime?: unknown;
   endTime?: unknown;
   childs?: unknown;
@@ -17,8 +18,8 @@ export function hasInvalidItinerary(items: ItineraryScheduleItem[]): boolean {
     const children = readChildren(item);
 
     return (
-      !String(item.title ?? '').trim() ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(String(item.date ?? '')) ||
+      !String(item.titleEng ?? '').trim() ||
+      !String(item.titleAr ?? '').trim() ||
       startMinutes === null ||
       endMinutes === null ||
       endMinutes <= startMinutes ||
@@ -36,7 +37,8 @@ export function hasItineraryTimeOverlap(items: ItineraryScheduleItem[]): boolean
 
     for (let rightIndex = leftIndex + 1; rightIndex < items.length; rightIndex++) {
       const right = items[rightIndex];
-      if (String(left.date ?? '') !== String(right.date ?? '')) continue;
+      const leftArrivalDate = String(left.arrivalDate ?? '');
+      if (!leftArrivalDate || leftArrivalDate !== String(right.arrivalDate ?? '')) continue;
 
       const rightStart = timeToMinutes(right.startTime);
       const rightEnd = timeToMinutes(right.endTime);

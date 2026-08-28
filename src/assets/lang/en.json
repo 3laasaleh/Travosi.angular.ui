@@ -758,6 +758,7 @@
   "englishDescription": "Description (English)",
   "englishValue": "English value",
   "arabicValue": "Arabic value",
+  "arrivalDate": "Arrival date",
   "arabicDescription": "Description (Arabic)",
   "englishFullDescription": "Full description (English)",
   "arabicFullDescription": "Full description (Arabic)",
