@@ -18,7 +18,6 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
-import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -33,7 +32,6 @@ export class HomeTourPage implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
-  private readonly seo = inject(SeoService);
 
   tour: any = null;
   isLoading = true;
@@ -98,7 +96,6 @@ export class HomeTourPage implements OnInit {
           this.tour = null;
           this.isLoading = false;
           this.errorMessage = 'tourNotFound';
-          this.seo.noIndex(this.translate.instant('tourNotFound'));
           this.cdr.markForCheck();
           return;
         }
@@ -180,7 +177,6 @@ export class HomeTourPage implements OnInit {
         this.tour = tour;
         if (!tour) {
           this.errorMessage = 'tourNotFound';
-          this.seo.noIndex(this.translate.instant('tourNotFound'));
           return;
         }
         this.updateSeo(tourId);
@@ -196,27 +192,7 @@ export class HomeTourPage implements OnInit {
       ? (this.tour?.metaDescriptionAr || this.tour?.descriptionAr || this.tour?.metaDescriptionEng || this.tour?.description || '')
       : (this.tour?.metaDescriptionEng || this.tour?.descriptionEng || this.tour?.description || this.tour?.fullDescription || '');
     const price = Number(this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ?? this.tour?.price);
-    this.seo.update({
-      title,
-      description,
-      canonicalPath: `/tours/${tourId}`,
-      image: this.resolvedImages[0],
-      type: 'product',
-      structuredData: {
-        '@type': 'TouristTrip',
-        name: title,
-        description,
-        image: this.resolvedImages,
-        ...(Number.isFinite(price) ? {
-          offers: {
-            '@type': 'Offer',
-            price,
-            priceCurrency: this.tour?.currencyCode ?? this.tour?.currency?.code ?? 'USD',
-            availability: 'https://schema.org/InStock',
-          },
-        } : {}),
-      },
-    });
+
   }
 
   private tourRequest(tourId: number): Observable<any> {

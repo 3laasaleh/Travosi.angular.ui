@@ -22,7 +22,6 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { formatHomePrice } from '../home-price.util';
-import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -38,7 +37,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
-  private readonly seo = inject(SeoService);
 
   destination: any = null;
   tours: any[] = [];
@@ -99,7 +97,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           this.cities = [];
           this.isLoading = false;
           this.errorMessage = 'destinationNotFound';
-          this.seo.noIndex(this.translate.instant('destinationNotFound'));
           this.cdr.markForCheck();
           return;
         }
@@ -222,7 +219,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
         this.destination = destination;
         if (!destination) {
           this.errorMessage = 'destinationNotFound';
-          this.seo.noIndex(this.translate.instant('destinationNotFound'));
           return;
         }
 
@@ -254,19 +250,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     const description = arabic
       ? (this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.description || '')
       : (this.destination?.metaDescriptionEng || this.destination?.descriptionEng || this.destination?.metaDescriptionAr || this.destination?.descriptionAr || this.destination?.description || '');
-    this.seo.update({
-      title,
-      description,
-      canonicalPath: `/destinations/${destinationId}`,
-      image: this.resolvedImages[0],
-      type: 'website',
-      structuredData: {
-        '@type': 'TouristDestination',
-        name: title,
-        description,
-        image: this.resolvedImages,
-      },
-    });
+
   }
 
   private initializeTourCarousel(): void {

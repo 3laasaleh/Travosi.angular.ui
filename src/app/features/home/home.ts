@@ -19,11 +19,9 @@ import { DestinationsSection } from './home-sections/destinations-section/destin
 import { PackagesSection } from './home-sections/packages-section/packages-section';
 import { BlogsSection } from './home-sections/blogs-section/blogs-section';
 import { ToursSection } from './home-sections/tours-section/tours-section';
-import { SelectedDate } from '../../shared/components/selected-date/selected-date';
 import { UsersOne } from '../../shared/components/users-one/users-one';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -57,22 +55,10 @@ export class Home implements OnInit, AfterViewInit {
     private visitorTracking: VisitorTrackingService,
     private destroyRef: DestroyRef,
     private translate: TranslateService,
-    private seo: SeoService,
   ) {}
 
   ngOnInit(): void {
-    this.seo.update({
-      title: this.translate.instant('homeSeoTitle'),
-      description: this.translate.instant('homeSeoDescription'),
-      canonicalPath: '/',
-      image: '/assets/images/bg/2.jpg',
-      type: 'website',
-      structuredData: {
-        '@type': 'TravelAgency',
-        name: 'Sea World Holidays',
-        description: this.translate.instant('homeSeoDescription'),
-      },
-    });
+
     this.loadStatistics();
     Promise.all([this.bg2, this.bg3, this.map].map((source) => this.preloadImage(source)))
       .finally(() => {
