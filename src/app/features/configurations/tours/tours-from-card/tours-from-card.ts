@@ -1157,6 +1157,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.highlights,
       this.tourForm.controls.includes,
       this.tourForm.controls.excludes,
+      this.tourForm.controls.cancellationPolicies,
     ];
     controls.forEach((control) => control.markAllAsTouched());
     const valid =
@@ -1188,13 +1189,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       MaxSeats: Number(form.maxSeats),
       StartDate: this.toApiDate(form.startDate),
       EndDate: this.toApiDate(form.endDate),
-      CancellationPolicies: this.toListPayload(form.cancellationPolicies),
       IsFreeCancelation: form.isFreeCancelation,
       IsNileCruise: form.isNileCruise,
       IsOneDayTour: form.isOneDayTour,
       Highlights: this.toListPayload(form.highlights),
       Includes: this.toListPayload(form.includes),
       Excludes: this.toListPayload(form.excludes),
+      CancellationPolicies: this.toListPayload(form.cancellationPolicies),
       IsActive: false,
     };
   }
