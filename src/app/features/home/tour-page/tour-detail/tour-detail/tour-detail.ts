@@ -109,7 +109,9 @@ export class TourDetail {
   itemValue(item: any): string {
     return typeof item === 'string'
       ? item
-      : (item?.value ?? item?.text ?? item?.name ?? '');
+      : this.isArabic
+        ? (item?.valueAr ?? item?.valueEng ?? item?.value ?? item?.text ?? item?.name ?? '')
+        : (item?.valueEng ?? item?.valueAr ?? item?.value ?? item?.text ?? item?.name ?? '');
   }
 
   get itineraryItems(): any[] {

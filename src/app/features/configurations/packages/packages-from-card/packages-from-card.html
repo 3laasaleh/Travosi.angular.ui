@@ -317,6 +317,7 @@
             ><app-date-picker
               formControlName="dateFrom"
               id="package-date-from"
+              [min]="today"
               [max]="packageForm.controls.dateTo.value || null"
               [ariaLabel]="'dateFrom' | translate"
               inputClass="rounded-2xl border px-3 py-2 pe-11"
@@ -345,7 +346,7 @@
             } @else if (
               packageForm.controls.dateTo.touched &&
               packageForm.controls.dateFrom.value &&
-              packageForm.controls.dateTo.value < packageForm.controls.dateFrom.value
+              packageForm.controls.dateTo.value <= packageForm.controls.dateFrom.value
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'bookingDateRangeInvalid' | translate }}</p>
             }
@@ -386,8 +387,24 @@
               packageForm.controls.descriptionAr.hasError('required')
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+            } @else if (packageForm.controls.descriptionAr.touched && packageForm.controls.descriptionAr.hasError('pattern')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
+        </div>
+        <div class="grid gap-4 xl:grid-cols-3">
+          <section class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4" formArrayName="highlights">
+            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'packageHighlights' | translate }}</h3><button type="button" class="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700" (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button></div>
+            <div class="space-y-2">@for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeHighlight(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noHighlightsAdded' | translate }}</p> }</div>
+          </section>
+          <section class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4" formArrayName="includes">
+            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'tourIncludes' | translate }}</h3><button type="button" class="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-700" (click)="addInclude()"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button></div>
+            <div class="space-y-2">@for (itemGroup of includesArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeInclude(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noTourIncludesAdded' | translate }}</p> }</div>
+          </section>
+          <section class="rounded-2xl border border-rose-200 bg-rose-50/40 p-4" formArrayName="excludes">
+            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'tourExcludes' | translate }}</h3><button type="button" class="rounded-full border border-rose-300 bg-white px-3 py-1 text-xs font-semibold text-rose-700" (click)="addExclude()"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button></div>
+            <div class="space-y-2">@for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeExclude(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noTourExcludesAdded' | translate }}</p> }</div>
+          </section>
         </div>
         <div class="rounded-2xl border bg-slate-50 p-4" formArrayName="cancellationPolicies">
           <label class="flex items-center gap-2 text-sm font-medium"

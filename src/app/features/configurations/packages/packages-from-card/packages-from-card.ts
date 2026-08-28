@@ -53,6 +53,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
+  readonly today = this.localDate(new Date());
+  readonly tomorrow = this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
   readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
     const hours = Math.floor(index / 4).toString().padStart(2, '0');
     const minutes = ((index % 4) * 15).toString().padStart(2, '0');
@@ -124,6 +126,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return this.packageForm.controls.cancellationPolicies;
   }
 
+  get highlightsArray(): FormArray<FormGroup> { return this.packageForm.controls.highlights; }
+  get includesArray(): FormArray<FormGroup> { return this.packageForm.controls.includes; }
+  get excludesArray(): FormArray<FormGroup> { return this.packageForm.controls.excludes; }
+
   get screenLoaderVisible(): boolean { return this.isSaving || this.deletingImageIndex !== null; }
   get screenLoaderMessage(): string {
     return this.deletingImageIndex !== null ? 'deletingPackageImage' : (this.apiLoadingMessage || 'pleaseWaitForRequest');
@@ -141,15 +147,16 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.pricePerPerson,
       controls.pricePerChild,
       controls.maxCapacity,
-      controls.dateFrom,
-      controls.dateTo,
       controls.destinationIds,
+      controls.highlights,
+      controls.includes,
+      controls.excludes,
     ];
     const cancellationPolicyMissing = !controls.isFreeCancelation.value
       && !this.cancellationPoliciesArray.getRawValue().some((item: any) => String(item?.value ?? '').trim());
     const dateRangeInvalid = !!controls.dateFrom.value
       && !!controls.dateTo.value
-      && controls.dateTo.value < controls.dateFrom.value;
+      && controls.dateTo.value <= controls.dateFrom.value;
     return requiredControls.some((control) => control.invalid)
       || cancellationPolicyMissing
       || dateRangeInvalid;
@@ -449,6 +456,12 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   removeItineraryStep(collection: TourItineraryItem[], index: number): void { if (!this.itineraryDraft) collection.splice(index, 1); }
   addCancellationPolicy(): void { this.cancellationPoliciesArray.push(this.createListItemGroup()); }
   removeCancellationPolicy(index: number): void { this.cancellationPoliciesArray.removeAt(index); }
+  addHighlight(): void { this.highlightsArray.push(this.createLocalizedListItemGroup()); }
+  removeHighlight(index: number): void { this.highlightsArray.removeAt(index); }
+  addInclude(): void { this.includesArray.push(this.createLocalizedListItemGroup()); }
+  removeInclude(index: number): void { this.includesArray.removeAt(index); }
+  addExclude(): void { this.excludesArray.push(this.createLocalizedListItemGroup()); }
+  removeExclude(index: number): void { this.excludesArray.removeAt(index); }
   cancelEdit(): void { this.resetForm(true); }
 
   getImageUrl(url: string): string {
@@ -461,7 +474,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
-      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       durationHours: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(23)] }),
       pricePerPerson: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0.01)] }),
@@ -469,12 +482,15 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
-      dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      dateTo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      dateFrom: new FormControl(this.today, { nonNullable: true }),
+      dateTo: new FormControl(this.tomorrow, { nonNullable: true }),
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
       itinerary: new FormControl<TourItineraryItem[]>([], { nonNullable: true }),
       cancellationPolicies: new FormArray<FormGroup>([]),
+      highlights: new FormArray<FormGroup>([]),
+      includes: new FormArray<FormGroup>([]),
+      excludes: new FormArray<FormGroup>([]),
     });
   }
 
@@ -482,6 +498,14 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
       value: new FormControl(String(item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
+    });
+  }
+
+  private createLocalizedListItemGroup(item: any = {}): FormGroup {
+    return new FormGroup({
+      id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
+      valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
+      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
     });
   }
 
@@ -498,15 +522,34 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       .filter((item) => !!item.Value);
   }
 
+  private toLocalizedListPayload(items: any[]): { Id: number; ValueEng: string; ValueAr: string }[] {
+    return (Array.isArray(items) ? items : [])
+      .map((item) => ({ Id: Number(item?.id) || 0, ValueEng: String(item?.valueEng ?? '').trim(), ValueAr: String(item?.valueAr ?? '').trim() }))
+      .filter((item) => !!item.ValueEng && !!item.ValueAr);
+  }
+
+  private setLocalizedListItems(collection: FormArray<FormGroup>, values: any[]): void {
+    collection.clear();
+    (Array.isArray(values) ? values : []).forEach((item) =>
+      collection.push(this.createLocalizedListItemGroup(typeof item === 'string' ? { valueEng: item, valueAr: item } : item)),
+    );
+  }
+
   private validateDetailsStep(): boolean {
     const names = ['nameEng', 'nameAr', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
     names.forEach((name) => this.packageForm.controls[name].markAsTouched());
     this.cancellationPoliciesArray.markAllAsTouched();
+    this.highlightsArray.markAllAsTouched();
+    this.includesArray.markAllAsTouched();
+    this.excludesArray.markAllAsTouched();
     const values = this.packageForm.getRawValue();
     if (values.dateFrom && values.dateTo && values.dateTo < values.dateFrom) {
       this.packageForm.controls.dateTo.setErrors({ dateRange: true });
     }
-    return names.every((name) => this.packageForm.controls[name].valid);
+    return names.every((name) => this.packageForm.controls[name].valid)
+      && this.highlightsArray.valid
+      && this.includesArray.valid
+      && this.excludesArray.valid;
   }
 
   private buildDetailsPayload(id: number | null): any {
@@ -519,6 +562,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       PricePerPerson: Number(value.pricePerPerson), PricePerChild: Number(value.pricePerChild),
       MaxCapacity: Number(value.maxCapacity),
       CancellationPolicies: this.toListPayload(value.cancellationPolicies),
+      Highlights: this.toLocalizedListPayload(value.highlights),
+      Includes: this.toLocalizedListPayload(value.includes),
+      Excludes: this.toLocalizedListPayload(value.excludes),
       CancellationPolicy: this.toListPayload(value.cancellationPolicies)[0]?.Value ?? '',
       IsFreeCancelation: value.isFreeCancelation,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
@@ -563,8 +609,12 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       images: this.imageUploads.map((image) => image.url),
       itinerary: (Array.isArray(item?.itinerary) ? item.itinerary : []).map((step: any) => readTourItinerary(step)),
       cancellationPolicies: [],
+      highlights: [], includes: [], excludes: [],
     } as any);
     this.setCancellationPolicies(item?.cancellationPolicies ?? (item?.cancellationPolicy ? [{ value: item.cancellationPolicy }] : []));
+    this.setLocalizedListItems(this.highlightsArray, item?.highlights ?? []);
+    this.setLocalizedListItems(this.includesArray, item?.includes ?? []);
+    this.setLocalizedListItems(this.excludesArray, item?.excludes ?? []);
     this.activeStep = 1;
     this.completedStep = 0;
   }
@@ -576,8 +626,11 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.errorMessage = ''; this.successMessage = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
-      dateFrom: '', dateTo: '', destinationIds: [], images: [], itinerary: [] });
+      dateFrom: this.today, dateTo: this.tomorrow, destinationIds: [], images: [], itinerary: [] });
     this.setCancellationPolicies([]);
+    this.setLocalizedListItems(this.highlightsArray, []);
+    this.setLocalizedListItems(this.includesArray, []);
+    this.setLocalizedListItems(this.excludesArray, []);
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -594,6 +647,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private extractPackageId(response: any): number | null { const data = response?.data ?? response?.result ?? response; return this.toOptionalId(data?.id ?? data?.packageId ?? data?.data?.id ?? data?.data?.packageId ?? data); }
   private toOptionalId(value: unknown): number | null { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }
   private toDateInput(value: unknown): string { const text = String(value ?? ''); return /^\d{4}-\d{2}-\d{2}/.test(text) ? text.slice(0, 10) : ''; }
+  private localDate(value: Date): string { return `${value.getFullYear().toString().padStart(4, '0')}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${value.getDate().toString().padStart(2, '0')}`; }
   private resolveImageUrl(image: any): string { return this.getImageUrl(String(typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? ''))); }
   private revokeNewImageUrls(): void { this.imageUploads.filter((image) => image.file).forEach((image) => URL.revokeObjectURL(image.url)); }
 }

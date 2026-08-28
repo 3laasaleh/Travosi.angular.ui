@@ -112,6 +112,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
   private itineraryClientSequence = 0;
   private citiesRequestSequence = 0;
+  readonly today = this.localDate(new Date());
 
   constructor(
     private adminService: AdminService,
@@ -210,8 +211,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.maxSeats,
       this.tourForm.controls.durationDays,
       this.tourForm.controls.durationHours,
-      this.tourForm.controls.startDate,
-      this.tourForm.controls.endDate,
       this.tourForm.controls.highlights,
       this.tourForm.controls.includes,
       this.tourForm.controls.excludes,
@@ -572,7 +571,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   addHighlight(): void {
-    this.highlightsArray.push(this.createListItemGroup());
+    this.highlightsArray.push(this.createLocalizedListItemGroup());
   }
 
   removeHighlight(index: number): void {
@@ -580,7 +579,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   addInclude(): void {
-    this.includesArray.push(this.createListItemGroup());
+    this.includesArray.push(this.createLocalizedListItemGroup());
   }
 
   removeInclude(index: number): void {
@@ -588,7 +587,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   addExclude(): void {
-    this.excludesArray.push(this.createListItemGroup());
+    this.excludesArray.push(this.createLocalizedListItemGroup());
   }
 
   removeExclude(index: number): void {
@@ -946,8 +945,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       durationDays: 1,
       durationHours: 0,
       maxSeats: 1,
-      startDate: '',
-      endDate: '',
+      startDate: this.today,
+      endDate: this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000)),
       images: [],
       isFreeCancelation: false,
       isNileCruise: false,
@@ -991,7 +990,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         descriptionAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(4000)],
+          validators: [Validators.required, Validators.maxLength(4000), Validators.pattern(/^[\u0600-\u06FF][\u0600-\u06FF\s'"-]*$/)],
         }),
         fullDescriptionEng: new FormControl('', {
           nonNullable: true,
@@ -999,7 +998,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         fullDescriptionAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.maxLength(8000)],
+          validators: [Validators.maxLength(8000), Validators.pattern(/^(?:[\u0600-\u06FF][\u0600-\u06FF\s'"-]*)?$/)],
         }),
  
         pricePerPerson: new FormControl(0, {
@@ -1026,8 +1025,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.required, Validators.min(1)],
         }),
-        startDate: new FormControl('', { nonNullable: true }),
-        endDate: new FormControl('', { nonNullable: true }),
+        startDate: new FormControl(this.today, { nonNullable: true }),
+        endDate: new FormControl(this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000)), { nonNullable: true }),
         images: new FormControl<string[]>([], {
           nonNullable: true,
           validators: [Validators.required],
@@ -1050,6 +1049,20 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
       value: new FormControl(String(item?.value ?? item?.text ?? item?.title ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    });
+  }
+
+  private createLocalizedListItemGroup(item: any = {}): FormGroup {
+    return new FormGroup({
+      id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
+      valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), {
         nonNullable: true,
         validators: [Validators.required],
       }),
@@ -1096,15 +1109,15 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private setHighlights(highlights: any[]): void {
-    this.setListItems(this.highlightsArray, highlights);
+    this.setLocalizedListItems(this.highlightsArray, highlights);
   }
 
   private setIncludes(includes: any[]): void {
-    this.setListItems(this.includesArray, includes);
+    this.setLocalizedListItems(this.includesArray, includes);
   }
 
   private setExcludes(excludes: any[]): void {
-    this.setListItems(this.excludesArray, excludes);
+    this.setLocalizedListItems(this.excludesArray, excludes);
   }
 
   private setCancellationPolicies(policies: any[]): void {
@@ -1116,6 +1129,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const items = Array.isArray(values) ? values : [];
     items.forEach((item) =>
       collection.push(this.createListItemGroup(typeof item === 'string' ? { value: item } : item)),
+    );
+  }
+
+  private setLocalizedListItems(collection: FormArray<FormGroup>, values: any[]): void {
+    collection.clear();
+    const items = Array.isArray(values) ? values : [];
+    items.forEach((item) =>
+      collection.push(this.createLocalizedListItemGroup(typeof item === 'string' ? { valueAr: item, valueEng: item } : item)),
     );
   }
 
@@ -1152,8 +1173,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.maxSeats,
       this.tourForm.controls.durationDays,
       this.tourForm.controls.durationHours,
-      this.tourForm.controls.startDate,
-      this.tourForm.controls.endDate,
       this.tourForm.controls.highlights,
       this.tourForm.controls.includes,
       this.tourForm.controls.excludes,
@@ -1192,20 +1211,27 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       IsFreeCancelation: form.isFreeCancelation,
       IsNileCruise: form.isNileCruise,
       IsOneDayTour: form.isOneDayTour,
-      Highlights: this.toListPayload(form.highlights),
-      Includes: this.toListPayload(form.includes),
-      Excludes: this.toListPayload(form.excludes),
+      Highlights: this.toLocalizedListPayload(form.highlights),
+      Includes: this.toLocalizedListPayload(form.includes),
+      Excludes: this.toLocalizedListPayload(form.excludes),
       CancellationPolicies: this.toListPayload(form.cancellationPolicies),
       IsActive: false,
     };
   }
 
-  private toListPayload(items: any[]): { Id: number; Value: string }[] {
+  private toLocalizedListPayload(items: any[]): { Id: number; ValueEng: string; ValueAr: string }[] {
     return items
       .map((item) => ({
         Id: Number(item?.id) || 0,
-        Value: String(item?.value ?? '').trim(),
+        ValueEng: String(item?.valueEng ?? '').trim(),
+        ValueAr: String(item?.valueAr ?? '').trim(),
       }))
+      .filter((item) => !!item.ValueEng && !!item.ValueAr);
+  }
+
+  private toListPayload(items: any[]): { Id: number; Value: string }[] {
+    return items
+      .map((item) => ({ Id: Number(item?.id) || 0, Value: String(item?.value ?? '').trim() }))
       .filter((item) => !!item.Value);
   }
 
@@ -1372,7 +1398,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const startDate = control.get('startDate')?.value;
     const endDate = control.get('endDate')?.value;
     if (!startDate || !endDate) return null;
-    return new Date(endDate).getTime() >= new Date(startDate).getTime()
+    return new Date(endDate).getTime() > new Date(startDate).getTime()
       ? null
       : { invalidDateRange: true };
   }
@@ -1441,6 +1467,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (Number.isNaN(date.getTime())) return '';
     const offset = date.getTimezoneOffset() * 60_000;
     return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+  }
+
+  private localDate(value: Date): string {
+    return `${value.getFullYear().toString().padStart(4, '0')}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${value.getDate().toString().padStart(2, '0')}`;
   }
 
   private toOptionalId(value: unknown): number | null {

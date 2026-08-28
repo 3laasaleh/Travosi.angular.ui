@@ -230,7 +230,9 @@ export class HomePackagePage implements OnInit {
   itemText(item: any): string {
     return typeof item === 'string'
       ? item
-      : (item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
+      : this.translate.currentLang()?.toLowerCase().startsWith('ar')
+        ? (item?.valueAr ?? item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? item?.name ?? '')
+        : (item?.valueEng ?? item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
   }
 
   tourTitle(tour: any): string {

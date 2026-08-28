@@ -285,7 +285,7 @@
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label>
             <div class="group relative">
               <app-date-picker formControlName="startDate" id="tour-start-date"
-                [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
+                [min]="today" [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
                 inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
             </div>
           </div>
@@ -315,6 +315,9 @@
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
             }
+            @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('pattern')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+            }
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{
@@ -326,6 +329,8 @@
             tourForm.controls.descriptionAr.hasError('required')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+            } @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('pattern')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
           <div>
@@ -333,12 +338,18 @@
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
               formControlName="fullDescriptionEng" rows="4" maxlength="8000"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
+            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('pattern')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+            }
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'arabicFullDescription' | translate }}
               <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
               formControlName="fullDescriptionAr" rows="4" maxlength="8000" dir="rtl"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
+            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('pattern')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+            }
           </div>
 
         </div>
@@ -362,8 +373,10 @@
           <div class="space-y-2">
             @for (itemGroup of includesArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="flex items-center gap-2">
-                <input formControlName="value" type="text" [placeholder]="'includeValuePlaceholder' | translate"
+              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
+                  class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" />
+                <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
                   class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><button
                   type="button"
                   class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
@@ -371,7 +384,7 @@
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
@@ -400,15 +413,17 @@
           <div class="space-y-2">
             @for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="flex items-center gap-2">
-                <input formControlName="value" type="text" [placeholder]="'excludeValuePlaceholder' | translate"
+              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
+                  class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" />
+                <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
                   class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><button type="button"
                   class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-100"
                   (click)="removeExclude(index)" [attr.aria-label]="'remove' | translate">
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
@@ -440,15 +455,17 @@
           <div class="space-y-2">
             @for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="flex items-center gap-2">
-                <input formControlName="value" type="text" [placeholder]="'highlightPlaceholder' | translate"
+              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
+                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
+                <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
                   class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button"
                   class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
                   (click)="removeHighlight(index)" [attr.aria-label]="'remove' | translate">
                   <i class="mdi mdi-close"></i>
                 </button>
               </div>
-              @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) {
+              @if ((itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) || (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid)) {
               <p class="mt-1 text-xs text-red-600">{{ 'listValueRequired' | translate }}</p>
               }
             </div>
