@@ -20,6 +20,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { formatHomePrice } from '../home-price.util';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-package-page',
@@ -44,6 +45,7 @@ export class HomePackagePage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly seo = inject(SeoService);
 
   travelPackage: any = null;
   isLoading = true;
@@ -52,39 +54,11 @@ export class HomePackagePage implements OnInit {
   imageViewerOpen = false;
 
   get title(): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (this.travelPackage?.nameAr ??
-          this.travelPackage?.titleAr ??
-          this.travelPackage?.nameEng ??
-          this.travelPackage?.titleEng ??
-          this.travelPackage?.name ??
-          this.travelPackage?.title ??
-          '')
-      : (this.travelPackage?.nameEng ??
-          this.travelPackage?.titleEng ??
-          this.travelPackage?.name ??
-          this.travelPackage?.title ??
-          this.travelPackage?.nameAr ??
-          this.travelPackage?.titleAr ??
-          '');
+    return this.travelPackage?.name ?? '';
   }
 
   get description(): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (this.travelPackage?.descriptionAr ??
-          this.travelPackage?.fullDescriptionAr ??
-          this.travelPackage?.description ??
-          this.travelPackage?.fullDescription ??
-          this.travelPackage?.subDescription ??
-          '')
-      : (this.travelPackage?.descriptionEng ??
-          this.travelPackage?.fullDescriptionEng ??
-          this.travelPackage?.fullDescription ??
-          this.travelPackage?.description ??
-          this.travelPackage?.subDescription ??
-          '');
+    return this.travelPackage?.description ?? '';
   }
 
   get images(): any[] {
@@ -229,6 +203,10 @@ export class HomePackagePage implements OnInit {
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
+  imageAlt(source: any, fallback = this.title): string {
+    return this.seo.imageAlt(source, fallback);
+  }
+
   itemText(item: any): string {
     return typeof item === 'string'
       ? item
@@ -281,23 +259,7 @@ export class HomePackagePage implements OnInit {
   }
 
   private updateSeo(packageId: number): void {
-    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    const title = arabic
-      ? this.travelPackage?.nameAr || this.title
-      : this.travelPackage?.nameEng || this.title;
-    const description = arabic
-      ? 
-        this.travelPackage?.descriptionAr ||
-        
-        this.description
-      :
-        this.travelPackage?.descriptionEng ||
-        this.description;
-    const price = Number(
-      this.travelPackage?.discountedPricePerPerson ??
-        this.travelPackage?.pricePerPerson ??
-        this.travelPackage?.price,
-    );
+    this.seo.updateFrom(this.travelPackage, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
   }
 
   private packageRequest(packageId: number): Observable<any> {

@@ -45,7 +45,7 @@
             <div class="relative overflow-hidden rounded-3xl bg-slate-100 shadow-sm ">
               <img
                 [src]="imageUrl(images[selectedImageIndex])"
-                [alt]="destinationTitle()"
+                [alt]="imageAlt(images[selectedImageIndex])"
                 class="aspect-[16/10] max-h-[620px] w-full cursor-zoom-in object-cover transition-opacity duration-300"
                 (click)="openImageViewer()"
               />
@@ -96,7 +96,7 @@
                   >
                     <img
                       [src]="imageUrl(image)"
-                      [alt]="destinationTitle()"
+                      [alt]="imageAlt(image)"
                       class="h-24 w-36 object-cover sm:h-28 sm:w-44"
                     />
                   </button>
@@ -134,7 +134,7 @@
                         <div class="relative overflow-hidden">
                           <img
                             [src]="tourImage(tour)"
-                            [alt]="tourTitle(tour)"
+                            [alt]="imageAlt(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl, tourTitle(tour))"
                             loading="lazy"
                             class="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
                           />

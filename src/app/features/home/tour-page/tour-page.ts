@@ -19,6 +19,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -33,6 +34,7 @@ export class HomeTourPage implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
+  private readonly seo = inject(SeoService);
 
   tour: any = null;
   isLoading = true;
@@ -72,17 +74,11 @@ export class HomeTourPage implements OnInit {
   }
 
   get title(): string {
-    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    return arabic
-      ? (this.tour?.titleAr || this.tour?.nameAr || this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
-      : (this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.titleAr || this.tour?.nameAr || '');
+    return this.tour?.title ?? '';
   }
 
   get destinationName(): string {
-    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    return arabic
-      ? (this.tour?.destinationNameAr || this.tour?.destination?.nameAr || this.tour?.destinationNameEng || this.tour?.destinationName || this.tour?.destination?.nameEng || '')
-      : (this.tour?.destinationNameEng || this.tour?.destinationName || this.tour?.destination?.nameEng || this.tour?.destinationNameAr || this.tour?.destination?.nameAr || '');
+    return this.tour?.destinationName ?? '';
   }
 
   ngOnInit(): void {
@@ -143,6 +139,10 @@ export class HomeTourPage implements OnInit {
     return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
   }
 
+  imageAlt(source: any, fallback = this.title): string {
+    return this.seo.imageAlt(source, fallback);
+  }
+
 
 
   private imageMatchesCover(image: any, cover: string): boolean {
@@ -180,6 +180,7 @@ export class HomeTourPage implements OnInit {
           this.errorMessage = 'tourNotFound';
           return;
         }
+        this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
       });
   }
 

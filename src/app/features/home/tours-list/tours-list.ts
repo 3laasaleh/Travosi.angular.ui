@@ -168,15 +168,11 @@ export class HomeToursList implements OnInit {
   }
 
   tourTitle(tour: any): string {
-    return this.isArabic
-      ? (tour?.titleAr || tour?.nameAr || tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || '')
-      : (tour?.titleEng || tour?.nameEng || tour?.title || tour?.name || tour?.titleAr || tour?.nameAr || '');
+    return tour?.title ?? '';
   }
 
   tourDescription(tour: any): string {
-    return this.isArabic
-      ? (tour?.descriptionAr || tour?.fullDescriptionAr || tour?.descriptionEng || tour?.fullDescriptionEng || tour?.description || tour?.fullDescription || '')
-      : (tour?.descriptionEng || tour?.fullDescriptionEng || tour?.description || tour?.fullDescription || tour?.descriptionAr || tour?.fullDescriptionAr || '');
+    return tour?.description ?? tour?.fullDescription ?? '';
   }
 
   private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }

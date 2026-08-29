@@ -9,7 +9,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -28,6 +28,8 @@ interface BlogImageUpload {
   url: string;
   name: string;
   existing: boolean;
+  altEng?: string;
+  altAr?: string;
 }
 
 type BlogContentControl = 'contentEng' | 'contentAr';
@@ -35,7 +37,7 @@ type BlogContentControl = 'contentEng' | 'contentAr';
 @Component({
   selector: 'app-blogs-form-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePicker, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
   templateUrl: './blogs-form-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -175,6 +177,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
             url: URL.createObjectURL(normalized),
             name: normalized.name,
             existing: false,
+            altEng: normalized.name,
+            altAr: normalized.name,
           });
         } catch (error) {
           this.imageValidationMessage =
@@ -258,6 +262,10 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }
 
     const value = this.form.getRawValue();
+    if (this.images.some((image) => image.file && (!image.altEng?.trim() || !image.altAr?.trim()))) {
+      this.errorMessage = 'imageAltRequired';
+      return;
+    }
     const data = new FormData();
     const blogId = this.selectedBlog?.id ?? this.selectedBlog?.Id;
     if (blogId) data.append('Id', String(blogId));
@@ -271,7 +279,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     if (value.publishedAt) data.append('PublishedAt', `${value.publishedAt}T00:00:00.000Z`);
     this.images
       .filter((image) => image.file)
-      .forEach((image) => data.append('Images', image.file!, image.file!.name));
+      .forEach((image, index) => {
+        data.append(`Images[${index}].Image`, image.file!, image.file!.name);
+        data.append(`Images[${index}].AltEng`, image.altEng!.trim());
+        data.append(`Images[${index}].AltAr`, image.altAr!.trim());
+      });
 
     this.isSaving = true;
     this.errorMessage = '';

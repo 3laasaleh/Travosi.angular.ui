@@ -34,6 +34,8 @@ interface PackageImageUpload {
   name: string;
   existing: boolean;
   uploaded: boolean;
+  altEng?: string;
+  altAr?: string;
 }
 
 type PackageFormStep = 1 | 2 | 3;
@@ -250,11 +252,16 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const pending = this.imageUploads.filter((image) => image.file && !image.uploaded);
+    if (pending.some((image) => !image.altEng?.trim() || !image.altAr?.trim())) { this.errorMessage = 'imageAltRequired'; return; }
     if (!pending.length) { this.completeImagesStep(); return; }
 
     const payload = new FormData();
     payload.append('PackageId', String(this.currentPackageId));
-    pending.forEach((image) => payload.append('Images', image.file!, image.file!.name));
+    pending.forEach((image, index) => {
+      payload.append(`Images[${index}].Image`, image.file!, image.file!.name);
+      payload.append(`Images[${index}].AltEng`, image.altEng!.trim());
+      payload.append(`Images[${index}].AltAr`, image.altAr!.trim());
+    });
     this.beginRequest('uploadingPackageImages');
     this.adminService.addPackageImages(payload).pipe(
       catchError((error) => { this.handleRequestError(error, 'packageImagesSaveError'); return of(null); }),
@@ -372,7 +379,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       }
       try {
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
-        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false });
+        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false, altEng: normalized.name, altAr: normalized.name });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }

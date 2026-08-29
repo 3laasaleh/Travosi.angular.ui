@@ -22,6 +22,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { formatHomePrice } from '../home-price.util';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -44,6 +45,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
+  private readonly seo = inject(SeoService);
 
   destination: any = null;
   tours: any[] = [];
@@ -73,9 +75,9 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationTitle(): string {
-    return this.isArabic
-      ? this.destination?.nameAr || this.destination?.nameEng || this.destination?.name || ''
-      : this.destination?.nameEng || this.destination?.name || this.destination?.nameAr || '';
+    return this.destination?.name ?? (this.isArabic
+      ? this.destination?.nameAr || this.destination?.nameEng || ''
+      : this.destination?.nameEng || this.destination?.nameAr || '');
   }
 
   destinationShortDescription(): string {
@@ -92,15 +94,13 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationDescription(): string {
-    return this.isArabic
+    return this.destination?.description ?? (this.isArabic
       ? this.destination?.descriptionAr ||
           this.destination?.descriptionEng ||
-          this.destination?.description ||
           ''
       : this.destination?.descriptionEng ||
-          this.destination?.description ||
           this.destination?.descriptionAr ||
-          '';
+          '');
   }
 
   ngOnInit(): void {
@@ -145,6 +145,10 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   destinationImage(): string {
     return this.imageUrl(this.images[0]);
+  }
+
+  imageAlt(source: any, fallback = this.destinationTitle()): string {
+    return this.seo.imageAlt(source, fallback);
   }
 
   selectImage(index: number): void {
@@ -276,21 +280,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateSeo(destinationId: number): void {
-    const arabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    const title = arabic
-      ? this.destination?.nameAr || this.destination?.nameEng || ''
-      : this.destination?.nameEng || this.destination?.nameAr || '';
-    const description = arabic
-      ?
-        this.destination?.descriptionAr ||
-        this.destination?.descriptionEng ||
-        this.destination?.description ||
-        ''
-      : 
-        this.destination?.descriptionEng ||
-        this.destination?.descriptionAr ||
-        this.destination?.description ||
-        '';
+    this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Place' });
   }
 
   private initializeTourCarousel(): void {

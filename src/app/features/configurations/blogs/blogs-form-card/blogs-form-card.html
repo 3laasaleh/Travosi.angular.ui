@@ -152,6 +152,10 @@
                 [alt]="image.name"
                 class="aspect-[3/2] w-full object-cover"
               />
+              <div class="absolute inset-x-1 bottom-1 grid gap-1 rounded-lg bg-white/95 p-1.5 shadow">
+                <input [(ngModel)]="image.altEng" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="English alt text" />
+                <input [(ngModel)]="image.altAr" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="Arabic alt text" />
+              </div>
               <button
                 type="button"
                 class="absolute end-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"

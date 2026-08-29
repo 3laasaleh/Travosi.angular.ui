@@ -177,17 +177,11 @@ export class HomePackagesList implements OnInit {
   }
 
   packageTitle(item: any): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
-      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+    return item?.name ?? '';
   }
 
   packageDescription(item: any): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (item?.descriptionAr ?? item?.subDescriptionAr ?? item?.description ?? item?.subDescription ?? '')
-      : (item?.descriptionEng ?? item?.subDescriptionEng ?? item?.description ?? item?.subDescription ?? '');
+    return item?.description ?? '';
   }
 
   destinationName(item: any): string {

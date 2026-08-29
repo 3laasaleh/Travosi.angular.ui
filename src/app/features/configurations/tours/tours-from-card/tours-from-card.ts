@@ -16,6 +16,7 @@ import {
   FormArray,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -46,6 +47,8 @@ interface TourImageUpload {
   existing: boolean;
   uploaded: boolean;
   isCover: boolean;
+  altEng?: string;
+  altAr?: string;
 }
 
 type TourFormStep = 1 | 2 | 3;
@@ -53,7 +56,7 @@ type TourFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -412,6 +415,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const pendingImages = this.imageUploads.filter((image) => image.file && !image.uploaded);
+    if (pendingImages.some((image) => !image.altEng?.trim() || !image.altAr?.trim())) {
+      this.errorMessage = 'imageAltRequired';
+      return;
+    }
     if (!pendingImages.length) {
       this.showApiToast('success', 'tourImagesAlreadySaved');
       this.completeImagesStep();
@@ -422,7 +429,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     payload.append('TourId', String(this.currentTourId));
     const coverImageIndex = pendingImages.findIndex((image) => image.isCover);
     if (coverImageIndex >= 0) payload.append('CoverImageIndex', String(coverImageIndex));
-    pendingImages.forEach((image) => payload.append('Images', image.file!, image.file!.name));
+    pendingImages.forEach((image, index) => {
+      payload.append(`Images[${index}].Image`, image.file!, image.file!.name);
+      payload.append(`Images[${index}].AltEng`, image.altEng!.trim());
+      payload.append(`Images[${index}].AltAr`, image.altAr!.trim());
+    });
 
     this.isSaving = true;
     this.apiLoadingMessage = 'uploadingTourImages';
@@ -710,6 +721,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           existing: false,
           uploaded: false,
           isCover: this.imageUploads.length === 0,
+          altEng: normalized.name,
+          altAr: normalized.name,
         });
       } catch (error) {
         this.imageValidationMessage =

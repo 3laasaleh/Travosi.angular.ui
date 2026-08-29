@@ -10,7 +10,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 
@@ -29,6 +29,8 @@ interface DestinationImageUpload {
   url: string;
   name: string;
   existing: boolean;
+  altEng?: string;
+  altAr?: string;
 }
 interface DestinationImageDto {
   id: number;
@@ -50,7 +52,7 @@ export interface DestinationDTO {
 @Component({
   selector: 'app-destinations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
   templateUrl: './destinations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -98,6 +100,10 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       return;
     }
     const form = this.destinationForm.getRawValue();
+    if (this.imageUploads.some((image) => image.file && (!image.altEng?.trim() || !image.altAr?.trim()))) {
+      this.errorMessage = 'imageAltRequired';
+      return;
+    }
     const payload = new FormData();
     if (this.selectedDestination?.id) payload.append('Id', this.selectedDestination?.id.toString());
 
@@ -111,7 +117,11 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     payload.append('IsActive', String(form.isActive));
     this.imageUploads
       .filter((image) => image.file)
-      .forEach((image) => payload.append('Images', image.file!, image.file!.name));
+      .forEach((image, index) => {
+        payload.append(`Images[${index}].Image`, image.file!, image.file!.name);
+        payload.append(`Images[${index}].AltEng`, image.altEng!.trim());
+        payload.append(`Images[${index}].AltAr`, image.altAr!.trim());
+      });
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
@@ -171,6 +181,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           url: URL.createObjectURL(normalized),
           name: normalized.name,
           existing: false,
+          altEng: normalized.name,
+          altAr: normalized.name,
         });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError

@@ -16,6 +16,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { formatHomePrice } from '../home-price.util';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-city-page',
@@ -31,6 +32,7 @@ export class CityPage implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
+  private readonly seo = inject(SeoService);
   destinationId = 0;
   city: any = null;
   destination: any = null;
@@ -56,14 +58,14 @@ export class CityPage implements OnInit {
   }
 
   cityName(): string {
-    return this.isArabic
+    return this.city?.name ?? (this.isArabic
       ? (this.city?.nameAr ?? this.city?.nameEng ?? '')
-      : (this.city?.nameEng ?? this.city?.nameAr ?? '');
+      : (this.city?.nameEng ?? this.city?.nameAr ?? ''));
   }
   cityDescription(): string {
-    return this.isArabic
+    return this.city?.description ?? (this.isArabic
       ? this.city?.descriptionAr || this.city?.descriptionEng || ''
-      : this.city?.descriptionEng || this.city?.descriptionAr || '';
+      : this.city?.descriptionEng || this.city?.descriptionAr || '');
   }
   destinationName(): string {
     return this.isArabic
@@ -90,10 +92,14 @@ export class CityPage implements OnInit {
   tourImage(tour: any): string {
     return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl);
   }
+  tourImageAlt(tour: any): string {
+    const image = tour?.images?.[0];
+    return this.seo.imageAlt(image, this.tourTitle(tour));
+  }
   tourTitle(tour: any): string {
-    return this.isArabic
+    return tour?.title ?? (this.isArabic
       ? (tour?.titleAr ?? tour?.titleEng ?? '')
-      : (tour?.titleEng ?? tour?.titleAr ?? '');
+      : (tour?.titleEng ?? tour?.titleAr ?? ''));
   }
   formattedTourPrice(tour: any): string {
     return formatHomePrice(
@@ -157,21 +163,8 @@ export class CityPage implements OnInit {
       });
   }
   private updateSeo(destinationId: number, cityId: number): void {
-    const title = this.isArabic
-      ? 
-        this.city?.nameAr ||
-        this.city?.nameEng ||
-        ''
-      : 
-        this.city?.nameEng ||
-        this.city?.nameAr ||
-        '';
-    const description = this.isArabic
-      ? 
-        this.city?.descriptionAr ||
-        this.city?.descriptionEng ||'': this.city?.descriptionEng ||
-        this.city?.descriptionAr ||'';
-
+    const image = this.destination?.coverImageUrl ?? this.destination?.imageUrl ?? this.destination?.images?.[0];
+    this.seo.updateFrom(this.city, { image, imageUrl: this.cityImage(), schemaType: 'City' });
   }
   private entity(response: any, key: string): any {
     const data = response?.data ?? response;

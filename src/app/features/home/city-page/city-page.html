@@ -29,7 +29,7 @@
         <p class="text-sm font-semibold">{{ 'moreDestinationTours' | translate }}</p>@for (tour of recommendedTours;
         track tour.id) { <a [routerLink]="['/tours', tour.id]"
           class="flex gap-3 rounded-xl p-1 transition hover:bg-slate-50"><img [src]="tourImage(tour)"
-            [alt]="tourTitle(tour)" class="h-14 w-16 rounded-lg object-cover" /><span class="min-w-0"><span
+            [alt]="tourImageAlt(tour)" class="h-14 w-16 rounded-lg object-cover" /><span class="min-w-0"><span
               class="line-clamp-2 text-sm font-semibold hover:text-primary">{{ tourTitle(tour) }}</span><span
               class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}</span></span></a> }
       </div> }
@@ -44,7 +44,7 @@
       <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">@for (tour of tours; track tour.id) { <a
           [routerLink]="['/tours', tour.id]"
           class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"><img
-            [src]="tourImage(tour)" [alt]="tourTitle(tour)"
+            [src]="tourImage(tour)" [alt]="tourImageAlt(tour)"
             class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
           <div class="p-4">
             <h3 class="line-clamp-2 font-semibold group-hover:text-primary">{{ tourTitle(tour) }}</h3>
