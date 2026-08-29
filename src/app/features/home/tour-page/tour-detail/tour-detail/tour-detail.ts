@@ -29,7 +29,7 @@ export class TourDetail {
   get destinationName(): string {
     return (
       this.tour?.destinationName ??
-      this.tour?.destination?.nameEng ??
+      this.tour?.destination?.titleEng ??
       this.tour?.destination?.name ??
       ''
     );

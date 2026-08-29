@@ -66,8 +66,8 @@ export class DestinationsSection implements OnInit {
   destinationName(destination: any): string {
     const isArabic = this.languageService.getCurrentLanguage() === 'ar';
     return isArabic
-      ? destination?.nameAr ?? destination?.nameEng ?? destination?.name ?? ''
-      : destination?.nameEng ?? destination?.name ?? destination?.nameAr ?? '';
+      ? destination?.titleAr ?? destination?.titleEng ?? destination?.title ?? ''
+      : destination?.titleEng ?? destination?.title ?? destination?.titleAr ?? '';
   }
 
   destinationDescription(destination: any): string {

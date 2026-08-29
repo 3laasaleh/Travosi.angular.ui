@@ -78,8 +78,8 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   destinationTitle(): string {
     return this.destination?.name ?? (this.isArabic
-      ? this.destination?.nameAr || this.destination?.nameEng || ''
-      : this.destination?.nameEng || this.destination?.nameAr || '');
+      ? this.destination?.titleAr || this.destination?.titleEng || ''
+      : this.destination?.titleEng || this.destination?.titleAr || '');
   }
 
   destinationShortDescription(): string {
@@ -222,8 +222,8 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   tourDestinationName(tour: any): string {
     return (
       tour?.destinationName ??
-      tour?.destination?.nameEng ??
-      this.destination?.nameEng ??
+      tour?.destination?.titleEng ??
+      this.destination?.titleEng ??
       this.destination?.name ??
       ''
     );

@@ -39,7 +39,7 @@ export class DestinationsMenu {
   activeCityId: number | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  destinationName(item: any): string { return this.isArabic ? item?.nameAr ?? item?.nameEng ?? '' : item?.nameEng ?? item?.nameAr ?? ''; }
+  destinationName(item: any): string { return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? ''; }
   cityName(item: any): string { return this.destinationName(item); }
   cities(destination: any): any[] { return destination?.cities ?? []; }
   tours(city: any): any[] { return city?.tours ?? []; }

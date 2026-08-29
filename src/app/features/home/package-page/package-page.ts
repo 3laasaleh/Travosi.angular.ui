@@ -115,7 +115,7 @@ export class HomePackagePage implements OnInit {
   get destinationName(): string {
     return (
       this.travelPackage?.destinationName ??
-      this.travelPackage?.destination?.nameEng ??
+      this.travelPackage?.destination?.titleEng ??
       this.travelPackage?.destination?.name ??
       this.travelPackage?.destinations?.[0]?.destinationName ??
       ''

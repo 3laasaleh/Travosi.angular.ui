@@ -178,7 +178,7 @@ export class HomeToursList implements OnInit {
   private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   destinationName(tour: any): string {
-    return tour?.destinationName ?? tour?.destination?.nameEng ?? tour?.destination?.name ?? '';
+    return tour?.destinationName ?? tour?.destination?.titleEng ?? tour?.destination?.title ?? '';
   }
 
   durationDays(tour: any): number | null {

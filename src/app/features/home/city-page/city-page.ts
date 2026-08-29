@@ -54,8 +54,8 @@ export class CityPage implements OnInit {
 
   cityName(): string {
     return this.city?.name ?? (this.isArabic
-      ? (this.city?.nameAr ?? this.city?.nameEng ?? '')
-      : (this.city?.nameEng ?? this.city?.nameAr ?? ''));
+      ? (this.city?.titleAr ?? this.city?.titleEng ?? '')
+      : (this.city?.titleEng ?? this.city?.titleAr ?? ''));
   }
   cityDescription(): string {
     return this.city?.description ?? (this.isArabic
@@ -64,8 +64,8 @@ export class CityPage implements OnInit {
   }
   destinationName(): string {
     return this.isArabic
-      ? (this.destination?.nameAr ?? this.destination?.nameEng ?? '')
-      : (this.destination?.nameEng ?? this.destination?.nameAr ?? '');
+      ? (this.destination?.titleAr ?? this.destination?.titleEng ?? '')
+      : (this.destination?.titleEng ?? this.destination?.titleAr ?? '');
   }
   cityImage(): string {
     return this.imageUrl(

@@ -26,7 +26,7 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
   ngOnDestroy(): void { this.swiper?.destroy(true, true); }
 
   get selector(): string { return `#${this.instanceId}`; }
-  cityName(city: any): string { return this.isArabic ? city?.nameAr ?? city?.nameEng ?? city?.name ?? '' : city?.nameEng ?? city?.nameAr ?? city?.name ?? ''; }
+  cityName(city: any): string { return this.isArabic ? city?.titleAr ?? city?.titleEng ?? city?.title ?? '' : city?.titleEng ?? city?.titleAr ?? city?.title ?? ''; }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
   cityImage(city: any): string {
     const raw = city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? city?.images?.[0]?.url ?? '';
