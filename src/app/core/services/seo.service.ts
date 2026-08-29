@@ -11,6 +11,19 @@ export interface SeoPageOptions {
   schemaType?: 'WebPage' | 'TouristTrip' | 'Place' | 'City' | 'BlogPosting';
 }
 
+export interface LocalizedSeoPage {
+  titleEn?: string | null;
+  titleAr?: string | null;
+  descriptionEn?: string | null;
+  descriptionAr?: string | null;
+  slug?: string | null;
+  section?: 'tours' | 'packages' | 'destinations' | 'cities' | 'blogs';
+  currentLang?: 'en' | 'ar';
+  imageUrl?: string;
+  imageAlt?: string;
+  schemaType?: SeoPageOptions['schemaType'];
+}
+
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly titleService = inject(Title);
@@ -20,38 +33,43 @@ export class SeoService {
 
   /** Uses the active language and the standard bilingual API fields for a public page. */
   updateFrom(entity: any, options: SeoPageOptions = {}): void {
-    const title = this.localized(
-      entity?.titleEng ?? entity?.TitleEng,
-      entity?.titleAr ?? entity?.TitleAr,
-      entity?.title ?? entity?.Title ?? entity?.nameEng ?? entity?.NameEng ?? entity?.name ?? entity?.Name ?? options.fallbackTitle,
-    );
-    const description = this.localized(
-      entity?.descriptionEng ?? entity?.DescriptionEng ?? entity?.fullDescriptionEng ?? entity?.FullDescriptionEng ?? entity?.summaryEng ?? entity?.SummaryEng ?? entity?.contentEng ?? entity?.ContentEng,
-      entity?.descriptionAr ?? entity?.DescriptionAr ?? entity?.fullDescriptionAr ?? entity?.FullDescriptionAr ?? entity?.summaryAr ?? entity?.SummaryAr ?? entity?.contentAr ?? entity?.ContentAr,
-      entity?.description ?? entity?.Description ?? entity?.fullDescription ?? entity?.FullDescription ?? entity?.summary ?? entity?.Summary ?? entity?.content ?? entity?.Content ?? options.fallbackDescription,
-    );
     const image = options.image ?? entity?.coverImage ?? entity?.coverImageUrl ?? entity?.imageUrl ?? entity?.images?.[0];
-    this.setPage(title, description, options.imageUrl, this.imageAlt(image, title));
-    this.setStructuredData(title, description, options.imageUrl, options.schemaType ?? 'WebPage');
+    this.setLocalizedPageSeo({
+      titleEn: entity?.seoTitleEn ?? entity?.SeoTitleEn ?? entity?.seoTitleEng ?? entity?.SeoTitleEng ?? entity?.titleEn ?? entity?.TitleEn ?? entity?.titleEng ?? entity?.TitleEng ?? entity?.nameEn ?? entity?.NameEn ?? entity?.nameEng ?? entity?.NameEng ?? entity?.title ?? entity?.Title ?? entity?.name ?? entity?.Name ?? options.fallbackTitle,
+      titleAr: entity?.seoTitleAr ?? entity?.SeoTitleAr ?? entity?.titleAr ?? entity?.TitleAr ?? entity?.nameAr ?? entity?.NameAr,
+      descriptionEn: entity?.seoDescriptionEn ?? entity?.SeoDescriptionEn ?? entity?.seoDescriptionEng ?? entity?.SeoDescriptionEng ?? entity?.descriptionEn ?? entity?.DescriptionEn ?? entity?.descriptionEng ?? entity?.DescriptionEng ?? entity?.fullDescriptionEn ?? entity?.FullDescriptionEn ?? entity?.fullDescriptionEng ?? entity?.FullDescriptionEng ?? entity?.summaryEn ?? entity?.SummaryEn ?? entity?.summaryEng ?? entity?.SummaryEng ?? entity?.contentEn ?? entity?.ContentEn ?? entity?.contentEng ?? entity?.ContentEng ?? entity?.description ?? entity?.Description ?? entity?.fullDescription ?? entity?.FullDescription ?? entity?.summary ?? entity?.Summary ?? entity?.content ?? entity?.Content ?? options.fallbackDescription,
+      descriptionAr: entity?.seoDescriptionAr ?? entity?.SeoDescriptionAr ?? entity?.descriptionAr ?? entity?.DescriptionAr ?? entity?.fullDescriptionAr ?? entity?.FullDescriptionAr ?? entity?.summaryAr ?? entity?.SummaryAr ?? entity?.contentAr ?? entity?.ContentAr,
+      slug: entity?.slug ?? entity?.Slug ?? entity?.routeName ?? entity?.RouteName,
+      currentLang: this.languageFromUrl(),
+      imageUrl: options.imageUrl,
+      imageAlt: this.imageAlt(image),
+      schemaType: options.schemaType,
+    });
   }
 
-  setPage(title: string, description: string, imageUrl?: string, imageAlt?: string): void {
+  /** Sets a localized detail page's SEO from the API response after it has loaded. */
+  setLocalizedPageSeo(page: LocalizedSeoPage): void {
+    const language = page.currentLang ?? this.languageFromUrl();
+    const title = this.localized(page.titleEn, page.titleAr, '', language);
+    const description = this.localized(page.descriptionEn, page.descriptionAr, '', language);
+    this.applyDocumentLanguage(language);
+    this.setPage(title, description, page.imageUrl, page.imageAlt, language);
+    this.setStructuredData(title, description, page.imageUrl, page.schemaType ?? 'WebPage', language);
+  }
+
+  setPage(title: string, description: string, imageUrl?: string, imageAlt?: string, language = this.languageFromUrl()): void {
     const resolvedTitle = title.trim();
     const resolvedDescription = this.cleanDescription(description);
     const canonicalUrl = this.canonicalUrl();
-    if (resolvedTitle) {
-      this.titleService.setTitle(resolvedTitle);
-      this.updateProperty('og:title', resolvedTitle);
-      this.updateName('twitter:title', resolvedTitle);
-    }
-    if (resolvedDescription) {
-      this.updateName('description', resolvedDescription);
-      this.updateProperty('og:description', resolvedDescription);
-      this.updateName('twitter:description', resolvedDescription);
-    }
+    this.titleService.setTitle(resolvedTitle || this.titleService.getTitle());
+    this.updateOrRemoveProperty('og:title', resolvedTitle);
+    this.updateOrRemoveName('twitter:title', resolvedTitle);
+    this.updateOrRemoveName('description', resolvedDescription);
+    this.updateOrRemoveProperty('og:description', resolvedDescription);
+    this.updateOrRemoveName('twitter:description', resolvedDescription);
     this.updateName('robots', 'index, follow');
     this.updateProperty('og:type', 'website');
-    this.updateProperty('og:locale', this.language.currentLanguage() === 'ar' ? 'ar_EG' : 'en_US');
+    this.updateProperty('og:locale', language === 'ar' ? 'ar_EG' : 'en_US');
     this.updateProperty('og:url', canonicalUrl);
     this.updateName('twitter:card', imageUrl ? 'summary_large_image' : 'summary');
     this.setCanonical(canonicalUrl);
@@ -59,23 +77,26 @@ export class SeoService {
     if (imageUrl) {
       this.updateProperty('og:image', imageUrl);
       this.updateName('twitter:image', imageUrl);
-      if (imageAlt) {
-        this.updateProperty('og:image:alt', imageAlt);
-        this.updateName('twitter:image:alt', imageAlt);
-      }
+      this.updateOrRemoveProperty('og:image:alt', imageAlt ?? '');
+      this.updateOrRemoveName('twitter:image:alt', imageAlt ?? '');
+    } else {
+      this.updateOrRemoveProperty('og:image', '');
+      this.updateOrRemoveName('twitter:image', '');
+      this.updateOrRemoveProperty('og:image:alt', '');
+      this.updateOrRemoveName('twitter:image:alt', '');
     }
   }
 
   imageAlt(image: any, fallback = ''): string {
     const english = image?.altEng ?? image?.AltEng;
     const arabic = image?.altAr ?? image?.AltAr;
-    return this.language.currentLanguage() === 'ar'
+    return this.languageFromUrl() === 'ar'
       ? arabic || english || image?.imageName || image?.ImageName || fallback
       : english || arabic || image?.imageName || image?.ImageName || fallback;
   }
 
-  private localized(english: unknown, arabic: unknown, fallback: unknown): string {
-    const value = this.language.currentLanguage() === 'ar'
+  private localized(english: unknown, arabic: unknown, fallback: unknown, language = this.languageFromUrl()): string {
+    const value = language === 'ar'
       ? arabic || english || fallback
       : english || arabic || fallback;
     return typeof value === 'string' ? value : '';
@@ -91,7 +112,9 @@ export class SeoService {
   }
 
   private setCanonical(url: string): void {
-    let link = this.document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    const canonicalLinks = Array.from(this.document.head.querySelectorAll('link[rel="canonical"]')) as HTMLLinkElement[];
+    let link = canonicalLinks.shift() ?? null;
+    canonicalLinks.forEach((duplicate) => duplicate.remove());
     if (!link) {
       link = this.document.createElement('link');
       link.rel = 'canonical';
@@ -106,22 +129,20 @@ export class SeoService {
     const segments = location.pathname.split('/').filter(Boolean);
     if (segments[0] !== 'en' && segments[0] !== 'ar') return;
 
-    for (const language of ['en', 'ar']) {
+    this.document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
+    for (const language of ['en', 'ar', 'x-default'] as const) {
       const alternateSegments = [...segments];
-      alternateSegments[0] = language;
+      alternateSegments[0] = language === 'x-default' ? 'en' : language;
       const href = `${location.origin}/${alternateSegments.join('/')}`;
-      let link = this.document.head.querySelector(`link[rel="alternate"][hreflang="${language}"]`) as HTMLLinkElement | null;
-      if (!link) {
-        link = this.document.createElement('link');
-        link.rel = 'alternate';
-        link.hreflang = language;
-        this.document.head.appendChild(link);
-      }
+      const link = this.document.createElement('link');
+      link.rel = 'alternate';
+      link.hreflang = language;
       link.href = href;
+      this.document.head.appendChild(link);
     }
   }
 
-  private setStructuredData(title: string, description: string, imageUrl: string | undefined, type: SeoPageOptions['schemaType']): void {
+  private setStructuredData(title: string, description: string, imageUrl: string | undefined, type: SeoPageOptions['schemaType'], language = this.languageFromUrl()): void {
     const scriptId = 'page-structured-data';
     let script = this.document.head.querySelector(`#${scriptId}`) as HTMLScriptElement | null;
     if (!script) {
@@ -137,7 +158,7 @@ export class SeoService {
       name: title,
       description,
       url: this.canonicalUrl(),
-      inLanguage: this.language.currentLanguage(),
+      inLanguage: language,
     };
     if (imageUrl) data['image'] = imageUrl;
     script.textContent = JSON.stringify(data);
@@ -149,5 +170,26 @@ export class SeoService {
 
   private updateProperty(property: string, content: string): void {
     this.meta.updateTag({ property, content });
+  }
+
+  private updateOrRemoveName(name: string, content: string): void {
+    if (content) this.updateName(name, content);
+    else this.meta.removeTag(`name="${name}"`);
+  }
+
+  private updateOrRemoveProperty(property: string, content: string): void {
+    if (content) this.updateProperty(property, content);
+    else this.meta.removeTag(`property="${property}"`);
+  }
+
+  private languageFromUrl(): 'en' | 'ar' {
+    const segment = this.document.defaultView?.location.pathname.split('/').filter(Boolean)[0]?.toLowerCase();
+    return segment === 'ar' ? 'ar' : segment === 'en' ? 'en' : this.language.currentLanguage();
+  }
+
+  private applyDocumentLanguage(language: 'en' | 'ar'): void {
+    const root = this.document.documentElement;
+    root.lang = language;
+    root.dir = language === 'ar' ? 'rtl' : 'ltr';
   }
 }

@@ -764,6 +764,7 @@
   "arrivalDate": "Arrival date",
   "pleaseCorrectFormErrors": "Please correct the highlighted fields before saving.",
   "arabicDescription": "Description (Arabic)",
+  "descriptionLinkHint": "Tip: To add a clickable link, use [Link Name](URL). Example: [Dubai Mall](https://www.thedubaimall.com)",
   "englishFullDescription": "Full description (English)",
   "arabicFullDescription": "Full description (Arabic)",
   "englishShortDescription": "Short description (English)",

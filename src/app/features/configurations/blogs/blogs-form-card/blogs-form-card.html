@@ -148,16 +148,13 @@
       @if (images.length) {
         <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           @for (image of images; track image.url; let index = $index) {
-            <div class="relative overflow-hidden rounded-xl bg-slate-200">
+            <div class="overflow-hidden rounded-xl bg-slate-200">
+              <div class="relative">
               <img
                 [src]="getImageUrl(image.url)"
-                [alt]="image.name"
+                [alt]="image.altEng || image.altAr || ''"
                 class="aspect-[3/2] w-full object-cover"
               />
-              <div class="absolute inset-x-1 bottom-1 grid gap-1 rounded-lg bg-white/95 p-1.5 shadow">
-                <input [(ngModel)]="image.altEng" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="English alt text" />
-                <input [(ngModel)]="image.altAr" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="Arabic alt text" />
-              </div>
               <button
                 type="button"
                 class="absolute end-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
@@ -174,6 +171,13 @@
                   aria-hidden="true"
                 ></i>
               </button>
+              </div>
+              <div class="grid gap-1 bg-white p-2">
+                <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+                <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text" dir="rtl" />
+                @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text is required.</p> }
+                @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+              </div>
             </div>
           }
         </div>

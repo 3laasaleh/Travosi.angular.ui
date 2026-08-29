@@ -182,7 +182,7 @@
       @if (destinationDescription(); as description) {
         <section class="mx-auto mb-16 max-w-4xl">
           <p class="whitespace-pre-line text-base leading-8 text-slate-600 ">
-            {{ description }}
+            <app-description-links [text]="description" />
           </p>
         </section>
       }

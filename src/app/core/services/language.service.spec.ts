@@ -5,14 +5,13 @@ import { of } from 'rxjs';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
-  it('applies Arabic direction and reloads the current page', () => {
-    const reload = vi.fn();
+  it('applies Arabic direction and navigates to the localized route without reloading', () => {
     const body = { setAttribute: vi.fn() };
     const documentElement = { lang: 'en', dir: 'ltr' };
     const documentRef = {
       documentElement,
       body,
-      defaultView: { location: { reload } },
+      defaultView: { location: { pathname: '/en/tours/hurghada', search: '', hash: '' } },
     } as unknown as Document;
     const http = {
       post: vi.fn().mockReturnValue(of({ isSuccess: true })),
@@ -25,7 +24,8 @@ describe('LanguageService', () => {
       addLangs: vi.fn(),
       use: vi.fn(),
     } as unknown as TranslateService;
-    const service = new LanguageService(http, cookies, translate, documentRef);
+    const router = { navigateByUrl: vi.fn(), navigate: vi.fn() };
+    const service = new LanguageService(http, cookies, translate, router as any, documentRef);
 
     service.setLanguageAndReload('ar');
 
@@ -36,7 +36,7 @@ describe('LanguageService', () => {
       sameSite: 'Lax',
     });
 
-    expect(reload).toHaveBeenCalledTimes(1);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/ar/tours/hurghada');
     expect(http.post).not.toHaveBeenCalled();
   });
 });

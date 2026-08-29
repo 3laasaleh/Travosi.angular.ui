@@ -60,7 +60,7 @@
 
         <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-text-box-outline"></i></span><div><p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'travelPackage' | translate }}</p><h2 class="mt-1 text-xl font-semibold text-slate-900">{{ 'packageOverview' | translate }}</h2></div></div>
-          <p class="mt-5 whitespace-pre-line leading-8 text-slate-600">{{ description }}</p>
+          <p class="mt-5 whitespace-pre-line leading-8 text-slate-600"><app-description-links [text]="description" /></p>
         </section>
 
         <app-itinerary-timeline [items]="itinerary" />

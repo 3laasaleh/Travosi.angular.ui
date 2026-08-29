@@ -779,6 +779,7 @@
   "arrivalDate": "تاريخ الوصول",
   "pleaseCorrectFormErrors": "يرجى تصحيح الحقول المميزة قبل الحفظ.",
   "arabicDescription": "الوصف بالعربية",
+  "descriptionLinkHint": "نصيحة: لإضافة رابط قابل للنقر، استخدم [اسم الرابط](URL). مثال: [دبي مول](https://www.thedubaimall.com)",
   "englishFullDescription": "الوصف الكامل بالإنجليزية",
   "arabicFullDescription": "الوصف الكامل بالعربية",
   "englishShortDescription": "الوصف المختصر بالإنجليزية",

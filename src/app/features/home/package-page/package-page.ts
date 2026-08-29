@@ -21,6 +21,7 @@ import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour
 import { formatHomePrice } from '../home-price.util';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
+import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 
 @Component({
   selector: 'app-home-package-page',
@@ -34,6 +35,7 @@ import { SeoService } from '../../../core/services/seo.service';
     TourBookingCard,
     ImageViewerModal,
     ProductReviews,
+    DescriptionLinks,
   ],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

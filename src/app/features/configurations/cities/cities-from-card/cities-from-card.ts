@@ -17,8 +17,8 @@ import { arabicTextValidator } from '../../../../core/validators/arabic-text.val
 
 export interface CityDTO {
   id: number;
-  nameEng: string;
-  nameAr: string;
+  titleEng: string;
+  titleAr: string;
   routeName?: string;
   descriptionEng: string;
   descriptionAr: string;
@@ -72,8 +72,8 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
     const form = this.cityForm.getRawValue();
     const payload: any = {
-      nameEng: form.nameEng.trim(),
-      nameAr: form.nameAr.trim(),
+      titleEng: form.titleEng.trim(),
+      titleAr: form.titleAr.trim(),
       routeName: form.routeName.trim().toLowerCase(),
       descriptionEng: form.descriptionEng.trim(),
       descriptionAr: form.descriptionAr.trim(),
@@ -139,8 +139,8 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
   private populateForm(city: CityDTO): void {
     this.cityForm.setValue({
-      nameEng: city.nameEng ?? '',
-      nameAr: city.nameAr ?? '',
+      titleEng: city.titleEng ?? '',
+      titleAr: city.titleAr ?? '',
       routeName: city.routeName ?? '',
       descriptionEng: city.descriptionEng ?? '',
       descriptionAr: city.descriptionAr ?? '',
@@ -151,8 +151,8 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
   private resetForm(emitCancel: boolean): void {
     this.cityForm.reset({
-      nameEng: '',
-      nameAr: '',
+      titleEng: '',
+      titleAr: '',
       routeName: '',
       descriptionEng: '',
       descriptionAr: '',
@@ -164,11 +164,11 @@ export class CitiesFromCard implements OnInit, OnChanges {
 
   private createForm() {
     return new FormGroup({
-      nameEng: new FormControl('', {
+      titleEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150)],
       }),
-      nameAr: new FormControl('', {
+      titleAr: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()],
       }),

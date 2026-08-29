@@ -20,7 +20,7 @@ import {
   normalizeImageUpload,
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
+import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 interface BlogImageUpload {
   id?: number;
@@ -91,6 +91,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   deletingImageIndex: number | null = null;
   errorMessage = '';
   imageValidationMessage = '';
+  imageAltErrorsVisible = false;
 
   constructor(
     private readonly adminService: AdminService,
@@ -109,6 +110,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   populate(): void {
     this.revokeNewImageUrls();
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     this.errorMessage = '';
 
     const blog = this.selectedBlog;
@@ -124,6 +126,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
           image?.ImageName ??
           image?.name ??
           this.translate.instant('blogImageNumber', { number: index + 1 }),
+        altEng: image?.altEng ?? image?.AltEng ?? '',
+        altAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: BlogImageUpload) => !!image.url);
 
@@ -144,6 +148,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     const files = Array.from(input.files ?? []);
     input.value = '';
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
 
     if (
       this.isSaving ||
@@ -179,8 +184,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
             url: URL.createObjectURL(normalized),
             name: normalized.name,
             existing: false,
-            altEng: normalized.name,
-            altAr: normalized.name,
+            altEng: '',
+            altAr: '',
           });
         } catch (error) {
           this.imageValidationMessage =
@@ -264,7 +269,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }
 
     const value = this.form.getRawValue();
-    if (this.images.some((image) => image.file && (!image.altEng?.trim() || !image.altAr?.trim()))) {
+    this.imageAltErrorsVisible = true;
+    if (this.images.some((image) => image.file && this.hasInvalidImageAlt(image))) {
       this.errorMessage = 'imageAltRequired';
       return;
     }
@@ -353,6 +359,10 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
     const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  hasInvalidImageAlt(image: BlogImageUpload): boolean {
+    return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
   }
 
   private contentEditor(controlName: BlogContentControl): HTMLElement | null {

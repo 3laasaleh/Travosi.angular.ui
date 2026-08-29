@@ -21,7 +21,7 @@ import {
   normalizeImageUpload,
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
+import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 interface DestinationImageUpload {
   id?: number;
@@ -36,11 +36,13 @@ interface DestinationImageDto {
   id: number;
   imageName: string;
   imageUrl: string;
+  altEng?: string;
+  altAr?: string;
 }
 export interface DestinationDTO {
   id: number;
-  nameEng: string;
-  nameAr: string;
+  titleEng: string;
+  titleAr: string;
   subDescriptionEng?: string;
   subDescriptionAr?: string;
   descriptionEng?: string;
@@ -75,6 +77,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   deletingImageIndex: number | null = null;
   errorMessage = '';
   imageValidationMessage = '';
+  imageAltErrorsVisible = false;
   successMessage = '';
 
   constructor(
@@ -100,15 +103,16 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       return;
     }
     const form = this.destinationForm.getRawValue();
-    if (this.imageUploads.some((image) => image.file && (!image.altEng?.trim() || !image.altAr?.trim()))) {
+    this.imageAltErrorsVisible = true;
+    if (this.imageUploads.some((image) => image.file && this.hasInvalidImageAlt(image))) {
       this.errorMessage = 'imageAltRequired';
       return;
     }
     const payload = new FormData();
     if (this.selectedDestination?.id) payload.append('Id', this.selectedDestination?.id.toString());
 
-    payload.append('NameEng', form.nameEng.trim());
-    payload.append('NameAr', form.nameAr.trim());
+    payload.append('TitleEng', form.titleEng.trim());
+    payload.append('TitleAr', form.titleAr.trim());
     payload.append('RouteName', form.routeName.trim().toLowerCase());
     payload.append('SubDescriptionEng', form.subDescriptionEng.trim());
     payload.append('SubDescriptionAr', form.subDescriptionAr.trim());
@@ -157,11 +161,16 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.markAllAsTouched();
   }
 
+  hasInvalidImageAlt(image: DestinationImageUpload): boolean {
+    return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
+  }
+
   async onImagesSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     if (this.imageUploads.length + files.length > this.maxImages) {
       this.imageValidationMessage = 'destinationImageLimit';
       return;
@@ -182,8 +191,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
           url: URL.createObjectURL(normalized),
           name: normalized.name,
           existing: false,
-          altEng: normalized.name,
-          altAr: normalized.name,
+          altEng: '',
+          altAr: '',
         });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError
@@ -256,11 +265,13 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         name: image?.imageName ?? image?.name
           ?? this.translate.instant('destinationImageNumber', { number: index + 1 }),
         existing: true,
+        altEng: image?.altEng ?? image?.AltEng ?? '',
+        altAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: DestinationImageUpload) => !!image.url);
     this.destinationForm.setValue({
-      nameEng: destination.nameEng ?? destination.name ?? '',
-      nameAr: destination.nameAr ?? '',
+      titleEng: destination.titleEng ?? destination.title ?? '',
+      titleAr: destination.titleAr ?? '',
       routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
       subDescriptionAr: destination.subDescriptionAr ?? '',
@@ -276,9 +287,10 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.revokeNewImageUrls();
     this.imageUploads = [];
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     this.destinationForm.reset({
-      nameEng: '',
-      nameAr: '',
+      titleEng: '',
+      titleAr: '',
       routeName: '',
       subDescriptionEng: '',
       subDescriptionAr: '',
@@ -318,11 +330,11 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      nameEng: new FormControl('', {
+      titleEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[A-Za-z][A-Za-z\s'-]*$/)],
       }),
-      nameAr: new FormControl('', {
+      titleAr: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, arabicTextValidator()],
       }),

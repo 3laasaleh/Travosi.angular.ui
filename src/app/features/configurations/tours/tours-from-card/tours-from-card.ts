@@ -36,7 +36,7 @@ import {
   isQuarterHourTime,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
+import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 
 interface TourImageUpload {
@@ -101,6 +101,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   deletingImageIndex: number | null = null;
   errorMessage = '';
   imageValidationMessage = '';
+  imageAltErrorsVisible = false;
   successMessage = '';
   activeStep: TourFormStep = 1;
   completedStep = 0;
@@ -415,7 +416,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const pendingImages = this.imageUploads.filter((image) => image.file && !image.uploaded);
-    if (pendingImages.some((image) => !image.altEng?.trim() || !image.altAr?.trim())) {
+    this.imageAltErrorsVisible = true;
+    if (pendingImages.some((image) => this.hasInvalidImageAlt(image))) {
       this.errorMessage = 'imageAltRequired';
       return;
     }
@@ -476,6 +478,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
               existing: true,
               uploaded: true,
               isCover: this.imageMatchesCover(image, savedCoverUrl),
+              altEng: image?.altEng ?? image?.AltEng ?? '',
+              altAr: image?.altAr ?? image?.AltAr ?? '',
             }))
             .filter((image: TourImageUpload) => !!image.url);
           if (this.imageUploads.length && !this.imageUploads.some((image) => image.isCover)) {
@@ -699,6 +703,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const files = Array.from(input.files ?? []);
     input.value = '';
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     if (this.imageUploads.length + files.length > this.maxImages) {
       this.imageValidationMessage = 'tourImageLimit';
       return;
@@ -721,8 +726,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           existing: false,
           uploaded: false,
           isCover: this.imageUploads.length === 0,
-          altEng: normalized.name,
-          altAr: normalized.name,
+          altEng: '',
+          altAr: '',
         });
       } catch (error) {
         this.imageValidationMessage =
@@ -896,6 +901,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         existing: true,
         uploaded: true,
         isCover: this.imageMatchesCover(image, coverImageUrl),
+        altEng: image?.altEng ?? image?.AltEng ?? '',
+        altAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: TourImageUpload) => !!image.url);
     this.imageUploads = imageUploads;
@@ -948,6 +955,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.savedTourId = null;
     this.imageUploads = [];
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     this.tourForm.reset({
       titleEng: '',
       titleAr: '',
@@ -1285,6 +1293,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  hasInvalidImageAlt(image: TourImageUpload): boolean {
+    return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
   }
 
   private syncImagesControl(): void {

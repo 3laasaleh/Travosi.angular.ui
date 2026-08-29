@@ -44,8 +44,8 @@
         <tbody>
           @for (city of cities; track city.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50">
-              <td class="px-4 py-3 font-semibold">{{ city.nameEng }}</td>
-              <td class="px-4 py-3" dir="rtl">{{ city.nameAr }}</td>
+              <td class="px-4 py-3 font-semibold">{{ city.titleEng }}</td>
+              <td class="px-4 py-3" dir="rtl">{{ city.titleAr }}</td>
               <td class="px-4 py-3">
                 <span class="block">{{ city.destinationNameEng || '—' }}</span>
                 @if (city.destinationNameAr) { <span class="text-xs text-slate-500" dir="rtl">{{ city.destinationNameAr }}</span> }
@@ -75,8 +75,8 @@
           <div class="p-4">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <h3 class="font-semibold">{{ city.nameEng }}</h3>
-                <p class="mt-1 text-sm text-slate-500" dir="rtl">{{ city.nameAr }}</p>
+                <h3 class="font-semibold">{{ city.titleEng }}</h3>
+                <p class="mt-1 text-sm text-slate-500" dir="rtl">{{ city.titleAr }}</p>
               </div>
               <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class.bg-emerald-50]="city.isActive !== false" [class.text-emerald-600]="city.isActive !== false" [class.bg-slate-100]="city.isActive === false" [class.text-slate-500]="city.isActive === false">{{ (city.isActive !== false ? 'active' : 'inactive') | translate }}</span>
             </div>

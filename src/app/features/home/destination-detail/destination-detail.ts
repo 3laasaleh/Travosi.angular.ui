@@ -23,6 +23,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
+import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -34,6 +35,7 @@ import { SeoService } from '../../../core/services/seo.service';
     FooterOne,
     ImageViewerModal,
     DestinationCitiesCarousel,
+    DescriptionLinks,
   ],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

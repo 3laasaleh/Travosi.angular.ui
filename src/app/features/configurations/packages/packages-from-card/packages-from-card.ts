@@ -25,7 +25,7 @@ import {
   hasItineraryTimeOverlap,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
+import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 interface PackageImageUpload {
   id?: number;
@@ -84,6 +84,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   deletingImageIndex: number | null = null;
   errorMessage = '';
   imageValidationMessage = '';
+  imageAltErrorsVisible = false;
   successMessage = '';
   activeStep: PackageFormStep = 1;
   completedStep = 0;
@@ -252,7 +253,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const pending = this.imageUploads.filter((image) => image.file && !image.uploaded);
-    if (pending.some((image) => !image.altEng?.trim() || !image.altAr?.trim())) { this.errorMessage = 'imageAltRequired'; return; }
+    this.imageAltErrorsVisible = true;
+    if (pending.some((image) => this.hasInvalidImageAlt(image))) { this.errorMessage = 'imageAltRequired'; return; }
     if (!pending.length) { this.completeImagesStep(); return; }
 
     const payload = new FormData();
@@ -367,6 +369,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const files = Array.from(input.files ?? []);
     input.value = '';
     this.imageValidationMessage = '';
+    this.imageAltErrorsVisible = false;
     if (this.imageUploads.length + files.length > this.maxImages) { this.imageValidationMessage = 'packageImageLimit'; return; }
     for (const file of files) {
       if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
@@ -379,7 +382,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       }
       try {
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
-        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false, altEng: normalized.name, altAr: normalized.name });
+        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false, altEng: '', altAr: '' });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
@@ -479,6 +482,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   getImageUrl(url: string): string {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     return `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '').replace(/^images\//i, '')}`;
+  }
+
+  hasInvalidImageAlt(image: PackageImageUpload): boolean {
+    return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
   }
 
   private createForm() {
@@ -605,6 +612,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       url: this.resolveImageUrl(image),
       name: image?.imageName ?? this.translate.instant('packageImageNumber', { number: index + 1 }),
       existing: true, uploaded: true,
+      altEng: image?.altEng ?? image?.AltEng ?? '',
+      altAr: image?.altAr ?? image?.AltAr ?? '',
     })).filter((image: PackageImageUpload) => !!image.url);
     this.savedPackageId = this.toOptionalId(item?.id ?? item?.packageId);
     const destinationIds = (Array.isArray(item?.destinations) ? item.destinations : [])
@@ -635,7 +644,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private resetForm(emitCancel: boolean): void {
     this.closeItineraryEditor(); this.closeDestinationMenu(); this.revokeNewImageUrls();
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
-    this.imageValidationMessage = '';
+    this.imageValidationMessage = ''; this.imageAltErrorsVisible = false;
     this.errorMessage = ''; this.successMessage = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,

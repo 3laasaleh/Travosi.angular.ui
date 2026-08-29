@@ -17,11 +17,12 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
+import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks],
   templateUrl: './city-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

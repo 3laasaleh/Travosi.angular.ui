@@ -68,7 +68,7 @@
     }
   </ol>
 
-  <form [formGroup]="packageForm" (focusout)="markCurrentStepTouched()" (ngSubmit)="saveCurrentStep()">
+  <form [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
     @if (activeStep === 1) {
       <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
         <div>
@@ -365,6 +365,7 @@
               maxlength="4000"
               class="w-full rounded-2xl border px-3 py-2"
             ></textarea>
+            <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
             @if (
               packageForm.controls.descriptionEng.touched &&
               packageForm.controls.descriptionEng.hasError('required')
@@ -383,6 +384,7 @@
               dir="rtl"
               class="w-full rounded-2xl border px-3 py-2"
             ></textarea>
+            <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
             @if (
               packageForm.controls.descriptionAr.touched &&
               packageForm.controls.descriptionAr.hasError('required')
@@ -499,16 +501,14 @@
           @if (imageUploads.length) {
             <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               @for (image of imageUploads; track image.url; let index = $index) {
-                <div class="relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+                <div class="overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+                  <div class="relative">
                   <img
                     [src]="getImageUrl(image.url)"
-                    [alt]="image.name"
+                    [alt]="image.altEng || image.altAr || ''"
                     class="aspect-[3/2] w-full object-cover"
                   />
-                  <div class="absolute inset-x-1 bottom-1 grid gap-1 rounded-lg bg-white/95 p-1.5 shadow">
-                    <input [(ngModel)]="image.altEng" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="English alt text" />
-                    <input [(ngModel)]="image.altAr" [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-[10px]" placeholder="Arabic alt text" />
-                  </div><button
+                  <button
                     type="button"
                     class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
                     [disabled]="deletingImageIndex !== null || isSaving"
@@ -529,6 +529,13 @@
                       >{{ 'cover' | translate }}</span
                     >
                   }
+                  </div>
+                  <div class="grid gap-1 bg-white p-2">
+                    <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+                    <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text" dir="rtl" />
+                    @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text is required.</p> }
+                    @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+                  </div>
                 </div>
               }
             </div>
@@ -803,9 +810,7 @@
           {{ 'close' | translate }}</button
         ><button
           type="submit"
-          [disabled]="
-            isSaving || deletingImageIndex !== null || destinationsLoading || currentStepInvalid
-          "
+          [disabled]="isSaving || deletingImageIndex !== null || destinationsLoading"
           class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
         >
           @if (activeStep === 1) {

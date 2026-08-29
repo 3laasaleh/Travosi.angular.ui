@@ -52,6 +52,6 @@
       </div>
     </section>
 
-    <div class="flex flex-wrap gap-3"><button type="submit" [disabled]="customerForm.invalid || isLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <i class="mdi mdi-content-save-outline"></i>{{ (selectedCustomer ? 'update' : 'add') | translate }} }</button>@if (selectedCustomer) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+    <div class="flex flex-wrap gap-3"><button type="submit" [disabled]="isLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if (isLoading) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'saving' | translate }}</span> } @else { <i class="mdi mdi-content-save-outline"></i>{{ (selectedCustomer ? 'update' : 'add') | translate }} }</button>@if (selectedCustomer) { <button type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading" (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
   </form>
 </div>

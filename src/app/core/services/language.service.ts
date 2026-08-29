@@ -3,6 +3,7 @@ import { Inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -15,6 +16,7 @@ export class LanguageService {
     private http: HttpClient,
     private cookieService: CookieService,
     public translate: TranslateService,
+    private router: Router,
     @Inject(DOCUMENT) private document: Document,
   ) {
     translate.addLangs(['en', 'ar']);
@@ -56,7 +58,7 @@ export class LanguageService {
     const language = this.applyLanguageSelection(lang);
     const location = this.document.defaultView?.location;
     if (!location?.pathname) {
-      this.reloadPage();
+      void this.router.navigate([language, 'home']);
       return;
     }
 
@@ -71,16 +73,15 @@ export class LanguageService {
     } else if (pathSegments.length === 0 || localizablePaths.has(firstSegment)) {
       pathSegments.unshift(language);
     } else {
-      this.reloadPage();
+      void this.router.navigateByUrl(`/${language}/home`);
       return;
     }
 
     const target = `/${pathSegments.join('/')}${location.search ?? ''}${location.hash ?? ''}`;
     if (target === `${location.pathname}${location.search ?? ''}${location.hash ?? ''}`) {
-      this.reloadPage();
       return;
     }
-    location.assign(target);
+    void this.router.navigateByUrl(target);
   }
 
   /** Applies the language selected by a canonical /en or /ar route without reloading. */
