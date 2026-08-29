@@ -63,7 +63,7 @@ export class UserSetting implements AfterViewInit {
   constructor() {
     const user = this._authService.getCurentUser();
     if (!user) {
-      this._route.navigate(['login']);
+      this._route.navigate(['/login']);
       return;
     }
 

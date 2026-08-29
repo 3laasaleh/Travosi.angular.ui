@@ -32,6 +32,8 @@
       </label>
     </div>
 
+    <label class="block text-sm font-medium">Route name<input formControlName="routeName" maxlength="180" placeholder="honey-moon-1" class="mt-1 w-full rounded-xl border p-2" />@if (form.controls.routeName.touched && form.controls.routeName.invalid) { <span class="mt-1 block text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</span> }</label>
+
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         English summary

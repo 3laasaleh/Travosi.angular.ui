@@ -34,7 +34,7 @@
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         @for (destination of destinations; track destination.id ?? destination.destinationId ?? $index) {
           <a
-            [routerLink]="['/destinations', destination.id ?? destination.destinationId]"
+            [routerLink]="['/destinations', destination.routeName]"
             class="group relative aspect-[4/3] overflow-hidden rounded-3xl bg-slate-900 shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <img

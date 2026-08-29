@@ -1,8 +1,16 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, CanMatchFn, Router } from '@angular/router';
 import { LanguageService } from '../services/language.service';
 
 const supportedLanguages = new Set(['en', 'ar']);
+
+/** Prevents the :lang route from swallowing real routes such as /login. */
+export const languageUrlMatchGuard: CanMatchFn = (_route, segments) => {
+  const language = segments[0]?.path?.toLowerCase();
+  if (!language || !supportedLanguages.has(language)) return false;
+  inject(LanguageService).setLanguage(language);
+  return true;
+};
 
 /** Keeps public catalogue URLs canonical, for example /ar/tours/2. */
 export const languageUrlGuard: CanActivateFn = (route, state) => {

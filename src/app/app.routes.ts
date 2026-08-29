@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/gaurds/auth.guard';
 import { adminGuard } from './core/gaurds/admin.guard';
-import { languageUrlGuard } from './core/gaurds/language-url.guard';
+import { languageUrlGuard, languageUrlMatchGuard } from './core/gaurds/language-url.guard';
 
 const localizedCatalogueRoutes: Routes = [
   {
@@ -51,6 +51,7 @@ const localizedCatalogueRoutes: Routes = [
 export const routes: Routes = [
   {
     path: ':lang',
+    canMatch: [languageUrlMatchGuard],
     canActivate: [languageUrlGuard],
     children: localizedCatalogueRoutes,
   },

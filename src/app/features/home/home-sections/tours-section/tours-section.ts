@@ -10,6 +10,7 @@ import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { formatHomePrice } from '../../home-price.util';
 export interface TourHomeDTO {
   id: number;
+  routeName?: string | null;
   coverImageUrl: string | null;
   titleAr: string;
   titleEng: string;

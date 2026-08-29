@@ -19,6 +19,7 @@ export interface CityDTO {
   id: number;
   nameEng: string;
   nameAr: string;
+  routeName?: string;
   descriptionEng: string;
   descriptionAr: string;
   destinationId?: number | null;
@@ -73,6 +74,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
     const payload: any = {
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
+      routeName: form.routeName.trim().toLowerCase(),
       descriptionEng: form.descriptionEng.trim(),
       descriptionAr: form.descriptionAr.trim(),
       destinationId: Number(form.destinationId),
@@ -139,6 +141,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '',
       nameAr: city.nameAr ?? '',
+      routeName: city.routeName ?? '',
       descriptionEng: city.descriptionEng ?? '',
       descriptionAr: city.descriptionAr ?? '',
       destinationId: city.destinationId ?? null,
@@ -150,6 +153,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
     this.cityForm.reset({
       nameEng: '',
       nameAr: '',
+      routeName: '',
       descriptionEng: '',
       descriptionAr: '',
       destinationId: null,
@@ -168,6 +172,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()],
       }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
       descriptionEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(4000)],

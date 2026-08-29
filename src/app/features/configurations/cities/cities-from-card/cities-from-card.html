@@ -45,6 +45,7 @@
       @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
       @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
     </div>
+    <div><label class="mb-2 block text-sm font-medium">Route name</label><input formControlName="routeName" maxlength="180" placeholder="sharm-elshikh" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (cityForm.controls.routeName.touched && cityForm.controls.routeName.invalid) { <p class="mt-1 text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</p> }</div>
 
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label>

@@ -47,7 +47,7 @@ export class AccountTab implements AfterViewInit, OnDestroy {
     this.currentUrl = this.router.url.split('?')[0];
     const user = this.authService.getCurentUser();
     if (!user) {
-      this.router.navigate(['login']);
+      this.router.navigate(['/login']);
       return;
     }
 

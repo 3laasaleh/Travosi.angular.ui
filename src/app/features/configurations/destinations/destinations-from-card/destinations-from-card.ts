@@ -109,6 +109,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
     payload.append('NameEng', form.nameEng.trim());
     payload.append('NameAr', form.nameAr.trim());
+    payload.append('RouteName', form.routeName.trim().toLowerCase());
     payload.append('SubDescriptionEng', form.subDescriptionEng.trim());
     payload.append('SubDescriptionAr', form.subDescriptionAr.trim());
     payload.append('DescriptionEng', form.descriptionEng.trim());
@@ -260,6 +261,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.setValue({
       nameEng: destination.nameEng ?? destination.name ?? '',
       nameAr: destination.nameAr ?? '',
+      routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
       subDescriptionAr: destination.subDescriptionAr ?? '',
       descriptionEng: destination.descriptionEng ?? destination.description ?? '',
@@ -277,6 +279,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.reset({
       nameEng: '',
       nameAr: '',
+      routeName: '',
       subDescriptionEng: '',
       subDescriptionAr: '',
       descriptionEng: '',
@@ -323,6 +326,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         nonNullable: true,
         validators: [Validators.required, arabicTextValidator()],
       }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
       subDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
       subDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500), arabicTextValidator()] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),

@@ -59,7 +59,7 @@ export class UserBooking implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurentUser();
     if (!user) {
-      this.router.navigate(['login']);
+      this.router.navigate(['/login']);
       return;
     }
 

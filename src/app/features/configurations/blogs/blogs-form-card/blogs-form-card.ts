@@ -65,6 +65,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
+    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
     summaryEng: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500)],
@@ -129,6 +130,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.form.reset({
       titleEng: blog?.titleEng ?? blog?.TitleEng ?? '',
       titleAr: blog?.titleAr ?? blog?.TitleAr ?? '',
+      routeName: blog?.routeName ?? blog?.RouteName ?? '',
       summaryEng: blog?.summaryEng ?? blog?.SummaryEng ?? '',
       summaryAr: blog?.summaryAr ?? blog?.SummaryAr ?? '',
       contentEng: blog?.contentEng ?? blog?.ContentEng ?? '',
@@ -272,6 +274,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
     data.append('TitleEng', value.titleEng.trim());
     data.append('TitleAr', value.titleAr.trim());
+    data.append('RouteName', value.routeName.trim().toLowerCase());
     data.append('SummaryEng', value.summaryEng.trim());
     data.append('SummaryAr', value.summaryAr.trim());
     data.append('ContentEng', value.contentEng.trim());
