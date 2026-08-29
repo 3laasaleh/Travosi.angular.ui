@@ -105,11 +105,11 @@ export class Packages {
     const destinations = Array.isArray(travelPackage?.destinations) ? travelPackage.destinations : [];
     if (destinations.length) {
       return destinations
-        .map((destination: any) => destination?.destinationName ?? destination?.nameEng ?? destination?.name)
+        .map((destination: any) => destination?.destinationName ?? destination?.titleEng ?? destination?.title)
         .filter(Boolean)
         .join(', ');
     }
-    return travelPackage?.destination?.nameEng ?? travelPackage?.destinationName
+    return travelPackage?.destination?.titleEng ?? travelPackage?.destinationName
       ?? this.translate.instant('destinationNumber', { id: travelPackage?.destinationId ?? '-' });
   }
 

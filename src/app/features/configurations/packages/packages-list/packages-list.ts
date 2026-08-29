@@ -150,11 +150,11 @@ export class PackagesList implements OnInit, OnChanges {
     const destinations = Array.isArray(item?.destinations) ? item.destinations : [];
     if (destinations.length) {
       return destinations
-        .map((destination: any) => destination?.destinationName ?? destination?.nameEng ?? destination?.name)
+        .map((destination: any) => destination?.destinationName ?? destination?.titleEng ?? destination?.title)
         .filter(Boolean)
         .join(', ');
     }
-    return item?.destination?.nameEng ?? item?.destinationName ?? `#${item?.destinationId ?? '-'}`;
+    return item?.destination?.titleEng ?? item?.destinationName ?? `#${item?.destinationId ?? '-'}`;
   }
 
   imageUrl(item: any): string {

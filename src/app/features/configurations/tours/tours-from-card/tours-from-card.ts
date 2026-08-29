@@ -832,7 +832,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   destinationLabel(destination: any): string {
-    return [destination?.nameEng ?? destination?.name, destination?.nameAr]
+    return [destination?.titleEng ?? destination?.title, destination?.titleAr]
       .filter(Boolean)
       .join(' — ');
   }

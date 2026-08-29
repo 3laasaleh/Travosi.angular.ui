@@ -165,7 +165,7 @@ export class ToursList implements OnInit, OnChanges {
 
   destinationName(tour: any): string {
     return (
-      tour?.destination?.nameEng ??
+      tour?.destination?.titleEng ??
       tour?.destinationName ??
       this.translate.instant('destinationNumber', { id: tour?.destinationId ?? '-' })
     );

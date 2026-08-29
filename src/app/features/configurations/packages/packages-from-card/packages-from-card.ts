@@ -358,7 +358,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   destinationId(destination: any): number { return Number(destination?.id ?? destination?.destinationId); }
   destinationLabel(destination: any): string {
-    return [destination?.nameEng ?? destination?.name, destination?.nameAr].filter(Boolean).join(' — ');
+    return [destination?.titleEng ?? destination?.title, destination?.titleAr].filter(Boolean).join(' — ');
   }
   updateDestinationSearch(event: Event): void { this.destinationSearchTerm = (event.target as HTMLInputElement).value; }
   closeDestinationMenu(): void { this.destinationMenuOpen = false; this.destinationSearchTerm = ''; }

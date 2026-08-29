@@ -183,7 +183,7 @@
                 {{ (citiesLoading ? 'loadingCities' : 'selectCity') | translate }}
               </option>
               @for (city of cities; track city.id) {
-              <option [ngValue]="city.id">{{ city.nameEng }} — {{ city.nameAr }}</option>
+              <option [ngValue]="city.id">{{ city.titleEng }} — {{ city.titleAr }}</option>
               }
             </select>
             @if (tourForm.controls.cityId.touched && tourForm.controls.cityId.invalid) {
