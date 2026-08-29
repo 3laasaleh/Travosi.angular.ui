@@ -84,12 +84,12 @@ export class HomeTourPage implements OnInit {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        map((params) => Number(params.get('id'))),
+        map((params) => params.get('routeName')?.trim() ?? ''),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((tourId) => {
-        if (!Number.isFinite(tourId) || tourId <= 0) {
+      .subscribe((routeName) => {
+        if (!routeName) {
           this.tour = null;
           this.isLoading = false;
           this.errorMessage = 'tourNotFound';
@@ -97,7 +97,7 @@ export class HomeTourPage implements OnInit {
           return;
         }
 
-        this.loadTour(tourId);
+        this.loadTour(routeName);
       });
   }
 
@@ -159,14 +159,14 @@ export class HomeTourPage implements OnInit {
       .toLowerCase();
   }
 
-  private loadTour(tourId: number): void {
+  private loadTour(routeName: string): void {
     this.isLoading = true;
     this.errorMessage = '';
     this.tour = null;
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
 
-    this.tourRequest(tourId)
+    this.tourRequest(routeName)
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -186,15 +186,15 @@ export class HomeTourPage implements OnInit {
 
  
 
-  private tourRequest(tourId: number): Observable<any> {
-    return this.apiService.getUnauthntecated(`Tours/${tourId}`).pipe(
+  private tourRequest(routeName: string): Observable<any> {
+    return this.apiService.getUnauthntecated(`Tours/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'tour')),
       catchError(() =>
         this.apiService.getUnauthntecated('Tours?page=1&pageSize=100').pipe(
           map(
             (response) =>
               this.extractCollection(response, ['tours']).find(
-                (tour) => Number(tour?.id ?? tour?.tourId) === Number(tourId),
+                (tour) => String(tour?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
               ) ?? null,
           ),
           catchError(() => of(null)),

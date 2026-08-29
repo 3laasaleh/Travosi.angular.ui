@@ -106,12 +106,12 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        map((params) => Number(params.get('id'))),
+        map((params) => params.get('routeName')?.trim() ?? ''),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((destinationId) => {
-        if (!Number.isFinite(destinationId) || destinationId <= 0) {
+      .subscribe((routeName) => {
+        if (!routeName) {
           this.destination = null;
           this.tours = [];
           this.cities = [];
@@ -121,7 +121,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
-        this.loadDestination(destinationId);
+        this.loadDestination(routeName);
       });
   }
 
@@ -227,7 +227,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private loadDestination(destinationId: number): void {
+  private loadDestination(routeName: string): void {
     this.tourCarousel?.destroy(true, true);
     this.tourCarousel = null;
     this.isLoading = true;
@@ -239,12 +239,12 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     this.imageViewerOpen = false;
 
     forkJoin({
-      destination: this.destinationRequest(destinationId),
+      destination: this.destinationRequest(routeName),
       tours: this.apiService
-        .getUnauthntecated(`Tours?page=1&pageSize=100&destinationId=${destinationId}`)
+        .getUnauthntecated('Tours?page=1&pageSize=100')
         .pipe(catchError(() => of(null))),
       cities: this.apiService
-        .getUnauthntecated(`Cities?destinationId=${destinationId}&page=1&pageSize=10`)
+        .getUnauthntecated('Cities?page=1&pageSize=100')
         .pipe(catchError(() => of(null))),
     })
       .pipe(
@@ -261,7 +261,8 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
-        this.updateSeo(destinationId);
+        this.updateSeo();
+        const destinationId = Number(destination.id ?? destination.destinationId);
 
         const apiTours = this.extractCollection(tours, ['tours']);
         const nestedTours = Array.isArray(destination?.tours) ? destination.tours : [];
@@ -273,13 +274,15 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           : apiTours;
 
         this.tours = matchingTours.length ? matchingTours : nestedTours;
-        this.cities = this.extractCollection(cities, ['cities']).slice(0, 10);
+        this.cities = this.extractCollection(cities, ['cities'])
+          .filter((city) => Number(city?.destinationId) === destinationId)
+          .slice(0, 10);
         this.cdr.markForCheck();
         setTimeout(() => this.initializeTourCarousel());
       });
   }
 
-  private updateSeo(destinationId: number): void {
+  private updateSeo(): void {
     this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Place' });
   }
 
@@ -317,16 +320,15 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private destinationRequest(destinationId: number): Observable<any> {
-    return this.apiService.getUnauthntecated(`destinations/${destinationId}`).pipe(
+  private destinationRequest(routeName: string): Observable<any> {
+    return this.apiService.getUnauthntecated(`destinations/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'destination')),
       catchError(() =>
         this.apiService.getUnauthntecated('destinations?page=1&pageSize=100').pipe(
           map(
             (response) =>
               this.extractCollection(response, ['destinations']).find(
-                (destination) =>
-                  Number(destination?.id ?? destination?.destinationId) === Number(destinationId),
+                (destination) => String(destination?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
               ) ?? null,
           ),
           catchError(() => of(null)),

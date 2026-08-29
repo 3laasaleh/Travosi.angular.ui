@@ -44,17 +44,11 @@ export class CityPage implements OnInit {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        map((params) => ({
-          destinationId: Number(params.get('destinationId')),
-          cityId: Number(params.get('cityId')),
-        })),
-        distinctUntilChanged(
-          (left, right) =>
-            left.destinationId === right.destinationId && left.cityId === right.cityId,
-        ),
+        map((params) => params.get('routeName')?.trim() ?? ''),
+        distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ destinationId, cityId }) => this.load(destinationId, cityId));
+      .subscribe((routeName) => this.loadByRouteName(routeName));
   }
 
   cityName(): string {
@@ -160,6 +154,29 @@ export class CityPage implements OnInit {
         this.recommendedTours = this.collection(result.recommended, 'tours')
           .filter((tour) => Number(tour?.cityId) !== cityId)
           .slice(0, 5);
+      });
+  }
+
+  private loadByRouteName(routeName: string): void {
+    if (!routeName) {
+      this.errorMessage = 'cityNotFound';
+      this.isLoading = false;
+      return;
+    }
+    this.isLoading = true;
+    this.api.getUnauthntecated(`Cities/by-route/${encodeURIComponent(routeName)}`)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        const city = this.entity(response, 'city');
+        const destinationId = Number(city?.destinationId);
+        const cityId = Number(city?.id);
+        if (!city || !destinationId || !cityId) {
+          this.errorMessage = 'cityNotFound';
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          return;
+        }
+        this.load(destinationId, cityId);
       });
   }
   private updateSeo(destinationId: number, cityId: number): void {

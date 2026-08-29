@@ -9,11 +9,11 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/destinations-list/destinations-list').then((m) => m.HomeDestinationsList),
   },
   {
-    path: 'destinations/:destinationId/cities/:cityId',
+    path: 'cities/:routeName',
     loadComponent: () => import('./features/home/city-page/city-page').then((m) => m.CityPage),
   },
   {
-    path: 'destinations/:id',
+    path: 'destinations/:routeName',
     loadComponent: () => import('./features/home/destination-detail/destination-detail').then((m) => m.HomeDestinationDetail),
   },
   {
@@ -26,7 +26,7 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
-    path: 'tours/:id',
+    path: 'tours/:routeName',
     loadComponent: () => import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
   },
   {
@@ -34,12 +34,12 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/packages-list/packages-list').then((m) => m.HomePackagesList),
   },
   {
-    path: 'packages/:id',
+    path: 'packages/:routeName',
     loadComponent: () => import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
   },
   { path: 'home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
   {
-    path: 'blogs/:id',
+    path: 'blogs/:routeName',
     loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
   },
   {
@@ -70,13 +70,13 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'destinations/:destinationId/cities/:cityId',
+    path: 'cities/:routeName',
     canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/city-page/city-page').then((m) => m.CityPage),
   },
   {
-    path: 'destinations/:id',
+    path: 'destinations/:routeName',
     canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/destination-detail/destination-detail').then(
@@ -97,7 +97,7 @@ export const routes: Routes = [
       import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
-    path: 'tours/:id',
+    path: 'tours/:routeName',
     canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
@@ -111,7 +111,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'packages/:id',
+    path: 'packages/:routeName',
     canActivate: [languageUrlGuard],
     loadComponent: () =>
       import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
@@ -335,7 +335,7 @@ export const routes: Routes = [
   },
  
   {
-    path: 'blogs/:id',
+    path: 'blogs/:routeName',
     canActivate: [languageUrlGuard],
     loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
   },

@@ -163,18 +163,18 @@ export class HomePackagePage implements OnInit {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        map((params) => Number(params.get('id'))),
+        map((params) => params.get('routeName')?.trim() ?? ''),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((packageId) => {
-        if (!Number.isFinite(packageId) || packageId <= 0) {
+      .subscribe((routeName) => {
+        if (!routeName) {
           this.isLoading = false;
           this.errorMessage = 'packageNotFound';
           this.cdr.markForCheck();
           return;
         }
-        this.loadPackage(packageId);
+        this.loadPackage(routeName);
       });
   }
 
@@ -234,13 +234,13 @@ export class HomePackagePage implements OnInit {
           '');
   }
 
-  private loadPackage(packageId: number): void {
+  private loadPackage(routeName: string): void {
     this.isLoading = true;
     this.errorMessage = '';
     this.travelPackage = null;
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
-    this.packageRequest(packageId)
+    this.packageRequest(routeName)
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -254,23 +254,23 @@ export class HomePackagePage implements OnInit {
           this.errorMessage = 'packageNotFound';
           return;
         }
-        this.updateSeo(packageId);
+        this.updateSeo();
       });
   }
 
-  private updateSeo(packageId: number): void {
+  private updateSeo(): void {
     this.seo.updateFrom(this.travelPackage, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
   }
 
-  private packageRequest(packageId: number): Observable<any> {
-    return this.apiService.getUnauthntecated(`Packages/${packageId}`).pipe(
+  private packageRequest(routeName: string): Observable<any> {
+    return this.apiService.getUnauthntecated(`Packages/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'package')),
       catchError(() =>
         this.apiService.getUnauthntecated('Packages?page=1&pageSize=100').pipe(
           map(
             (response) =>
               this.extractCollection(response, ['packages']).find(
-                (item) => Number(item?.id ?? item?.packageId) === packageId,
+                (item) => String(item?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
               ) ?? null,
           ),
           catchError(() => of(null)),

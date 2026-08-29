@@ -108,7 +108,7 @@
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @for (item of packages; track item.id ?? item.packageId ?? $index; let itemIndex = $index) {
           <a
-            [routerLink]="['/packages', item.id ?? item.packageId]"
+            [routerLink]="['/packages', item.routeName]"
             class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 "
           >
             <article class="flex w-full flex-col">
