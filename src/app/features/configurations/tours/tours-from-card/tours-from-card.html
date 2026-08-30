@@ -411,7 +411,7 @@
           <div class="space-y-2">
             @for (itemGroup of includesArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+              <div class="grid gap-2">
                 <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
                   class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" />
                 <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
@@ -452,7 +452,7 @@
           <div class="space-y-2">
             @for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+              <div class="grid gap-2">
                 <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
                   class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" />
                 <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
@@ -495,7 +495,7 @@
           <div class="space-y-2">
             @for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) {
             <div [formGroup]="itemGroup">
-              <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+              <div class="grid gap-2">
                 <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
                   class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
                 <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
@@ -533,7 +533,7 @@
             </div>
             <div class="space-y-2">
               @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
-              <div [formGroupName]="index" class="flex items-center gap-2">
+              <div [formGroupName]="index" class="grid gap-2">
                 <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
                   class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
                 <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
@@ -780,11 +780,9 @@
               <div><label class="mb-1 block text-xs font-medium">{{ 'englishValue' | translate }}</label><textarea formControlName="valueEng" rows="3" maxlength="2000" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (itineraryDraft.controls['valueEng'].touched && itineraryDraft.controls['valueEng'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'validItineraryStepRequired' | translate }}</p> }</div>
               <div><label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }}</label><textarea formControlName="valueAr" dir="rtl" rows="3" maxlength="2000" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (itineraryDraft.controls['valueAr'].touched && itineraryDraft.controls['valueAr'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'validItineraryStepRequired' | translate }}</p> } @else if (itineraryDraft.controls['valueAr'].touched && itineraryDraft.controls['valueAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
             </div>
-            <div>
-              <label class="mb-1 block text-xs font-medium">{{ 'notes' | translate }}</label><textarea
-                formControlName="notes" rows="3" maxlength="2000"
-                [placeholder]="'itineraryNotesPlaceholder' | translate"
-                class="w-full rounded-2xl border px-3 py-2"></textarea>
+            <div class="grid gap-3 md:grid-cols-2">
+              <div><label class="mb-1 block text-xs font-medium">{{ 'englishNotes' | translate }}</label><textarea formControlName="notesEng" rows="3" maxlength="2000" [placeholder]="'itineraryNotesPlaceholder' | translate" class="w-full rounded-2xl border px-3 py-2"></textarea></div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'arabicNotes' | translate }}</label><textarea formControlName="notesAr" dir="rtl" rows="3" maxlength="2000" class="w-full rounded-2xl border px-3 py-2"></textarea>@if (itineraryDraft.controls['notesAr'].touched && itineraryDraft.controls['notesAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
             </div>
             <div class="flex gap-2">
               <button type="button" [disabled]="itineraryDraft.invalid"
@@ -863,9 +861,9 @@
                     {{ stepGroup.controls['valueEng'].value }}
                   </p>
                   }
-                  @if (stepGroup.controls['notes'].value) {
+                  @if (stepGroup.controls['notesEng'].value) {
                   <p class="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                    <i class="mdi mdi-note-text-outline me-1"></i>{{ stepGroup.controls['notes'].value }}
+                    <i class="mdi mdi-note-text-outline me-1"></i>{{ stepGroup.controls['notesEng'].value }}
                   </p>
                   }
                   @if (itineraryChildrenArray(stepGroup); as children) {
@@ -918,9 +916,9 @@
                         {{ childGroup.controls['valueEng'].value }}
                       </p>
                       }
-                      @if (childGroup.controls['notes'].value) {
+                      @if (childGroup.controls['notesEng'].value) {
                       <p class="mt-1 text-xs text-amber-700">
-                        {{ childGroup.controls['notes'].value }}
+                        {{ childGroup.controls['notesEng'].value }}
                       </p>
                       }
                     </li>

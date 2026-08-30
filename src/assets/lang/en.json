@@ -772,6 +772,8 @@
   "oneDayHoursRequired": "A one-day tour must have at least one hour and uses zero duration days.",
   "multiDayDurationRequired": "A multi-day tour must have at least one day; additional hours can be zero or more.",
   "notes": "Notes",
+  "englishNotes": "Notes (English)",
+  "arabicNotes": "Notes (Arabic)",
   "itineraryNotesPlaceholder": "Add meeting notes or useful instructions",
   "cancellationPolicyRequired": "A cancellation policy is required when cancellation is not free.",
   "savedPackageNumber": "Saved package",

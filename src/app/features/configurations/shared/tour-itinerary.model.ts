@@ -7,7 +7,8 @@ export interface TourItineraryItem {
   titleEng: string;
   valueAr: string;
   valueEng: string;
-  notes: string;
+  notesEng: string;
+  notesAr: string;
   arrivalDate: string;
   startTime: string | null;
   endTime: string | null;
@@ -25,7 +26,8 @@ export function createEmptyTourItinerary(tourId: number | null = null): TourItin
     titleEng: '',
     valueAr: '',
     valueEng: '',
-    notes: '',
+    notesEng: '',
+    notesAr: '',
     arrivalDate: '',
     startTime: null,
     endTime: null,
@@ -47,7 +49,9 @@ export function readTourItinerary(
     titleEng: String(item?.titleEng ?? item?.title ?? ''),
     valueAr: String(item?.valueAr ?? item?.value ?? ''),
     valueEng: String(item?.valueEng ?? item?.value ?? ''),
-    notes: String(item?.notes ?? item?.Notes ?? ''),
+    // Keep a legacy one-language note usable when editing existing records.
+    notesEng: String(item?.notesEng ?? item?.NotesEng ?? item?.notes ?? item?.Notes ?? ''),
+    notesAr: String(item?.notesAr ?? item?.NotesAr ?? item?.notes ?? item?.Notes ?? ''),
     arrivalDate: toDateInput(item?.arrivalDate ?? item?.ArrivalDate ?? item?.date ?? item?.Date),
     startTime: toTimeInput(item?.startTime),
     endTime: toTimeInput(item?.endTime),
@@ -70,7 +74,8 @@ export function toTourItineraryPayload(
     titleEng: String(item?.titleEng ?? item?.title ?? '').trim(),
     valueAr: String(item?.valueAr ?? item?.value ?? '').trim(),
     valueEng: String(item?.valueEng ?? item?.value ?? '').trim(),
-    notes: String(item?.notes ?? '').trim(),
+    notesEng: String(item?.notesEng ?? item?.NotesEng ?? '').trim(),
+    notesAr: String(item?.notesAr ?? item?.NotesAr ?? '').trim(),
     arrivalDate: toDateInput(item?.arrivalDate ?? item?.ArrivalDate ?? item?.date ?? item?.Date),
     startTime: toApiTime(item?.startTime),
     endTime: toApiTime(item?.endTime),

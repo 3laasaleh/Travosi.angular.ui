@@ -1123,9 +1123,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(2000), arabicTextValidator()],
         }),
-        notes: new FormControl(itinerary.notes, {
+        notesEng: new FormControl(itinerary.notesEng, {
           nonNullable: true,
           validators: [Validators.maxLength(2000)],
+        }),
+        notesAr: new FormControl(itinerary.notesAr, {
+          nonNullable: true,
+          validators: [Validators.maxLength(2000), arabicTextValidator()],
         }),
         arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true }),
         startTime: new FormControl<string | null>(itinerary.startTime, {
@@ -1281,7 +1285,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       TitleEng: String(item?.titleEng ?? '').trim(),
       ValueAr: String(item?.valueAr ?? '').trim(),
       ValueEng: String(item?.valueEng ?? '').trim(),
-      Notes: String(item?.notes ?? '').trim(),
+      NotesEng: String(item?.notesEng ?? '').trim(),
+      NotesAr: String(item?.notesAr ?? '').trim(),
       ArrivalDate: String(item?.arrivalDate ?? '') || null,
       StartTime: this.toApiTime(item?.startTime),
       EndTime: this.toApiTime(item?.endTime),

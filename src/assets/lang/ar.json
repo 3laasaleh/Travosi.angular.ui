@@ -419,6 +419,8 @@
   "infants": "الرضع",
   "manageBookings": "إدارة حجوزات الوكلاء وسجلات الحجوزات.",
   "notes": "ملاحظات",
+  "englishNotes": "الملاحظات بالإنجليزية",
+  "arabicNotes": "الملاحظات بالعربية",
   "passportNumber": "رقم جواز السفر",
   "passportNumberRequired": "رقم جواز السفر مطلوب.",
   "passportNumberMaxLength": "يجب ألا يتجاوز رقم جواز السفر الحد الأقصى المسموح به 20",
