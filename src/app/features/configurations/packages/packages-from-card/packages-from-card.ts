@@ -459,6 +459,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return hasInvalidItinerary([this.itineraryDraft])
       || !startsWithArabic(this.itineraryDraft.titleAr)
       || !startsWithArabic(this.itineraryDraft.valueAr)
+      || (!!this.itineraryDraft.notesAr.trim() && !startsWithArabic(this.itineraryDraft.notesAr))
       || this.itineraryDraftHasTimeOverlap;
   }
 

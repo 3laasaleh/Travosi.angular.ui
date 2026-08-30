@@ -20,11 +20,12 @@ import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-ca
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
+import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews],
+  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews, DescriptionLinks],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -75,6 +76,14 @@ export class HomeTourPage implements OnInit {
 
   get title(): string {
     return this.tour?.title ?? '';
+  }
+
+  /** The brief description belongs below the gallery; the detail component keeps the full text. */
+  get shortDescription(): string {
+    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return isArabic
+      ? (this.tour?.descriptionAr ?? this.tour?.description ?? this.tour?.descriptionEng ?? '')
+      : (this.tour?.descriptionEng ?? this.tour?.description ?? this.tour?.descriptionAr ?? '');
   }
 
   get destinationName(): string {
