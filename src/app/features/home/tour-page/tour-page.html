@@ -1,95 +1,108 @@
 <app-home-navbar />
 
 @if (isLoading) {
-  <main class="container py-16 md:py-24" aria-busy="true">
-    <div class="mb-8 h-10 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
-    <div class="grid gap-4 md:grid-cols-[1fr_220px]">
-      <div class="aspect-[16/9] animate-pulse rounded-2xl bg-slate-200"></div>
-      <div class="grid gap-3">
-        @for (image of [1,2,3]; track image) {
-          <div class="h-32 animate-pulse rounded-xl bg-slate-200"></div>
-        }
-      </div>
+<main class="container py-16 md:py-24" aria-busy="true">
+  <div class="mb-8 h-10 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
+  <div class="grid gap-4 md:grid-cols-[1fr_220px]">
+    <div class="aspect-[16/9] animate-pulse rounded-2xl bg-slate-200"></div>
+    <div class="grid gap-3">
+      @for (image of [1,2,3]; track image) {
+      <div class="h-32 animate-pulse rounded-xl bg-slate-200"></div>
+      }
     </div>
-  </main>
+  </div>
+</main>
 } @else if (errorMessage) {
-  <main class="container grid min-h-[70vh] place-items-center py-24 text-center">
-    <div>
-      <i class="mdi mdi-compass-off-outline text-7xl text-slate-300"></i>
-      <h1 class="mt-4 text-3xl font-semibold">{{ errorMessage | translate }}</h1>
-      <a routerLink="/home" class="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-semibold text-white">
-        <i class="mdi mdi-arrow-left rtl:rotate-180"></i>
-        {{ 'back' | translate }}
-      </a>
-    </div>
-  </main>
+<main class="container grid min-h-[70vh] place-items-center py-24 text-center">
+  <div>
+    <i class="mdi mdi-compass-off-outline text-7xl text-slate-300"></i>
+    <h1 class="mt-4 text-3xl font-semibold">{{ errorMessage | translate }}</h1>
+    <a routerLink="/home"
+      class="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-semibold text-white">
+      <i class="mdi mdi-arrow-left rtl:rotate-180"></i>
+      {{ 'back' | translate }}
+    </a>
+  </div>
+</main>
 } @else {
-  <main class="py-4 md:py-4">
-    <div class="container">
-      <header class="mb-7">
-        <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
-        @if (destinationName) {
-          <p class="mt-3 flex items-center gap-2 font-medium text-slate-500">
-            <i class="mdi mdi-map-marker-outline text-xl text-primary"></i>
-            {{ destinationName }}
-          </p>
-        }
-      </header>
+<main class="py-4 md:py-4">
+  <div class="container">
+    <header class="mb-7">
+      <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
+      @if (destinationName) {
+      <p class="mt-3 flex items-center gap-2 font-medium text-slate-500">
+        <i class="mdi mdi-map-marker-outline text-xl text-primary"></i>
+        {{ destinationName }}
+      </p>
+      }
+    </header>
 
-      <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div>
         <div class="space-y-8">
-           <section class="mb-10 md:mb-12">
-          @if (images.length) {
-          <div class="relative overflow-hidden rounded-2xl bg-slate-100 md:grid md:h-[480px] md:grid-cols-[2fr_1fr] md:gap-2">
-            @if (tour.activeDiscount?.isCurrentlyActive) { <span class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg"><i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: tour.activeDiscount.percentage } }}</span> }
-            <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
-              <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" class="aspect-[4/3] h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
-            </button>
-            @if (images.length > 1) {
+          <section class="mb-10 md:mb-12">
+            @if (images.length) {
+            <div
+              class="relative overflow-hidden rounded-2xl bg-slate-100 md:grid md:h-[480px] md:grid-cols-[2fr_1.75fr] md:gap-2">
+              @if (tour.activeDiscount?.isCurrentlyActive) { <span
+                class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg"><i
+                  class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage:
+                tour.activeDiscount.percentage } }}</span> }
+              <button type="button" class="group relative block h-full w-full overflow-hidden"
+                (click)="openImageViewer(0)">
+                <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])"
+                  class=" h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
+              </button>
+              @if (images.length > 1) {
               <div class="hidden min-h-0 gap-2 md:grid" [class.grid-cols-2]="images.length > 3">
                 @for (image of images.slice(1, 5); track $index; let imageIndex = $index) {
-                  <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
-                    <img [src]="imageUrl(image)" [alt]="imageAlt(image)" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                  </button>
+                <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
+                  <img [src]="imageUrl(image)" [alt]="imageAlt(image)"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                </button>
                 }
               </div>
+              }
+              <button type="button"
+                class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition hover:bg-slate-50"
+                (click)="openImageViewer(0)">
+                <i class="mdi mdi-image-multiple-outline text-lg"></i>
+                {{ images.length }} {{ 'photos' | translate }}
+              </button>
+            </div>
             }
-            <button type="button" class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition hover:bg-slate-50" (click)="openImageViewer(0)">
-              <i class="mdi mdi-image-multiple-outline text-lg"></i>
-              {{ images.length }} {{ 'photos' | translate }}
-            </button>
-          </div>
-        }
-      </section>
+          </section>
         </div>
-        <aside class="lg:sticky lg:top-24">
-          <app-tour-booking-card [tour]="tour" />
-        </aside>
-      </div>
- 
 
-      <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div class="space-y-8">
           <app-tour-detail [tour]="tour" />
           @if (itinerary.length) {
-                    <div class="pt-6">
+          <div class="pt-6">
             <app-itinerary-timeline [items]="itinerary" />
-            </div>
+          </div>
           }
         </div>
- 
       </div>
+
+
+      <aside class="lg:sticky lg:top-24">
+        <app-tour-booking-card [tour]="tour" />
+      </aside>
+
+
     </div>
-  </main>
+
+    @if (imageViewerOpen) {
+    <app-image-viewer-modal [images]="resolvedImages" [title]="title" [(selectedIndex)]="selectedImageIndex"
+      (closed)="closeImageViewer()" />
+    }
+     <div class="grid items-end gap-8 lg:grid-cols-1] mt-8">
+    <app-product-reviews productType="tour" [productId]="tour?.id ?? tour?.tourId" />
+    </div>
+
+  </div>
+</main>
 }
 
-@if (imageViewerOpen) {
-  <app-image-viewer-modal
-    [images]="resolvedImages"
-    [title]="title"
-    [(selectedIndex)]="selectedImageIndex"
-    (closed)="closeImageViewer()"
-  />
-}
-<app-product-reviews productType="tour" [productId]="tour?.id ?? tour?.tourId" />
+
 <app-footer-one />
