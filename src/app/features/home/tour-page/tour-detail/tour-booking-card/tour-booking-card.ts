@@ -27,7 +27,6 @@ import { AuthService } from '../../../../user/_services/auth.service';
 import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
 import { formatHomePrice } from '../../../home-price.util';
 
-
 @Component({
   selector: 'app-tour-booking-card',
   standalone: true,
@@ -65,20 +64,34 @@ export class TourBookingCard implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  bookingForm = new FormGroup({
-    dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dateTo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    adults: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)] }),
-    children: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.pattern(/^\d+$/)] }),
-    specialRequests: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
-  }, { validators: TourBookingCard.dateRangeValidator });
+  bookingForm = new FormGroup(
+    {
+      dateFrom: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      dateTo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      adults: new FormControl(1, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+      }),
+      children: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
+      }),
+      specialRequests: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.maxLength(1000)],
+      }),
+    },
+    { validators: TourBookingCard.dateRangeValidator },
+  );
 
   get isLoggedIn(): boolean {
     return this.authService.getCurentUser() !== null && !this.authService.isTokenExpired();
   }
 
   get pricePerPerson(): number {
-    return this.rawPrice(this.product?.discountedPricePerPerson ?? this.product?.pricePerPerson ?? this.product?.price);
+    return this.rawPrice(
+      this.product?.discountedPricePerPerson ?? this.product?.pricePerPerson ?? this.product?.price,
+    );
   }
 
   get pricePerChild(): number {
@@ -94,7 +107,11 @@ export class TourBookingCard implements OnInit {
   }
 
   get formattedOriginalPricePerPerson(): string {
-    return formatHomePrice(this.currencyService, this.product?.pricePerPerson ?? this.product?.price, this.product);
+    return formatHomePrice(
+      this.currencyService,
+      this.product?.pricePerPerson ?? this.product?.price,
+      this.product,
+    );
   }
 
   get formattedOriginalPricePerChild(): string {
@@ -104,12 +121,18 @@ export class TourBookingCard implements OnInit {
   get seatsAvailable(): number {
     const available = Number(this.product?.seatsAvailable);
     if (Number.isFinite(available) && available >= 0) return available;
-    return Math.max(0, Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) - Number(this.product?.seatsBooked ?? 0));
+    return Math.max(
+      0,
+      Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) -
+        Number(this.product?.seatsBooked ?? 0),
+    );
   }
 
   get hasSeatLimit(): boolean {
-    return this.product?.seatsAvailable !== null && this.product?.seatsAvailable !== undefined
-      || Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) > 0;
+    return (
+      (this.product?.seatsAvailable !== null && this.product?.seatsAvailable !== undefined) ||
+      Number(this.product?.maxSeats ?? this.product?.maxCapacity ?? 0) > 0
+    );
   }
 
   get guests(): number {
@@ -136,9 +159,13 @@ export class TourBookingCard implements OnInit {
   }
 
   get minTravelDate(): string {
-    const today = this.toDateInput(new Date());
+    const today = new Date();
+    const after3Days = new Date(today);
+    after3Days.setDate(after3Days.getDate() + 3);
+    const fData = this.toDateInput(after3Days);
+
     const productStart = this.toDateInput(this.product?.startDate ?? this.product?.dateFrom);
-    return productStart && productStart > today ? productStart : today;
+    return productStart && productStart > fData ? productStart : fData;
   }
 
   get maxTravelDate(): string | null {
@@ -167,7 +194,6 @@ export class TourBookingCard implements OnInit {
     this.bookingForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.resetAvailability());
-
   }
 
   checkAvailability(): void {
@@ -186,28 +212,31 @@ export class TourBookingCard implements OnInit {
     this.availabilityConfirmed = false;
     this.errorMessage = '';
 
-    this.apiService.postUnauthenticated('Bookings/CheckAvailability', payload).pipe(
-      catchError(() => {
-        this.errorMessage = 'availabilityCheckError';
-        this.showToast('error', this.errorMessage);
-        return of(null);
-      }),
-      finalize(() => {
-        this.isCheckingAvailability = false;
-        this.cdr.markForCheck();
-      }),
-    ).subscribe((response: any) => {
-      if (response === null) return;
+    this.apiService
+      .postUnauthenticated('Bookings/CheckAvailability', payload)
+      .pipe(
+        catchError(() => {
+          this.errorMessage = 'availabilityCheckError';
+          this.showToast('error', this.errorMessage);
+          return of(null);
+        }),
+        finalize(() => {
+          this.isCheckingAvailability = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe((response: any) => {
+        if (response === null) return;
 
-      const data = response?.data ?? response;
-      const isAvailable = response?.isSuccess !== false && data?.isAvailable === true;
-      this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
-      this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
-      this.availabilityConfirmed = isAvailable;
-      if (!isAvailable && response?.isSuccess === false) {
-        this.errorMessage = 'availabilityCheckError';
-      }
-    });
+        const data = response?.data ?? response;
+        const isAvailable = response?.isSuccess !== false && data?.isAvailable === true;
+        this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
+        this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
+        this.availabilityConfirmed = isAvailable;
+        if (!isAvailable && response?.isSuccess === false) {
+          this.errorMessage = 'availabilityCheckError';
+        }
+      });
   }
 
   goToLogin(): void {
@@ -230,7 +259,9 @@ export class TourBookingCard implements OnInit {
     }
 
     if (this.product?.isActive === false) {
-      this.errorMessage = this.isPackage ? 'packageUnavailableForBooking' : 'tourUnavailableForBooking';
+      this.errorMessage = this.isPackage
+        ? 'packageUnavailableForBooking'
+        : 'tourUnavailableForBooking';
       return;
     }
 
@@ -261,30 +292,39 @@ export class TourBookingCard implements OnInit {
     this.showBookingLoader();
     this.errorMessage = '';
     this.successMessage = '';
-    this.apiService.post('Bookings', payload).pipe(
-      catchError((error) => {
-        this.errorMessage = this.bookingErrorMessage(error?.error?.message);
-        this.showToast('error', this.errorMessage);
-        return of(null);
-      }),
-      finalize(() => {
-        this.isSubmitting = false;
-        this.hideBookingLoader();
-        this.cdr.markForCheck();
-      }),
-    ).subscribe((response: any) => {
-      if (response === null) return;
-      if (response?.isSuccess === false) {
-        this.errorMessage = this.bookingErrorMessage(response?.message);
-        this.showToast('error', this.errorMessage);
-        return;
-      }
-      this.successMessage = 'bookingCreated';
-      this.showBookingConfirmation(response?.data ?? response);
-      this.bookingForm.reset({ dateFrom: '', dateTo: '', adults: 1, children: 0, specialRequests: '' });
-      this.setDefaultDates();
-      this.resetAvailability();
-    });
+    this.apiService
+      .post('Bookings', payload)
+      .pipe(
+        catchError((error) => {
+          this.errorMessage = this.bookingErrorMessage(error?.error?.message);
+          this.showToast('error', this.errorMessage);
+          return of(null);
+        }),
+        finalize(() => {
+          this.isSubmitting = false;
+          this.hideBookingLoader();
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe((response: any) => {
+        if (response === null) return;
+        if (response?.isSuccess === false) {
+          this.errorMessage = this.bookingErrorMessage(response?.message);
+          this.showToast('error', this.errorMessage);
+          return;
+        }
+        this.successMessage = 'bookingCreated';
+        this.showBookingConfirmation(response?.data ?? response);
+        this.bookingForm.reset({
+          dateFrom: '',
+          dateTo: '',
+          adults: 1,
+          children: 0,
+          specialRequests: '',
+        });
+        this.setDefaultDates();
+        this.resetAvailability();
+      });
   }
 
   private createBookingPayload(): Record<string, unknown> | null {
@@ -355,7 +395,9 @@ export class TourBookingCard implements OnInit {
     if (!value) return '';
     const date = new Date(`${value}T00:00:00`);
     if (Number.isNaN(date.getTime())) return value;
-    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar') ? 'ar-EG' : 'en-GB';
+    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar')
+      ? 'ar-EG'
+      : 'en-GB';
     return new Intl.DateTimeFormat(locale, {
       day: 'numeric',
       month: 'short',
@@ -390,14 +432,17 @@ export class TourBookingCard implements OnInit {
 
   private showBookingConfirmation(booking: any): void {
     const createdAt = booking?.createdDate ? new Date(booking.createdDate) : new Date();
-    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar') ? 'ar-EG' : 'en-GB';
+    const locale = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar')
+      ? 'ar-EG'
+      : 'en-GB';
     const bookingTime = new Intl.DateTimeFormat(locale, {
       dateStyle: 'medium',
       timeStyle: 'short',
     }).format(createdAt);
-    const messageKey = booking?.acknowledgementEmailSent === false
-      ? 'bookingConfirmationEmailPending'
-      : 'bookingConfirmationMessage';
+    const messageKey =
+      booking?.acknowledgementEmailSent === false
+        ? 'bookingConfirmationEmailPending'
+        : 'bookingConfirmationMessage';
 
     Swal.fire({
       icon: 'success',
@@ -417,6 +462,7 @@ export class TourBookingCard implements OnInit {
 
   private setDefaultDates(): void {
     const dateFrom = this.minTravelDate;
+    debugger;
     if (!dateFrom) return;
 
     let dateTo = this.maxTravelDate;

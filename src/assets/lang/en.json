@@ -1178,5 +1178,6 @@
   "reviewTextTooLong": "A review cannot exceed 2000 characters.",
   "reviewSaveError": "Your review could not be saved. Please try again.",
   "alreadyReviewedBooking": "Review submitted",
-  "reviewUnavailable": "Review unavailable"
+  "reviewUnavailable": "Review unavailable",
+  "bookingIsAvlAfterThreeDays":"booking is only avilable after 3 days"
 }

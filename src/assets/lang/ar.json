@@ -1178,6 +1178,7 @@
   "quotationStatusUpdateError": "تعذر تحديث حالة عرض السعر.",
   "confirmQuotationSend": "إرسال عرض السعر؟",
   "confirmQuotationSendMessage": "سيؤدي ذلك إلى تغيير حالة عرض السعر من مسودة إلى مُرسل قبل تنزيل ملف PDF.",
-  "cancelled": "ملغي"
+  "cancelled": "ملغي",
+  "bookingIsAvlAfterThreeDays":"لا يتوفر الحجز إلا بعد 3 أيام"
 
 }
