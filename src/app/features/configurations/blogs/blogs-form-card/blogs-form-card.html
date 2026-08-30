@@ -5,50 +5,60 @@
   </div>
 
   @if (errorMessage) {
-    <p class="mb-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{{ errorMessage }}</p>
+  <p class="mb-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{{ errorMessage }}</p>
   }
 
   <form class="space-y-4" [formGroup]="form" (ngSubmit)="save()">
-    @if (form.touched && form.invalid) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
+    @if (form.touched && form.invalid) { <p
+      class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' |
+      translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         English title
         <input formControlName="titleEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2" />
         @if (form.controls.titleEng.touched && form.controls.titleEng.hasError('required')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</span>
         } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         }
       </label>
       <label class="text-sm font-medium">
         Arabic title
         <input formControlName="titleAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2" />
         @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('required')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</span>
         } @else if (form.controls.titleAr.touched && form.controls.titleAr.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         }
-        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
+        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('arabicText')) { <span
+          class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>
 
-    <label class="block text-sm font-medium">Route name<input formControlName="routeName" maxlength="180" placeholder="honey-moon-1" class="mt-1 w-full rounded-xl border p-2" />@if (form.controls.routeName.touched && form.controls.routeName.invalid) { <span class="mt-1 block text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</span> }</label>
+    <label class="block text-sm font-medium">Route name<input formControlName="routeName" maxlength="180"
+        placeholder="blogs/routeName" class="mt-1 w-full rounded-xl border p-2" />
+        @if (form.controls.routeName.touched &&form.controls.routeName.invalid)
+         { <span class="mt-1 block text-xs text-red-600">Use lowercase letters, numbers,
+        and hyphens only.</span> }</label>
 
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         English summary
-        <textarea formControlName="summaryEng" maxlength="500" rows="2" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        <textarea formControlName="summaryEng" maxlength="500" rows="2"
+          class="mt-1 w-full rounded-xl border p-2"></textarea>
         @if (form.controls.summaryEng.touched && form.controls.summaryEng.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
         }
       </label>
       <label class="text-sm font-medium">
         Arabic summary
-        <textarea formControlName="summaryAr" maxlength="500" rows="2" dir="rtl" class="mt-1 w-full rounded-xl border p-2"></textarea>
+        <textarea formControlName="summaryAr" maxlength="500" rows="2" dir="rtl"
+          class="mt-1 w-full rounded-xl border p-2"></textarea>
         @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
         }
-        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
+        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('arabicText')) { <span
+          class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>
 
@@ -57,49 +67,66 @@
         <label for="blog-contentEng-editor">English content</label>
         <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white">
           <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'bold')" class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentEng', 'insertUnorderedList')" class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i class="mdi mdi-format-list-bulleted"></i></button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentEng')" class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{ 'insertLink' | translate }}</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)"
+              (click)="formatContent('contentEng', 'bold')"
+              class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)"
+              (click)="formatContent('contentEng', 'italic')"
+              class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)"
+              (click)="formatContent('contentEng', 'insertUnorderedList')"
+              class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
+                class="mdi mdi-format-list-bulleted"></i></button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentEng')"
+              class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{
+              'insertLink' | translate }}</button>
           </div>
-          <div id="blog-contentEng-editor" contenteditable="true" role="textbox" aria-multiline="true" [innerHTML]="form.controls.contentEng.value" (input)="onContentInput('contentEng', $event)" class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
+          <div id="blog-contentEng-editor" contenteditable="true" role="textbox" aria-multiline="true"
+            [innerHTML]="form.controls.contentEng.value" (input)="onContentInput('contentEng', $event)"
+            class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
         </div>
         @if (form.controls.contentEng.touched && form.controls.contentEng.hasError('required')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentEng.touched && form.controls.contentEng.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
         }
       </div>
       <div class="text-sm font-medium">
         <label for="blog-contentAr-editor">Arabic content</label>
         <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white" dir="rtl">
           <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'bold')" class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'insertUnorderedList')" class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i class="mdi mdi-format-list-bulleted"></i></button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentAr')" class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{ 'insertLink' | translate }}</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'bold')"
+              class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)"
+              (click)="formatContent('contentAr', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200"
+              aria-label="Italic">I</button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)"
+              (click)="formatContent('contentAr', 'insertUnorderedList')"
+              class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
+                class="mdi mdi-format-list-bulleted"></i></button>
+            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentAr')"
+              class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{
+              'insertLink' | translate }}</button>
           </div>
-          <div id="blog-contentAr-editor" contenteditable="true" role="textbox" aria-multiline="true" [innerHTML]="form.controls.contentAr.value" (input)="onContentInput('contentAr', $event)" class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
+          <div id="blog-contentAr-editor" contenteditable="true" role="textbox" aria-multiline="true"
+            [innerHTML]="form.controls.contentAr.value" (input)="onContentInput('contentAr', $event)"
+            class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
         </div>
         @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('required')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentAr.touched && form.controls.contentAr.hasError('maxlength')) {
-          <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
         }
-        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('arabicText')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
+        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('arabicText')) { <span
+          class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </div>
     </div>
 
     <div>
       <label for="blog-publish-date" class="block text-sm font-medium">Publish date</label>
-      <app-date-picker
-        formControlName="publishedAt"
-        id="blog-publish-date"
-        placeholder="Select a publish date"
-        ariaLabel="Publish date"
-        class="mt-1 block max-w-sm"
-        inputClass="rounded-xl border border-slate-300 bg-white px-3 py-2.5 pe-11 shadow-sm"
-      />
+      <app-date-picker formControlName="publishedAt" id="blog-publish-date" placeholder="Select a publish date"
+        ariaLabel="Publish date" class="mt-1 block max-w-sm"
+        inputClass="rounded-xl border border-slate-300 bg-white px-3 py-2.5 pe-11 shadow-sm" />
       <p class="mt-1 text-xs text-slate-500">Choose the day this blog should appear on the website.</p>
     </div>
 
@@ -109,91 +136,74 @@
         <span class="text-xs text-slate-500">{{ images.length }} / {{ maxImages }}</span>
       </div>
 
-      <label
-        for="blog-images"
+      <label for="blog-images"
         class="flex flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-white px-4 py-5 text-center transition hover:border-primary"
         [class.cursor-pointer]="images.length < maxImages && !isSaving && !isProcessingImages && deletingImageIndex === null"
         [class.cursor-not-allowed]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
         [class.opacity-60]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
-        [attr.aria-disabled]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
-      >
-        <i
-          class="mdi mb-2 text-3xl text-primary"
-          [class.mdi-image-multiple-outline]="!isProcessingImages"
-          [class.mdi-loading]="isProcessingImages"
-          [class.mdi-spin]="isProcessingImages"
-          aria-hidden="true"
-        ></i>
+        [attr.aria-disabled]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null">
+        <i class="mdi mb-2 text-3xl text-primary" [class.mdi-image-multiple-outline]="!isProcessingImages"
+          [class.mdi-loading]="isProcessingImages" [class.mdi-spin]="isProcessingImages" aria-hidden="true"></i>
         <span class="text-sm font-semibold text-primary">
           {{ (isProcessingImages ? 'processingImages' : 'chooseImages') | translate }}
         </span>
         <span class="mt-1 text-xs text-slate-500">{{ 'blogImageRules' | translate }}</span>
       </label>
-      <input
-        id="blog-images"
-        class="sr-only"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        multiple
+      <input id="blog-images" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple
         [disabled]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
-        (change)="onFiles($event)"
-      />
+        (change)="onFiles($event)" />
 
       @if (imageValidationMessage) {
-        <p class="mt-2 text-xs font-medium text-red-600" role="alert">
-          {{ imageValidationMessage | translate }}
-        </p>
+      <p class="mt-2 text-xs font-medium text-red-600" role="alert">
+        {{ imageValidationMessage | translate }}
+      </p>
       }
 
       @if (images.length) {
-        <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          @for (image of images; track image.url; let index = $index) {
-            <div class="overflow-hidden rounded-xl bg-slate-200">
-              <div class="relative">
-              <img
-                [src]="getImageUrl(image.url)"
-                [alt]="image.altEng || image.altAr || ''"
-                class="aspect-[3/2] w-full object-cover"
-              />
-              <button
-                type="button"
-                class="absolute end-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-                [disabled]="deletingImageIndex !== null || isSaving || isProcessingImages"
-                [attr.aria-label]="'removeImage' | translate"
-                [attr.title]="'removeImage' | translate"
-                (click)="removeImage(index)"
-              >
-                <i
-                  class="mdi"
-                  [class.mdi-loading]="deletingImageIndex === index"
-                  [class.mdi-spin]="deletingImageIndex === index"
-                  [class.mdi-close]="deletingImageIndex !== index"
-                  aria-hidden="true"
-                ></i>
-              </button>
-              </div>
-              <div class="grid gap-1 bg-white p-2">
-                <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
-                <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text" dir="rtl" />
-                @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text is required.</p> }
-                @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-              </div>
-            </div>
-          }
+      <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        @for (image of images; track image.url; let index = $index) {
+        <div class="overflow-hidden rounded-xl bg-slate-200">
+          <div class="relative">
+            <img [src]="getImageUrl(image.url)" [alt]="image.altEng || image.altAr || ''"
+              class="aspect-[3/2] w-full object-cover" />
+            <button type="button"
+              class="absolute end-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/70 text-lg text-white transition-colors duration-200 hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="deletingImageIndex !== null || isSaving || isProcessingImages"
+              [attr.aria-label]="'removeImage' | translate" [attr.title]="'removeImage' | translate"
+              (click)="removeImage(index)">
+              <i class="mdi" [class.mdi-loading]="deletingImageIndex === index"
+                [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"
+                aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="grid gap-1 bg-white p-2">
+            <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true"
+              [ngModelOptions]="{standalone: true}"
+              [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()"
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+            <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}"
+              [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))"
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text"
+              dir="rtl" />
+            @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text
+              is required.</p> }
+            @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is
+              required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
+              class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+          </div>
         </div>
+        }
+      </div>
       }
     </div>
 
-    <button
-      type="submit"
-      [disabled]="isSaving || isProcessingImages || deletingImageIndex !== null"
-      class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-    >
+    <button type="submit" [disabled]="isSaving || isProcessingImages || deletingImageIndex !== null"
+      class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
       @if (isSaving) {
-        <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
-        <span>{{ 'saving' | translate }}</span>
+      <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+      <span>{{ 'saving' | translate }}</span>
       } @else {
-        {{ selectedBlog ? 'Update blog' : 'Create blog' }}
+      {{ selectedBlog ? 'Update blog' : 'Create blog' }}
       }
     </button>
   </form>

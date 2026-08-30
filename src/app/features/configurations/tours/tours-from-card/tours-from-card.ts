@@ -36,8 +36,10 @@ import {
   isQuarterHourTime,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
-
+import {
+  arabicTextValidator,
+  startsWithArabic,
+} from '../../../../core/validators/arabic-text.validator';
 
 interface TourImageUpload {
   id?: number;
@@ -115,7 +117,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private get defaultCurrencyId(): number {
     return this.currencies[0].id;
   }
-  private itineraryClientSequence = 0;
   private citiesRequestSequence = 0;
   readonly today = this.localDate(new Date());
 
@@ -206,6 +207,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const controls: AbstractControl[] = [
       this.tourForm.controls.titleEng,
       this.tourForm.controls.titleAr,
+      this.tourForm.controls.routeName,
       this.tourForm.controls.descriptionEng,
       this.tourForm.controls.descriptionAr,
       this.tourForm.controls.destinationId,
@@ -252,7 +254,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return of(null);
         }),
         finalize(() => {
-          debugger
           this.destinationsLoading = false;
           this.cdr.markForCheck();
         }),
@@ -334,7 +335,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const existingId = this.currentTourId;
     const isCreating = !existingId;
     const payload = this.buildTourDetailsPayload(existingId);
-
     this.isSaving = true;
     this.apiLoadingMessage = 'savingTourDetails';
     this.errorMessage = '';
@@ -910,20 +910,21 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.imageUploads[0].isCover = true;
     }
     this.tourForm.patchValue({
-      titleEng: tour.titleEng ?? tour.title ?? '',
+      titleEng: tour.titleEng ?? '',
       titleAr: tour.titleAr ?? '',
+      routeName: tour.routeName ?? tour.titleEng ?? '',
       destinationId: tour.destinationId ?? '',
       cityId: tour.cityId ?? '',
-      descriptionEng: tour.descriptionEng ?? tour.description ?? tour.overview ?? '',
+      descriptionEng: tour.descriptionEng ?? '',
       descriptionAr: tour.descriptionAr ?? '',
-      fullDescriptionEng: tour.fullDescriptionEng ?? tour.fullDescription ?? '',
+      fullDescriptionEng: tour.fullDescriptionEng ?? '',
       fullDescriptionAr: tour.fullDescriptionAr ?? '',
-      pricePerPerson: Number(tour.pricePerPerson ?? tour.price ?? 0),
+      pricePerPerson: Number(tour.pricePerPerson ?? 0),
       pricePerChild: Number(tour.pricePerChild ?? 0),
       currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
       durationDays: Number(tour.durationDays ?? 0),
-      durationHours: Number(tour.durationhours ?? tour.durationHours ?? 0),
-      maxSeats: Number(tour.maxSeats ?? 14),
+      durationHours: Number(tour.durationhours ?? 0),
+      maxSeats: Number(tour.maxSeats),
       startDate: this.toDateInput(tour.startDate),
       endDate: this.toDateInput(tour.endDate),
       isFreeCancelation: tour.isFreeCancelation === true,
@@ -935,7 +936,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.setHighlights(tour.highlights ?? []);
     this.setIncludes(tour.includes ?? []);
     this.setExcludes(tour.excludes ?? []);
-    this.setCancellationPolicies(tour.cancellationPolicies ?? (tour.cancellationPolicy ? [{ valueAr: tour.cancellationPolicy, valueEng: tour.cancellationPolicy }] : []));
+    this.setCancellationPolicies(tour.cancellationPolicies ?? []);
     this.setItinerary(tour.itinerary ?? tour.itineraries ?? []);
     this.syncImagesControl();
     const destinationId = Number(tour.destinationId);
@@ -959,21 +960,21 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.tourForm.reset({
       titleEng: '',
       titleAr: '',
+      routeName: '',
       destinationId: '',
       cityId: '',
       descriptionEng: '',
       descriptionAr: '',
       fullDescriptionEng: '',
       fullDescriptionAr: '',
-
       pricePerPerson: 0,
       pricePerChild: 0,
       currencyId: this.defaultCurrencyId,
       durationDays: 1,
       durationHours: 0,
-      maxSeats: 1,
-      startDate: this.today,
-      endDate: this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000)),
+      maxSeats: 20,
+      startDate: null,
+      endDate: null,
       images: [],
       isFreeCancelation: false,
       isNileCruise: false,
@@ -982,9 +983,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     });
     this.syncOneDayTourState();
     this.setHighlights([]);
+    this.addHighlight();
     this.setIncludes([]);
+    this.addInclude();
     this.setExcludes([]);
+    this.addExclude();
     this.setCancellationPolicies([]);
+    this.addCancellationPolicy();
     this.setItinerary([]);
     if (emitCancel) this.editCancelled.emit();
   }
@@ -998,8 +1003,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         titleAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required, arabicTextValidator()],
+          validators: [Validators.required,  arabicTextValidator()],
         }),
+        routeName: new FormControl('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] ,
+        }),
+
         destinationId: new FormControl<number | ''>('', {
           nonNullable: true,
           validators: [Validators.required],
@@ -1024,7 +1034,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.maxLength(8000), arabicTextValidator()],
         }),
- 
+
         pricePerPerson: new FormControl(0, {
           nonNullable: true,
           validators: [Validators.required, Validators.min(0.01)],
@@ -1045,17 +1055,17 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.required, Validators.min(0)],
         }),
-        maxSeats: new FormControl(1, {
+        maxSeats: new FormControl(20, {
           nonNullable: true,
           validators: [Validators.required, Validators.min(1)],
         }),
-        startDate: new FormControl(this.today, { nonNullable: true }),
-        endDate: new FormControl(this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000)), { nonNullable: true }),
+        startDate: new FormControl(),
+        endDate: new FormControl(),
         images: new FormControl<string[]>([], {
           nonNullable: true,
           validators: [Validators.required],
         }),
-        isFreeCancelation: new FormControl(false, { nonNullable: true }),
+        isFreeCancelation: new FormControl(false),
         isNileCruise: new FormControl(false, { nonNullable: true }),
         isOneDayTour: new FormControl(false, { nonNullable: true }),
         isActive: new FormControl(true, { nonNullable: true }),
@@ -1072,14 +1082,20 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private createLocalizedListItemGroup(item: any = {}): FormGroup {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
-      valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), {
-        nonNullable: true,
-        validators: [Validators.required, arabicTextValidator()],
-      }),
+      valueEng: new FormControl(
+        String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''),
+        {
+          nonNullable: true,
+          validators: [Validators.required],
+        },
+      ),
+      valueAr: new FormControl(
+        String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''),
+        {
+          nonNullable: true,
+          validators: [Validators.required, arabicTextValidator()],
+        },
+      ),
     });
   }
 
@@ -1099,7 +1115,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
         }),
-        valueEng: new FormControl(itinerary.valueEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
+        valueEng: new FormControl(itinerary.valueEng, {
+          nonNullable: true,
+          validators: [Validators.maxLength(2000)],
+        }),
         valueAr: new FormControl(itinerary.valueAr, {
           nonNullable: true,
           validators: [Validators.maxLength(2000), arabicTextValidator()],
@@ -1144,7 +1163,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     collection.clear();
     const items = Array.isArray(values) ? values : [];
     items.forEach((item) =>
-      collection.push(this.createLocalizedListItemGroup(typeof item === 'string' ? { valueAr: item, valueEng: item } : item)),
+      collection.push(
+        this.createLocalizedListItemGroup(
+          typeof item === 'string' ? { valueAr: item, valueEng: item } : item,
+        ),
+      ),
     );
   }
 
@@ -1171,6 +1194,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const controls: AbstractControl[] = [
       this.tourForm.controls.titleEng,
       this.tourForm.controls.titleAr,
+      this.tourForm.controls.routeName,
       this.tourForm.controls.descriptionEng,
       this.tourForm.controls.descriptionAr,
       this.tourForm.controls.destinationId,
@@ -1201,7 +1225,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ...(tourId ? { Id: tourId } : {}),
       TitleEng: form.titleEng.trim(),
       TitleAr: form.titleAr.trim(),
-
+      RouteName:form.routeName.trim(),
       DestinationId: Number(form.destinationId),
       CityId: Number(form.cityId),
       DescriptionEng: form.descriptionEng.trim(),
@@ -1227,7 +1251,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  private toLocalizedListPayload(items: any[]): { Id: number; ValueEng: string; ValueAr: string }[] {
+  private toLocalizedListPayload(
+    items: any[],
+  ): { Id: number; ValueEng: string; ValueAr: string }[] {
     return items
       .map((item) => ({
         Id: Number(item?.id) || 0,
@@ -1487,5 +1513,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private toOptionalId(value: unknown): number | null {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 ? id : null;
+  }
+  hasError(controlName: string, errorName: string, formGroup: FormGroup = this.tourForm): boolean {
+    const control = formGroup.get(controlName);
+
+    return !!(control && control.hasError(errorName) && (control.touched || control.dirty));
   }
 }

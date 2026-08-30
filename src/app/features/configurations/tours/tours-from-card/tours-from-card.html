@@ -77,7 +77,9 @@
           </div>
         </div>
 
+
         <div class="grid gap-4 md:grid-cols-2">
+
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label>
             <input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
@@ -107,6 +109,7 @@
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
+          <!-- destinations dropdown -->
 
           <div>
             <label class="mb-2 block text-sm font-medium" id="tourDestinationLabel">{{
@@ -174,7 +177,7 @@
             <p class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p>
             }
           </div>
-
+          <!-- cities dropdown -->
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'city' | translate }}</label>
             <select formControlName="cityId" [disabled]="!tourForm.controls.destinationId.value || citiesLoading"
@@ -191,7 +194,32 @@
             }
           </div>
 
-          <!-- <div><label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label><select formControlName="currencyId" class="w-full rounded-2xl border bg-white px-3 py-2">@for (currency of currencies; track currency.id) { <option [ngValue]="currency.id">{{ currency.labelKey | translate }} ({{ currency.code }})</option> }</select></div> -->
+
+
+          <!-- startDate and endDate  -->
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}
+            </label>
+            <div class="group relative">
+              <app-date-picker formControlName="startDate" id="tour-start-date" [min]="today"
+                [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
+                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}
+            </label>
+            <div class="group relative">
+              <app-date-picker formControlName="endDate" id="tour-end-date"
+                [min]="tourForm.controls.startDate.value || null" [ariaLabel]="'endDate' | translate"
+                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
+            </div>
+            @if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p>
+            }
+          </div>
+
+          <!-- prices -->
           <div>
             <label class="mb-2 block text-sm font-medium">{{
               'pricePerPerson' | translate
@@ -226,12 +254,15 @@
             </p>
             }
           </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input
-              formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
-            @if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) {
-            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
+
+          <!-- nileCruise isOneDayTour   checkboxes-->
+
+          <div class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3">
+            <label class="flex items-center gap-2 text-sm font-medium">
+              <input class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                formControlName="isNileCruise" type="checkbox" />{{
+              'nileCruise' | translate
+              }}</label>
           </div>
           <div class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3">
             <input id="isOneDayTour" formControlName="isOneDayTour" type="checkbox"
@@ -279,29 +310,36 @@
             </p>
             }
           </div>
-
           <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}
-              <span class="text-slate-400">({{ 'optional' | translate }})</span></label>
-            <div class="group relative">
-              <app-date-picker formControlName="startDate" id="tour-start-date" [min]="today"
-                [max]="tourForm.controls.endDate.value || null" [ariaLabel]="'startDate' | translate"
-                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
-            </div>
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}
-              <span class="text-slate-400">({{ 'optional' | translate }})</span></label>
-            <div class="group relative">
-              <app-date-picker formControlName="endDate" id="tour-end-date"
-                [min]="tourForm.controls.startDate.value || null" [ariaLabel]="'endDate' | translate"
-                inputClass="cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" />
-            </div>
-            @if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) {
-            <p class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p>
+            <label class="mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input
+              formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
             }
           </div>
+          <div>
+            <label class="block text-sm font-medium">{{ 'routeName' | translate }}<input formControlName="routeName"
+                maxlength="180" placeholder="tours/routeName" class="mt-1 w-full rounded-xl border p-2" />
+              @if (tourForm.controls.routeName.touched &&tourForm.controls.routeName.invalid)
+              { <span class="mt-1 block text-xs text-red-600">Use lowercase letters, numbers,
+                and hyphens only.</span> }
+
+              @if(tourForm.hasError('required')) {
+              <small class="text-red-500">
+               {{'fieldRequired' |translate}}
+              </small>
+              }
+
+
+
+
+            </label>
+
+          </div>
+
+
         </div>
+
 
         <div class="mt-4 grid gap-4 md:grid-cols-2">
           <div>
@@ -328,25 +366,25 @@
             tourForm.controls.descriptionAr.hasError('required')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
-            } @else if (tourForm.controls.descriptionAr.touched && tourForm.controls.descriptionAr.hasError('arabicText'))
+            } @else if (tourForm.controls.descriptionAr.touched &&
+            tourForm.controls.descriptionAr.hasError('arabicText'))
             {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'englishFullDescription' | translate }}
-              <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
-              formControlName="fullDescriptionEng" rows="4" maxlength="8000"
+            </label><textarea formControlName="fullDescriptionEng" rows="4" maxlength="8000"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
             <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'arabicFullDescription' | translate }}
-              <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea
-              formControlName="fullDescriptionAr" rows="4" maxlength="8000" dir="rtl"
+            </label><textarea formControlName="fullDescriptionAr" rows="4" maxlength="8000" dir="rtl"
               class="w-full rounded-2xl border px-3 py-2"></textarea>
             <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
-            @if (tourForm.controls.fullDescriptionAr.touched && tourForm.controls.fullDescriptionAr.hasError('arabicText'))
+            @if (tourForm.controls.fullDescriptionAr.touched &&
+            tourForm.controls.fullDescriptionAr.hasError('arabicText'))
             {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
@@ -461,7 +499,8 @@
                 <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
                   class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
                 <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
-                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button"
+                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
+                <button type="button"
                   class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
                   (click)="removeHighlight(index)" [attr.aria-label]="'remove' | translate">
                   <i class="mdi mdi-close"></i>
@@ -481,45 +520,46 @@
           </div>
         </section>
 
-
-        <section class="rounded-2xl border border-slate-200 bg-white p-4" formArrayName="cancellationPolicies">
-          <div class="mb-3 flex items-center justify-between gap-3">
-            <label class="text-sm font-medium">{{ 'cancellationPolicies' | translate }} <span class="text-slate-400">({{
-                'optional' | translate }})</span></label>
-            <button type="button"
-              class="rounded-full border border-primary px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/5"
-              (click)="addCancellationPolicy()"><i class="mdi mdi-plus"></i> {{ 'addCancellationPolicy' | translate
-              }}</button>
-          </div>
-          <div class="space-y-2">
-            @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
-            <div [formGroupName]="index" class="flex items-center gap-2">
-              <input formControlName="value" type="text" [placeholder]="'cancellationPolicyPlaceholder' | translate"
-                class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
+        <div class="rounded-2xl border border-slate-200 bg-white p-4">
+          <section formArrayName="cancellationPolicies">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <label class="text-sm font-medium">{{ 'cancellationPolicies' | translate }} <span
+                  class="text-slate-400">({{
+                  'optional' | translate }})</span></label>
               <button type="button"
-                class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50"
-                (click)="removeCancellationPolicy(index)" [attr.aria-label]="'remove' | translate"><i
-                  class="mdi mdi-close"></i></button>
+                class="rounded-full border border-primary px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/5"
+                (click)="addCancellationPolicy()"><i class="mdi mdi-plus"></i> {{ 'addCancellationPolicy' | translate
+                }}</button>
             </div>
-            @if (itemGroup.controls['value'].touched && itemGroup.controls['value'].invalid) { <p
-              class="text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
-            } @empty { <p
-              class="rounded-xl border border-dashed border-slate-300 px-3 py-5 text-center text-xs text-slate-500">{{
-              'noCancellationPoliciesAdded' | translate }}</p> }
-          </div>
-          <div class="mt-4">
-            <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isFreeCancelation"
-                type="checkbox" />{{
+            <div class="space-y-2">
+              @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
+              <div [formGroupName]="index" class="flex items-center gap-2">
+                <input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate"
+                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
+                <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate"
+                  class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" />
+                <button type="button"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50"
+                  (click)="removeCancellationPolicy(index)" [attr.aria-label]="'remove' | translate"><i
+                    class="mdi mdi-close"></i></button>
+              </div>
+              @if (itemGroup.controls['valueEng'].touched && itemGroup.controls['valueAr'].invalid) { <p
+                class="text-xs text-red-600">{{ 'listValueRequired' | translate }}</p> }
+              } @empty { <p
+                class="rounded-xl border border-dashed border-slate-300 px-3 py-5 text-center text-xs text-slate-500">{{
+                'noCancellationPoliciesAdded' | translate }}</p> }
+            </div>
+
+
+          </section>
+          <div class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 mt-4">
+            <label class="flex items-center gap-2 text-sm font-medium">
+              <input formControlName="isFreeCancelation"
+                class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox" />{{
               'freeCancellation' | translate
               }}</label>
           </div>
-          <div class="mt-4">
-            <label class="flex items-center gap-2 text-sm font-medium"><input formControlName="isNileCruise"
-                type="checkbox" />{{
-              'nileCruise' | translate
-              }}</label>
-          </div>
-        </section>
+        </div>
       </div>
 
 
@@ -581,29 +621,41 @@
         <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           @for (image of imageUploads; track image.url; let index = $index) {
           <div class="overflow-hidden rounded-xl bg-slate-200 shadow-sm">
-            <div class="relative"><img [src]="getImageUrl(image.url)" [alt]="image.altEng || image.altAr || ''" class="aspect-[3/2] w-full object-cover" />
-            <button type="button"
-              class="absolute start-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
-              [disabled]="image.isCover || deletingImageIndex !== null || isSaving" (click)="setCoverImage(index)"
-              [attr.aria-label]="'cover' | translate">
-              <i class="mdi mdi-image-filter-center-focus-strong-outline"></i>
-            </button>
-            <button type="button"
-              class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-              [disabled]="deletingImageIndex !== null || isSaving" (click)="removeImage(index)">
-              <i class="mdi" [class.mdi-loading]="deletingImageIndex === index"
-                [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"></i>
-            </button>
-            @if (image.isCover) {
-            <span
-              class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
-              'cover' | translate }}</span>
-            }</div>
+            <div class="relative"><img [src]="getImageUrl(image.url)" [alt]="image.altEng || image.altAr || ''"
+                class="aspect-[3/2] w-full object-cover" />
+              <button type="button"
+                class="absolute start-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="image.isCover || deletingImageIndex !== null || isSaving" (click)="setCoverImage(index)"
+                [attr.aria-label]="'cover' | translate">
+                <i class="mdi mdi-image-filter-center-focus-strong-outline"></i>
+              </button>
+              <button type="button"
+                class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="deletingImageIndex !== null || isSaving" (click)="removeImage(index)">
+                <i class="mdi" [class.mdi-loading]="deletingImageIndex === index"
+                  [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"></i>
+              </button>
+              @if (image.isCover) {
+              <span
+                class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
+                'cover' | translate }}</span>
+              }
+            </div>
             <div class="grid gap-1 bg-white p-2">
-              <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
-              <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text" dir="rtl" />
-              @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text is required.</p> }
-              @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+              <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true"
+                [ngModelOptions]="{standalone: true}"
+                [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()"
+                class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+              <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true"
+                [ngModelOptions]="{standalone: true}"
+                [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))"
+                class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text"
+                dir="rtl" />
+              @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt
+                text is required.</p> }
+              @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text
+                is required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
+                class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
             </div>
           </div>
           }

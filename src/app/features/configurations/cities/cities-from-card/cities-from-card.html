@@ -13,7 +13,7 @@
     @if (cityForm.touched && cityForm.invalid) { <p
       class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' |
       translate }}</p> }
-          <div>
+    <div>
       <label class="mb-2 block text-sm font-medium">{{ 'destination' | translate }}</label>
       <select formControlName="destinationId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
         <option [ngValue]="null" disabled>{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') |
@@ -33,7 +33,8 @@
       @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p>
       }
-      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
+      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('maxlength')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>
@@ -42,10 +43,15 @@
       @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p>
       }
-      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
+      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('arabicText')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('maxlength')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
     </div>
-    <div><label class="mb-2 block text-sm font-medium">Route name</label><input formControlName="routeName" maxlength="180" placeholder="sharm-elshikh" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (cityForm.controls.routeName.touched && cityForm.controls.routeName.invalid) { <p class="mt-1 text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</p> }</div>
+    <div><label class="mb-2 block text-sm font-medium">Route name</label><input formControlName="routeName"
+        maxlength="180" placeholder="cities/routename" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
+      (cityForm.controls.routeName.touched && cityForm.controls.routeName.invalid) { <p
+        class="mt-1 text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</p> }</div>
 
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }}</label>
@@ -55,7 +61,8 @@
       @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
       }
-      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+      @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('maxlength')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }}</label>
@@ -65,8 +72,10 @@
       @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
       }
-      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('arabicText')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+      @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('maxlength')) { <p
+        class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
     </div>
 
     <div class="flex gap-3">

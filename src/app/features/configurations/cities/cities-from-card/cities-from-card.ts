@@ -172,7 +172,7 @@ export class CitiesFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()],
       }),
-      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
       descriptionEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.maxLength(4000)],

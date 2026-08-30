@@ -65,7 +65,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
-    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
     summaryEng: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500)],
