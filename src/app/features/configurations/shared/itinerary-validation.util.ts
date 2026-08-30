@@ -1,6 +1,8 @@
 interface ItineraryScheduleItem {
   titleEng?: unknown;
   titleAr?: unknown;
+  valueEng?: unknown;
+  valueAr?: unknown;
   arrivalDate?: unknown;
   startTime?: unknown;
   endTime?: unknown;
@@ -20,6 +22,8 @@ export function hasInvalidItinerary(items: ItineraryScheduleItem[]): boolean {
     return (
       !String(item.titleEng ?? '').trim() ||
       !String(item.titleAr ?? '').trim() ||
+      !String(item.valueEng ?? '').trim() ||
+      !String(item.valueAr ?? '').trim() ||
       startMinutes === null ||
       endMinutes === null ||
       endMinutes <= startMinutes ||

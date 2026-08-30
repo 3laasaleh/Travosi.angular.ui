@@ -1117,11 +1117,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         valueEng: new FormControl(itinerary.valueEng, {
           nonNullable: true,
-          validators: [Validators.maxLength(2000)],
+          validators: [Validators.required, Validators.maxLength(2000)],
         }),
         valueAr: new FormControl(itinerary.valueAr, {
           nonNullable: true,
-          validators: [Validators.maxLength(2000), arabicTextValidator()],
+          validators: [Validators.required, Validators.maxLength(2000), arabicTextValidator()],
         }),
         notes: new FormControl(itinerary.notes, {
           nonNullable: true,
