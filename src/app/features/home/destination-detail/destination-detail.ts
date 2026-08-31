@@ -99,13 +99,21 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationDescription(): string {
-    return this.destination?.description ?? (this.isArabic
-      ? this.destination?.descriptionAr ||
-          this.destination?.descriptionEng ||
-          ''
-      : this.destination?.descriptionEng ||
+    return this.isArabic
+      ? this.destination?.fullDescriptionAr ||
           this.destination?.descriptionAr ||
-          '');
+          this.destination?.fullDescriptionEng ||
+          this.destination?.descriptionEng ||
+          this.destination?.fullDescription ||
+          this.destination?.description ||
+          ''
+      : this.destination?.fullDescriptionEng ||
+          this.destination?.descriptionEng ||
+          this.destination?.fullDescription ||
+          this.destination?.description ||
+          this.destination?.fullDescriptionAr ||
+          this.destination?.descriptionAr ||
+          '';
   }
 
   ngOnInit(): void {

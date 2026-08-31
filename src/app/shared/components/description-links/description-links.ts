@@ -23,7 +23,7 @@ export class DescriptionLinks implements OnChanges {
 }
 
 export function parseDescriptionLinks(value: string | null | undefined): DescriptionPart[] {
-  const text = value ?? '';
+  const text = normalizeDescription(value ?? '');
   const parts: DescriptionPart[] = [];
   const pattern = /\[([^\]\r\n]+)]\(([^\s)]+)\)/g;
   let lastIndex = 0;
@@ -44,6 +44,46 @@ export function parseDescriptionLinks(value: string | null | undefined): Descrip
 
   if (lastIndex < text.length || parts.length === 0) parts.push({ text: text.slice(lastIndex) });
   return parts;
+}
+
+function normalizeDescription(value: string): string {
+  let text = value
+    .replace(/<br\s*\/?\s*>/gi, '\n')
+    .replace(/<\/(p|div|li|h[1-6])\s*>/gi, '\n')
+    .replace(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1[^>]*>(.*?)<\/a>/gis,
+      (_match, _quote, href, label) => `[${stripTags(label)}](${href})`)
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_match, code) => String.fromCodePoint(Number.parseInt(code, 16)))
+    .replace(/&#(\d+);/g, (_match, code) => String.fromCodePoint(Number(code)));
+
+  // Accept the link format generated/pasted by some editors:
+  // (Marsa Alam) [[https://example.com](https://example.com)]
+  text = text.replace(
+    /\(([^)\r\n]+)\)\s*\[\[?[^\]\r\n]+\]\((https?:\/\/[^\s)]+)\)\]?/gi,
+    (_match, label, href) => `[${label}](${unescapeMarkdownUrl(href)})`,
+  );
+  text = text.replace(
+    /\(([^)\r\n]+)\)\s*\[\[(https?:\/\/[^\]\s]+)\]\]/gi,
+    (_match, label, href) => `[${label}](${unescapeMarkdownUrl(href)})`,
+  );
+  return text.replace(
+    /\[([^\]\r\n]+)]\((https?:\/\/[^\s)]+)\)/gi,
+    (_match, label, href) => `[${label}](${unescapeMarkdownUrl(href)})`,
+  );
+}
+
+function unescapeMarkdownUrl(value: string): string {
+  return value.replace(/\\([&_=+#?])/g, '$1');
+}
+
+function stripTags(value: string): string {
+  return value.replace(/<[^>]+>/g, '').trim();
 }
 
 function safeExternalUrl(value: string): string | null {

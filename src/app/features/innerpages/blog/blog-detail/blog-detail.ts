@@ -9,8 +9,9 @@ import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { SeoService } from '../../../../core/services/seo.service';
+import { DescriptionLinks } from '../../../../shared/components/description-links/description-links';
 
-@Component({ selector: 'app-blog-detail', standalone: true, imports: [RouterLink, DatePipe, TranslatePipe, HomeNavbar, FooterOne, ImageViewerModal], templateUrl: './blog-detail.html', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-blog-detail', standalone: true, imports: [RouterLink, DatePipe, TranslatePipe, HomeNavbar, FooterOne, ImageViewerModal, DescriptionLinks], templateUrl: './blog-detail.html', changeDetection: ChangeDetectionStrategy.OnPush })
 export class BlogDetail implements OnInit {
   private readonly api = inject(ApiService); private readonly route = inject(ActivatedRoute); private readonly cdr = inject(ChangeDetectorRef); private readonly translate = inject(TranslateService); private readonly seo = inject(SeoService);
   blog: any = null; isLoading = true; errorMessage = ''; selectedImageIndex = 0; imageViewerOpen = false;

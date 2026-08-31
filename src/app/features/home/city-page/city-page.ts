@@ -58,9 +58,9 @@ export class CityPage implements OnInit {
       : (this.city?.titleEng ?? this.city?.titleAr ?? ''));
   }
   cityDescription(): string {
-    return this.city?.description ?? (this.isArabic
-      ? this.city?.descriptionAr || this.city?.descriptionEng || ''
-      : this.city?.descriptionEng || this.city?.descriptionAr || '');
+    return this.isArabic
+      ? this.city?.fullDescriptionAr || this.city?.descriptionAr || this.city?.fullDescriptionEng || this.city?.descriptionEng || this.city?.fullDescription || this.city?.description || ''
+      : this.city?.fullDescriptionEng || this.city?.descriptionEng || this.city?.fullDescription || this.city?.description || this.city?.fullDescriptionAr || this.city?.descriptionAr || '';
   }
   destinationName(): string {
     return this.isArabic

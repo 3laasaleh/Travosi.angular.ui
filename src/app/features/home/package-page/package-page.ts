@@ -60,7 +60,10 @@ export class HomePackagePage implements OnInit {
   }
 
   get description(): string {
-    return this.travelPackage?.description ?? '';
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    return arabic
+      ? this.travelPackage?.fullDescriptionAr || this.travelPackage?.descriptionAr || this.travelPackage?.fullDescriptionEng || this.travelPackage?.descriptionEng || this.travelPackage?.fullDescription || this.travelPackage?.description || ''
+      : this.travelPackage?.fullDescriptionEng || this.travelPackage?.descriptionEng || this.travelPackage?.fullDescription || this.travelPackage?.description || this.travelPackage?.fullDescriptionAr || this.travelPackage?.descriptionAr || '';
   }
 
   get images(): any[] {

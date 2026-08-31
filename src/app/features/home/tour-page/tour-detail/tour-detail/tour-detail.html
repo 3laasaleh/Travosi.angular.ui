@@ -24,7 +24,8 @@
         <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-text-box-outline"></i></span>
         <div><p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'tour' | translate }}</p><h2 class="mt-1 text-xl font-bold text-slate-900 ">{{ 'tourDescriptions' | translate }}</h2></div>
       </div>
-      <p class="mt-5 whitespace-pre-line text-base leading-8 text-slate-600 "><app-description-links [text]="description" /></p>
+      <p class="mt-5 whitespace-pre-line text-base leading-8 text-slate-600 ">
+        <app-description-links [text]="description" /></p>
     </section>
   }
 
