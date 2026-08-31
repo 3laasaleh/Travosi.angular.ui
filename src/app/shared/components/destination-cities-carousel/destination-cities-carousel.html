@@ -3,7 +3,7 @@
     <div class="swiper-wrapper">
       @for (city of cities; track city.id) {
         <div class="swiper-slide pb-8">
-          <a [routerLink]="['/destinations', destinationId, 'cities', city.id]" class="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+          <a [routerLink]="city.routeName ? ['/cities', city.routeName] : ['/destinations']" class="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
             <img [src]="cityImage(city)" [alt]="cityName(city)" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
             <div class="flex items-center justify-between gap-3 p-4"><div><h3 class="font-semibold group-hover:text-primary">{{ cityName(city) }}</h3>@if (city.titleAr) { <p dir="rtl" class="mt-1 text-xs text-slate-500">{{ city.titleAr }}</p> }</div><i class="mdi mdi-arrow-right text-xl text-primary rtl:rotate-180"></i></div>
           </a>

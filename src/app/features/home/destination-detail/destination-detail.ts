@@ -11,6 +11,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import { Observable, catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
 import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
@@ -48,6 +50,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   destination: any = null;
   tours: any[] = [];
@@ -119,6 +122,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           this.cities = [];
           this.isLoading = false;
           this.errorMessage = 'destinationNotFound';
+          this.seo.markNotFound('Destination not found');
           this.cdr.markForCheck();
           return;
         }
@@ -128,7 +132,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.viewInitialized = true;
+    this.viewInitialized = isPlatformBrowser(this.platformId);
     this.initializeTourCarousel();
   }
 
@@ -260,6 +264,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
         this.destination = destination;
         if (!destination) {
           this.errorMessage = 'destinationNotFound';
+          this.seo.markNotFound('Destination not found');
           return;
         }
 
@@ -280,12 +285,12 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           .filter((city) => Number(city?.destinationId) === destinationId)
           .slice(0, 10);
         this.cdr.markForCheck();
-        setTimeout(() => this.initializeTourCarousel());
+        if (isPlatformBrowser(this.platformId)) setTimeout(() => this.initializeTourCarousel());
       });
   }
 
   private updateSeo(): void {
-    this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Place' });
+    this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristDestination' });
   }
 
   private initializeTourCarousel(): void {
@@ -325,17 +330,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private destinationRequest(routeName: string): Observable<any> {
     return this.apiService.getUnauthntecated(`destinations/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'destination')),
-      catchError(() =>
-        this.apiService.getUnauthntecated('destinations?page=1&pageSize=100').pipe(
-          map(
-            (response) =>
-              this.extractCollection(response, ['destinations']).find(
-                (destination) => String(destination?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
-              ) ?? null,
-          ),
-          catchError(() => of(null)),
-        ),
-      ),
+      catchError(() => of(null)),
     );
   }
 

@@ -107,21 +107,21 @@ export class CityPage implements OnInit {
     return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
   }
 
-  private load(destinationId: number, cityId: number): void {
+  private load(city: any, destinationId: number, cityId: number): void {
     this.destinationId = destinationId;
     this.isLoading = true;
     this.errorMessage = '';
-    this.city = null;
+    this.city = city;
     this.destination = null;
     this.tours = [];
     this.recommendedTours = [];
     if (!destinationId || !cityId) {
       this.errorMessage = 'cityNotFound';
+      this.seo.markNotFound('City not found');
       this.isLoading = false;
       return;
     }
     forkJoin({
-      city: this.api.getUnauthntecated(`Cities/${cityId}`).pipe(catchError(() => of(null))),
       destination: this.api
         .getUnauthntecated(`Destinations/${destinationId}`)
         .pipe(catchError(() => of(null))),
@@ -142,10 +142,10 @@ export class CityPage implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((result) => {
-        this.city = this.entity(result.city, 'city');
         this.destination = this.entity(result.destination, 'destination');
         if (!this.city || Number(this.city.destinationId) !== destinationId) {
           this.errorMessage = 'cityNotFound';
+          this.seo.markNotFound('City not found');
           return;
         }
         this.updateSeo(destinationId, cityId);
@@ -162,6 +162,7 @@ export class CityPage implements OnInit {
     if (!routeName) {
       this.errorMessage = 'cityNotFound';
       this.isLoading = false;
+      this.seo.markNotFound('City not found');
       return;
     }
     this.isLoading = true;
@@ -174,13 +175,14 @@ export class CityPage implements OnInit {
         if (!city || !destinationId || !cityId) {
           this.errorMessage = 'cityNotFound';
           this.isLoading = false;
+          this.seo.markNotFound('City not found');
           this.cdr.markForCheck();
           return;
         }
-        this.load(destinationId, cityId);
+        this.load(city, destinationId, cityId);
       });
   }
-  private updateSeo(destinationId: number, cityId: number): void {
+  private updateSeo(_destinationId: number, _cityId: number): void {
     const image = this.destination?.coverImageUrl ?? this.destination?.imageUrl ?? this.destination?.images?.[0];
     this.seo.updateFrom(this.city, { image, imageUrl: this.cityImage(), schemaType: 'City' });
   }

@@ -14,6 +14,6 @@ export class UserNotification implements AfterViewInit {
   bg = 'assets/images/bg/cta.jpg';
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

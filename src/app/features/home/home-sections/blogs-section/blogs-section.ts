@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,6 +7,7 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   ViewChild,
   inject,
 } from '@angular/core';
@@ -23,6 +24,8 @@ import { LanguageService } from '../../../../core/services/language.service';
 interface ActiveBlog {
   id?: number;
   Id?: number;
+  routeName?: string;
+  RouteName?: string;
   titleEng?: string;
   TitleEng?: string;
   titleAr?: string;
@@ -49,6 +52,7 @@ export class BlogsSection implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   private swiper: Swiper | null = null;
   private swiperInitializationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -104,8 +108,8 @@ export class BlogsSection implements OnInit, OnDestroy {
       });
   }
 
-  blogId(blog: ActiveBlog): number | undefined {
-    return blog.id ?? blog.Id;
+  blogRoute(blog: ActiveBlog): string | number | undefined {
+    return blog.routeName ?? blog.RouteName ?? '';
   }
 
   publishedAt(blog: ActiveBlog): string | undefined {
@@ -170,6 +174,7 @@ export class BlogsSection implements OnInit, OnDestroy {
   }
 
   private scheduleSwiperInitialization(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (this.swiperInitializationTimer !== null) {
       clearTimeout(this.swiperInitializationTimer);
     }

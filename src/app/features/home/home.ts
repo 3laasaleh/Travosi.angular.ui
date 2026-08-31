@@ -5,7 +5,10 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  PLATFORM_ID,
+  inject,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap } from 'rxjs';
 import { HomeNavbar } from '../../layout/home-navbar/home-navbar';
@@ -42,6 +45,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './home.scss',
 })
 export class Home implements OnInit, AfterViewInit {
+  private readonly platformId = inject(PLATFORM_ID);
   isLoading = true;
   bg2 = 'assets/images/bg/2.jpg';
   bg3 = 'assets/images/bg/3.jpg';
@@ -60,6 +64,10 @@ export class Home implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     this.loadStatistics();
+    if (!isPlatformBrowser(this.platformId)) {
+      this.isLoading = false;
+      return;
+    }
     Promise.all([this.bg2, this.bg3, this.map].map((source) => this.preloadImage(source)))
       .finally(() => {
         this.isLoading = false;
@@ -69,7 +77,7 @@ export class Home implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (!this.isLoading) this.initializeSlider();
+    if (isPlatformBrowser(this.platformId) && !this.isLoading) this.initializeSlider();
   }
 
   private initializeSlider(): void {

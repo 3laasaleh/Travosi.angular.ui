@@ -21,7 +21,7 @@ export class HelpcenterFaqsComp implements AfterViewInit {
   activeIndex4 = 1;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   handleclick(id: number): void {

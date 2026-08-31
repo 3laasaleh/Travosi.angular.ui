@@ -92,7 +92,7 @@ export class ContactPage implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   toggle(): void {

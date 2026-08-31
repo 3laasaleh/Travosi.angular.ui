@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { isPlatformBrowser, NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AfterViewInit,
@@ -10,6 +10,7 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  PLATFORM_ID,
   SimpleChanges,
   ViewChild,
   forwardRef,
@@ -80,6 +81,7 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly instanceId = `flowbite-datepicker-${++nextDatePickerId}`;
 
   @ViewChild('dateInput') private dateInput?: ElementRef<HTMLInputElement>;
@@ -127,6 +129,7 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
   }
 
   ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.viewInitialized = true;
     const input = this.dateInput?.nativeElement;
     if (!input) return;
@@ -253,7 +256,7 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
   }
 
   private schedulePickerRebuild(): void {
-    if (!this.viewInitialized) return;
+    if (!isPlatformBrowser(this.platformId) || !this.viewInitialized) return;
     queueMicrotask(() => {
       if (!this.viewInitialized) return;
       this.destroyPicker();

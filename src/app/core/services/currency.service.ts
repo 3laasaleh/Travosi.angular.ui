@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, catchError, finalize, map, of, shareReplay, tap } from 'rxjs';
 import { ApiService } from './apiservice.service';
@@ -39,6 +40,7 @@ const RATE_CACHE_KEY = 'seaworld.usd-egp-rate.v1';
 
 @Injectable({ providedIn: 'root' })
 export class CurrencyService {
+  private readonly platformId = inject(PLATFORM_ID);
   readonly options = signal<CurrencyOption[]>(FALLBACK_CURRENCIES);
   readonly currentCurrency;
   readonly usdToEgpRate = signal<number | null>(null);
@@ -440,7 +442,7 @@ export class CurrencyService {
 
   private readCache<T>(key: string): CacheEntry<T> | null {
     try {
-      if (typeof localStorage === 'undefined') return null;
+      if (!isPlatformBrowser(this.platformId)) return null;
       const parsed = JSON.parse(localStorage.getItem(key) ?? 'null') as unknown;
       const record = this.asRecord(parsed);
       const cachedAt = Number(record?.['cachedAt']);
@@ -458,7 +460,7 @@ export class CurrencyService {
 
   private writeCache<T>(key: string, value: T): void {
     try {
-      if (typeof localStorage !== 'undefined') {
+      if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem(key, JSON.stringify({ cachedAt: Date.now(), value } satisfies CacheEntry<T>));
       }
     } catch {

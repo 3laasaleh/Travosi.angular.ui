@@ -18,6 +18,6 @@ export class BlogStandard implements AfterViewInit {
   blogData = blogData;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

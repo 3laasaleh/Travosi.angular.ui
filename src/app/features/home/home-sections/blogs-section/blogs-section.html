@@ -39,10 +39,10 @@
       <div class="relative px-1 pb-12">
         <div #blogSwiper class="swiper overflow-hidden">
           <div class="swiper-wrapper">
-            @for (blog of blogs; track blogId(blog) ?? $index) {
+            @for (blog of blogs; track blogRoute(blog) ?? $index) {
               <div class="swiper-slide h-auto">
                 <a
-                  [routerLink]="['/blogs', blogId(blog)]"
+                  [routerLink]="['/blogs', blogRoute(blog)]"
                   class="group flex h-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <article class="flex min-h-[450px] w-full flex-col">

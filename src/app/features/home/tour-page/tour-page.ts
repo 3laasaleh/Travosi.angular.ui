@@ -102,6 +102,7 @@ export class HomeTourPage implements OnInit {
           this.tour = null;
           this.isLoading = false;
           this.errorMessage = 'tourNotFound';
+          this.seo.markNotFound('Tour not found');
           this.cdr.markForCheck();
           return;
         }
@@ -187,6 +188,7 @@ export class HomeTourPage implements OnInit {
         this.tour = tour;
         if (!tour) {
           this.errorMessage = 'tourNotFound';
+          this.seo.markNotFound('Tour not found');
           return;
         }
         this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
@@ -198,17 +200,7 @@ export class HomeTourPage implements OnInit {
   private tourRequest(routeName: string): Observable<any> {
     return this.apiService.getUnauthntecated(`Tours/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'tour')),
-      catchError(() =>
-        this.apiService.getUnauthntecated('Tours?page=1&pageSize=100').pipe(
-          map(
-            (response) =>
-              this.extractCollection(response, ['tours']).find(
-                (tour) => String(tour?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
-              ) ?? null,
-          ),
-          catchError(() => of(null)),
-        ),
-      ),
+      catchError(() => of(null)),
     );
   }
 
@@ -221,13 +213,4 @@ export class HomeTourPage implements OnInit {
     return data?.[key] ?? data;
   }
 
-  private extractCollection(response: any, keys: string[]): any[] {
-    const data = response?.data ?? response;
-    const rows =
-      data?.data ??
-      data?.items ??
-      keys.map((key) => data?.[key]).find((value) => Array.isArray(value)) ??
-      data;
-    return Array.isArray(rows) ? rows : [];
-  }
 }

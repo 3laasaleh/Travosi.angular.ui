@@ -43,11 +43,24 @@
               "src/assets/libs/@mdi/font/css/materialdesignicons.min.css",
               "src/assets/css/tailwind.css",
               "src/styles.scss"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "security": {
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1",
+                "seaworldholidays.com",
+                "www.seaworldholidays.com"
+              ]
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
-               "optimization": true,
+              "optimization": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

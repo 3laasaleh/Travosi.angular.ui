@@ -37,7 +37,7 @@ export class UserPayment implements AfterViewInit {
   ];
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   showModal(): void {

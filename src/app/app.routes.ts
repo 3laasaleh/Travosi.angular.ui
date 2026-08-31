@@ -4,6 +4,7 @@ import { adminGuard } from './core/gaurds/admin.guard';
 import { languageUrlGuard, languageUrlMatchGuard } from './core/gaurds/language-url.guard';
 
 const localizedCatalogueRoutes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'destinations',
     loadComponent: () => import('./features/home/destinations-list/destinations-list').then((m) => m.HomeDestinationsList),
@@ -48,13 +49,7 @@ const localizedCatalogueRoutes: Routes = [
   },
 ];
 
-export const routes: Routes = [
-  {
-    path: ':lang',
-    canMatch: [languageUrlMatchGuard],
-    canActivate: [languageUrlGuard],
-    children: localizedCatalogueRoutes,
-  },
+const localizedApplicationRoutes: Routes = [
   {
     path: 'user-setting',
     canActivate: [authGuard],
@@ -62,61 +57,6 @@ export const routes: Routes = [
       import('./features/user/auth-pages/user-setting/user-setting').then((m) => m.UserSetting),
   },
 
-  {
-    path: 'destinations',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/destinations-list/destinations-list').then(
-        (m) => m.HomeDestinationsList,
-      ),
-  },
-  {
-    path: 'cities/:routeName',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/city-page/city-page').then((m) => m.CityPage),
-  },
-  {
-    path: 'destinations/:routeName',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/destination-detail/destination-detail').then(
-        (m) => m.HomeDestinationDetail,
-      ),
-  },
-  {
-    path: 'tours',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
-  },
-  {
-    path: 'nile-cruises',
-    canActivate: [languageUrlGuard],
-    data: { nileCruisesOnly: true },
-    loadComponent: () =>
-      import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
-  },
-  {
-    path: 'tours/:routeName',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
-  },
-  {
-    path: 'packages',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/packages-list/packages-list').then(
-        (m) => m.HomePackagesList,
-      ),
-  },
-  {
-    path: 'packages/:routeName',
-    canActivate: [languageUrlGuard],
-    loadComponent: () =>
-      import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
-  },
   {
     path: 'configurations',
     canActivate: [adminGuard],
@@ -243,7 +183,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/user/auth-pages/reset-password/reset-password').then((m) => m.ResetPassword),
   },
-  { path: 'home', canActivate: [languageUrlGuard], loadComponent: () => import('./features/home/home').then((m) => m.Home) },
   {
     path: 'user-profile',
     canActivate: [authGuard],
@@ -336,16 +275,6 @@ export const routes: Routes = [
   },
  
   {
-    path: 'blogs/:routeName',
-    canActivate: [languageUrlGuard],
-    loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
-  },
-  {
-    path: 'blogs',
-    canActivate: [languageUrlGuard],
-    loadComponent: () => import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
-  },
-  {
     path: 'blog-standard',
     loadComponent: () =>
       import('./features/innerpages/blog/blog-standard/blog-standard').then((m) => m.BlogStandard),
@@ -355,5 +284,24 @@ export const routes: Routes = [
     redirectTo: 'blogs',
   },
 
-  { path: '**', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./features/innerpages/not-found/not-found').then((m) => m.NotFound),
+  },
+];
+
+export const routes: Routes = [
+  {
+    path: ':lang',
+    canMatch: [languageUrlMatchGuard],
+    canActivate: [languageUrlGuard],
+    children: [...localizedCatalogueRoutes, ...localizedApplicationRoutes],
+  },
+  {
+    path: '**',
+    canActivate: [languageUrlGuard],
+    loadComponent: () =>
+      import('./features/innerpages/not-found/not-found').then((m) => m.NotFound),
+  },
 ];

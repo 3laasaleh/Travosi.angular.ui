@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
-import { tns } from 'tiny-slider';
+import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, ChangeDetectionStrategy, PLATFORM_ID, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -9,6 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './users-one.html',
 })
 export class UsersOne implements AfterViewInit {
+  private readonly platformId = inject(PLATFORM_ID);
   readonly travelPromises = [
     { icon: 'mdi-map-marker-path', title: 'personalizedTravelPlanning', description: 'personalizedTravelPlanningDescription' },
     { icon: 'mdi-headset', title: 'supportThroughoutJourney', description: 'supportThroughoutJourneyDescription' },
@@ -16,7 +17,8 @@ export class UsersOne implements AfterViewInit {
   ];
 
   ngAfterViewInit(): void {
-    tns({
+    if (!isPlatformBrowser(this.platformId)) return;
+    void import('tiny-slider').then(({ tns }) => tns({
       container: '.tiny-three-item',
       controls: false,
       mouseDrag: true,
@@ -33,6 +35,6 @@ export class UsersOne implements AfterViewInit {
         768: { items: 2 },
         320: { items: 1 },
       },
-    });
+    }));
   }
 }

@@ -173,6 +173,7 @@ export class HomePackagePage implements OnInit {
         if (!routeName) {
           this.isLoading = false;
           this.errorMessage = 'packageNotFound';
+          this.seo.markNotFound('Package not found');
           this.cdr.markForCheck();
           return;
         }
@@ -254,6 +255,7 @@ export class HomePackagePage implements OnInit {
         this.travelPackage = travelPackage;
         if (!travelPackage) {
           this.errorMessage = 'packageNotFound';
+          this.seo.markNotFound('Package not found');
           return;
         }
         this.updateSeo();
@@ -267,17 +269,7 @@ export class HomePackagePage implements OnInit {
   private packageRequest(routeName: string): Observable<any> {
     return this.apiService.getUnauthntecated(`Packages/by-route/${encodeURIComponent(routeName)}`).pipe(
       map((response) => this.extractEntity(response, 'package')),
-      catchError(() =>
-        this.apiService.getUnauthntecated('Packages?page=1&pageSize=100').pipe(
-          map(
-            (response) =>
-              this.extractCollection(response, ['packages']).find(
-                (item) => String(item?.routeName ?? '').toLowerCase() === routeName.toLowerCase(),
-              ) ?? null,
-          ),
-          catchError(() => of(null)),
-        ),
-      ),
+      catchError(() => of(null)),
     );
   }
 
@@ -288,10 +280,4 @@ export class HomePackagePage implements OnInit {
     return data?.[key] ?? data;
   }
 
-  private extractCollection(response: any, keys: string[]): any[] {
-    const data = response?.data ?? response;
-    const rows =
-      data?.data ?? data?.items ?? keys.map((key) => data?.[key]).find(Array.isArray) ?? data;
-    return Array.isArray(rows) ? rows : [];
-  }
 }

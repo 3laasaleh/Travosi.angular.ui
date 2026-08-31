@@ -14,6 +14,6 @@ export class HelpcenterOne implements AfterViewInit {
   starts = starts;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

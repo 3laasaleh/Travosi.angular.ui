@@ -36,7 +36,7 @@
     <ul class="space-y-1 text-slate-900">
       @for (destination of destinations; track destination.id) {
       <li class="relative" (mouseenter)="activateDestination(destination)">
-        <a [routerLink]="['/destinations', destination.id]" (click)="onNavigate()"
+        <a [routerLink]="destination.routeName ? ['/destinations', destination.routeName] : ['/destinations']" (click)="onNavigate()"
           class="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-slate-50 hover:text-primary">
           <span class="flex items-center gap-2"><i class="mdi mdi-map-marker-outline text-primary"
               aria-hidden="true"></i>{{ destinationName(destination) }}</span>
@@ -48,7 +48,7 @@
           class="space-y-1 border-s border-slate-100 ps-2 pt-1 md:absolute md:end-full md:top-0 md:me-1 md:min-w-64 md:rounded-xl md:border md:bg-white md:p-2 md:shadow-xl dark:border-slate-700">
           @for (city of cities(destination); track city.id) {
           <li class="relative" (mouseenter)="activateCity(city)">
-            <a [routerLink]="['/destinations', destination.id, 'cities', city.id]" (click)="onNavigate()"
+            <a [routerLink]="city.routeName ? ['/cities', city.routeName] : ['/destinations']" (click)="onNavigate()"
               class="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary">
               <span class="flex items-center gap-2"><i class="mdi mdi-city-variant-outline text-slate-400"></i>{{
                 cityName(city) }}</span>
@@ -58,7 +58,7 @@
             <ul
               class="space-y-1 border-s border-slate-100 ps-2 pt-1 md:absolute md:end-full md:top-0 md:me-1 md:min-w-72 md:rounded-xl md:border md:bg-white md:p-2 md:shadow-xl dark:border-slate-700">
               @for (tour of tours(city); track tour.id) {
-              <li><a [routerLink]="['/tours', tour.id]" (click)="onNavigate()"
+              <li><a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()"
                   class="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary"><i
                     class="mdi mdi-compass-outline text-primary"></i><span class="truncate">{{ tourName(tour)
                     }}</span></a></li>

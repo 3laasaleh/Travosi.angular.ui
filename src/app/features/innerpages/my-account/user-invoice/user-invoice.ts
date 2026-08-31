@@ -16,6 +16,6 @@ export class UserInvoice implements AfterViewInit {
   logoLight = 'assets/images/main-logo.png';
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

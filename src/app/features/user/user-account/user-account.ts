@@ -17,6 +17,6 @@ export class UserAccount implements AfterViewInit {
   packageData = packageData.slice(0, 6);
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

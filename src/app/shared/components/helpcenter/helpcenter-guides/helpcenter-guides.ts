@@ -13,6 +13,6 @@ export class HelpcenterGuidesComp implements AfterViewInit {
   guidesData = guidesData;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

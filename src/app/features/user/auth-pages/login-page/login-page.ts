@@ -37,7 +37,7 @@ export class LoginPage implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   onSubmit(): void {

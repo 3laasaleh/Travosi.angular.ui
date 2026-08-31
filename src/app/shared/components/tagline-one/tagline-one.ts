@@ -8,6 +8,6 @@ import feather from 'feather-icons';
 })
 export class TaglineOne implements AfterViewInit {
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

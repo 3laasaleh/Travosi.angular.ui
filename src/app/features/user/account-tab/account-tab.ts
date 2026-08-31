@@ -78,7 +78,7 @@ export class AccountTab implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   ngOnDestroy(): void {

@@ -12,7 +12,7 @@ export const languageUrlMatchGuard: CanMatchFn = (_route, segments) => {
   return true;
 };
 
-/** Keeps public catalogue URLs canonical, for example /ar/tours/2. */
+/** Reads language from localized URLs and redirects legacy root URLs under it. */
 export const languageUrlGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const languageService = inject(LanguageService);
@@ -34,7 +34,7 @@ export const languageUrlGuard: CanActivateFn = (route, state) => {
   }
 
   return router.createUrlTree(
-    [languageService.getCurrentLanguage(), ...segments],
+    [languageService.getCurrentLanguage(), ...(segments.length ? segments : ['home'])],
     { queryParams: tree.queryParams, fragment: tree.fragment ?? undefined },
   );
 };

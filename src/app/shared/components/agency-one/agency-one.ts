@@ -7,7 +7,10 @@ import {
   SimpleChanges,
   ViewChild,
   ChangeDetectionStrategy,
+  PLATFORM_ID,
+  inject,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CountUp } from 'countup.js';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -20,6 +23,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './agency-one.html',
 })
 export class AgencyOne implements AfterViewInit, OnChanges {
+  private readonly platformId = inject(PLATFORM_ID);
   about = 'assets/images/about.jpg';
   map = 'assets/images/map-plane-big.png';
   @Input() visitorTotal = 4589;
@@ -31,7 +35,8 @@ export class AgencyOne implements AfterViewInit, OnChanges {
   private packageCounter?: CountUp;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (typeof document !== 'undefined') feather.replace();
     this.visitorCounter = new CountUp(this.visitorCount.nativeElement, this.visitorTotal, {
       startVal: 0,
     });

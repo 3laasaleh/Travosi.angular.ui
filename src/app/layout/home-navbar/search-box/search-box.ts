@@ -123,7 +123,11 @@ export class SearchBox implements OnInit {
     };
 
     this.closeResults();
-    void this.router.navigate([routeByType[item.type], item.id]);
+    const routeName = item.route?.split('/').filter(Boolean).at(-1);
+    const hasSlug = routeName && !/^\d+$/.test(routeName);
+    void this.router.navigate(hasSlug
+      ? [routeByType[item.type], routeName]
+      : [routeByType[item.type]]);
   }
 
   private search(term: string) {

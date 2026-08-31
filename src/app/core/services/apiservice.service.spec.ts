@@ -13,6 +13,7 @@ describe('ApiService unauthenticated requests', () => {
     const service = new ApiService(
       http as unknown as HttpClient,
       {} as AuthService,
+      'https://api.example.test/',
     );
 
     service.getUnauthntecated('Currencies').subscribe();

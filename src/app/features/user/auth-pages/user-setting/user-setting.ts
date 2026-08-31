@@ -77,7 +77,7 @@ export class UserSetting implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 
   savePersonalDetails(): void {

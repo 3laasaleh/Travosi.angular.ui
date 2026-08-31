@@ -13,6 +13,6 @@ export class HelpcenterSupportComp implements AfterViewInit {
   helps = helps;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

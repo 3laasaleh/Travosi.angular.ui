@@ -14,6 +14,6 @@ export class TourSidebar implements AfterViewInit {
   date: string | null = null;
 
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
 }

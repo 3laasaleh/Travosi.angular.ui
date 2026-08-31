@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /configurations/
+Disallow: /account/
+Disallow: /user-
+Disallow: /login
+Disallow: /signup
 
-# Add the production sitemap URL here after the public domain is confirmed.
+Sitemap: https://seaworldholidays.com/sitemap.xml

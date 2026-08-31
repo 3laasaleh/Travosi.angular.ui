@@ -10,6 +10,8 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
@@ -30,6 +32,7 @@ export class HomeNavbar implements AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly platformId = inject(PLATFORM_ID);
   readonly languageService = inject(LanguageService);
   readonly currencyService = inject(CurrencyService);
 
@@ -153,6 +156,7 @@ export class HomeNavbar implements AfterViewInit {
   }
 
   private refreshIcons(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     requestAnimationFrame(() => feather.replace());
   }
 }

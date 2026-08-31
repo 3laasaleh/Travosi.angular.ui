@@ -28,7 +28,7 @@ export class ForgotPassword implements AfterViewInit {
   errorMessage = '';
   messageSent: any;
   ngAfterViewInit(): void {
-    feather.replace();
+    if (typeof document !== 'undefined') feather.replace();
   }
   navigateToHome(){
     this._router.navigate(['home']);

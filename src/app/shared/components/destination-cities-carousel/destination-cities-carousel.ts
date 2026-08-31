@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, PLATFORM_ID, SimpleChanges, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import Swiper from 'swiper';
@@ -14,10 +15,11 @@ import { environment } from '../../../../environments/environment';
 })
 export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDestroy {
   private readonly translate = inject(TranslateService);
+  private readonly platformId = inject(PLATFORM_ID);
   @Input() destinationId!: number;
   @Input() cities: any[] = [];
   private swiper: Swiper | null = null;
-  readonly instanceId = `city-carousel-${Math.random().toString(36).slice(2)}`;
+  readonly instanceId = 'destination-cities-carousel';
 
   ngAfterViewInit(): void { this.initialize(); }
   ngOnChanges(changes: SimpleChanges): void {
@@ -36,6 +38,7 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
   }
 
   private initialize(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.swiper?.destroy(true, true);
     if (!this.cities.length || !document.querySelector(this.selector)) return;
     this.swiper = new Swiper(`${this.selector} .swiper`, {
