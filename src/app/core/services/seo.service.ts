@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, effect, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { LanguageService } from './language.service';
 
@@ -30,6 +30,16 @@ export class SeoService {
   private readonly meta = inject(Meta);
   private readonly document = inject(DOCUMENT);
   private readonly language = inject(LanguageService);
+  private lastPage: LocalizedSeoPage | null = null;
+
+  constructor() {
+    // Detail components are reused when only /en changes to /ar. Reapply the
+    // loaded entity's bilingual metadata even when the component is not recreated.
+    effect(() => {
+      const currentLanguage = this.language.currentLanguage();
+      if (this.lastPage) this.applyLocalizedPageSeo(this.lastPage, currentLanguage);
+    });
+  }
 
   /** Uses the active language and the standard bilingual API fields for a public page. */
   updateFrom(entity: any, options: SeoPageOptions = {}): void {
@@ -49,7 +59,11 @@ export class SeoService {
 
   /** Sets a localized detail page's SEO from the API response after it has loaded. */
   setLocalizedPageSeo(page: LocalizedSeoPage): void {
-    const language = page.currentLang ?? this.languageFromUrl();
+    this.lastPage = page;
+    this.applyLocalizedPageSeo(page, page.currentLang ?? this.languageFromUrl());
+  }
+
+  private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
     const title = this.localized(page.titleEn, page.titleAr, '', language);
     const description = this.localized(page.descriptionEn, page.descriptionAr, '', language);
     this.applyDocumentLanguage(language);
