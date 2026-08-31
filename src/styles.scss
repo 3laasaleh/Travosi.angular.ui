@@ -125,3 +125,7 @@ div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
     transform: rotate(360deg);
   }
 }
+
+table tbody tr td {
+  text-align: center;
+}

@@ -41,7 +41,6 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   constructor() {
     effect(() => {
       this.taskNotifications.changed();
-      debugger
       if (this.isAgent) this.loadAgentTasks();
     });
   }
@@ -73,7 +72,6 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   }
 
   loadAgentTasks(): void {
-    debugger
     this.apiService.get('Notifications/Mine?unreadOnly=false').pipe(
       catchError(() => of(null)),
       finalize(() => this.cdr.markForCheck()),

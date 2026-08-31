@@ -462,7 +462,6 @@ export class TourBookingCard implements OnInit {
 
   private setDefaultDates(): void {
     const dateFrom = this.minTravelDate;
-    debugger;
     if (!dateFrom) return;
 
     let dateTo = this.maxTravelDate;

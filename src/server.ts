@@ -12,7 +12,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const allowedHosts = (process.env['NG_ALLOWED_HOSTS']
-  || 'localhost,127.0.0.1,seaworld.premiumasp.net,www.seaworld.premiumasp.net')
+  || 'localhost,127.0.0.1,seaworld.premiumasp.net,www.seaworld.premiumasp.net,seaworld-stage.premiumasp.net')
   .split(',')
   .map((host) => host.trim())
   .filter(Boolean);
