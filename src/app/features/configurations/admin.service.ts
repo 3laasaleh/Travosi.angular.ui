@@ -174,6 +174,26 @@ export class AdminService {
     });
   }
 
+  deleteTour(id: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Tours/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deletePackage(id: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Packages/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deleteDestination(id: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Destinations/${id}`, { headers: this.getHeaders() });
+  }
+
+  deleteBlog(id: number): Observable<any> {
+    return this.http.delete(`${environment.baseUrl}Blogs/${id}`, { headers: this.getHeaders() });
+  }
+
   updateTour(payload: any): Observable<any> {
     return this.http.put(`${environment.baseUrl}Tours`, payload, {
       headers: this.getHeaders(),

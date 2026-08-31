@@ -39,6 +39,7 @@ export class CitiesList implements OnInit, OnChanges {
   cities: CityDTO[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 1 };
 
@@ -114,7 +115,7 @@ export class CitiesList implements OnInit, OnChanges {
   }
 
   async toggleCityStatus(city: CityDTO): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -153,6 +154,25 @@ export class CitiesList implements OnInit, OnChanges {
         timerProgressBar: true,
       });
       this.cdr.markForCheck();
+    });
+  }
+
+  async deleteCity(city: CityDTO): Promise<void> {
+    if (city?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const id = Number(city.id);
+    if (!Number.isInteger(id) || id <= 0) return;
+    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', focusCancel: true, reverseButtons: true });
+    if (!result.isConfirmed) return;
+    this.deletingId = id;
+    this.apiService.deleteRequest(`Cities/${id}`).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of({ deleteFailed: true }); }),
+      finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) { Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('recordDeleteError') }); return; }
+      if (this.cities.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('cityDeleted'), showConfirmButton: false, timer: 2200 });
+      this.loadCities();
     });
   }
 }

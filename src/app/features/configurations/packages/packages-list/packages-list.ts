@@ -41,6 +41,7 @@ export class PackagesList implements OnInit, OnChanges {
   packages: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfo = { page: 1, pageSize: 10, totalCount: 0, totalPages: 1 };
 
@@ -107,7 +108,7 @@ export class PackagesList implements OnInit, OnChanges {
   }
 
   async togglePackageStatus(travelPackage: any): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
     const isActive = travelPackage.isActive !== false;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
@@ -139,6 +140,57 @@ export class PackagesList implements OnInit, OnChanges {
       travelPackage.isActive = !isActive;
       Swal.fire({ toast: true, position: 'top-end', icon: 'success', iconColor: '#00d492', title: this.translate.instant('statusUpdated'), showConfirmButton: false, timer: 2200, timerProgressBar: true });
       this.cdr.markForCheck();
+    });
+  }
+
+  async deletePackage(travelPackage: any): Promise<void> {
+    if (travelPackage?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const packageId = Number(travelPackage?.id ?? travelPackage?.packageId);
+    if (!Number.isInteger(packageId) || packageId <= 0) return;
+
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmDeleteRecord'),
+      text: this.translate.instant('recordDeleteWarning'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.deletingId = packageId;
+    this.apiService.deleteRequest(`Packages/${packageId}`).pipe(
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') });
+        return of({ deleteFailed: true });
+      }),
+      finalize(() => {
+        this.deletingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({
+          icon: 'error',
+          title: response?.message || this.translate.instant('recordDeleteError'),
+        });
+        return;
+      }
+      if (this.packages.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: this.translate.instant('packageDeleted'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.loadPackages();
     });
   }
 

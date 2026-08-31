@@ -49,6 +49,7 @@ export class BlogsList implements OnInit, OnChanges {
   blogs: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = {
     page: 1,
@@ -139,7 +140,7 @@ export class BlogsList implements OnInit, OnChanges {
   }
 
   async toggleStatus(blog: any): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
 
     const isActive = this.isActive(blog);
     const confirmation = await Swal.fire({
@@ -201,6 +202,26 @@ export class BlogsList implements OnInit, OnChanges {
         });
         this.cdr.markForCheck();
       });
+  }
+
+  async deleteBlog(blog: any): Promise<void> {
+    if (this.isActive(blog) || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const id = Number(this.blogId(blog));
+    if (!Number.isInteger(id) || id <= 0) return;
+    const confirmation = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', focusCancel: true, reverseButtons: true });
+    if (!confirmation.isConfirmed) return;
+    this.deletingId = id;
+    this.adminService.deleteBlog(id).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of({ deleteFailed: true }); }),
+      finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false || response?.IsSuccess === false) { Swal.fire({ icon: 'error', title: response?.message ?? response?.Message ?? this.translate.instant('recordDeleteError') }); return; }
+      if (this.blogs.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('blogDeleted'), showConfirmButton: false, timer: 2200 });
+      this.load();
+    });
   }
 
   blogId(blog: any): number | undefined {

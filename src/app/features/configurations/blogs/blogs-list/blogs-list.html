@@ -106,6 +106,7 @@
               </td>
               <td class="px-4 py-3">
                 @if (!isActive(blog)) {
+                  <div class="flex gap-2">
                   <button
                     type="button"
                     class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-amber-300 text-amber-600 transition hover:border-amber-500 hover:bg-amber-500 hover:text-white"
@@ -115,6 +116,8 @@
                   >
                     <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>
                   </button>
+                  <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 hover:bg-rose-600 hover:text-white disabled:opacity-50" [attr.aria-label]="'delete' | translate" (click)="deleteBlog(blog)"><i class="mdi" [class.mdi-loading]="deletingId === blogId(blog)" [class.mdi-spin]="deletingId === blogId(blog)" [class.mdi-delete-outline]="deletingId !== blogId(blog)"></i></button>
+                  </div>
                 }
               </td>
             </tr>
@@ -161,6 +164,7 @@
 
               <div class="mt-auto flex items-center justify-between gap-3 pt-4">
                 @if (!isActive(blog)) {
+                  <div class="flex gap-2">
                   <button
                     type="button"
                     class="rounded-full border border-amber-300 px-3 py-1.5 text-xs font-semibold text-amber-600 transition hover:border-amber-500 hover:bg-amber-500 hover:text-white"
@@ -168,6 +172,8 @@
                   >
                     {{ 'edit' | translate }}
                   </button>
+                  <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="rounded-full border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-600 hover:text-white disabled:opacity-50" (click)="deleteBlog(blog)">@if (deletingId === blogId(blog)) { <i class="mdi mdi-loading mdi-spin"></i> } @else { {{ 'delete' | translate }} }</button>
+                  </div>
                 } @else {
                   <span></span>
                 }

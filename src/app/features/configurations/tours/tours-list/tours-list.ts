@@ -45,6 +45,7 @@ export class ToursList implements OnInit, OnChanges {
   tours: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
@@ -107,7 +108,7 @@ export class ToursList implements OnInit, OnChanges {
   }
 
   async toggleTourStatus(tour: any): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
     const currentlyActive = tour?.isActive !== false;
     const nextStatus = !currentlyActive;
     const confirmation = await Swal.fire({
@@ -191,6 +192,57 @@ export class ToursList implements OnInit, OnChanges {
     const coverIndex = images.findIndex((image: any) => this.imageMatchesCover(image, cover));
     if (coverIndex < 0) return [{ url: cover }, ...images];
     return [images[coverIndex], ...images.filter((_: any, index: number) => index !== coverIndex)];
+  }
+
+  async deleteTour(tour: any): Promise<void> {
+    if (tour?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const tourId = Number(tour?.id ?? tour?.tourId);
+    if (!Number.isInteger(tourId) || tourId <= 0) return;
+
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmDeleteRecord'),
+      text: this.translate.instant('recordDeleteWarning'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.deletingId = tourId;
+    this.adminService.deleteTour(tourId).pipe(
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') });
+        return of({ deleteFailed: true });
+      }),
+      finalize(() => {
+        this.deletingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({
+          icon: 'error',
+          title: response?.message || this.translate.instant('recordDeleteError'),
+        });
+        return;
+      }
+      if (this.tours.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: this.translate.instant('tourDeleted'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.loadTours();
+    });
   }
 
   imageUrl(image: any): string {

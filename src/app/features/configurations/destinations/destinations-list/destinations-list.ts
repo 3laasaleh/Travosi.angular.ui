@@ -40,6 +40,7 @@ export class DestinationsList implements OnInit, OnChanges {
   destinations: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   successMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
@@ -136,7 +137,7 @@ export class DestinationsList implements OnInit, OnChanges {
   }
 
   async toggleDestinationStatus(destination: any): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
       text: this.translate.instant(
@@ -183,6 +184,25 @@ export class DestinationsList implements OnInit, OnChanges {
         timerProgressBar: true,
       });
       this.cdr.markForCheck();
+    });
+  }
+
+  async deleteDestination(destination: any): Promise<void> {
+    if (destination?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const id = Number(destination?.id);
+    if (!Number.isInteger(id) || id <= 0) return;
+    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', focusCancel: true, reverseButtons: true });
+    if (!result.isConfirmed) return;
+    this.deletingId = id;
+    this.adminService.deleteDestination(id).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of({ deleteFailed: true }); }),
+      finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) { Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('recordDeleteError') }); return; }
+      if (this.destinations.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('destinationDeleted'), showConfirmButton: false, timer: 2200 });
+      this.loadDestinations();
     });
   }
 
