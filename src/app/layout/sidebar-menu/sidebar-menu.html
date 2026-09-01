@@ -28,7 +28,7 @@
         @for (item of menuItems; track item.path) {
           <li [class.active]="activeMenu === item.path">
             <a
-              [routerLink]="item.path"
+              [routerLink]="localizedPath(item.path)"
               routerLinkActive="active !border-primary !bg-primary !text-white"
               [routerLinkActiveOptions]="{ exact: true }"
               ariaCurrentWhenActive="page"

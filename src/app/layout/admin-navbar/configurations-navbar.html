@@ -151,7 +151,7 @@
         @for (item of menuItems; track item.path) {
           <li>
             <a
-              [routerLink]="item.path"
+              [routerLink]="localizedPath(item.path)"
               routerLinkActive="!border-primary !bg-primary !text-white shadow-sm"
               [routerLinkActiveOptions]="{ exact: true }"
               ariaCurrentWhenActive="page"

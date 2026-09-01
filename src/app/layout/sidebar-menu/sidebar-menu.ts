@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../features/user/_services/auth.service';
+import { LanguageService } from '../../core/services/language.service';
 import { CONFIGURATION_MENU_ITEMS } from '../configuration-menu-items';
 
 @Component({
@@ -13,6 +14,7 @@ import { CONFIGURATION_MENU_ITEMS } from '../configuration-menu-items';
 })
 export class SidebarMenu {
   private authService = inject(AuthService);
+  readonly languageService = inject(LanguageService);
   activeMenu = '';
   collapsed = false;
 
@@ -28,5 +30,9 @@ export class SidebarMenu {
 
   get showSidebar(): boolean {
     return this.currentRole === 'Admin' || this.currentRole === 'Agent';
+  }
+
+  localizedPath(path: string): string[] {
+    return ['/', this.languageService.currentLanguage(), ...path.split('/').filter(Boolean)];
   }
 }

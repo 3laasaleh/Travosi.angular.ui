@@ -66,9 +66,9 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (this.isAgent) {
-      timer(0, 30000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAgentTasks());
-    }
+    // if (this.isAgent) {
+    //   timer(0, 30000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAgentTasks());
+    // }
   }
 
   loadAgentTasks(): void {
@@ -111,6 +111,10 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
 
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
+  }
+
+  localizedPath(path: string): string[] {
+    return ['/', this.languageService.currentLanguage(), ...path.split('/').filter(Boolean)];
   }
 
   toggleLanguageMenu(event: MouseEvent): void {
