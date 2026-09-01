@@ -20,24 +20,15 @@ import { A11y, Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { LanguageService } from '../../../../core/services/language.service';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 
 interface ActiveBlog {
   id?: number;
-  Id?: number;
   routeName?: string;
-  RouteName?: string;
-  titleEng?: string;
-  TitleEng?: string;
-  titleAr?: string;
-  TitleAr?: string;
-  summaryEng?: string;
-  SummaryEng?: string;
-  summaryAr?: string;
-  SummaryAr?: string;
+  title?: string;
+  summary?: string;
   publishedAt?: string;
-  PublishedAt?: string;
   images?: unknown[];
-  Images?: unknown[];
 }
 
 @Component({
@@ -97,39 +88,31 @@ export class BlogsSection implements OnInit, OnDestroy {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((response: unknown) => {
-        if (response === null || this.isFailedResponse(response)) {
+      .subscribe((response: IGenericResponse<ActiveBlog[]>) => {
+        if (response.data === null || this.isFailedResponse(response)) {
           this.blogs = [];
           this.hasError = true;
           return;
         }
-
-        this.blogs = this.extractBlogs(response);
+debugger
+        this.blogs = response.data  ?? [];
       });
   }
 
   blogRoute(blog: ActiveBlog): string | number | undefined {
-    return blog.routeName ?? blog.RouteName ?? '';
+    return blog.routeName ?? blog.routeName ?? '';
   }
 
   publishedAt(blog: ActiveBlog): string | undefined {
-    return blog.publishedAt ?? blog.PublishedAt;
+    return blog.publishedAt ?? blog.publishedAt;
   }
 
-  title(blog: ActiveBlog): string {
-    const titleEng = blog.titleEng ?? blog.TitleEng ?? '';
-    const titleAr = blog.titleAr ?? blog.TitleAr ?? '';
-    return this.isArabic ? titleAr || titleEng : titleEng || titleAr;
-  }
+ 
 
-  summary(blog: ActiveBlog): string {
-    const summaryEng = blog.summaryEng ?? blog.SummaryEng ?? '';
-    const summaryAr = blog.summaryAr ?? blog.SummaryAr ?? '';
-    return this.isArabic ? summaryAr || summaryEng : summaryEng || summaryAr;
-  }
+
 
   imageUrl(blog: ActiveBlog): string {
-    const images = blog.images ?? blog.Images ?? [];
+    const images = blog.images ?? blog.images ?? [];
     const firstImage = Array.isArray(images) ? images[0] : undefined;
     const image = firstImage as Record<string, unknown> | string | undefined;
     const rawUrl =
@@ -146,9 +129,7 @@ export class BlogsSection implements OnInit, OnDestroy {
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
-  private get isArabic(): boolean {
-    return this.languageService.currentLanguage() === 'ar';
-  }
+
 
   private isFailedResponse(response: unknown): boolean {
     if (!response || typeof response !== 'object') return false;
@@ -156,22 +137,7 @@ export class BlogsSection implements OnInit, OnDestroy {
     return envelope['isSuccess'] === false || envelope['IsSuccess'] === false;
   }
 
-  private extractBlogs(response: unknown): ActiveBlog[] {
-    const envelope = response as Record<string, any>;
-    const candidates = [
-      envelope?.['data'],
-      envelope?.['Data'],
-      envelope?.['data']?.['data'],
-      envelope?.['data']?.['Data'],
-      envelope?.['data']?.['items'],
-      envelope?.['Data']?.['data'],
-      envelope?.['Data']?.['Data'],
-      envelope?.['Data']?.['items'],
-      response,
-    ];
 
-    return candidates.find((candidate) => Array.isArray(candidate)) ?? [];
-  }
 
   private scheduleSwiperInitialization(): void {
     if (!isPlatformBrowser(this.platformId)) return;

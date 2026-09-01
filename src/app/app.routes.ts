@@ -274,11 +274,7 @@ const localizedApplicationRoutes: Routes = [
       import('./features/innerpages/contact-page/contact-page').then((m) => m.ContactPage),
   },
  
-  {
-    path: 'blog-standard',
-    loadComponent: () =>
-      import('./features/innerpages/blog/blog-standard/blog-standard').then((m) => m.BlogStandard),
-  },
+ 
   {
     path: 'blog-detail',
     redirectTo: 'blogs',
