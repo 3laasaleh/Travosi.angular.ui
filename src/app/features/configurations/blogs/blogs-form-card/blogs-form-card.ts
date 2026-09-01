@@ -325,28 +325,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.syncContentEditor(controlName, editor);
   }
 
-  insertLink(controlName: BlogContentControl): void {
-    const editor = this.contentEditor(controlName);
-    if (!editor) return;
-
-    const input = window.prompt(this.translate.instant('blogLinkPrompt'));
-    if (!input) return;
-    const href = this.safeLinkUrl(input);
-    if (!href) {
-      this.errorMessage = 'blogLinkInvalid';
-      this.cdr.markForCheck();
-      return;
-    }
-
-    editor.focus();
-    document.execCommand('createLink', false, href);
-    this.secureEditorLinks(editor);
-    this.syncContentEditor(controlName, editor);
-  }
-
   onContentInput(controlName: BlogContentControl, event: Event): void {
     const editor = event.target as HTMLElement;
-    this.secureEditorLinks(editor);
     this.syncContentEditor(controlName, editor);
   }
 
@@ -374,32 +354,6 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     control.setValue(editor.innerHTML);
     control.markAsTouched();
     control.markAsDirty();
-  }
-
-  private secureEditorLinks(editor: HTMLElement): void {
-    editor.querySelectorAll('a').forEach((anchor) => {
-      const href = this.safeLinkUrl(anchor.getAttribute('href') ?? '');
-      if (!href) {
-        anchor.replaceWith(...Array.from(anchor.childNodes));
-        return;
-      }
-      anchor.href = href;
-      anchor.target = '_blank';
-      anchor.rel = 'noopener noreferrer';
-    });
-  }
-
-  private safeLinkUrl(value: string): string | null {
-    const raw = value.trim();
-    if (!raw) return null;
-    if (raw.startsWith('/')) return raw;
-    const withProtocol = /^[a-z][a-z\d+.-]*:/i.test(raw) ? raw : `https://${raw}`;
-    try {
-      const url = new URL(withProtocol);
-      return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
-    } catch {
-      return null;
-    }
   }
 
   private removeLocal(index: number): void {

@@ -13,7 +13,7 @@
       @if (showForm) {
         <app-quotations-from-card [selectedQuotation]="selectedQuotation" (quotationSaved)="handleQuotationSaved()" (editCancelled)="clearSelectedQuotation()" />
       } @else {
-        <app-configurations-quotations-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectQuotationForEdit($event)" />
+        <app-configurations-quotations-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectQuotationForEdit($event)" (duplicateRequested)="selectQuotationForEdit($event)" />
       }
     </div>
   </div>

@@ -40,12 +40,15 @@ export class QuotationsList implements OnInit, OnChanges {
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
   @Output() editRequested = new EventEmitter<any>();
+  @Output() duplicateRequested = new EventEmitter<any>();
 
   quotations: any[] = [];
   isLoading = false;
   errorMessage = '';
   downloadingQuotationId: number | null = null;
   statusUpdatingId: number | null = null;
+  deletingQuotationId: number | null = null;
+  duplicatingQuotationId: number | null = null;
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
@@ -82,12 +85,20 @@ export class QuotationsList implements OnInit, OnChanges {
       if (response === null) return;
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.quotations ?? pageData;
-      this.quotations = Array.isArray(rows) ? rows : [];
+      const allRows = Array.isArray(rows) ? rows : [];
+      const serverPaged = !Array.isArray(pageData)
+        && (pageData?.page !== undefined || pageData?.pageSize !== undefined || pageData?.totalCount !== undefined);
+      const totalCount = Number(pageData?.totalCount ?? allRows.length);
+      const totalPages = Math.max(1, Number(pageData?.totalPages ?? Math.ceil(totalCount / this.paginationInfo.pageSize)));
+      const page = Math.min(Math.max(1, Number(pageData?.page ?? this.paginationInfo.page)), totalPages);
+      this.quotations = serverPaged
+        ? allRows
+        : allRows.slice((page - 1) * this.paginationInfo.pageSize, page * this.paginationInfo.pageSize);
       this.paginationInfo = {
-        page: Number(pageData?.page ?? this.paginationInfo.page),
+        page,
         pageSize: Number(pageData?.pageSize ?? this.paginationInfo.pageSize),
-        totalCount: Number(pageData?.totalCount ?? this.quotations.length),
-        totalPages: Math.max(1, Number(pageData?.totalPages ?? 1)),
+        totalCount,
+        totalPages,
       };
     });
   }
@@ -128,6 +139,11 @@ export class QuotationsList implements OnInit, OnChanges {
     return (this.allowedTransitions[Number(quotation?.status) as QuotationStatusEnum]?.length ?? 0) > 0;
   }
 
+  canDelete(quotation: any): boolean {
+    const status = Number(quotation?.status);
+    return status === QuotationStatusEnum.Draft || status === QuotationStatusEnum.Cancelled;
+  }
+
   statusKey(quotation: any): string {
     const status = Number(quotation?.status);
     return QuotationStatusEnum[status]?.toLowerCase() || String(quotation?.statusName ?? 'draft').toLowerCase();
@@ -161,7 +177,10 @@ export class QuotationsList implements OnInit, OnChanges {
     const nextStatus = Number(result.value) as QuotationStatusEnum;
     if (!allowed.includes(nextStatus)) return;
     this.statusUpdatingId = id;
-    this.apiService.patch('Quotations/ChangeStatus', { id, status: nextStatus }).pipe(
+    const request$ = nextStatus === QuotationStatusEnum.Sent
+      ? this.apiService.patch(`Quotations/${id}/Send`, {})
+      : this.apiService.patch('Quotations/ChangeStatus', { id, status: nextStatus });
+    request$.pipe(
       catchError((error) => {
         this.showToast('error', this.apiMessage(error, 'quotationStatusUpdateError'));
         return of(null);
@@ -211,6 +230,77 @@ export class QuotationsList implements OnInit, OnChanges {
         return;
       }
       this.showToast('error', 'quotationPdfInvalid');
+    });
+  }
+
+  async duplicateQuotation(quotation: any): Promise<void> {
+    const id = Number(quotation?.id);
+    if (!id || this.duplicatingQuotationId !== null) return;
+    const result = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('duplicateQuotation'),
+      text: this.translate.instant('duplicateQuotationPrompt'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('duplicate'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) return;
+
+    this.duplicatingQuotationId = id;
+    this.apiService.post(`Quotations/${id}/Duplicate`, {}).pipe(
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'quotationDuplicateError'));
+        return of(null);
+      }),
+      finalize(() => {
+        this.duplicatingQuotationId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null || response?.isSuccess === false) {
+        if (response?.isSuccess === false) this.showToast('error', this.apiMessage(response, 'quotationDuplicateError'));
+        return;
+      }
+      const copy = response?.data ?? response;
+      this.showToast('success', response?.message || 'quotationDuplicated');
+      this.duplicateRequested.emit(copy);
+    });
+  }
+
+  async deleteQuotation(quotation: any): Promise<void> {
+    const id = Number(quotation?.id);
+    if (!id || !this.canDelete(quotation) || this.deletingQuotationId !== null) return;
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('confirmDeleteRecord'),
+      text: this.translate.instant('recordDeleteWarning'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) return;
+
+    this.deletingQuotationId = id;
+    this.apiService.delete('Quotations', id).pipe(
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'quotationDeleteError'));
+        return of(null);
+      }),
+      finalize(() => {
+        this.deletingQuotationId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null || response?.isSuccess === false) {
+        if (response?.isSuccess === false) this.showToast('error', this.apiMessage(response, 'quotationDeleteError'));
+        return;
+      }
+      this.showToast('success', response?.message || 'quotationDeleted');
+      this.loadQuotations();
     });
   }
 

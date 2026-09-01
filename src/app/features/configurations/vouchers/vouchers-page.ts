@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../shared/components/time-picker/time-picker';
@@ -248,12 +249,19 @@ export class Vouchers implements OnInit {
     });
   }
 
-  delete(voucher: any): void {
+  async delete(voucher: any): Promise<void> {
     if (this.deletingId !== null) return;
-    const confirmed = confirm(
-      `${this.translate.instant('confirmDeleteRecord')} ${this.translate.instant('recordDeleteWarning')}`,
-    );
-    if (!confirmed) return;
+    const confirmation = await Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('confirmDeleteRecord'),
+      text: this.translate.instant('recordDeleteWarning'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
 
     this.deletingId = Number(voucher.id);
     this.errorMessage = '';
@@ -271,6 +279,10 @@ export class Vouchers implements OnInit {
       if (response?.isSuccess === false) {
         this.errorMessage = this.responseError(response, 'recordDeleteError');
         return;
+      }
+      if (this.selectedId === Number(voucher.id)) {
+        this.showForm = false;
+        this.reset();
       }
       this.load();
     });

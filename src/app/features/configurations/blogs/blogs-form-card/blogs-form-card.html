@@ -64,7 +64,7 @@
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="text-sm font-medium">
-        <label for="blog-contentEng-editor">English content</label>
+        <label for="blog-contentEng-editor">English content <span class="font-normal text-slate-500">([label](https://url))</span></label>
         <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white">
           <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
             <button type="button" (mousedown)="preventToolbarFocus($event)"
@@ -77,9 +77,6 @@
               (click)="formatContent('contentEng', 'insertUnorderedList')"
               class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
                 class="mdi mdi-format-list-bulleted"></i></button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentEng')"
-              class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{
-              'insertLink' | translate }}</button>
           </div>
           <div id="blog-contentEng-editor" contenteditable="true" role="textbox" aria-multiline="true"
             [innerHTML]="form.controls.contentEng.value" (input)="onContentInput('contentEng', $event)"
@@ -92,7 +89,7 @@
         }
       </div>
       <div class="text-sm font-medium">
-        <label for="blog-contentAr-editor">Arabic content</label>
+        <label for="blog-contentAr-editor">Arabic content <span class="font-normal text-slate-500">([النص](https://url))</span></label>
         <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white" dir="rtl">
           <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
             <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'bold')"
@@ -104,9 +101,6 @@
               (click)="formatContent('contentAr', 'insertUnorderedList')"
               class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
                 class="mdi mdi-format-list-bulleted"></i></button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="insertLink('contentAr')"
-              class="rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"><i class="mdi mdi-link-variant"></i> {{
-              'insertLink' | translate }}</button>
           </div>
           <div id="blog-contentAr-editor" contenteditable="true" role="textbox" aria-multiline="true"
             [innerHTML]="form.controls.contentAr.value" (input)="onContentInput('contentAr', $event)"

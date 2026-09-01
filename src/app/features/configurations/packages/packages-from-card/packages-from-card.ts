@@ -144,6 +144,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const requiredControls = [
       controls.nameEng,
       controls.nameAr,
+      controls.routeName,
       controls.descriptionEng,
       controls.descriptionAr,
       controls.durationDays,
@@ -157,7 +158,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.excludes,
     ];
     const cancellationPolicyMissing = !controls.isFreeCancelation.value
-      && !this.cancellationPoliciesArray.getRawValue().some((item: any) => String(item?.value ?? '').trim());
+      && !this.cancellationPoliciesArray.getRawValue().some((item: any) =>
+        String(item?.valueEng ?? '').trim() && String(item?.valueAr ?? '').trim());
     const dateRangeInvalid = !!controls.dateFrom.value
       && !!controls.dateTo.value
       && controls.dateTo.value <= controls.dateFrom.value;
@@ -472,7 +474,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   cancelItineraryStep(): void { this.closeItineraryEditor(); }
   removeItineraryStep(collection: TourItineraryItem[], index: number): void { if (!this.itineraryDraft) collection.splice(index, 1); }
-  addCancellationPolicy(): void { this.cancellationPoliciesArray.push(this.createListItemGroup()); }
+  addCancellationPolicy(): void { this.cancellationPoliciesArray.push(this.createLocalizedListItemGroup()); }
   removeCancellationPolicy(index: number): void { this.cancellationPoliciesArray.removeAt(index); }
   addHighlight(): void { this.highlightsArray.push(this.createLocalizedListItemGroup()); }
   removeHighlight(index: number): void { this.highlightsArray.removeAt(index); }
@@ -495,6 +497,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return new FormGroup({
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
@@ -534,14 +537,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private setCancellationPolicies(policies: any[]): void {
     this.cancellationPoliciesArray.clear();
     (Array.isArray(policies) ? policies : []).forEach((policy) =>
-      this.cancellationPoliciesArray.push(this.createListItemGroup(typeof policy === 'string' ? { value: policy } : policy)),
+      this.cancellationPoliciesArray.push(this.createLocalizedListItemGroup(
+        typeof policy === 'string' ? { valueEng: policy, valueAr: policy } : policy,
+      )),
     );
-  }
-
-  private toListPayload(items: any[]): { Id: number; Value: string }[] {
-    return (Array.isArray(items) ? items : [])
-      .map((item) => ({ Id: Number(item?.id) || 0, Value: String(item?.value ?? '').trim() }))
-      .filter((item) => !!item.Value);
   }
 
   private toLocalizedListPayload(items: any[]): { Id: number; ValueEng: string; ValueAr: string }[] {
@@ -558,7 +557,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private validateDetailsStep(): boolean {
-    const names = ['nameEng', 'nameAr', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
+    const names = ['nameEng', 'nameAr', 'routeName', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
     names.forEach((name) => this.packageForm.controls[name].markAsTouched());
     this.cancellationPoliciesArray.markAllAsTouched();
     this.highlightsArray.markAllAsTouched();
@@ -569,6 +568,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       this.packageForm.controls.dateTo.setErrors({ dateRange: true });
     }
     return names.every((name) => this.packageForm.controls[name].valid)
+      && (values.isFreeCancelation || (this.cancellationPoliciesArray.valid && this.toLocalizedListPayload(values.cancellationPolicies).length > 0))
       && this.highlightsArray.valid
       && this.includesArray.valid
       && this.excludesArray.valid;
@@ -578,16 +578,16 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const value = this.packageForm.getRawValue();
     const payload: any = {
       NameEng: value.nameEng.trim(), NameAr: value.nameAr.trim(),
+      RouteName: value.routeName.trim().toLowerCase(),
       DescriptionEng: value.descriptionEng.trim(), DescriptionAr: value.descriptionAr.trim(),
       Description: value.descriptionEng.trim(),
       DurationDays: Number(value.durationDays), DurationHours: Number(value.durationHours),
       PricePerPerson: Number(value.pricePerPerson), PricePerChild: Number(value.pricePerChild),
       MaxCapacity: Number(value.maxCapacity),
-      CancellationPolicies: this.toListPayload(value.cancellationPolicies),
+      CancellationPolicies: this.toLocalizedListPayload(value.cancellationPolicies),
       Highlights: this.toLocalizedListPayload(value.highlights),
       Includes: this.toLocalizedListPayload(value.includes),
       Excludes: this.toLocalizedListPayload(value.excludes),
-      CancellationPolicy: this.toListPayload(value.cancellationPolicies)[0]?.Value ?? '',
       IsFreeCancelation: value.isFreeCancelation,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
       Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId, DisplayOrder: index })),
@@ -624,6 +624,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       .map((destination: any) => Number(destination.destinationId ?? destination.id)).filter(Number.isFinite);
     this.packageForm.patchValue({
       nameEng: item?.nameEng ?? '', nameAr: item?.nameAr ?? '',
+      routeName: item?.routeName ?? item?.nameEng ?? '',
       descriptionEng: item?.descriptionEng ?? item?.description ?? '', descriptionAr: item?.descriptionAr ?? '',
       durationDays: Number(item?.durationDays) || 1, durationHours: Number(item?.durationHours) || 0,
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
@@ -636,7 +637,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       cancellationPolicies: [],
       highlights: [], includes: [], excludes: [],
     } as any);
-    this.setCancellationPolicies(item?.cancellationPolicies ?? (item?.cancellationPolicy ? [{ value: item.cancellationPolicy }] : []));
+    this.setCancellationPolicies(item?.cancellationPolicies ?? (item?.cancellationPolicy ? [{ valueEng: item.cancellationPolicy, valueAr: item.cancellationPolicy }] : []));
     this.setLocalizedListItems(this.highlightsArray, item?.highlights ?? []);
     this.setLocalizedListItems(this.includesArray, item?.includes ?? []);
     this.setLocalizedListItems(this.excludesArray, item?.excludes ?? []);
@@ -649,7 +650,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
     this.imageValidationMessage = ''; this.imageAltErrorsVisible = false;
     this.errorMessage = ''; this.successMessage = '';
-    this.packageForm.reset({ nameEng: '', nameAr: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
+    this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
       dateFrom: this.today, dateTo: this.tomorrow, destinationIds: [], images: [], itinerary: [] });
     this.setCancellationPolicies([]);
