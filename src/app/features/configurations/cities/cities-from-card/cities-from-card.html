@@ -35,6 +35,7 @@
       }
       @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('maxlength')) { <p
         class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
+      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label>

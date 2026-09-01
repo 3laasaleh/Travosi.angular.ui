@@ -287,6 +287,7 @@
   "blogLinkInvalid": "أدخل رابط HTTP أو HTTPS صالحًا.",
   "shortDescription": "وصف مختصر",
   "optional": "اختياري",
+  "defaultImage": "الصورة الافتراضية",
   "description": "الوصف",
   "descriptionRequired": "الوصف مطلوب.",
   "destinationImages": "صور الوجهة",

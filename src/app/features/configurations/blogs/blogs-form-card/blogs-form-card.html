@@ -20,6 +20,8 @@
         <span class="mt-1 block text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</span>
         } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('maxlength')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('pattern')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</span>
         }
       </label>
       <label class="text-sm font-medium">

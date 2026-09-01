@@ -271,6 +271,7 @@
   "blogLinkInvalid": "Enter a valid HTTP or HTTPS link.",
   "shortDescription": "Short description",
   "optional": "Optional",
+  "defaultImage": "Default image",
   "description": "Description",
   "descriptionRequired": "Description is required.",
   "destinationImages": "Destination images",

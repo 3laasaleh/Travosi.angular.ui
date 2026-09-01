@@ -59,13 +59,13 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   form = new FormGroup({
     titleEng: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(200)],
+      validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)],
     }),
     titleAr: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
-    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
     summaryEng: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500)],

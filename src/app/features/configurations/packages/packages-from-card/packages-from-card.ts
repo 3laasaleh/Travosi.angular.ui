@@ -93,6 +93,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   itineraryDraftIsChild = false;
   private itineraryDraftCollection: TourItineraryItem[] | null = null;
   private itineraryDraftIndex: number | null = null;
+  private initialItinerarySnapshot = '';
 
   constructor(
     private adminService: AdminService,
@@ -291,13 +292,20 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       this.errorMessage = 'itineraryTimeConflict';
       return;
     }
+    if (this.selectedPackage && this.initialItinerarySnapshot === this.serializeItinerary(itinerary)) {
+      this.showToast('success', 'packageItineraryAlreadySaved');
+      this.completedStep = 3;
+      this.packageSaved.emit();
+      this.resetForm(false);
+      return;
+    }
     this.beginRequest('savingPackageItinerary');
     this.adminService.addPackageItinerary({
       PackageId: this.currentPackageId,
       Itinerary: itinerary.map((item) => this.toItineraryPayload(item)),
     }).pipe(
       switchMap((itineraryResponse: any) => {
-        if (itineraryResponse?.isSuccess === false) {
+        if (itineraryResponse?.isSuccess !== true) {
           return of({ itineraryResponse, statusResponse: null, statusError: null });
         }
 
@@ -495,9 +503,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+    nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
-      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       durationDays: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
@@ -637,6 +645,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       cancellationPolicies: [],
       highlights: [], includes: [], excludes: [],
     } as any);
+    this.initialItinerarySnapshot = this.serializeItinerary(this.packageForm.controls.itinerary.value);
     this.setCancellationPolicies(item?.cancellationPolicies ?? (item?.cancellationPolicy ? [{ valueEng: item.cancellationPolicy, valueAr: item.cancellationPolicy }] : []));
     this.setLocalizedListItems(this.highlightsArray, item?.highlights ?? []);
     this.setLocalizedListItems(this.includesArray, item?.includes ?? []);
@@ -650,6 +659,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
     this.imageValidationMessage = ''; this.imageAltErrorsVisible = false;
     this.errorMessage = ''; this.successMessage = '';
+    this.initialItinerarySnapshot = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
       dateFrom: this.today, dateTo: this.tomorrow, destinationIds: [], images: [], itinerary: [] });
@@ -662,13 +672,15 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private completeImagesStep(): void { this.completedStep = Math.max(this.completedStep, 2); this.activeStep = 3; this.errorMessage = ''; this.cdr.markForCheck(); }
   private closeItineraryEditor(): void { this.itineraryDraft = null; this.itineraryDraftCollection = null; this.itineraryDraftIndex = null; this.itineraryDraftIsChild = false; }
+
+  private serializeItinerary(value: unknown): string { return JSON.stringify(value ?? []); }
   private syncImagesControl(): void { this.packageForm.controls.images.setValue(this.imageUploads.map((image) => image.url)); this.packageForm.controls.images.markAsTouched(); this.packageForm.controls.images.updateValueAndValidity(); }
   private removeImageLocally(index: number): void { const [image] = this.imageUploads.splice(index, 1); if (image?.file) URL.revokeObjectURL(image.url); this.syncImagesControl(); this.cdr.markForCheck(); }
   private showImageDeletedToast(): void { this.showToast('success', 'imageDeleted'); }
   private beginRequest(message: string): void { this.isSaving = true; this.apiLoadingMessage = message; this.errorMessage = ''; this.successMessage = ''; }
   private endRequest(): void { this.isSaving = false; this.apiLoadingMessage = ''; this.cdr.markForCheck(); }
   private handleRequestError(error: any, fallback: string): void { this.errorMessage = error?.error?.message || fallback; this.showToast('error', this.errorMessage); }
-  private acceptResponse(response: any, fallback: string): boolean { if (response === null) return false; if (response?.isSuccess === false) { this.errorMessage = response?.message || fallback; this.showToast('error', this.errorMessage); return false; } return true; }
+  private acceptResponse(response: any, fallback: string): boolean { if (response?.isSuccess !== true) { this.errorMessage = response?.message || fallback; this.showToast('error', this.errorMessage); return false; } return true; }
   private showToast(icon: 'success' | 'error', message: string): void { Swal.fire({ toast: true, position: 'top-end', icon, iconColor: icon === 'success' ? '#00d492' : undefined, title: this.translate.instant(message), showConfirmButton: false, timer: icon === 'success' ? 2500 : 4500, timerProgressBar: true }); }
   private extractPackageId(response: any): number | null { const data = response?.data ?? response?.result ?? response; return this.toOptionalId(data?.id ?? data?.packageId ?? data?.data?.id ?? data?.data?.packageId ?? data); }
   private toOptionalId(value: unknown): number | null { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }

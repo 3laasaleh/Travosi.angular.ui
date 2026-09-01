@@ -113,6 +113,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   itineraryDraftIsChild = false;
   private itineraryDraftCollection: FormArray<FormGroup> | null = null;
   private itineraryDraftIndex: number | null = null;
+  private initialItinerarySnapshot = '';
 
   private get defaultCurrencyId(): number {
     return this.currencies[0].id;
@@ -528,6 +529,13 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.errorMessage = 'itineraryTimeConflict';
       return;
     }
+    if (this.selectedTour && this.initialItinerarySnapshot === this.serializeItinerary(itinerary)) {
+      this.showApiToast('success', 'tourItineraryAlreadySaved');
+      this.completedStep = 3;
+      this.tourSaved.emit();
+      this.resetForm(false);
+      return;
+    }
 
     this.isSaving = true;
     this.apiLoadingMessage = 'savingTourItinerary';
@@ -542,7 +550,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       .addTourItinerary(payload)
       .pipe(
         switchMap((itineraryResponse: any) => {
-          if (itineraryResponse?.isSuccess === false) {
+          if (itineraryResponse?.isSuccess !== true) {
             return of({ itineraryResponse, statusResponse: null, statusError: null });
           }
 
@@ -569,12 +577,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       .subscribe((result: any) => {
         if (result === null) return;
         const response = result.itineraryResponse;
-        if (response?.isSuccess === false) {
+        if (response?.isSuccess !== true) {
           this.errorMessage = response?.message || 'tourItinerarySaveError';
           this.showApiToast('error', this.errorMessage);
           return;
         }
-        if (result.statusError || result.statusResponse?.isSuccess === false) {
+        if (result.statusError || result.statusResponse?.isSuccess !== true) {
           this.errorMessage = result.statusResponse?.message || 'tourStatusUpdateError';
           this.showApiToast('error', this.errorMessage);
           return;
@@ -938,6 +946,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.setExcludes(tour.excludes ?? []);
     this.setCancellationPolicies(tour.cancellationPolicies ?? []);
     this.setItinerary(tour.itinerary ?? tour.itineraries ?? []);
+    this.initialItinerarySnapshot = this.serializeItinerary(this.itineraryArray.getRawValue());
     this.syncImagesControl();
     const destinationId = Number(tour.destinationId);
     if (destinationId) this.loadCities(destinationId, Number(tour.cityId));
@@ -991,6 +1000,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.setCancellationPolicies([]);
     this.addCancellationPolicy();
     this.setItinerary([]);
+    this.initialItinerarySnapshot = '';
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -999,15 +1009,19 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       {
         titleEng: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required, Validators.pattern(/^[A-Za-z][A-Za-z\s'-]*$/)],
+          validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
         }),
         titleAr: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required,  arabicTextValidator()],
+          validators: [Validators.required, arabicTextValidator()],
         }),
         routeName: new FormControl('', {
           nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] ,
+          validators: [
+            Validators.required,
+            Validators.maxLength(100),
+            Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/),
+          ],
         }),
 
         destinationId: new FormControl<number | ''>('', {
@@ -1181,6 +1195,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     items.forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
   }
 
+  private serializeItinerary(value: unknown): string {
+    return JSON.stringify(value ?? []);
+  }
+
   private closeItineraryEditor(): void {
     this.itineraryDraft = null;
     this.itineraryDraftCollection = null;
@@ -1195,32 +1213,16 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private validateDetailsStep(): boolean {
-    const controls: AbstractControl[] = [
-      this.tourForm.controls.titleEng,
-      this.tourForm.controls.titleAr,
-      this.tourForm.controls.routeName,
-      this.tourForm.controls.descriptionEng,
-      this.tourForm.controls.descriptionAr,
-      this.tourForm.controls.destinationId,
-      this.tourForm.controls.cityId,
-      this.tourForm.controls.pricePerPerson,
-      this.tourForm.controls.pricePerChild,
-      this.tourForm.controls.currencyId,
-      this.tourForm.controls.maxSeats,
-      this.tourForm.controls.durationDays,
-      this.tourForm.controls.durationHours,
-      this.tourForm.controls.highlights,
-      this.tourForm.controls.includes,
-      this.tourForm.controls.excludes,
-      this.tourForm.controls.cancellationPolicies,
-    ];
-    controls.forEach((control) => control.markAllAsTouched());
-    const valid =
-      controls.every((control) => control.valid) &&
-      !this.tourForm.hasError('invalidDateRange') &&
-      !this.tourForm.hasError('invalidTourDuration');
-    if (!valid) this.errorMessage = 'completeTourDetailsFirst';
-    return valid;
+    this.tourForm.markAllAsTouched();
+    // The full form also contains the images and itinerary steps, which are
+    // intentionally completed later. Validate only the controls belonging to
+    // the details step here; otherwise the form is invalid with no visible
+    // error because those later-step controls are still empty.
+    if (this.detailsStepInvalid) {
+      this.errorMessage = 'completeTourDetailsFirst';
+      return false;
+    }
+    return true;
   }
 
   private buildTourDetailsPayload(tourId: number | null): Record<string, unknown> {
@@ -1229,7 +1231,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ...(tourId ? { Id: tourId } : {}),
       TitleEng: form.titleEng.trim(),
       TitleAr: form.titleAr.trim(),
-      RouteName:form.routeName.trim(),
+      RouteName: form.routeName.trim(),
       DestinationId: Number(form.destinationId),
       CityId: Number(form.cityId),
       DescriptionEng: form.descriptionEng.trim(),

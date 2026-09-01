@@ -332,13 +332,13 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     return new FormGroup({
       titleEng: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^[A-Za-z][A-Za-z\s'-]*$/)],
+        validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
       }),
       titleAr: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, arabicTextValidator()],
       }),
-      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
       subDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
       subDescriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500), arabicTextValidator()] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),

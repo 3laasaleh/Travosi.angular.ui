@@ -96,6 +96,8 @@
               <p class="mt-1 text-xs text-red-600">
                 {{ 'maximumCharacters' | translate: { count: 200 } }}
               </p>
+            } @else if (packageForm.controls.nameEng.touched && packageForm.controls.nameEng.hasError('pattern')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p>
             }
           </div>
           <div>
