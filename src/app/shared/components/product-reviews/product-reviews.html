@@ -21,9 +21,9 @@
   } @else {
     <div class="mt-6 space-y-4">
       @for (review of reviews; track review.id) {
-        <article class="rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+        <article class="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm">
           <div class="flex items-center justify-between gap-3">
-            <p class="font-bold text-slate-800">{{ review.authorName || ('verifiedTraveler' | translate) }}</p>
+            <p class="flex items-center gap-2 font-bold text-slate-800"><span class="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary"><i class="mdi mdi-account-check-outline"></i></span>{{ review.authorName || ('verifiedTraveler' | translate) }}<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700">{{ 'verifiedTraveler' | translate }}</span></p>
             <time class="text-xs text-slate-400" [attr.datetime]="review.createdAtUtc">{{ review.createdAtUtc | date: 'mediumDate' }}</time>
           </div>
           <div class="mt-2 text-amber-500" [attr.aria-label]="review.rating + ' stars'">{{ '★'.repeat(review.rating || 0) }}<span class="text-slate-300">{{ '★'.repeat(5 - (review.rating || 0)) }}</span></div>
