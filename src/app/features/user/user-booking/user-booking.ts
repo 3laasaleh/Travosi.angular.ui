@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AccountTab } from '../account-tab/account-tab';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 
@@ -40,7 +40,7 @@ interface UserBookingItem {
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
+  imports: [CommonModule,RouterLink, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })

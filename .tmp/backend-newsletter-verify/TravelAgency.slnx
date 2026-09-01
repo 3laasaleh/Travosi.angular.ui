@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="TravelAgency.API/TravelAgency.API.csproj" />
-  <Project Path="TravelAgency.ApiGateway/TravelAgency.ApiGateway.csproj" />
-  <Project Path="TravelAgency.Application/TravelAgency.Application.csproj" />
-  <Project Path="TravelAgency.Domain/TravelAgency.Domain.csproj" />
-  <Project Path="TravelAgency.InfraStructure/TravelAgency.InfraStructure.csproj" />
-</Solution>
