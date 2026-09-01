@@ -69,6 +69,7 @@
   </ol>
 
   <form [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
+    @if (packageForm.invalid && (packageForm.touched || packageForm.dirty)) { <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     @if (activeStep === 1) {
       <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
         <div>

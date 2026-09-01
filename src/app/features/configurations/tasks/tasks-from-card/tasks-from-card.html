@@ -3,6 +3,7 @@
   @if (successMessage) { <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{ successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedTask ? 'editTask' : 'addTask') | translate }}</h2>
   <form class="space-y-4" [formGroup]="taskForm" (ngSubmit)="saveTask()">
+    @if (taskForm.invalid && (taskForm.touched || taskForm.dirty)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div><label class="mb-2 block text-sm font-medium">{{ 'taskTitle' | translate }}</label><input formControlName="title" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (taskForm.get('title')?.touched && taskForm.get('title')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'taskTitleRequired' | translate }}</p> }</div>
     <div><label class="mb-2 block text-sm font-medium">{{ 'description' | translate }} <span class="text-slate-400">({{ 'optional' | translate }})</span></label><textarea formControlName="description" rows="4" class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea></div>
     <div class="grid gap-4 md:grid-cols-2">

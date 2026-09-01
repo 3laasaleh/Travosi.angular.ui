@@ -6,6 +6,7 @@
     successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedAirline ? 'editAirline' : 'addAirline') | translate }}</h2>
   <form class="space-y-4" [formGroup]="airlineForm" (ngSubmit)="saveAirline()">
+    @if (airlineForm.invalid && (airlineForm.touched || airlineForm.dirty)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'airlineName' | translate }}</label><input
           formControlName="name" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if

@@ -16,6 +16,7 @@
   }
 
   <form class="space-y-5" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
+    @if (quotationForm.invalid && (quotationForm.touched || quotationForm.dirty)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <div>
         <label class="mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label>

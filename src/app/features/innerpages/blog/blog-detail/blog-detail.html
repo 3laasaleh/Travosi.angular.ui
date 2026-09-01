@@ -71,7 +71,24 @@
         </div>
       }
 
-      <div class="mt-8 whitespace-pre-line text-lg leading-8 text-slate-700" [dir]="isArabic ? 'rtl' : 'ltr'"><app-description-links [text]="content" /></div>
+      @if (headerData.length) {
+        <div class="mt-10 space-y-10" [dir]="isArabic ? 'rtl' : 'ltr'">
+          @for (section of headerData; track $index) {
+            <section class="border-s-4 border-primary/30 ps-5">
+              @switch (section.headerType) {
+                @case (1) { <h1 class="text-3xl font-bold leading-tight text-slate-900 md:text-4xl">{{ section.header }}</h1> }
+                @case (2) { <h2 class="text-2xl font-bold leading-tight text-slate-900 md:text-3xl">{{ section.header }}</h2> }
+                @case (3) { <h3 class="text-xl font-bold leading-tight text-slate-900 md:text-2xl">{{ section.header }}</h3> }
+                @case (4) { <h4 class="text-lg font-bold leading-tight text-slate-900 md:text-xl">{{ section.header }}</h4> }
+                @default { <h5 class="text-base font-bold leading-tight text-slate-900 md:text-lg">{{ section.header }}</h5> }
+              }
+              <div class="mt-4 whitespace-pre-line text-lg leading-8 text-slate-700"><app-description-links [text]="section.description" /></div>
+            </section>
+          }
+        </div>
+      } @else {
+        <div class="mt-8 whitespace-pre-line text-lg leading-8 text-slate-700" [dir]="isArabic ? 'rtl' : 'ltr'"><app-description-links [text]="content" /></div>
+      }
     </article>
   }
 </main>

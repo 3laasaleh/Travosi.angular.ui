@@ -40,8 +40,7 @@
     <label class="block text-sm font-medium">Route name<input formControlName="routeName" maxlength="180"
         placeholder="blogs/routeName" class="mt-1 w-full rounded-xl border p-2" />
         @if (form.controls.routeName.touched &&form.controls.routeName.invalid)
-         { <span class="mt-1 block text-xs text-red-600">Use lowercase letters, numbers,
-        and hyphens only.</span> }</label>
+         { <span class="mt-1 block text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</span> }</label>
 
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
@@ -64,39 +63,93 @@
       </label>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
-      <div class="text-sm font-medium">
-        <label for="blog-contentEng">English content <span class="font-normal text-slate-500">([label](https://url))</span></label>
-        <textarea id="blog-contentEng" formControlName="contentEng" maxlength="15000" rows="10"
-          placeholder="Write the blog content. Use [label](https://url) for links."
-          class="mt-1 min-h-52 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm font-normal leading-6 outline-none focus:border-primary"></textarea>
-        @if (form.controls.contentEng.touched && form.controls.contentEng.hasError('required')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
-        } @else if (form.controls.contentEng.touched && form.controls.contentEng.hasError('maxlength')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
+    <section class="rounded-2xl border border-slate-200 bg-white p-4" formArrayName="headerData">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="font-semibold">{{ 'blogContentSections' | translate }}</h3>
+          <p class="mt-1 text-xs text-slate-500">{{ 'blogContentLinkHint' | translate }}</p>
+        </div>
+        <button type="button"
+          class="rounded-full border border-primary/30 px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-40"
+          [disabled]="headerData.length >= maxHeaderData" (click)="addContentSection()">
+          <i class="mdi mdi-plus"></i>
+          {{ 'addContentSection' | translate }} ({{ headerData.length }}/{{ maxHeaderData }})
+        </button>
+      </div>
+
+      <div class="space-y-5">
+        @for (section of headerData.controls; track section; let index = $index) {
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4" [formGroupName]="index">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h4 class="font-semibold">{{ 'contentSection' | translate }} {{ index + 1 }}</h4>
+            <button type="button"
+              class="grid h-8 w-8 place-items-center rounded-full border border-rose-200 text-rose-600 disabled:opacity-40"
+              [disabled]="headerData.length <= 1" (click)="removeContentSection(index)"
+              [attr.aria-label]="'delete' | translate">
+              <i class="mdi mdi-delete-outline"></i>
+            </button>
+          </div>
+
+          <div class="mb-4 max-w-48">
+            <label class="text-sm font-medium">{{ 'headingLevel' | translate }}</label>
+            <select formControlName="headerType"
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">
+              @for (type of headerTypes; track type) {
+              <option [ngValue]="type">H{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="text-sm font-medium">{{ 'englishHeader' | translate }}</label>
+              <input formControlName="headerEng" maxlength="200"
+                class="mt-1 w-full rounded-xl border border-slate-300 bg-white p-2" />
+              @if (section.get('headerEng')?.touched && section.get('headerEng')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'englishHeaderRequired' | translate }}</p> }
+              @else if (section.get('headerEng')?.touched && section.get('headerEng')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p> }
+              @else if (section.get('headerEng')?.touched && section.get('headerEng')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
+            </div>
+            <div>
+              <label class="text-sm font-medium">{{ 'arabicHeader' | translate }}</label>
+              <input formControlName="headerAr" maxlength="200" dir="rtl"
+                class="mt-1 w-full rounded-xl border border-slate-300 bg-white p-2" />
+              @if (section.get('headerAr')?.touched && section.get('headerAr')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicHeaderRequired' | translate }}</p> }
+              @else if (section.get('headerAr')?.touched && section.get('headerAr')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p> }
+              @else if (section.get('headerAr')?.touched && section.get('headerAr')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+            </div>
+            <div>
+              <label class="text-sm font-medium">{{ 'englishDescription' | translate }}</label>
+              <textarea formControlName="descriptionEng" maxlength="4000" rows="6"
+                class="mt-1 min-h-36 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm leading-6"></textarea>
+              <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+              @if (section.get('descriptionEng')?.touched && section.get('descriptionEng')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }
+              @else if (section.get('descriptionEng')?.touched && section.get('descriptionEng')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+            </div>
+            <div>
+              <label class="text-sm font-medium">{{ 'arabicDescription' | translate }}</label>
+              <textarea formControlName="descriptionAr" maxlength="4000" rows="6" dir="rtl"
+                class="mt-1 min-h-36 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm leading-6"></textarea>
+              <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+              @if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }
+              @else if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+              @else if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+            </div>
+          </div>
+        </article>
         }
       </div>
-      <div class="text-sm font-medium">
-        <label for="blog-contentAr-editor">Arabic content <span class="font-normal text-slate-500">([النص](https://url))</span></label>
-        <textarea id="blog-contentAr" formControlName="contentAr" maxlength="15000" rows="10"
-          placeholder="اكتب محتوى المدونة. استخدم [النص](https://url) لإضافة الروابط."
-          class="mt-1 min-h-52 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm font-normal leading-6 outline-none focus:border-primary"></textarea>
-        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('required')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
-        } @else if (form.controls.contentAr.touched && form.controls.contentAr.hasError('maxlength')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 15000 } }}</span>
-        }
-        @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('arabicText')) { <span
-          class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
-      </div>
-    </div>
+    </section>
 
     <div>
-      <label for="blog-publish-date" class="block text-sm font-medium">Publish date</label>
-      <app-date-picker formControlName="publishedAt" id="blog-publish-date" placeholder="Select a publish date"
-        ariaLabel="Publish date" class="mt-1 block max-w-sm"
+      <label for="blog-publish-date" class="block text-sm font-medium">{{ 'publishDate' | translate }}</label>
+      <app-date-picker formControlName="publishedAt" id="blog-publish-date" [min]="today"
+        [placeholder]="'publishDate' | translate" [ariaLabel]="'publishDate' | translate" class="mt-1 block max-w-sm"
         inputClass="rounded-xl border border-slate-300 bg-white px-3 py-2.5 pe-11 shadow-sm" />
-      <p class="mt-1 text-xs text-slate-500">Choose the day this blog should appear on the website.</p>
+      <p class="mt-1 text-xs text-slate-500">{{ 'blogPublishDateHint' | translate }}</p>
+      @if (form.controls.publishedAt.touched && form.controls.publishedAt.hasError('minDate')) {
+      <p class="mt-1 text-xs text-red-600">{{ 'blogPublishDatePast' | translate }}</p>
+      }
+      @if (form.controls.publishedAt.touched && form.controls.publishedAt.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p> }
     </div>
 
     <div>
@@ -106,13 +159,15 @@
       </div>
 
       <label for="blog-images"
-        class="flex flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-white px-4 py-5 text-center transition hover:border-primary"
+        class="flex flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-9 text-center transition hover:border-primary hover:bg-primary/5"
         [class.cursor-pointer]="images.length < maxImages && !isSaving && !isProcessingImages && deletingImageIndex === null"
         [class.cursor-not-allowed]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
         [class.opacity-60]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null"
         [attr.aria-disabled]="images.length >= maxImages || isSaving || isProcessingImages || deletingImageIndex !== null">
-        <i class="mdi mb-2 text-3xl text-primary" [class.mdi-image-multiple-outline]="!isProcessingImages"
-          [class.mdi-loading]="isProcessingImages" [class.mdi-spin]="isProcessingImages" aria-hidden="true"></i>
+        <span class="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary">
+          <i class="mdi" [class.mdi-image-plus-outline]="!isProcessingImages" [class.mdi-loading]="isProcessingImages"
+            [class.mdi-spin]="isProcessingImages" aria-hidden="true"></i>
+        </span>
         <span class="text-sm font-semibold text-primary">
           {{ (isProcessingImages ? 'processingImages' : 'chooseImages') | translate }}
         </span>
@@ -129,9 +184,9 @@
       }
 
       @if (images.length) {
-      <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         @for (image of images; track image.url; let index = $index) {
-        <div class="overflow-hidden rounded-xl bg-slate-200">
+        <div class="overflow-hidden rounded-xl bg-slate-200 shadow-sm">
           <div class="relative">
             <img [src]="getImageUrl(image.url)" [alt]="image.altEng || image.altAr || ''"
               class="aspect-[3/2] w-full object-cover" />
@@ -149,15 +204,13 @@
             <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true"
               [ngModelOptions]="{standalone: true}"
               [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()"
-              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="'blogEnglishAltText' | translate" />
             <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}"
               [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))"
-              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text"
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="'blogArabicAltText' | translate"
               dir="rtl" />
-            @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text
-              is required.</p> }
-            @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is
-              required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
+            @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogEnglishAltTextRequired' | translate }}</p> }
+            @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
               class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
           </div>
         </div>

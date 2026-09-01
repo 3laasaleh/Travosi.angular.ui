@@ -7,11 +7,15 @@
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedDestination ? 'editDestination' : 'addDestination') | translate }}
   </h2>
   <form class="space-y-4" [formGroup]="destinationForm" (ngSubmit)="saveDestination()">
+    @if (destinationForm.invalid && (destinationForm.touched || destinationForm.dirty)) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p>
+    }
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }}</label><input
           formControlName="titleEng" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
         (destinationForm.get('titleEng')?.touched && destinationForm.get('titleEng')?.hasError('required')) { <p
           class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p> }@if
+        (destinationForm.get('titleEng')?.touched && destinationForm.get('titleEng')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }@if
         (destinationForm.get('titleEng')?.touched && destinationForm.get('titleEng')?.hasError('pattern')) { <p
           class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }</div>
       <div><label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }}</label><input
@@ -19,13 +23,14 @@
           class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (destinationForm.get('titleAr')?.touched &&
         destinationForm.get('titleAr')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameRequired' | translate }}</p> }@if (destinationForm.get('titleAr')?.touched &&
+        destinationForm.get('titleAr')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }@if (destinationForm.get('titleAr')?.touched &&
         destinationForm.get('titleAr')?.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameInvalid' | translate }}</p> }</div>
     </div>
     <div><label class="mb-2 block text-sm font-medium">Route name</label><input formControlName="routeName"
         maxlength="180" placeholder="destinations/routeName" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
-      (destinationForm.controls.routeName.touched && destinationForm.controls.routeName.invalid) { <p
-        class="mt-1 text-xs text-red-600">Use lowercase letters, numbers, and hyphens only.</p> }</div>
+        (destinationForm.controls.routeName.touched && destinationForm.controls.routeName.invalid) { <p
+        class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p> }</div>
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'englishShortDescription' | translate }} <span
             class="text-slate-400">({{ 'optional' | translate }})</span></label><input
@@ -101,15 +106,13 @@
             <input [(ngModel)]="image.altEng" (blur)="imageAltErrorsVisible = true"
               [ngModelOptions]="{standalone: true}"
               [class.border-red-500]="imageAltErrorsVisible && !image.altEng?.trim()"
-              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="'blogEnglishAltText' | translate" />
             <input [(ngModel)]="image.altAr" (blur)="imageAltErrorsVisible = true" [ngModelOptions]="{standalone: true}"
               [class.border-red-500]="imageAltErrorsVisible && (!image.altAr?.trim() || hasInvalidImageAlt(image))"
-              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text"
+              class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="'blogArabicAltText' | translate"
               dir="rtl" />
-            @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">English alt text
-              is required.</p> }
-            @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">Arabic alt text is
-              required.</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
+            @if (imageAltErrorsVisible && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogEnglishAltTextRequired' | translate }}</p> }
+            @if (imageAltErrorsVisible && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if (imageAltErrorsVisible && hasInvalidImageAlt(image)) { <p
               class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
           </div>
         </div> }

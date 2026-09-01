@@ -9,7 +9,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -32,7 +32,18 @@ interface BlogImageUpload {
   altAr?: string;
 }
 
-type BlogContentControl = 'contentEng' | 'contentAr';
+interface BlogHeaderDataValue {
+  headerType: number;
+  headerEng: string;
+  headerAr: string;
+  descriptionEng: string;
+  descriptionAr: string;
+}
+
+const notBefore = (minimum: string) => (control: AbstractControl): ValidationErrors | null => {
+  const value = String(control.value ?? '');
+  return value && value < minimum ? { minDate: true } : null;
+};
 
 @Component({
   selector: 'app-blogs-form-card',
@@ -50,6 +61,9 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
+  readonly maxHeaderData = 5;
+  readonly headerTypes = [1, 2, 3, 4, 5];
+  readonly today = this.localDate(new Date());
 
   private readonly imageConstraints = {
     maxWidth: this.maxImageWidth,
@@ -74,15 +88,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       nonNullable: true,
       validators: [Validators.maxLength(500), arabicTextValidator()],
     }),
-    contentEng: new FormControl('', {
+    headerData: new FormArray<FormGroup>([]),
+    publishedAt: new FormControl(this.today, {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(15000)],
+      validators: [Validators.required, notBefore(this.today)],
     }),
-    contentAr: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(15000), arabicTextValidator()],
-    }),
-    publishedAt: new FormControl('', { nonNullable: true }),
   });
 
   images: BlogImageUpload[] = [];
@@ -97,7 +107,13 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     private readonly adminService: AdminService,
     private readonly cdr: ChangeDetectorRef,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    this.headerData.push(this.createHeaderDataGroup());
+  }
+
+  get headerData(): FormArray<FormGroup> {
+    return this.form.controls.headerData;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedBlog']) this.populate();
@@ -137,10 +153,14 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       routeName: blog?.routeName ?? blog?.RouteName ?? '',
       summaryEng: blog?.summaryEng ?? blog?.SummaryEng ?? '',
       summaryAr: blog?.summaryAr ?? blog?.SummaryAr ?? '',
-      contentEng: blog?.contentEng ?? blog?.ContentEng ?? '',
-      contentAr: blog?.contentAr ?? blog?.ContentAr ?? '',
-      publishedAt: this.dateInput(blog?.publishedAt ?? blog?.PublishedAt),
+      publishedAt: this.dateInput(blog?.publishedAt ?? blog?.PublishedAt) || this.today,
     });
+    this.setHeaderData(
+      blog?.headerData ?? blog?.HeaderData ?? [],
+      blog?.contentEng ?? blog?.ContentEng ?? '',
+      blog?.contentAr ?? blog?.ContentAr ?? '',
+      blog,
+    );
   }
 
   async onFiles(event: Event): Promise<void> {
@@ -283,8 +303,14 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     data.append('RouteName', value.routeName.trim().toLowerCase());
     data.append('SummaryEng', value.summaryEng.trim());
     data.append('SummaryAr', value.summaryAr.trim());
-    data.append('ContentEng', value.contentEng.trim());
-    data.append('ContentAr', value.contentAr.trim());
+    const headerData = this.headerData.getRawValue() as BlogHeaderDataValue[];
+    headerData.forEach((section, index) => {
+      data.append(`HeaderData[${index}].HeaderType`, String(section.headerType));
+      data.append(`HeaderData[${index}].HeaderEng`, section.headerEng.trim());
+      data.append(`HeaderData[${index}].HeaderAr`, section.headerAr.trim());
+      data.append(`HeaderData[${index}].DescriptionEng`, section.descriptionEng.trim());
+      data.append(`HeaderData[${index}].DescriptionAr`, section.descriptionAr.trim());
+    });
     if (value.publishedAt) data.append('PublishedAt', `${value.publishedAt}T00:00:00.000Z`);
     this.images
       .filter((image) => image.file)
@@ -317,21 +343,16 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       });
   }
 
-  formatContent(controlName: BlogContentControl, command: 'bold' | 'italic' | 'insertUnorderedList'): void {
-    const editor = this.contentEditor(controlName);
-    if (!editor) return;
-    editor.focus();
-    document.execCommand(command);
-    this.syncContentEditor(controlName, editor);
+  addContentSection(): void {
+    if (this.headerData.length >= this.maxHeaderData) return;
+    this.headerData.push(this.createHeaderDataGroup());
+    this.headerData.markAsDirty();
   }
 
-  onContentInput(controlName: BlogContentControl, event: Event): void {
-    const editor = event.target as HTMLElement;
-    this.syncContentEditor(controlName, editor);
-  }
-
-  preventToolbarFocus(event: MouseEvent): void {
-    event.preventDefault();
+  removeContentSection(index: number): void {
+    if (this.headerData.length <= 1) return;
+    this.headerData.removeAt(index);
+    this.headerData.markAsDirty();
   }
 
   getImageUrl(url: string): string {
@@ -345,15 +366,84 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
   }
 
-  private contentEditor(controlName: BlogContentControl): HTMLElement | null {
-    return document.getElementById(`blog-${controlName}-editor`);
+  private createHeaderDataGroup(value: any = {}): FormGroup {
+    return new FormGroup({
+      headerType: new FormControl(Number(value.headerType ?? value.HeaderType) || 2, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1), Validators.max(5)],
+      }),
+      headerEng: new FormControl(String(value.headerEng ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)],
+      }),
+      headerAr: new FormControl(String(value.headerAr ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
+      }),
+      descriptionEng: new FormControl(String(value.descriptionEng ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(4000)],
+      }),
+      descriptionAr: new FormControl(String(value.descriptionAr ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()],
+      }),
+    });
   }
 
-  private syncContentEditor(controlName: BlogContentControl, editor: HTMLElement): void {
-    const control = this.form.controls[controlName];
-    control.setValue(editor.innerHTML);
-    control.markAsTouched();
-    control.markAsDirty();
+  private setHeaderData(headerData: any[], contentEng: string, contentAr: string, blog: any): void {
+    this.headerData.clear();
+    const sections = Array.isArray(headerData) ? headerData.slice(0, this.maxHeaderData) : [];
+    if (sections.length > 0) {
+      sections.forEach((section) => this.headerData.push(this.createHeaderDataGroup({
+        headerType: section?.headerType ?? section?.HeaderType,
+        headerEng: section?.headerEng ?? section?.HeaderEng,
+        headerAr: section?.headerAr ?? section?.HeaderAr,
+        descriptionEng: section?.descriptionEng ?? section?.DescriptionEng,
+        descriptionAr: section?.descriptionAr ?? section?.DescriptionAr,
+      })));
+      return;
+    }
+
+    const english = this.parseLegacyContentSections(contentEng);
+    const arabic = this.parseLegacyContentSections(contentAr);
+    const legacyCount = Math.min(this.maxHeaderData, Math.max(english.length, arabic.length));
+    if (legacyCount > 0) {
+      for (let index = 0; index < legacyCount; index++) {
+        this.headerData.push(this.createHeaderDataGroup({
+          headerType: english[index]?.headerType ?? arabic[index]?.headerType ?? 2,
+          headerEng: english[index]?.header ?? '',
+          descriptionEng: english[index]?.description ?? '',
+          headerAr: arabic[index]?.header ?? '',
+          descriptionAr: arabic[index]?.description ?? '',
+        }));
+      }
+      return;
+    }
+
+    this.headerData.push(this.createHeaderDataGroup({
+        headerType: 2,
+        headerEng: contentEng ? (blog?.titleEng ?? blog?.TitleEng ?? '') : '',
+        descriptionEng: contentEng,
+        headerAr: contentAr ? (blog?.titleAr ?? blog?.TitleAr ?? '') : '',
+        descriptionAr: contentAr,
+    }));
+  }
+
+  private parseLegacyContentSections(content: string): Array<{ headerType: number; header: string; description: string }> {
+    if (!content?.trim()) return [];
+    try {
+      const parsed = JSON.parse(content);
+      return Array.isArray(parsed)
+        ? parsed.filter((item) => item && typeof item === 'object').map((item) => ({
+            headerType: Number(item.headerType) || 2,
+            header: String(item.header ?? ''),
+            description: String(item.description ?? ''),
+          }))
+        : [];
+    } catch {
+      return [];
+    }
   }
 
   private removeLocal(index: number): void {
@@ -386,5 +476,10 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     if (!value) return '';
     const date = new Date(String(value));
     return Number.isNaN(date.valueOf()) ? '' : date.toISOString().slice(0, 10);
+  }
+
+  private localDate(date: Date): string {
+    const offset = date.getTimezoneOffset() * 60_000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 10);
   }
 }
