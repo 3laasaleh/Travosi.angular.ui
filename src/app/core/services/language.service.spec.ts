@@ -5,13 +5,13 @@ import { of } from 'rxjs';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
-  it('applies Arabic direction and navigates to the localized route without reloading', () => {
+  it('applies Arabic direction and reloads the localized route', () => {
     const body = { setAttribute: vi.fn() };
     const documentElement = { lang: 'en', dir: 'ltr' };
     const documentRef = {
       documentElement,
       body,
-      defaultView: { location: { pathname: '/en/tours/hurghada', search: '', hash: '' } },
+      defaultView: { location: { pathname: '/en/tours/hurghada', search: '', hash: '', assign: vi.fn() } },
     } as unknown as Document;
     const http = {
       post: vi.fn().mockReturnValue(of({ isSuccess: true })),
@@ -36,7 +36,7 @@ describe('LanguageService', () => {
       sameSite: 'Lax',
     });
 
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/ar/tours/hurghada');
+    expect(documentRef.defaultView?.location.assign).toHaveBeenCalledWith('/ar/tours/hurghada');
     expect(http.post).not.toHaveBeenCalled();
   });
 });

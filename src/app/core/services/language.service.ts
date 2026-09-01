@@ -81,7 +81,9 @@ export class LanguageService {
     if (target === `${location.pathname}${location.search ?? ''}${location.hash ?? ''}`) {
       return;
     }
-    void this.router.navigateByUrl(target);
+    // A full navigation makes every route recreate its data requests using the
+    // newly selected language, including pages that Angular would otherwise reuse.
+    location.assign(target);
   }
 
   /** Applies the language selected by a canonical /en or /ar route without reloading. */
