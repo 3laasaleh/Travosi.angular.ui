@@ -64,24 +64,10 @@
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="text-sm font-medium">
-        <label for="blog-contentEng-editor">English content <span class="font-normal text-slate-500">([label](https://url))</span></label>
-        <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white">
-          <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
-            <button type="button" (mousedown)="preventToolbarFocus($event)"
-              (click)="formatContent('contentEng', 'bold')"
-              class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)"
-              (click)="formatContent('contentEng', 'italic')"
-              class="rounded px-2 py-1 text-xs italic hover:bg-slate-200" aria-label="Italic">I</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)"
-              (click)="formatContent('contentEng', 'insertUnorderedList')"
-              class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
-                class="mdi mdi-format-list-bulleted"></i></button>
-          </div>
-          <div id="blog-contentEng-editor" contenteditable="true" role="textbox" aria-multiline="true"
-            [innerHTML]="form.controls.contentEng.value" (input)="onContentInput('contentEng', $event)"
-            class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
-        </div>
+        <label for="blog-contentEng">English content <span class="font-normal text-slate-500">([label](https://url))</span></label>
+        <textarea id="blog-contentEng" formControlName="contentEng" maxlength="15000" rows="10"
+          placeholder="Write the blog content. Use [label](https://url) for links."
+          class="mt-1 min-h-52 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm font-normal leading-6 outline-none focus:border-primary"></textarea>
         @if (form.controls.contentEng.touched && form.controls.contentEng.hasError('required')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentEng.touched && form.controls.contentEng.hasError('maxlength')) {
@@ -90,22 +76,9 @@
       </div>
       <div class="text-sm font-medium">
         <label for="blog-contentAr-editor">Arabic content <span class="font-normal text-slate-500">([النص](https://url))</span></label>
-        <div class="mt-1 overflow-hidden rounded-xl border border-slate-300 bg-white" dir="rtl">
-          <div class="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
-            <button type="button" (mousedown)="preventToolbarFocus($event)" (click)="formatContent('contentAr', 'bold')"
-              class="rounded px-2 py-1 text-xs font-bold hover:bg-slate-200" aria-label="Bold">B</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)"
-              (click)="formatContent('contentAr', 'italic')" class="rounded px-2 py-1 text-xs italic hover:bg-slate-200"
-              aria-label="Italic">I</button>
-            <button type="button" (mousedown)="preventToolbarFocus($event)"
-              (click)="formatContent('contentAr', 'insertUnorderedList')"
-              class="rounded px-2 py-1 text-xs hover:bg-slate-200" aria-label="Bulleted list"><i
-                class="mdi mdi-format-list-bulleted"></i></button>
-          </div>
-          <div id="blog-contentAr-editor" contenteditable="true" role="textbox" aria-multiline="true"
-            [innerHTML]="form.controls.contentAr.value" (input)="onContentInput('contentAr', $event)"
-            class="min-h-52 p-3 text-sm font-normal leading-6 outline-none"></div>
-        </div>
+        <textarea id="blog-contentAr" formControlName="contentAr" maxlength="15000" rows="10"
+          placeholder="اكتب محتوى المدونة. استخدم [النص](https://url) لإضافة الروابط."
+          class="mt-1 min-h-52 w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm font-normal leading-6 outline-none focus:border-primary"></textarea>
         @if (form.controls.contentAr.touched && form.controls.contentAr.hasError('required')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span>
         } @else if (form.controls.contentAr.touched && form.controls.contentAr.hasError('maxlength')) {

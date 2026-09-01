@@ -80,6 +80,11 @@
                                                 <td class="px-4 py-4 align-top">
                                                     @if (canWriteReview(booking)) {
                                                         <div class="min-w-64 space-y-2">
+                                                            <label class="block text-xs font-semibold text-slate-600">{{ 'rating' | translate }}</label>
+                                                            <select [(ngModel)]="booking.reviewRating" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" [attr.aria-label]="'rating' | translate">
+                                                                <option [ngValue]="undefined">{{ 'selectRating' | translate }}</option>
+                                                                @for (star of [5,4,3,2,1]; track star) { <option [ngValue]="star">{{ star }} ★</option> }
+                                                            </select>
                                                             <textarea [(ngModel)]="booking.reviewComment" maxlength="2000" rows="3" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'shareYourReview' | translate" [attr.aria-label]="'shareYourReview' | translate"></textarea>
                                                             <div class="flex items-center justify-between gap-2">
                                                                 <span class="text-xs text-slate-400">{{ booking.reviewComment?.length ?? 0 }}/2000</span>

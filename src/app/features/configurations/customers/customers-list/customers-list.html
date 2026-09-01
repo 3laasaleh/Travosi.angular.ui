@@ -63,6 +63,7 @@
           <td class="px-4 py-3">
             <div class="flex gap-2">
               <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white cursor-pointer" (click)="editRequested.emit(item)"><i class="mdi mdi-pencil-outline"></i></button>
+              @if (item.isActive === false) { <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 transition hover:bg-rose-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50" [attr.aria-label]="'delete' | translate" [attr.title]="'delete' | translate" (click)="deleteCustomer(item)"><i class="mdi" [class.mdi-loading]="deletingId === item.id" [class.mdi-spin]="deletingId === item.id" [class.mdi-delete-outline]="deletingId !== item.id"></i></button> }
             </div>
           </td>
         </tr> } @empty { <tr>
@@ -83,6 +84,7 @@
         <p class="mt-1 text-xs text-slate-500"><i class="mdi mdi-account-tie-outline me-1 text-primary"></i>{{ item.agentName || '-' }} · <i class="mdi mdi-account-group-outline me-1 text-primary"></i>{{ item.travelers?.length ?? 0 }} {{ 'travelers' | translate }}</p>
         <div class="mt-4 flex gap-2">
           <button type="button" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(item)">{{ 'edit' | translate }}</button>
+          @if (item.isActive === false) { <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50" (click)="deleteCustomer(item)">@if (deletingId === item.id) { <i class="mdi mdi-loading mdi-spin"></i> } @else { {{ 'delete' | translate }} }</button> }
         </div>
       </div>
     </article> } @empty { <p class="text-sm text-slate-500">{{ 'noCustomersFound' | translate }}</p> }</div>

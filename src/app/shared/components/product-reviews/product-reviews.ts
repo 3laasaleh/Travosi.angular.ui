@@ -7,6 +7,7 @@ import { ApiService } from '../../../core/services/apiservice.service';
 interface ProductReview {
   id: number;
   comment: string;
+  rating: number;
   authorName: string;
   createdAtUtc: string;
 }

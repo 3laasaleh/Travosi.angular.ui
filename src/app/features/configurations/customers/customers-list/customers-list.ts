@@ -38,6 +38,7 @@ export class CustomersList implements OnInit, OnChanges {
   customers: any[] = [];
   isLoading = false;
   statusUpdatingId: number | null = null;
+  deletingId: number | null = null;
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
@@ -152,6 +153,53 @@ export class CustomersList implements OnInit, OnChanges {
         timerProgressBar: true,
       });
       this.cdr.markForCheck();
+    });
+  }
+
+  async deleteCustomer(customer: any): Promise<void> {
+    const id = Number(customer?.id);
+    if (!Number.isInteger(id) || id <= 0 || customer?.isActive !== false || this.deletingId !== null) return;
+
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmDeleteRecord'),
+      text: this.translate.instant('recordDeleteWarning'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      focusCancel: true,
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.deletingId = id;
+    this.apiService.delete('Customers', id).pipe(
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') });
+        return of({ deleteFailed: true });
+      }),
+      finalize(() => {
+        this.deletingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('recordDeleteError') });
+        return;
+      }
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        iconColor: '#00d492',
+        title: response?.message || this.translate.instant('recordDeleted'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      this.loadCustomers();
     });
   }
 }

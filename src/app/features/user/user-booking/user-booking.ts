@@ -30,6 +30,7 @@ interface UserBookingItem {
   cancellationFeeAmount: number;
   reviewEligibility?: ReviewEligibility;
   reviewComment?: string;
+  reviewRating?: number;
   reviewError?: string;
   isSavingReview?: boolean;
 }
@@ -126,9 +127,14 @@ export class UserBooking implements OnInit {
       this.cdr.markForCheck();
       return;
     }
+    if (!booking.reviewRating || booking.reviewRating < 1 || booking.reviewRating > 5) {
+      booking.reviewError = 'reviewRatingRequired';
+      this.cdr.markForCheck();
+      return;
+    }
 
     booking.isSavingReview = true;
-    this.apiService.post('Reviews', { bookingId: booking.id, comment }).pipe(
+    this.apiService.post('Reviews', { bookingId: booking.id, comment, rating: booking.reviewRating }).pipe(
       finalize(() => {
         booking.isSavingReview = false;
         this.cdr.markForCheck();
@@ -140,6 +146,7 @@ export class UserBooking implements OnInit {
           return;
         }
         booking.reviewComment = '';
+        booking.reviewRating = undefined;
         booking.reviewEligibility = {
           canReview: false,
           alreadyReviewed: true,
