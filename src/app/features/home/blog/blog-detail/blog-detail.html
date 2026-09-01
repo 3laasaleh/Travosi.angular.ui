@@ -1,8 +1,8 @@
 <app-home-navbar />
 <main class="container py-16 md:py-24">
   <a routerLink="/blogs" class="inline-flex items-center text-sm font-semibold text-primary"><i class="mdi mdi-arrow-left me-1"></i>Back to blogs</a>
-  @if (isLoading) { <div class="mt-8 h-96 animate-pulse rounded-2xl bg-slate-100"></div> }
-  @else if (errorMessage) { <p class="mt-8 rounded-xl bg-rose-50 p-4 text-rose-700">{{ errorMessage }}</p> }
+  @if (isLoading) { 
+    <div class="mt-8 h-96 animate-pulse rounded-2xl bg-slate-100"></div> }
   @else if (blog) {
     <article class="mx-auto mt-8 max-w-5xl">
       <p class="text-sm font-medium text-primary">{{ (blog.publishedAt ?? blog.PublishedAt) | date:'longDate' }}</p>
