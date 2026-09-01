@@ -26,7 +26,7 @@ export class BlogPage implements OnInit {
     ).subscribe(response => { const page = response?.data ?? response; this.blogs = Array.isArray(page?.data) ? page.data : []; });
   }
   get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
-  title(blog: any): string { return this.isArabic ? (blog.titleAr || blog.titleEng) : (blog.titleEng || blog.titleAr); }
-  summary(blog: any): string { return this.isArabic ? (blog.summaryAr || blog.summaryEng) : (blog.summaryEng || blog.summaryAr); }
+  title(blog: any): string { return blog.title ?? blog.Title ?? (this.isArabic ? (blog.titleAr || blog.titleEng) : (blog.titleEng || blog.titleAr)); }
+  summary(blog: any): string { return blog.summary ?? blog.Summary ?? (this.isArabic ? (blog.summaryAr || blog.summaryEng) : (blog.summaryEng || blog.summaryAr)); }
   image(blog: any): string { const url = blog?.images?.[0]?.imageUrl ?? blog?.images?.[0]?.url; return !url ? 'assets/images/blog/1.jpg' : (/^(https?:|data:|blob:)/i.test(url) ? url : `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`); }
 }

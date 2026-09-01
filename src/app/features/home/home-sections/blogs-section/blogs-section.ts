@@ -89,12 +89,11 @@ export class BlogsSection implements OnInit, OnDestroy {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((response: IGenericResponse<ActiveBlog[]>) => {
-        if (response.data === null || this.isFailedResponse(response)) {
+        if (response?.data === null || this.isFailedResponse(response)) {
           this.blogs = [];
           this.hasError = true;
           return;
         }
-debugger
         this.blogs = response.data  ?? [];
       });
   }
@@ -106,6 +105,10 @@ debugger
   publishedAt(blog: ActiveBlog): string | undefined {
     return blog.publishedAt ?? blog.publishedAt;
   }
+
+  title(blog: ActiveBlog): string { return blog.title ?? ''; }
+
+  summary(blog: ActiveBlog): string { return blog.summary ?? ''; }
 
  
 

@@ -41,11 +41,11 @@ const localizedCatalogueRoutes: Routes = [
   { path: 'home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
   {
     path: 'blogs/:routeName',
-    loadComponent: () => import('./features/innerpages/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
+    loadComponent: () => import('./features/home/blog/blog-detail/blog-detail').then((m) => m.BlogDetail),
   },
   {
     path: 'blogs',
-    loadComponent: () => import('./features/innerpages/blog/blog-page/blog-page').then((m) => m.BlogPage),
+    loadComponent: () => import('./features/home/blog/blog-page/blog-page').then((m) => m.BlogPage),
   },
 ];
 

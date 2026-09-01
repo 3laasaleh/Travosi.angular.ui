@@ -23,10 +23,8 @@ export interface SeoPageOptions {
 }
 
 interface LocalizedSeoPage {
-  titleEn?: string | null;
-  titleAr?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string;
   imageAlt?: string;
   schemaType: SeoSchemaType;
@@ -69,33 +67,29 @@ export class SeoService {
 
   /** Uses only the entity's existing title/name and description/summary/content fields. */
   updateFrom(entity: any, options: SeoPageOptions = {}): void {
+    const headerData = entity?.headerData ;
+    const headerDescription = Array.isArray(headerData)
+      ? headerData
+          .slice()
+          .map((item: any) => item?.description ?? '')
+          .filter((value: unknown) => typeof value === 'string' && value.trim())
+          .join(' ')
+      : '';
     const image =
       options.image ??
       entity?.coverImage ??
       entity?.coverImageUrl ??
       entity?.imageUrl ??
-      entity?.images?.[0];
+      entity?.images?.[0] ?? entity?.Images?.[0];
 
     const page: LocalizedSeoPage = {
-      titleEn:
-        entity?.titleEn ?? entity?.TitleEn ?? entity?.titleEng ?? entity?.TitleEng ??
-        entity?.nameEn ?? entity?.NameEn ?? entity?.nameEng ?? entity?.NameEng ??
-        entity?.title ?? entity?.Title ?? entity?.name ?? entity?.Name ?? options.fallbackTitle,
-      titleAr: entity?.titleAr ?? entity?.TitleAr ?? entity?.nameAr ?? entity?.NameAr,
-      descriptionEn:
-        entity?.descriptionEn ?? entity?.DescriptionEn ??
-        entity?.descriptionEng ?? entity?.DescriptionEng ??
-        entity?.summaryEn ?? entity?.SummaryEn ?? entity?.summaryEng ?? entity?.SummaryEng ??
-        entity?.description ?? entity?.Description ??
-        entity?.fullDescriptionEn ?? entity?.FullDescriptionEn ??
-        entity?.fullDescriptionEng ?? entity?.FullDescriptionEng ??
-        entity?.contentEn ?? entity?.ContentEn ?? entity?.contentEng ?? entity?.ContentEng ??
-        entity?.content ?? entity?.Content ?? options.fallbackDescription,
-      descriptionAr:
-        entity?.descriptionAr ?? entity?.DescriptionAr ??
-        entity?.summaryAr ?? entity?.SummaryAr ??
-        entity?.fullDescriptionAr ?? entity?.FullDescriptionAr ??
-        entity?.contentAr ?? entity?.ContentAr,
+      title:
+        entity?.title ,
+        description: 
+        entity?.description??
+        entity?.summary??
+        entity?.fullDescription ?? headerDescription,
+
       imageUrl: this.absoluteUrl(options.imageUrl),
       imageAlt: this.imageAlt(image),
       schemaType: options.schemaType ?? 'WebPage',
@@ -133,8 +127,8 @@ export class SeoService {
   }
 
   private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
-    const title = this.localized(page.titleEn, page.titleAr, '', language);
-    const description = this.localized(page.descriptionEn, page.descriptionAr, '', language);
+    const title = this.localized(page.title, page.title, '', language);
+    const description = this.localized(page.description , page.description, '', language);
     this.applyDocumentLanguage(language);
     this.setPage(title, description, page.imageUrl, page.imageAlt, page.schemaType, page.entity);
   }
