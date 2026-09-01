@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { finalize } from 'rxjs';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { DigitsOnlyDirective } from '../../../../core/directives/digits-only.directive';
 
 interface RegistrationPayload {
   firstName: string;
@@ -22,7 +23,7 @@ interface RegistrationPayload {
 
 @Component({
   selector: 'app-signup-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, DatePicker],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, DatePicker, DigitsOnlyDirective],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './signup-page.html',
 })
@@ -54,15 +55,15 @@ export class SignupPage implements AfterViewInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  signupForm = this.fb.nonNullable.group(
+  signupForm = this.fb.group(
     {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       mobile: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s-]{7,15}$/)]],
       email: ['', [Validators.required, Validators.email]],
       dateOfBirth: ['', Validators.required],
-      gender: [0, Validators.required],
-      passportNumber: ['', [Validators.maxLength(20),Validators.minLength(8)]],
+      gender: [null as number | null, Validators.required],
+      passportNumber: ['', [Validators.pattern(/^\d*$/), Validators.minLength(8), Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       acceptTerms: [false, Validators.requiredTrue],
@@ -93,9 +94,9 @@ export class SignupPage implements AfterViewInit {
       mobile: this.signupForm.get('mobile')?.value?.trim() ?? '',
       password: this.signupForm.get('password')?.value ?? '',
       confirmPassword: this.signupForm.get('confirmPassword')?.value ?? '',
-      dateOfBirth: this.signupForm.controls.dateOfBirth.value,
-      gender: Number(this.signupForm.controls.gender.value),
-      passportNumber: this.signupForm.controls.passportNumber.value.trim(),
+      dateOfBirth: this.signupForm.controls.dateOfBirth.value ?? '',
+      gender: this.signupForm.controls.gender.value!,
+      passportNumber: this.signupForm.controls.passportNumber.value?.trim() ?? '',
     };
 
     this.isSubmitting = true;
@@ -126,15 +127,8 @@ export class SignupPage implements AfterViewInit {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
 
-    if (password && confirmPassword && password !== confirmPassword) {
-      control.get('confirmPassword')?.setErrors({ mismatch: true });
-      return { mismatch: true };
-    }
-
-    if (control.get('confirmPassword')?.hasError('mismatch')) {
-      control.get('confirmPassword')?.setErrors(null);
-    }
-
-    return null;
+    return password && confirmPassword && password !== confirmPassword
+      ? { passwordMismatch: true }
+      : null;
   }
 }

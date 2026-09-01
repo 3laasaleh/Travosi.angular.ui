@@ -425,6 +425,7 @@
   "passportNumberRequired": "رقم جواز السفر مطلوب.",
   "passportNumberMaxLength": "يجب ألا يتجاوز رقم جواز السفر الحد الأقصى المسموح به 20",
   "passportNumberMinLength": "يجب ألا يقل رقم جواز السفر عن الحد الأدنى المسموح به 8",
+  "passportNumberDigitsOnly": "يجب أن يحتوي رقم جواز السفر على أرقام فقط.",
   "quotationNo": "رقم عرض السعر",
   "selectCurrency": "اختر العملة",
   "selectCustomer": "اختر العميل",

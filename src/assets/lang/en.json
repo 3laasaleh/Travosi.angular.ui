@@ -408,6 +408,7 @@
   "passportNumberRequired": "Passport number is required.",
   "passportNumberMaxLength": "Passport Number max length is 20",
   "passportNumberMinLength": "Passport Number min length is 8",
+  "passportNumberDigitsOnly": "Passport number can contain digits only.",
   "quotationNo": "Quotation Number",
   "selectCurrency": "Select currency",
   "selectCustomer": "Select customer",
