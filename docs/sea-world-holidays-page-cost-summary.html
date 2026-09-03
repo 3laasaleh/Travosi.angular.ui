@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sea World Holidays — System Overview &amp; Cost per Page</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm 15mm; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #17202b; font-size: 10pt; line-height: 1.5; margin: 0; }
+  h1, h2, h3 { color: #0d2a45; line-height: 1.25; margin: 0 0 8px; }
+  h1 { font-size: 24pt; }
+  h2 { font-size: 15pt; border-bottom: 2px solid #1e7fb8; padding-bottom: 5px; margin-top: 22px; }
+  h3 { font-size: 11.5pt; margin-top: 15px; color: #12557f; }
+  p { margin: 0 0 8px; }
+  ul { margin: 0 0 9px; padding-inline-start: 17px; }
+  li { margin-bottom: 2px; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 8.5pt; background: #eef3f7; padding: 1px 4px; border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9pt; }
+  th, td { border: 1px solid #cdd8e2; padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #0d2a45; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f8fb; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tfoot td { font-weight: 700; background: #e3edf5; }
+  .note { background: #f2f7fb; border-inline-start: 4px solid #1e7fb8; padding: 8px 11px; margin: 9px 0 13px; font-size: 9pt; }
+  .muted { color: #667889; font-size: 8.5pt; }
+  .tag { display: inline-block; background: #e3edf5; color: #12557f; border-radius: 10px; padding: 1px 9px; font-size: 8.5pt; }
+  .big { font-size: 18pt; font-weight: 700; color: #0d2a45; }
+  footer.docfoot { margin-top: 22px; border-top: 1px solid #cdd8e2; padding-top: 7px; font-size: 8pt; color: #667889; }
+</style>
+</head>
+<body>
+
+<span class="tag">Cost Summary</span>
+<h1>Sea World Holidays — Web Platform</h1>
+<p style="font-size:12pt; color:#4a5c6d; margin-bottom:14px;">System overview, page inventory and cost per page.</p>
+<p class="muted">Angular 22 SSR platform · bilingual English / Arabic · 47 pages · Document version 2.0</p>
+
+<h2>1. Pricing model</h2>
+<p>Every page of the system is priced as a unit of delivery. A page includes its layout, data loading,
+   English and Arabic content, RTL handling, loading and error states, responsive behaviour and QA.</p>
+<table>
+  <tr><th>Rule</th><th class="num">Hours</th><th class="num">Price (EGP)</th></tr>
+  <tr><td>Standard page — home, catalogue, content, account and admin screens</td><td class="num">5</td><td class="num">5,000</td></tr>
+  <tr><td>Tour page — extra depth: gallery, itinerary, reviews, availability and booking</td><td class="num">8</td><td class="num">8,000</td></tr>
+</table>
+<p>The blended engineering rate is <strong>EGP 1,000 per hour</strong> (about USD 21), so a 5,000 EGP page is
+   five hours of work and an 8,000 EGP page is eight.</p>
+
+<h2>2. What the system does</h2>
+<p>Sea World Holidays is a bilingual travel platform with three audiences on one codebase:</p>
+<ul>
+  <li><strong>Visitors</strong> browse destinations, cities, tours, Nile cruises, packages and travel articles, then request a booking.</li>
+  <li><strong>Customers</strong> sign in to track their bookings, invoices and profile, and to review completed trips.</li>
+  <li><strong>Staff (Admin / Agent)</strong> manage the whole catalogue, the booking queue and the financial documents from a back office.</li>
+</ul>
+<p>Every public page is server-rendered for search engines, carries structured data and breadcrumbs, and
+   is available on both <code>/en/…</code> and <code>/ar/…</code> with automatic right-to-left layout.</p>
+
+<br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+
+<h2>3. Sections and pages</h2>
+
+<h3>3.1 Catalogue &amp; content — the public shop front</h3>
+<p>The revenue-generating pages. Visitors search and filter inventory, view rich product pages and start a
+   booking. Tour pages carry the deepest functionality, which is why they are priced higher.</p>
+<table>
+  <thead><tr><th style="width:26%">Page</th><th style="width:22%">Route</th><th>What it does</th><th class="num">EGP</th></tr></thead>
+  <tbody>
+    <tr><td>Home</td><td><code>/home</code></td><td>Hero slider, featured destinations, tours, packages and articles, live company statistics</td><td class="num">5,000</td></tr>
+    <tr><td>Destinations listing</td><td><code>/destinations</code></td><td>Paginated destination index with per-card image carousels</td><td class="num">5,000</td></tr>
+    <tr><td>Destination detail</td><td><code>/destinations/:slug</code></td><td>Gallery and lightbox, related tours carousel, cities of the destination</td><td class="num">5,000</td></tr>
+    <tr><td>City page</td><td><code>/cities/:slug</code></td><td>Top tours in the city plus recommended tours from the wider destination</td><td class="num">5,000</td></tr>
+    <tr><td><strong>Tours listing</strong></td><td><code>/tours</code></td><td>Search with autocomplete, travel date-range filter, pagination, discount badges</td><td class="num">8,000</td></tr>
+    <tr><td><strong>Nile cruises</strong></td><td><code>/nile-cruises</code></td><td>Cruise-only catalogue with the same search and filtering</td><td class="num">8,000</td></tr>
+    <tr><td><strong>Tour detail</strong></td><td><code>/tours/:slug</code></td><td>Gallery and lightbox, key facts, pricing, itinerary timeline, reviews, booking card</td><td class="num">8,000</td></tr>
+    <tr><td>Packages listing</td><td><code>/packages</code></td><td>Search, date filter and pagination over holiday packages</td><td class="num">5,000</td></tr>
+    <tr><td>Package detail</td><td><code>/packages/:slug</code></td><td>Gallery, itinerary, inclusions, related tours, reviews and booking card</td><td class="num">5,000</td></tr>
+    <tr><td>Blog listing</td><td><code>/blogs</code></td><td>Article index with cover images, dates and excerpts</td><td class="num">5,000</td></tr>
+    <tr><td>Blog article</td><td><code>/blogs/:slug</code></td><td>Bilingual sectioned article with gallery and safe link rendering</td><td class="num">5,000</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="3">Subtotal — 11 pages</td><td class="num">64,000</td></tr></tfoot>
+</table>
+
+<h3>3.2 Information &amp; support</h3>
+<p>Trust and service pages. Lower complexity, but each still needs bilingual copy, RTL layout and SEO.</p>
+<table>
+  <thead><tr><th style="width:26%">Page</th><th style="width:22%">Route</th><th>What it does</th><th class="num">EGP</th></tr></thead>
+  <tbody>
+    <tr><td>About us</td><td><code>/aboutus</code></td><td>Company story, mission, team and statistics</td><td class="num">5,000</td></tr>
+    <tr><td>Contact us</td><td><code>/contact</code></td><td>Contact form posting to the back office, office details and map</td><td class="num">5,000</td></tr>
+    <tr><td>Help center</td><td><code>/helpcenter</code></td><td>Support landing page with topic navigation</td><td class="num">5,000</td></tr>
+    <tr><td>FAQs</td><td><code>/helpcenter-faqs</code></td><td>Grouped, expandable question and answer lists</td><td class="num">5,000</td></tr>
+    <tr><td>Guides</td><td><code>/helpcenter-guides</code></td><td>How-to guides for booking and travelling</td><td class="num">5,000</td></tr>
+    <tr><td>Support</td><td><code>/helpcenter-support</code></td><td>Support request form and contact channels</td><td class="num">5,000</td></tr>
+    <tr><td>Terms &amp; conditions</td><td><code>/terms</code></td><td>Legal terms in both languages</td><td class="num">5,000</td></tr>
+    <tr><td>Privacy policy</td><td><code>/privacy</code></td><td>Privacy and data handling policy</td><td class="num">5,000</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="3">Subtotal — 8 pages</td><td class="num">40,000</td></tr></tfoot>
+</table>
+
+<br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+
+<h3>3.3 Account &amp; authentication</h3>
+<p>The customer's private area. Every page here is behind a guard, excluded from search engines, and needs
+   form validation, session handling and error messaging in both languages.</p>
+<table>
+  <thead><tr><th style="width:26%">Page</th><th style="width:22%">Route</th><th>What it does</th><th class="num">EGP</th></tr></thead>
+  <tbody>
+    <tr><td>Sign in</td><td><code>/login</code></td><td>JWT login with return-URL handling after a booking attempt</td><td class="num">5,000</td></tr>
+    <tr><td>Sign up</td><td><code>/signup</code></td><td>Registration form with validation</td><td class="num">5,000</td></tr>
+    <tr><td>Sign-up success</td><td><code>/signup-success</code></td><td>Confirmation and next-step guidance</td><td class="num">5,000</td></tr>
+    <tr><td>Account activation</td><td><code>/account/activate</code></td><td>E-mail activation link handling</td><td class="num">5,000</td></tr>
+    <tr><td>Forgot password</td><td><code>/forgot-password</code></td><td>Reset request by e-mail</td><td class="num">5,000</td></tr>
+    <tr><td>Reset password</td><td><code>/reset-password</code></td><td>Token-based password reset</td><td class="num">5,000</td></tr>
+    <tr><td>My profile</td><td><code>/user-profile</code></td><td>Personal details and account overview</td><td class="num">5,000</td></tr>
+    <tr><td>My bookings</td><td><code>/user-booking</code></td><td>Booking history with status, totals and review submission</td><td class="num">5,000</td></tr>
+    <tr><td>Account settings</td><td><code>/user-setting</code></td><td>Password change and preferences</td><td class="num">5,000</td></tr>
+    <tr><td>Payments</td><td><code>/user-payment</code></td><td>Saved payment methods screen</td><td class="num">5,000</td></tr>
+    <tr><td>Invoices</td><td><code>/user-invoice</code></td><td>Customer invoice view</td><td class="num">5,000</td></tr>
+    <tr><td>Social accounts</td><td><code>/user-social</code></td><td>Linked social profiles</td><td class="num">5,000</td></tr>
+    <tr><td>Notifications</td><td><code>/user-notification</code></td><td>Notification preferences</td><td class="num">5,000</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="3">Subtotal — 13 pages</td><td class="num">65,000</td></tr></tfoot>
+</table>
+
+<h3>3.4 Back office (configuration)</h3>
+<p>Admin and Agent screens. Each is a full management module: paginated listing, create and edit forms,
+   validation, status changes and guarded deletion. Tours and Bookings are priced higher because they carry
+   the image pipeline, itinerary builder, discounts and the booking status workflow.</p>
+<table>
+  <thead><tr><th style="width:26%">Page</th><th style="width:26%">Route</th><th>What it does</th><th class="num">EGP</th></tr></thead>
+  <tbody>
+    <tr><td>Destinations</td><td><code>/configurations/destinations</code></td><td>Manage destinations, images and publication status</td><td class="num">5,000</td></tr>
+    <tr><td>Cities</td><td><code>/configurations/cities</code></td><td>Manage cities under each destination</td><td class="num">5,000</td></tr>
+    <tr><td><strong>Tours</strong></td><td><code>/configurations/tours</code></td><td>Tour authoring: details, image pipeline, itinerary builder, discounts</td><td class="num">8,000</td></tr>
+    <tr><td>Packages</td><td><code>/configurations/packages</code></td><td>Three-step package wizard with images, itinerary and discounts</td><td class="num">5,000</td></tr>
+    <tr><td>Hotels</td><td><code>/configurations/hotels</code></td><td>Hotel records used by packages and vouchers</td><td class="num">5,000</td></tr>
+    <tr><td>Airlines</td><td><code>/configurations/airlines</code></td><td>Airline reference data</td><td class="num">5,000</td></tr>
+    <tr><td>Flights</td><td><code>/configurations/flights</code></td><td>Flight records used by quotations and vouchers</td><td class="num">5,000</td></tr>
+    <tr><td>Blogs</td><td><code>/configurations/blogs</code></td><td>Bilingual article editor with sections and image management</td><td class="num">5,000</td></tr>
+    <tr><td>Customers</td><td><code>/configurations/customers</code></td><td>Customer records and history</td><td class="num">5,000</td></tr>
+    <tr><td><strong>Bookings</strong></td><td><code>/configurations/bookings</code></td><td>Booking queue, status workflow, cancellation fees, agent assignment</td><td class="num">8,000</td></tr>
+    <tr><td>Quotations</td><td><code>/configurations/quotations</code></td><td>Build, send, duplicate and export quotations as PDF</td><td class="num">5,000</td></tr>
+    <tr><td>Invoices</td><td><code>/configurations/invoices</code></td><td>Create, edit and export invoices as PDF</td><td class="num">5,000</td></tr>
+    <tr><td>Vouchers</td><td><code>/configurations/vouchers</code></td><td>Create, edit and export travel vouchers as PDF</td><td class="num">5,000</td></tr>
+    <tr><td>Tasks</td><td><code>/configurations/tasks</code></td><td>Internal task tracking with notifications</td><td class="num">5,000</td></tr>
+    <tr><td>Contact messages</td><td><code>/configurations/contact-messages</code></td><td>Inbox for website contact submissions</td><td class="num">5,000</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="3">Subtotal — 15 pages</td><td class="num">81,000</td></tr></tfoot>
+</table>
+
+<br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+
+<h2>4. Total cost</h2>
+<table>
+  <thead><tr><th>Section</th><th class="num">Pages</th><th class="num">Hours</th><th class="num">Total (EGP)</th></tr></thead>
+  <tbody>
+    <tr><td>Catalogue &amp; content</td><td class="num">11</td><td class="num">64</td><td class="num">64,000</td></tr>
+    <tr><td>Information &amp; support</td><td class="num">8</td><td class="num">40</td><td class="num">40,000</td></tr>
+    <tr><td>Account &amp; authentication</td><td class="num">13</td><td class="num">65</td><td class="num">65,000</td></tr>
+    <tr><td>Back office (configuration)</td><td class="num">15</td><td class="num">81</td><td class="num">81,000</td></tr>
+  </tbody>
+  <tfoot><tr><td>Total</td><td class="num">47</td><td class="num">250</td><td class="num">250,000</td></tr></tfoot>
+</table>
+
+<p class="big">Total project cost: EGP 250,000</p>
+<p class="muted">250 hours at EGP 1,000 per hour · approximately USD 5,150 at 48.5 EGP/USD ·
+   roughly 6–7 weeks for one engineer, or 3 weeks for a team of two.</p>
+
+<h3>4.1 Price breakdown by page type</h3>
+<table>
+  <tr><th>Page type</th><th class="num">Count</th><th class="num">Unit (EGP)</th><th class="num">Total (EGP)</th></tr>
+  <tr><td>Standard pages</td><td class="num">42</td><td class="num">5,000</td><td class="num">210,000</td></tr>
+  <tr><td>Tour pages (listing, Nile cruises, detail, admin tours, admin bookings)</td><td class="num">5</td><td class="num">8,000</td><td class="num">40,000</td></tr>
+  <tfoot><tr><td>Total</td><td class="num">47</td><td class="num">—</td><td class="num">250,000</td></tr></tfoot>
+</table>
+
+<h2>5. What is included in every page price</h2>
+<ul>
+  <li>Layout and responsive implementation from the agreed design</li>
+  <li>Integration with the backend API, including loading, empty and error states</li>
+  <li>English and Arabic content wiring with right-to-left layout verification</li>
+  <li>Server-side rendering compatibility, page metadata, structured data and breadcrumbs (public pages)</li>
+  <li>Access control and search-engine exclusion (account and back-office pages)</li>
+  <li>Manual QA on desktop and mobile, code review and one round of revisions</li>
+</ul>
+
+<h2>6. Not included</h2>
+<ul>
+  <li>Backend / API development and database work</li>
+  <li>Online payment gateway integration — the booking flow captures requests, it does not take card payments</li>
+  <li>Hosting, domains, SSL and infrastructure</li>
+  <li>Original UI/UX design, photography, copywriting and translation</li>
+  <li>Content entry for destinations, tours, packages and articles</li>
+  <li>Automated test suites and ongoing maintenance or support retainer</li>
+</ul>
+
+<div class="note"><strong>Scope control.</strong> The price is fixed per page. Adding a page adds 5,000 EGP
+  (8,000 EGP for a tour page). Reworking a page after it has been signed off is quoted separately.</div>
+
+<footer class="docfoot">
+  Sea World Holidays — System Overview &amp; Cost per Page · Version 2.0 · 47 pages · EGP 250,000.
+  Supersedes the effort-based estimate in version 1.0. Valid for 30 days from issue.
+</footer>
+
+</body>
+</html>
