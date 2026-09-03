@@ -15,46 +15,38 @@
     <div class="swiper-container absolute end-0 top-0 w-full h-full">
         <div class="swiper h-full">
             <div class="swiper-wrapper">
-                <div class="swiper-slide flex items-center overflow-hidden">
-                    <div class="slide-inner absolute end-0 top-0 w-full h-full slide-bg-image flex items-center bg-center" [style.background-image]="'url(' + bg2 + ')'">
-                        <div class="absolute inset-0 bg-slate-900/70"></div>
-                        <div class="container relative">
-                            <div class="grid grid-cols-1">
-                                <div class="text-center">
-                                    <img [src]="map" class="mx-auto w-[300px]" [alt]="'travelAroundWorld' | translate">
-                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">{{ 'homeHeroPackagesTitle' | translate }}</h1>
-                                    <p class="text-white/70 text-xl max-w-xl mx-auto">{{ 'homeHeroPackagesDescription' | translate }}</p>
-                                    <div class="mt-6">
-                                        <a routerLink="/packages" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'explorePackages' | translate }}</a>
+                <!-- Slides come from Home.heroSlides in home.ts — add, remove or edit them there. -->
+                @for (slide of heroSlides; track $index) {
+                    <div class="swiper-slide flex items-center overflow-hidden">
+                        <div class="slide-inner absolute end-0 top-0 w-full h-full slide-bg-image flex items-center bg-center" [style.background-image]="'url(' + slide.image + ')'">
+                            <div class="absolute inset-0 bg-slate-900/70"></div>
+                            <div class="container relative">
+                                <div class="grid grid-cols-1">
+                                    <div class="text-center">
+                                        @if (slide.icon) {
+                                            <img [src]="slide.icon" class="mx-auto w-[300px]" [alt]="(slide.iconAltKey ?? '') | translate">
+                                        }
+                                        <h2 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">{{ slide.titleKey | translate }}</h2>
+                                        @if (slide.descriptionKey) {
+                                            <p class="text-white/70 text-xl max-w-xl mx-auto">{{ slide.descriptionKey | translate }}</p>
+                                        }
+                                        @if (slide.ctaKey && slide.ctaLink) {
+                                            <div class="mt-6">
+                                                <a [routerLink]="slide.ctaLink" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ slide.ctaKey | translate }}</a>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="swiper-slide flex items-center overflow-hidden">
-                    <div class="slide-inner absolute end-0 top-0 w-full h-full slide-bg-image flex items-center bg-center" [style.background-image]="'url(' + bg3 + ')'">
-                        <div class="absolute inset-0 bg-slate-900/70"></div>
-                        <div class="container relative">
-                            <div class="grid grid-cols-1">
-                                <div class="text-center">
-                                    <img [src]="map" class="mx-auto w-[300px]" [alt]="'travelAroundWorld' | translate">
-                                    <h1 class="font-bold text-white lg:leading-normal leading-normal text-4xl lg:text-6xl mb-6 mt-5">{{ 'homeHeroDestinationsTitle' | translate }}</h1>
-                                    <p class="text-white/70 text-xl max-w-xl mx-auto">{{ 'homeHeroDestinationsDescription' | translate }}</p>
-
-                                    <div class="mt-6">
-                                        <a routerLink="/destinations" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'exploreDestinations' | translate }}</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
 
-        <div class="swiper-pagination"></div>
+        @if (heroSlides.length > 1) {
+            <div class="swiper-pagination"></div>
+        }
     </div>
 </section>
 }

@@ -10,6 +10,7 @@ import { AuthService } from '../_services/auth.service';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 interface ReviewEligibility {
   canReview: boolean;
@@ -40,7 +41,7 @@ interface UserBookingItem {
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [CommonModule,RouterLink, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
+  imports: [Breadcrumbs, CommonModule,RouterLink, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })

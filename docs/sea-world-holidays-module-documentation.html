@@ -1,0 +1,623 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sea World Holidays — Module Documentation &amp; Engineering Cost Estimate</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #17202b; font-size: 10.5pt; line-height: 1.55; margin: 0;
+  }
+  h1, h2, h3, h4 { color: #0d2a45; line-height: 1.25; margin: 0 0 8px; }
+  h1 { font-size: 26pt; }
+  h2 { font-size: 16pt; border-bottom: 2px solid #1e7fb8; padding-bottom: 6px; margin-top: 26px; }
+  h3 { font-size: 12.5pt; margin-top: 18px; color: #12557f; }
+  h4 { font-size: 10.5pt; margin-top: 12px; text-transform: uppercase; letter-spacing: .06em; color: #4a5c6d; }
+  p { margin: 0 0 9px; }
+  ul { margin: 0 0 10px; padding-inline-start: 18px; }
+  li { margin-bottom: 3px; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 9pt; background: #eef3f7; padding: 1px 4px; border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 9.5pt; }
+  th, td { border: 1px solid #cdd8e2; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #0d2a45; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f8fb; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tfoot td { font-weight: 700; background: #e3edf5; }
+  .page { page-break-after: always; }
+  .cover { display: flex; flex-direction: column; justify-content: center; min-height: 240mm; }
+  .cover .rule { height: 6px; background: #1e7fb8; width: 90px; margin: 18px 0 26px; }
+  .cover .meta { margin-top: 40px; font-size: 10pt; color: #4a5c6d; }
+  .cover .meta div { margin-bottom: 4px; }
+  .subtitle { font-size: 13pt; color: #4a5c6d; }
+  .note { background: #f2f7fb; border-inline-start: 4px solid #1e7fb8; padding: 9px 12px; margin: 10px 0 14px; font-size: 9.5pt; }
+  .warn { background: #fff6ed; border-inline-start: 4px solid #d98324; padding: 9px 12px; margin: 10px 0 14px; font-size: 9.5pt; }
+  .cols { display: flex; gap: 18px; }
+  .cols > div { flex: 1; }
+  .avoid-break { page-break-inside: avoid; }
+  .muted { color: #667889; font-size: 9pt; }
+  .tag { display: inline-block; background: #e3edf5; color: #12557f; border-radius: 10px; padding: 1px 9px; font-size: 8.5pt; margin-inline-end: 4px; }
+  footer.docfoot { margin-top: 26px; border-top: 1px solid #cdd8e2; padding-top: 8px; font-size: 8.5pt; color: #667889; }
+</style>
+</head>
+<body>
+
+<!-- ======================= COVER ======================= -->
+<section class="page cover">
+  <div class="tag">Technical Documentation</div>
+  <h1>Sea World Holidays<br />Web Platform</h1>
+  <div class="rule"></div>
+  <p class="subtitle">Module-by-module functional documentation, engineering effort<br />and cost estimate for the Angular 22 SSR travel platform.</p>
+  <div class="meta">
+    <div><strong>Product:</strong> seaworldholidays.com — bilingual (English / Arabic) travel agency platform</div>
+    <div><strong>Codebase:</strong> <code>custom-angular</code> — Angular 22.0.8, SSR, Tailwind CSS 4, ngx-translate</div>
+    <div><strong>Modules covered:</strong> Home, Destinations, Cities, Tours, Packages, Blogs, Booking</div>
+    <div><strong>Costing basis:</strong> blended engineering rate, Egypt market, 2026</div>
+    <div><strong>Document version:</strong> 1.0</div>
+  </div>
+</section>
+
+<!-- ======================= 1. ABOUT ======================= -->
+<section>
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>1. About this document</h2>
+  <p>This document describes what each major module of the Sea World Holidays platform actually does, based on a
+     direct reading of the source code rather than on a product brief. For every module it lists:</p>
+  <ul>
+    <li>the public routes and the Angular components that implement them;</li>
+    <li>the concrete functions the module provides to visitors, customers and staff;</li>
+    <li>the backend API endpoints the module consumes;</li>
+    <li>the estimated engineering effort in hours and the corresponding cost.</li>
+  </ul>
+  <p>Section 9 consolidates the effort into a single total and shows how that total moves with the hourly rate.</p>
+
+  <h3>1.1 Platform at a glance</h3>
+  <table>
+    <tr><th style="width:32%">Area</th><th>Implementation</th></tr>
+    <tr><td>Framework</td><td>Angular 22.0.8, standalone components, signals, <code>OnPush</code> change detection</td></tr>
+    <tr><td>Rendering</td><td>Angular SSR (<code>@angular/ssr</code> + Express 5). Public pages server-rendered; admin and account pages client-rendered and <code>noindex</code></td></tr>
+    <tr><td>Hydration</td><td>Full client hydration with HTTP transfer cache for all unauthenticated GET requests</td></tr>
+    <tr><td>Styling</td><td>Tailwind CSS 4, Material Design Icons, Feather Icons, Flowbite</td></tr>
+    <tr><td>Internationalisation</td><td><code>@ngx-translate/core</code> 18 with <code>en.json</code> / <code>ar.json</code>, language-prefixed routes (<code>/en/…</code>, <code>/ar/…</code>), automatic RTL switching, <code>Accept-Language</code> interceptor</td></tr>
+    <tr><td>Auth</td><td>JWT bearer tokens, cookie session flag, <code>authGuard</code> and <code>adminGuard</code> route guards, roles Admin / Agent / Customer</td></tr>
+    <tr><td>Media / UX</td><td>Swiper carousels, custom lightbox modal, Flowbite date pickers, SweetAlert2 dialogs, skeleton loaders</td></tr>
+    <tr><td>Money</td><td>Central <code>CurrencyService</code> with USD/EGP options and live exchange-rate lookup, cached in localStorage</td></tr>
+    <tr><td>SEO</td><td><code>SeoService</code>: titles, meta, Open Graph, Twitter cards, canonical, <code>hreflang</code> alternates, JSON-LD structured data, SSR 404 status codes</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 2. COSTING METHOD ======================= -->
+<section>
+  <h2>2. Costing method and rate card</h2>
+  <p>Costs below are <strong>engineering build cost</strong>: the effort required to design, implement, test and ship each
+     module to the quality level present in the codebase today. They are expressed as person-hours multiplied by a
+     blended hourly rate.</p>
+
+  <h3>2.1 Rate card</h3>
+  <p>Published 2026 rates for the Egyptian market place junior developers at roughly USD 15–20 per hour, blended agency
+     teams at USD 20–35, and senior engineers or tech leads at USD 40–50. A blended rate is used here because each module
+     consumes a mix of senior architecture work, mid-level feature work, QA and project management.</p>
+  <table>
+    <tr><th>Scenario</th><th class="num">USD / hour</th><th class="num">EGP / hour</th><th>When it applies</th></tr>
+    <tr><td>Low — in-house / junior-heavy team</td><td class="num">20</td><td class="num">970</td><td>Local salaried team, senior review only at milestones</td></tr>
+    <tr><td><strong>Base — blended agency team (used in this document)</strong></td><td class="num"><strong>30</strong></td><td class="num"><strong>1,455</strong></td><td>Mixed senior + mid-level squad including QA and PM</td></tr>
+    <tr><td>High — senior / tech-lead led</td><td class="num">45</td><td class="num">2,183</td><td>Senior-only delivery, architecture-heavy or fixed deadline</td></tr>
+  </table>
+  <p class="muted">Currency conversion at 1 USD = 48.5 EGP. EGP figures are rounded to the nearest 5.</p>
+
+  <h3>2.2 What an hour includes</h3>
+  <ul>
+    <li>Requirements clarification and UI/UX interpretation of the design</li>
+    <li>Angular implementation (components, services, models, guards, routing)</li>
+    <li>Bilingual EN/AR content handling and RTL layout verification</li>
+    <li>API integration, loading / empty / error states, and SSR compatibility</li>
+    <li>Manual QA on desktop and mobile, code review and bug-fix cycles</li>
+    <li>A proportional share of project management and release effort</li>
+  </ul>
+
+  <h3>2.3 Estimating rules</h3>
+  <ul>
+    <li>Effort is counted per module including its admin/back-office screens where those exist.</li>
+    <li>Shared building blocks used by several modules (pagination, date picker, image viewer, currency service) are
+        counted once, in section 8 (Shared foundations), not repeatedly in each module.</li>
+    <li>Backend/API development, hosting, design tooling and content entry are <strong>excluded</strong> — see section 10.</li>
+  </ul>
+</section>
+
+<!-- ======================= 3. HOME ======================= -->
+<section class="page">
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>3. Home page</h2>
+  <p><span class="tag">Route <code>/:lang/home</code></span> <span class="tag">Public</span> <span class="tag">Server-rendered</span></p>
+  <p>The landing page and primary SEO entry point. It combines a promotional hero with four dynamic content
+     sections that pull live catalogue data, so the page always reflects the current inventory without a content edit.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/home.ts</code> · <code>home-sections/destinations-section</code> · <code>home-sections/tours-section</code>
+     · <code>home-sections/packages-section</code> · <code>home-sections/blogs-section</code>
+     · <code>shared/components/agency-one</code> · <code>shared/components/users-one</code></p>
+
+  <h4>Functions provided</h4>
+  <ul>
+    <li><strong>Hero slider</strong> — full-width Swiper carousel with autoplay, looping, navigation arrows and fraction pagination; initialised only in the browser so SSR is unaffected.</li>
+    <li><strong>Search / call-to-action panel</strong> routing visitors into the tours and packages catalogues.</li>
+    <li><strong>Featured destinations</strong> — loads the first 12 destinations and renders a responsive card grid with bilingual titles and normalised image URLs.</li>
+    <li><strong>Featured tours</strong> — loads the curated home-page tour set, showing discounted and original prices side by side.</li>
+    <li><strong>Featured packages</strong> — loads the first eight packages with the same price and discount treatment.</li>
+    <li><strong>Blog carousel</strong> — accessible Swiper carousel (A11y, autoplay, navigation, pagination) over all active blog posts, with responsive breakpoints and correct destroy/rebuild lifecycle.</li>
+    <li><strong>Live company statistics</strong> — visitor and package totals fetched from the API and animated with CountUp.js.</li>
+    <li><strong>Visitor tracking</strong> — every home-page view is posted to the analytics endpoint.</li>
+    <li><strong>Travel-promise slider</strong> — tiny-slider carousel of service guarantees.</li>
+    <li><strong>Progressive loading</strong> — hero imagery is preloaded and skeleton placeholders are shown until ready.</li>
+    <li><strong>Full bilingual rendering</strong> with automatic RTL layout for Arabic.</li>
+    <li><strong>SEO</strong> — localized title/description, Open Graph and Twitter cards, canonical URL, <code>hreflang</code> alternates, and Organization + WebSite JSON-LD.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>AboutUs/Statistics</code> · <code>AboutUs/Visitors</code> · <code>destinations?page=1&amp;pageSize=12</code> ·
+     <code>tours/GetHomePage</code> · <code>Packages?page=1&amp;pageSize=8</code> · <code>Blogs/AllActive</code></p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Hero slider, layout and responsive shell</td><td class="num">22</td><td class="num">660</td></tr>
+    <tr><td>Four dynamic content sections (data loading, cards, prices, i18n)</td><td class="num">40</td><td class="num">1,200</td></tr>
+    <tr><td>Statistics counters and visitor tracking</td><td class="num">10</td><td class="num">300</td></tr>
+    <tr><td>Blog carousel with accessibility and lifecycle handling</td><td class="num">12</td><td class="num">360</td></tr>
+    <tr><td>SSR compatibility, skeletons, QA and bilingual verification</td><td class="num">14</td><td class="num">420</td></tr>
+    <tfoot><tr><td>Total — Home page</td><td class="num">98</td><td class="num">2,940</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 4. DESTINATIONS ======================= -->
+<section>
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>4. Destinations</h2>
+  <p><span class="tag">Routes <code>/:lang/destinations</code>, <code>/:lang/destinations/:routeName</code></span> <span class="tag">Public</span></p>
+  <p>The country/region catalogue. The listing gives visitors a browsable index; the detail page acts as a mini landing
+     page for each destination, aggregating its cities and tours.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/destinations-list</code> · <code>features/home/destination-detail</code></p>
+
+  <h4>Functions provided — listing</h4>
+  <ul>
+    <li><strong>Server-side pagination</strong> with a selectable page size (10 / 20 / 50) and a compact pagination control with ellipsis logic.</li>
+    <li><strong>Per-card image carousel</strong> — each destination card cycles through its own gallery with previous/next controls and a live image counter, tracked independently per card.</li>
+    <li><strong>Lazy-loaded imagery</strong> and resilient image-URL normalisation across the several shapes the API returns.</li>
+    <li><strong>Skeleton, empty and error states</strong> with a retry action.</li>
+    <li><strong>Bilingual titles and descriptions</strong> with fallback when one language is missing.</li>
+  </ul>
+
+  <h4>Functions provided — detail page</h4>
+  <ul>
+    <li><strong>Slug-based routing</strong> (<code>/destinations/hurghada</code>) resolved through a dedicated by-route endpoint, with a proper 404 response when the slug does not exist.</li>
+    <li><strong>Parallel data loading</strong> — destination, tours and cities are fetched concurrently so the page paints in one pass.</li>
+    <li><strong>Image gallery</strong> with main image, arrow navigation, thumbnail strip and counter.</li>
+    <li><strong>Full-screen lightbox</strong> with keyboard navigation (arrows, Escape) and background scroll locking.</li>
+    <li><strong>Related tours carousel</strong> filtered to the destination.</li>
+    <li><strong>Cities carousel</strong> linking into each city page.</li>
+    <li><strong>SEO</strong> — <code>TouristDestination</code> structured data, localized metadata and social preview images.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>destinations?page=&amp;pageSize=</code> · <code>destinations/by-route/{routeName}</code> ·
+     <code>Tours?page=1&amp;pageSize=100</code> · <code>Cities?page=1&amp;pageSize=100</code></p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Listing page, pagination and page-size control</td><td class="num">24</td><td class="num">720</td></tr>
+    <tr><td>Per-card image carousel and image normalisation</td><td class="num">14</td><td class="num">420</td></tr>
+    <tr><td>Detail page: routing, parallel loading, 404 handling</td><td class="num">22</td><td class="num">660</td></tr>
+    <tr><td>Gallery, lightbox and related-tours carousel</td><td class="num">26</td><td class="num">780</td></tr>
+    <tr><td>Cities integration, SEO, states, QA</td><td class="num">18</td><td class="num">540</td></tr>
+    <tfoot><tr><td>Total — Destinations</td><td class="num">104</td><td class="num">3,120</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 5. CITIES ======================= -->
+<section>
+  <h2>5. Cities</h2>
+  <p><span class="tag">Route <code>/:lang/cities/:routeName</code></span> <span class="tag">Public</span></p>
+  <p>City pages capture long-tail search traffic ("tours in Luxor") and funnel it straight into the relevant tours.
+     A city always belongs to a destination, and the page validates that relationship before rendering.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/city-page</code> · <code>shared/components/destination-cities-carousel</code> ·
+     <code>shared/components/destination-cities-grid</code></p>
+
+  <h4>Functions provided</h4>
+  <ul>
+    <li><strong>Slug-based city lookup</strong> with parent-destination validation; a mismatched or unknown slug returns a 404 rather than an empty page.</li>
+    <li><strong>Top tours in the city</strong> — up to ten tours filtered by city, each with image, title and formatted price.</li>
+    <li><strong>Recommended tours sidebar</strong> — fallback suggestions from the wider destination when the city itself has few tours, keeping the page commercially useful.</li>
+    <li><strong>Sticky sidebar</strong> with city name, description and contextual guidance.</li>
+    <li><strong>Reusable city components</strong> — a Swiper carousel (responsive 1.1 → 4 slides) and a static grid variant, both consumed by the destination pages.</li>
+    <li><strong>SEO</strong> — <code>City</code> structured data with locality address and localized metadata.</li>
+    <li><strong>Bilingual naming</strong> and RTL-safe layout, plus skeleton and error states.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>Cities/by-route/{routeName}</code> · <code>Destinations/{id}</code> ·
+     <code>Tours?page=1&amp;pageSize=10&amp;destinationId=&amp;cityId=</code> · <code>Tours?page=1&amp;pageSize=5&amp;destinationId=</code></p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>City page layout, sidebar and tour grid</td><td class="num">20</td><td class="num">600</td></tr>
+    <tr><td>Lookup, validation, fallback recommendation logic</td><td class="num">14</td><td class="num">420</td></tr>
+    <tr><td>Cities carousel and grid components</td><td class="num">14</td><td class="num">420</td></tr>
+    <tr><td>SEO, bilingual handling, states, QA</td><td class="num">8</td><td class="num">240</td></tr>
+    <tfoot><tr><td>Total — Cities</td><td class="num">56</td><td class="num">1,680</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 6. TOURS ======================= -->
+<section class="page">
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>6. Tours</h2>
+  <p><span class="tag">Routes <code>/:lang/tours</code>, <code>/:lang/nile-cruises</code>, <code>/:lang/tours/:routeName</code></span> <span class="tag">Public</span></p>
+  <p>The largest public module and the main revenue surface. It covers catalogue browsing with real filtering, a rich
+     product page, an itinerary presentation and customer reviews.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/tours-list</code> · <code>features/home/tour-page</code> (<code>tour-detail</code>,
+     <code>tour-booking-card</code>) · <code>shared/components/itinerary-timeline</code> ·
+     <code>shared/components/product-reviews</code> · <code>shared/components/image-viewer-modal</code></p>
+
+  <h4>Functions provided — catalogue</h4>
+  <ul>
+    <li><strong>Free-text search</strong> with autocomplete suggestions built from tour titles and destination names; matching runs across English and Arabic titles, names and descriptions.</li>
+    <li><strong>Travel date-range filter</strong> with two date pickers and validation that the end date is not before the start date.</li>
+    <li><strong>Nile-cruise mode</strong> — the same catalogue reused under a dedicated route and page title with a server-side cruise filter.</li>
+    <li><strong>Server-side pagination</strong> plus a second client-side filtering pass, so results stay consistent when the API filter is broader than the UI.</li>
+    <li><strong>Discount badges</strong> showing the percentage saved with the original price struck through.</li>
+    <li><strong>Duration display</strong>, per-card image carousels, lazy loading, and skeleton / empty / error states.</li>
+  </ul>
+
+  <h4>Functions provided — tour detail</h4>
+  <ul>
+    <li><strong>Slug-based product page</strong> with hero gallery, thumbnail strip and a "view all photos" full-screen lightbox.</li>
+    <li><strong>Key facts panel</strong> — duration in days and hours, group size, tour type, languages offered.</li>
+    <li><strong>Pricing</strong> per person with discount handling and live currency conversion.</li>
+    <li><strong>Rich description</strong> rendered through a safe link parser that converts Markdown-style and HTML links into real anchors without using <code>innerHTML</code>.</li>
+    <li><strong>Highlights and included / excluded lists</strong>, including backwards compatibility with the legacy data shape.</li>
+    <li><strong>Itinerary timeline</strong> — vertical day-by-day timeline supporting nested sub-steps, times, descriptions and notes.</li>
+    <li><strong>Customer reviews</strong> — public star ratings with author, date and a verified-traveller badge; authenticated customers with a completed booking can submit a review, with eligibility checked per booking.</li>
+    <li><strong>Booking card</strong> — see section 8.</li>
+    <li><strong>SEO</strong> — <code>TouristTrip</code> structured data including an <code>Offer</code> node with price, currency and availability, which makes the tour eligible for rich results.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>Tours?{page,pageSize,searchTerm,dateFrom,dateTo,isNileCruise}</code> · <code>Tours/by-route/{routeName}</code> ·
+     <code>Reviews/{type}/{id}</code> · <code>Reviews/eligibility/{bookingId}</code> · <code>Reviews</code></p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Catalogue page, pagination, card grid</td><td class="num">26</td><td class="num">780</td></tr>
+    <tr><td>Search, autocomplete and bilingual matching</td><td class="num">18</td><td class="num">540</td></tr>
+    <tr><td>Date-range filter and validation</td><td class="num">14</td><td class="num">420</td></tr>
+    <tr><td>Nile-cruise variant and discount rendering</td><td class="num">10</td><td class="num">300</td></tr>
+    <tr><td>Tour detail page: layout, facts, pricing, description parser</td><td class="num">34</td><td class="num">1,020</td></tr>
+    <tr><td>Gallery and full-screen lightbox</td><td class="num">16</td><td class="num">480</td></tr>
+    <tr><td>Itinerary timeline component</td><td class="num">20</td><td class="num">600</td></tr>
+    <tr><td>Reviews: listing, eligibility, submission</td><td class="num">24</td><td class="num">720</td></tr>
+    <tr><td>SEO, SSR, states, QA</td><td class="num">16</td><td class="num">480</td></tr>
+    <tfoot><tr><td>Total — Tours</td><td class="num">178</td><td class="num">5,340</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 7. PACKAGES ======================= -->
+<section>
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>7. Packages</h2>
+  <p><span class="tag">Routes <code>/:lang/packages</code>, <code>/:lang/packages/:routeName</code></span>
+     <span class="tag">Admin <code>/:lang/configurations/packages</code></span></p>
+  <p>Multi-day holiday products. The public side mirrors the tours experience; the private side adds a full authoring
+     back office, which is where most of the effort in this module sits.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/packages-list</code> · <code>features/home/package-page</code> ·
+     <code>features/configurations/packages</code> (list, form wizard) · <code>configurations/shared/discount-manager</code></p>
+
+  <h4>Functions provided — public</h4>
+  <ul>
+    <li><strong>Package catalogue</strong> with free-text search, travel date-range filter, pagination and page-size control.</li>
+    <li><strong>Discount presentation</strong> — percentage badge plus original and discounted prices.</li>
+    <li><strong>Package detail page</strong> with image gallery and lightbox, bilingual long description, highlights, and included / excluded lists.</li>
+    <li><strong>Day-by-day itinerary</strong> reusing the shared timeline component.</li>
+    <li><strong>Related tours</strong> and <strong>customer reviews</strong> for the package.</li>
+    <li><strong>Booking card</strong> — the same component as tours, switched to package mode.</li>
+    <li><strong>SEO</strong> — <code>TouristTrip</code> structured data with offer pricing and provider attribution.</li>
+  </ul>
+
+  <h4>Functions provided — back office</h4>
+  <ul>
+    <li><strong>Three-step authoring wizard</strong>: details → images → itinerary. A new package is deliberately created inactive and only published once images and itinerary exist, which prevents half-built packages from being bookable.</li>
+    <li><strong>Bilingual validation</strong> — Arabic fields are validated to actually contain Arabic, English fields to start with a Latin character.</li>
+    <li><strong>Image pipeline</strong> — up to five images, 5 MB limit, JPG/PNG/WebP only, oversized images automatically downscaled and converted to WebP in the browser, with per-image English and Arabic alt text.</li>
+    <li><strong>Itinerary builder</strong> with time-overlap detection and required bilingual titles and descriptions.</li>
+    <li><strong>Publish / unpublish toggle</strong> and guarded deletion (only inactive packages can be deleted).</li>
+    <li><strong>Discount manager</strong> — create, stop and restart time-boxed discounts per package.</li>
+    <li><strong>Paginated admin listing</strong> with confirmation dialogs on every destructive action.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>Packages?{page,pageSize,searchTerm,dateFrom,dateTo}</code> · <code>Packages/by-route/{routeName}</code> ·
+     <code>Packages/GetAll</code> · <code>Packages</code> (POST/PUT) · <code>Packages/AddImages</code> ·
+     <code>Packages/AddItinerary</code> · <code>Packages/ChangeStatus</code> · <code>Packages/deleteImage/{id}</code> ·
+     <code>Packages/{id}</code> (DELETE) · <code>Discounts…</code></p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Public catalogue with search, filters and pagination</td><td class="num">28</td><td class="num">840</td></tr>
+    <tr><td>Public detail page, gallery, itinerary, related items</td><td class="num">30</td><td class="num">900</td></tr>
+    <tr><td>Admin three-step wizard and state machine</td><td class="num">40</td><td class="num">1,200</td></tr>
+    <tr><td>Image upload pipeline (validation, resize, WebP, alt text)</td><td class="num">24</td><td class="num">720</td></tr>
+    <tr><td>Itinerary builder with overlap validation</td><td class="num">22</td><td class="num">660</td></tr>
+    <tr><td>Admin listing, status toggle, guarded delete</td><td class="num">16</td><td class="num">480</td></tr>
+    <tr><td>Discount manager</td><td class="num">14</td><td class="num">420</td></tr>
+    <tr><td>SEO, bilingual QA, regression testing</td><td class="num">16</td><td class="num">480</td></tr>
+    <tfoot><tr><td>Total — Packages</td><td class="num">190</td><td class="num">5,700</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 8. BLOGS ======================= -->
+<section class="page">
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>8. Blogs</h2>
+  <p><span class="tag">Routes <code>/:lang/blogs</code>, <code>/:lang/blogs/:routeName</code></span>
+     <span class="tag">Admin <code>/:lang/configurations/blogs</code></span></p>
+  <p>The content-marketing engine. Blog posts are the platform's main organic-search asset and are fully bilingual,
+     structured, and editable by staff without developer involvement.</p>
+
+  <h4>Components</h4>
+  <p><code>features/home/blog/blog-page</code> · <code>features/home/blog/blog-detail</code> ·
+     <code>home-sections/blogs-section</code> · <code>features/configurations/blogs</code> (list, form card)</p>
+
+  <h4>Functions provided — public</h4>
+  <ul>
+    <li><strong>Blog index</strong> — responsive card grid with cover image, publication date, title, excerpt and read-more link.</li>
+    <li><strong>Home-page carousel</strong> of active posts with autoplay and accessibility support.</li>
+    <li><strong>Article page</strong> with slug URLs, publication date, hero gallery with lightbox, and section-based body content.</li>
+    <li><strong>Structured bilingual content</strong> — each article is composed of up to five titled sections in both languages, with a legacy JSON content format still supported.</li>
+    <li><strong>Safe link rendering</strong> in article bodies via the shared link parser.</li>
+    <li><strong>SEO</strong> — <code>BlogPosting</code> structured data with headline, publisher, author, published and modified dates, plus article-type Open Graph tags.</li>
+  </ul>
+
+  <h4>Functions provided — back office</h4>
+  <ul>
+    <li><strong>Create and edit posts</strong> with English/Arabic titles, summaries, SEO slug, publication date and up to five content sections.</li>
+    <li><strong>Language validation</strong> on every bilingual field.</li>
+    <li><strong>Image management</strong> — same five-image pipeline with size, type and dimension validation and automatic WebP conversion; individual images can be removed.</li>
+    <li><strong>Publish / unpublish toggle</strong> and deletion restricted to unpublished posts.</li>
+    <li><strong>Paginated admin listing</strong> with confirmation dialogs.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>Blogs/AllActive</code> · <code>Blogs?page=&amp;pageSize=</code> · <code>Blogs/by-route/{routeName}</code> ·
+     <code>Blogs/GetAll</code> · <code>Blogs</code> (POST/PUT) · <code>Blogs/{id}/ChangeStatus</code> ·
+     <code>Blogs/deleteImage/{id}</code> · <code>Blogs/{id}</code> (DELETE)</p>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Blog index and home-page carousel</td><td class="num">20</td><td class="num">600</td></tr>
+    <tr><td>Article page, gallery, section rendering, legacy format support</td><td class="num">28</td><td class="num">840</td></tr>
+    <tr><td>Admin editor with bilingual sections and validation</td><td class="num">32</td><td class="num">960</td></tr>
+    <tr><td>Image pipeline and management</td><td class="num">16</td><td class="num">480</td></tr>
+    <tr><td>Admin listing, status, delete rules</td><td class="num">12</td><td class="num">360</td></tr>
+    <tr><td>SEO structured data, states, QA</td><td class="num">12</td><td class="num">360</td></tr>
+    <tfoot><tr><td>Total — Blogs</td><td class="num">120</td><td class="num">3,600</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 9. BOOKING ======================= -->
+<section>
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>9. Booking</h2>
+  <p><span class="tag">Public booking card on every tour and package</span>
+     <span class="tag">Customer <code>/:lang/user-booking</code></span>
+     <span class="tag">Admin <code>/:lang/configurations/bookings</code></span></p>
+  <p>The commercial core of the platform: the path from an interested visitor to a confirmed, agent-managed booking.
+     A single booking component serves both tours and packages, and the request is validated at three points before it
+     reaches an agent.</p>
+
+  <h4>Components</h4>
+  <p><code>tour-page/tour-detail/tour-booking-card</code> · <code>features/user/user-booking</code> ·
+     <code>features/configurations/bookings</code> (list, agent assignment card) ·
+     <code>shared/components/customer-contact-overlay</code> · quotations / invoices / vouchers modules</p>
+
+  <h4>Functions provided — visitor booking journey</h4>
+  <ul>
+    <li><strong>Booking form</strong> capturing travel start and end dates, number of adults, number of children and special requests, with full reactive validation (minimum one adult, whole numbers, 1,000-character request limit, coherent date range).</li>
+    <li><strong>Date constraints</strong> — earliest travel date is three days out or the product's own start date, whichever is later; the maximum is bounded by the product end date.</li>
+    <li><strong>Live availability check</strong> — an unauthenticated endpoint returns availability and remaining seats before the visitor is asked to log in, so anonymous users get a useful answer immediately.</li>
+    <li><strong>Live price summary</strong> — total recalculated from adult and child pricing and formatted in the visitor's selected currency.</li>
+    <li><strong>Sign-in hand-off</strong> — unauthenticated users are redirected to login with a return URL and land back on the same product.</li>
+    <li><strong>Guarded submission</strong> — inactive products, exceeded seat limits and invalid ranges are rejected client-side with clear localized messages before the request is sent.</li>
+    <li><strong>Confirmation</strong> dialog with the booking reference and timestamp.</li>
+    <li><strong>Contact overlay</strong> — a persistent WhatsApp / phone / email overlay so a visitor who does not want to book online can reach an agent immediately.</li>
+  </ul>
+
+  <h4>Functions provided — customer area</h4>
+  <ul>
+    <li><strong>My bookings</strong> — authenticated list of all bookings with status, travel dates, traveller counts, totals and any cancellation fee.</li>
+    <li><strong>Review submission</strong> from completed bookings, with server-checked eligibility per booking.</li>
+    <li><strong>Route protection</strong> — the area is behind an auth guard and excluded from search indexing.</li>
+  </ul>
+
+  <h4>Functions provided — agent / admin back office</h4>
+  <ul>
+    <li><strong>Booking queue</strong> with pagination and status filtering.</li>
+    <li><strong>Status workflow</strong> — confirm (with a contact note recording that the customer was reached), complete, and cancel with an optional cancellation fee when the free-cancellation window has passed.</li>
+    <li><strong>Agent assignment</strong> — bookings are assigned to a named agent from the staff list.</li>
+    <li><strong>Financial documents</strong> — quotations (create, send, duplicate, status change, PDF export), invoices (create, edit, PDF export) and vouchers (create, edit, PDF export), all linked to customers, tours, packages, hotels and flights.</li>
+    <li><strong>Role-based access</strong> — Admin and Agent roles only, enforced by route guard and client-side rendering with <code>noindex</code> headers.</li>
+  </ul>
+
+  <h4>API endpoints consumed</h4>
+  <p><code>Bookings/CheckAvailability</code> · <code>Bookings</code> · <code>Bookings/user/{userId}</code> ·
+     <code>Bookings?page=&amp;pageSize=&amp;status=</code> · <code>Bookings/{id}/ChangeStatus</code> ·
+     <code>Bookings/{id}/AssignAgent</code> · <code>Account/GetAgents</code> · <code>Reviews…</code> ·
+     <code>Quotations…</code> · <code>Invoices…</code> · <code>Vouchers…</code></p>
+
+  <div class="warn"><strong>Scope note.</strong> The booking flow captures and manages requests; it does not currently
+    take online card payments. The payment type enumeration and the customer payment screen exist as UI only, with no
+    payment gateway integrated. Adding real payment capture is a separate piece of work and is not included in the
+    figures below.</div>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Booking form, validation rules and date constraints</td><td class="num">26</td><td class="num">780</td></tr>
+    <tr><td>Availability check and live price summary</td><td class="num">18</td><td class="num">540</td></tr>
+    <tr><td>Authentication hand-off and submission guards</td><td class="num">16</td><td class="num">480</td></tr>
+    <tr><td>Customer "my bookings" area and review submission</td><td class="num">22</td><td class="num">660</td></tr>
+    <tr><td>Admin booking queue, status workflow, agent assignment</td><td class="num">34</td><td class="num">1,020</td></tr>
+    <tr><td>Quotations, invoices and vouchers with PDF export</td><td class="num">56</td><td class="num">1,680</td></tr>
+    <tr><td>Contact overlay and notification messaging</td><td class="num">10</td><td class="num">300</td></tr>
+    <tr><td>End-to-end QA across roles and languages</td><td class="num">20</td><td class="num">600</td></tr>
+    <tfoot><tr><td>Total — Booking</td><td class="num">202</td><td class="num">6,060</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 10. SHARED FOUNDATIONS ======================= -->
+<section class="page">
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>10. Shared foundations</h2>
+  <p>Cross-cutting infrastructure used by every module. Counted once here rather than spread across the module
+     estimates.</p>
+
+  <h4>Functions provided</h4>
+  <ul>
+    <li><strong>Bilingual routing and RTL</strong> — language-prefixed routes with match and activation guards, legacy URL redirection, cookie persistence, <code>Accept-Language</code> interceptor, and automatic document direction switching.</li>
+    <li><strong>Server-side rendering</strong> — Express host, per-route render modes, transfer cache for unauthenticated GETs, and <code>noindex</code> headers on private routes.</li>
+    <li><strong>Authentication and authorisation</strong> — JWT handling, session interceptor with automatic logout on expiry, role resolution, and route guards.</li>
+    <li><strong>Currency service</strong> — currency options, live USD/EGP exchange rate with caching and staleness detection, and consistent price formatting everywhere.</li>
+    <li><strong>SEO service</strong> — titles, descriptions, robots directives, Open Graph and Twitter cards, canonical URLs, <code>hreflang</code> alternates and SSR-aware 404 responses.</li>
+    <li><strong>Structured data (this engagement)</strong> — an Organization / TravelAgency graph built from the real footer company details (legal name, address, phone, e-mail, social profiles, accepted payment methods and currencies), a WebSite node, per-page schema for tours, packages, destinations, cities and articles including offer pricing, and a BreadcrumbList on every page.</li>
+    <li><strong>Breadcrumb navigation (this engagement)</strong> — a single service derives the trail from the active route in English or Arabic and feeds both the visible RTL-aware navigation and the BreadcrumbList schema, so the two can never disagree. Present on every page except the home page.</li>
+    <li><strong>Reusable UI kit</strong> — pagination with ellipsis logic, Flowbite date picker wrapped as a form control with Arabic locale, full-screen image viewer, safe link parser, itinerary timeline, review widget and skeleton patterns.</li>
+    <li><strong>API layer</strong> — typed HTTP wrapper with public and authenticated variants, generic response envelope, file download support, and consistent error and toast handling.</li>
+  </ul>
+
+  <h4>Effort and cost</h4>
+  <table class="avoid-break">
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">Cost (USD)</th></tr>
+    <tr><td>Project setup, build, Tailwind, SSR host configuration</td><td class="num">28</td><td class="num">840</td></tr>
+    <tr><td>Bilingual routing, translations infrastructure and RTL</td><td class="num">32</td><td class="num">960</td></tr>
+    <tr><td>Auth, guards, interceptors and role handling</td><td class="num">24</td><td class="num">720</td></tr>
+    <tr><td>Currency service and price formatting</td><td class="num">16</td><td class="num">480</td></tr>
+    <tr><td>SEO service (meta, canonical, hreflang, SSR status codes)</td><td class="num">22</td><td class="num">660</td></tr>
+    <tr><td>Structured data and breadcrumbs (this engagement)</td><td class="num">34</td><td class="num">1,020</td></tr>
+    <tr><td>Shared UI component kit</td><td class="num">36</td><td class="num">1,080</td></tr>
+    <tr><td>API layer, error handling, notifications</td><td class="num">14</td><td class="num">420</td></tr>
+    <tfoot><tr><td>Total — Shared foundations</td><td class="num">206</td><td class="num">6,180</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 11. TOTAL ======================= -->
+<section>
+  <br clear="all" style="mso-special-character:line-break;page-break-before:always" />
+  <h2>11. Total cost</h2>
+
+  <h3>11.1 Summary by module</h3>
+  <table>
+    <thead>
+      <tr><th>Module</th><th class="num">Hours</th><th class="num">Share</th><th class="num">Cost (USD)</th><th class="num">Cost (EGP)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Home page</td><td class="num">98</td><td class="num">8.5%</td><td class="num">2,940</td><td class="num">142,590</td></tr>
+      <tr><td>Destinations</td><td class="num">104</td><td class="num">9.0%</td><td class="num">3,120</td><td class="num">151,320</td></tr>
+      <tr><td>Cities</td><td class="num">56</td><td class="num">4.9%</td><td class="num">1,680</td><td class="num">81,480</td></tr>
+      <tr><td>Tours</td><td class="num">178</td><td class="num">15.4%</td><td class="num">5,340</td><td class="num">258,990</td></tr>
+      <tr><td>Packages</td><td class="num">190</td><td class="num">16.5%</td><td class="num">5,700</td><td class="num">276,450</td></tr>
+      <tr><td>Blogs</td><td class="num">120</td><td class="num">10.4%</td><td class="num">3,600</td><td class="num">174,600</td></tr>
+      <tr><td>Booking</td><td class="num">202</td><td class="num">17.5%</td><td class="num">6,060</td><td class="num">293,910</td></tr>
+      <tr><td>Shared foundations</td><td class="num">206</td><td class="num">17.8%</td><td class="num">6,180</td><td class="num">299,730</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>Subtotal</td><td class="num">1,154</td><td class="num">100%</td><td class="num">34,620</td><td class="num">1,679,070</td></tr>
+    </tfoot>
+  </table>
+
+  <h3>11.2 Grand total</h3>
+  <p>A contingency of 12% is applied to cover scope discovery, browser and RTL edge cases, and the rework that always
+     follows client review. This is the figure to budget against.</p>
+  <table>
+    <tr><th>Line</th><th class="num">Hours</th><th class="num">USD</th><th class="num">EGP</th></tr>
+    <tr><td>Modules and shared foundations</td><td class="num">1,154</td><td class="num">34,620</td><td class="num">1,679,070</td></tr>
+    <tr><td>Contingency @ 12%</td><td class="num">139</td><td class="num">4,170</td><td class="num">202,245</td></tr>
+    <tfoot><tr><td><strong>Grand total</strong></td><td class="num"><strong>1,293</strong></td><td class="num"><strong>38,790</strong></td><td class="num"><strong>1,881,315</strong></td></tr></tfoot>
+  </table>
+  <p class="muted">Approximately 8 person-months for a single engineer, or about 3 calendar months for a squad of three.</p>
+
+  <h3>11.3 Sensitivity to the hourly rate</h3>
+  <table>
+    <tr><th>Rate scenario</th><th class="num">USD / hour</th><th class="num">Total USD</th><th class="num">Total EGP</th></tr>
+    <tr><td>Low — in-house / junior-heavy</td><td class="num">20</td><td class="num">25,860</td><td class="num">1,254,210</td></tr>
+    <tr><td><strong>Base — blended agency team</strong></td><td class="num"><strong>30</strong></td><td class="num"><strong>38,790</strong></td><td class="num"><strong>1,881,315</strong></td></tr>
+    <tr><td>High — senior / tech-lead led</td><td class="num">45</td><td class="num">58,185</td><td class="num">2,821,973</td></tr>
+  </table>
+
+  <h3>11.4 This engagement in isolation</h3>
+  <p>For reference, the SEO structured-data and breadcrumb work delivered as part of this document is the following
+     subset of section 10:</p>
+  <table>
+    <tr><th>Work item</th><th class="num">Hours</th><th class="num">USD</th><th class="num">EGP</th></tr>
+    <tr><td>Company profile extraction and Organization / TravelAgency schema</td><td class="num">8</td><td class="num">240</td><td class="num">11,640</td></tr>
+    <tr><td>Per-page schema (tours, packages, destinations, cities, articles, offers)</td><td class="num">10</td><td class="num">300</td><td class="num">14,550</td></tr>
+    <tr><td>Bilingual breadcrumb service and RTL component</td><td class="num">10</td><td class="num">300</td><td class="num">14,550</td></tr>
+    <tr><td>Rollout across 25 pages, build and SSR verification</td><td class="num">6</td><td class="num">180</td><td class="num">8,730</td></tr>
+    <tfoot><tr><td>Total</td><td class="num">34</td><td class="num">1,020</td><td class="num">49,470</td></tr></tfoot>
+  </table>
+</section>
+
+<!-- ======================= 12. ASSUMPTIONS ======================= -->
+<section>
+  <h2>12. Assumptions and exclusions</h2>
+
+  <h3>12.1 Assumptions</h3>
+  <ul>
+    <li>Figures represent front-end engineering effort for the Angular application as it exists today, at the observed quality level.</li>
+    <li>The backend API and its endpoints are supplied and maintained separately; integration effort against those endpoints is included, building them is not.</li>
+    <li>UI designs are provided; interpretation and responsive implementation are included, original visual design is not.</li>
+    <li>Arabic and English copy is supplied by the business; translation-key wiring and RTL verification are included.</li>
+    <li>Exchange rate of 1 USD = 48.5 EGP. EGP totals move with the rate.</li>
+    <li>Rates are drawn from published 2026 Egyptian market data: juniors USD 15–20/hour, blended agency teams USD 20–35/hour, seniors USD 40–50/hour.</li>
+  </ul>
+
+  <h3>12.2 Exclusions</h3>
+  <ul>
+    <li>Backend / API development, database design and server-side business logic</li>
+    <li>Online payment gateway integration and PCI considerations</li>
+    <li>Hosting, domains, SSL, CDN and ongoing infrastructure costs</li>
+    <li>Original UI/UX design, photography, copywriting and translation</li>
+    <li>Content entry (destinations, tours, packages, articles)</li>
+    <li>Automated test suite authoring — the current codebase has minimal test coverage</li>
+    <li>Ongoing maintenance, support retainer and Angular major-version upgrades</li>
+    <li>Third-party licences and paid SEO or advertising spend</li>
+  </ul>
+
+  <h3>12.3 Recommended next steps</h3>
+  <ul>
+    <li>Register the site in Google Search Console and validate the new structured data with the Rich Results Test.</li>
+    <li>Confirm the public base URL used for canonical links and schema identifiers matches the production domain.</li>
+    <li>Decide whether online payment capture is in scope; if so, budget it as a separate work package.</li>
+    <li>Introduce automated tests around the booking status transitions and the package authoring wizard.</li>
+  </ul>
+
+  <footer class="docfoot">
+    Sea World Holidays — Module Documentation &amp; Engineering Cost Estimate · Version 1.0 ·
+    Prepared from a direct source-code review of the <code>custom-angular</code> repository.
+    All costs are estimates and are valid for 30 days from issue.
+  </footer>
+</section>
+
+</body>
+</html>

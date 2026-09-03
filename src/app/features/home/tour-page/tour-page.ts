@@ -20,11 +20,12 @@ import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-ca
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews],
+  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -925,6 +925,7 @@
   "tourImageNumber": "صورة الجولة {{number}}",
   "agent": "الوكيل",
   "back": "رجوع",
+  "breadcrumbNavigation": "مسار التنقل",
   "home": "الرئيسية",
   "nonNegativeValueRequired": "يجب ألا تكون القيمة سالبة.",
   "whatsappseaworldHolidays": "تواصل مع سي وورلد هوليدايز عبر واتساب",

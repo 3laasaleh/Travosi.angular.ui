@@ -4,10 +4,11 @@ import feather from 'feather-icons';
 
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
+import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-user-invoice',
-  imports: [RouterLink, HomeNavbar,FooterOne],
+  imports: [Breadcrumbs, RouterLink, HomeNavbar,FooterOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-invoice.html',
 })

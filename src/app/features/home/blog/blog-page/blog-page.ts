@@ -7,8 +7,9 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
+import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
 
-@Component({ selector: 'app-blog-page', standalone: true, imports: [RouterLink, DatePipe, HomeNavbar, FooterOne], templateUrl: './blog-page.html', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-blog-page', standalone: true, imports: [Breadcrumbs, RouterLink, DatePipe, HomeNavbar, FooterOne], templateUrl: './blog-page.html', changeDetection: ChangeDetectionStrategy.OnPush })
 export class BlogPage implements OnInit {
   private readonly api = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);

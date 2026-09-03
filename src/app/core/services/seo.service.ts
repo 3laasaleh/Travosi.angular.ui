@@ -3,7 +3,9 @@ import { Injectable, REQUEST, RESPONSE_INIT, effect, inject } from '@angular/cor
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { COMPANY_PROFILE } from '../data/company-profile';
 import { PUBLIC_BASE_URL } from '../tokens/app-urls';
+import { BreadcrumbService } from './breadcrumb.service';
 import { LanguageService } from './language.service';
 
 export type SeoSchemaType =
@@ -31,12 +33,7 @@ interface LocalizedSeoPage {
   entity?: Record<string, unknown>;
 }
 
-interface BreadcrumbItem {
-  name: string;
-  path: string;
-}
-
-const SITE_NAME = 'Sea World Holidays';
+const SITE_NAME = COMPANY_PROFILE.name;
 const DEFAULT_DESCRIPTION =
   'Discover curated tours, travel packages, cities and destinations with Sea World Holidays.';
 
@@ -46,14 +43,15 @@ export class SeoService {
   private readonly meta = inject(Meta);
   private readonly document = inject(DOCUMENT);
   private readonly language = inject(LanguageService);
+  private readonly breadcrumbService = inject(BreadcrumbService);
   private readonly router = inject(Router);
   private readonly request = inject(REQUEST, { optional: true });
   private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
   private readonly publicBaseUrl = inject(PUBLIC_BASE_URL);
   private lastPage: LocalizedSeoPage | null = null;
+  private siteStructuredDataLanguage: 'en' | 'ar' | null = null;
 
   constructor() {
-    this.setSiteStructuredData();
     this.applyRouteDefaults(this.router.url);
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -130,6 +128,8 @@ export class SeoService {
     const title = this.localized(page.title, page.title, '', language);
     const description = this.localized(page.description , page.description, '', language);
     this.applyDocumentLanguage(language);
+    // Detail pages know their entity name, so the last breadcrumb can show it instead of the slug.
+    this.breadcrumbService.setCurrentTitle(title);
     this.setPage(title, description, page.imageUrl, page.imageAlt, page.schemaType, page.entity);
   }
 
@@ -241,14 +241,32 @@ export class SeoService {
       page['headline'] = title;
       page['mainEntityOfPage'] = { '@id': `${canonicalUrl}#page` };
       page['publisher'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      page['author'] = { '@id': `${this.publicBaseUrl}/#organization` };
       const published = this.dateValue(entity, 'publishedAt', 'PublishedAt');
       const modified = this.dateValue(entity, 'modifiedAt', 'ModifiedAt', 'updatedAt', 'UpdatedAt');
       if (published) page['datePublished'] = published;
       if (modified) page['dateModified'] = modified;
     }
 
+    if (type === 'TouristTrip') {
+      page['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      const offer = this.offer(entity, canonicalUrl);
+      if (offer) page['offers'] = offer;
+      const duration = this.durationInDays(entity);
+      if (duration) page['itinerary'] = { '@type': 'ItemList', numberOfItems: duration };
+    }
+
+    if (type === 'City' || type === 'TouristDestination' || type === 'Place') {
+      page['address'] = {
+        '@type': 'PostalAddress',
+        addressCountry: COMPANY_PROFILE.address.country,
+        addressLocality: title,
+      };
+      page['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
+    }
+
     const graph: Record<string, unknown>[] = [page];
-    const breadcrumbs = this.breadcrumbs(title);
+    const breadcrumbs = this.breadcrumbService.items();
     if (breadcrumbs.length > 1) {
       graph.push({
         '@type': 'BreadcrumbList',
@@ -268,7 +286,12 @@ export class SeoService {
     });
   }
 
-  private setSiteStructuredData(): void {
+  /**
+   * Organization + website graph, kept in sync with the company details shown in the footer
+   * so Google sees the same name, address, phone, e-mail and social profiles as visitors do.
+   */
+  private setSiteStructuredData(language: 'en' | 'ar'): void {
+    const logo = this.absolutePath(COMPANY_PROFILE.logoPath);
     this.setJsonLd('site-structured-data', {
       '@context': 'https://schema.org',
       '@graph': [
@@ -276,46 +299,70 @@ export class SeoService {
           '@type': 'TravelAgency',
           '@id': `${this.publicBaseUrl}/#organization`,
           name: SITE_NAME,
+          legalName: COMPANY_PROFILE.legalName,
           url: this.publicBaseUrl,
-          logo: { '@type': 'ImageObject', url: this.absolutePath('/assets/images/main-logo.png') },
+          description: COMPANY_PROFILE.description[language],
+          logo: { '@type': 'ImageObject', '@id': `${this.publicBaseUrl}/#logo`, url: logo, caption: SITE_NAME },
+          image: { '@id': `${this.publicBaseUrl}/#logo` },
+          email: COMPANY_PROFILE.email,
+          telephone: COMPANY_PROFILE.phone,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: COMPANY_PROFILE.address[language],
+            addressLocality: COMPANY_PROFILE.address.locality,
+            addressRegion: COMPANY_PROFILE.address.region,
+            addressCountry: COMPANY_PROFILE.address.country,
+          },
+          contactPoint: [
+            {
+              '@type': 'ContactPoint',
+              contactType: 'customer service',
+              telephone: COMPANY_PROFILE.phone,
+              email: COMPANY_PROFILE.email,
+              availableLanguage: ['en', 'ar'],
+              areaServed: COMPANY_PROFILE.address.country,
+            },
+          ],
+          sameAs: COMPANY_PROFILE.socialProfiles,
+          paymentAccepted: COMPANY_PROFILE.paymentAccepted.join(', '),
+          currenciesAccepted: COMPANY_PROFILE.currenciesAccepted.join(', '),
+          knowsLanguage: ['en', 'ar'],
         },
         {
           '@type': 'WebSite',
           '@id': `${this.publicBaseUrl}/#website`,
           name: SITE_NAME,
           url: this.publicBaseUrl,
+          description: COMPANY_PROFILE.description[language],
           publisher: { '@id': `${this.publicBaseUrl}/#organization` },
           inLanguage: ['en', 'ar'],
         },
       ],
     });
+    this.siteStructuredDataLanguage = language;
   }
 
-  private breadcrumbs(currentTitle: string): BreadcrumbItem[] {
-    const language = this.languageFromUrl();
-    const path = this.currentPath();
-    const segments = path.split('/').filter(Boolean);
-    const sectionIndex = segments[0] === 'en' || segments[0] === 'ar' ? 1 : 0;
-    const section = segments[sectionIndex] ?? 'home';
-    const localizedRoot = `/${language}`;
-    const labels: Record<string, [string, string]> = {
-      destinations: ['Destinations', 'الوجهات'],
-      cities: ['Destinations', 'الوجهات'],
-      tours: ['Tours', 'الجولات'],
-      'nile-cruises': ['Nile Cruises', 'رحلات النيل'],
-      packages: ['Packages', 'الباقات'],
-      blogs: ['Blog', 'المدونة'],
+  /** Builds an `Offer` node from whichever price fields the tour or package exposes. */
+  private offer(entity: Record<string, unknown> | undefined, url: string): Record<string, unknown> | null {
+    const price = this.numberValue(
+      entity,
+      'finalPrice', 'FinalPrice', 'priceAfterDiscount', 'PriceAfterDiscount',
+      'adultPrice', 'AdultPrice', 'pricePerPerson', 'PricePerPerson', 'price', 'Price',
+    );
+    if (price === null) return null;
+    const currency = this.textValue(entity, 'currencyCode', 'CurrencyCode', 'currency', 'Currency') ?? 'USD';
+    return {
+      '@type': 'Offer',
+      price,
+      priceCurrency: currency.toUpperCase(),
+      availability: 'https://schema.org/InStock',
+      url,
+      seller: { '@id': `${this.publicBaseUrl}/#organization` },
     };
-    const items: BreadcrumbItem[] = [
-      { name: language === 'ar' ? 'الرئيسية' : 'Home', path: `${localizedRoot}/home` },
-    ];
-    const label = labels[section];
-    if (label) {
-      const sectionPath = section === 'cities' ? 'destinations' : section;
-      items.push({ name: language === 'ar' ? label[1] : label[0], path: `${localizedRoot}/${sectionPath}` });
-    }
-    if (segments.length > sectionIndex + 1 && currentTitle) items.push({ name: currentTitle, path });
-    return items;
+  }
+
+  private durationInDays(entity: Record<string, unknown> | undefined): number | null {
+    return this.numberValue(entity, 'durationDays', 'DurationDays', 'numberOfDays', 'NumberOfDays', 'days', 'Days');
   }
 
   private setCanonical(url: string): void {
@@ -417,6 +464,22 @@ export class SeoService {
     return null;
   }
 
+  private numberValue(entity: Record<string, unknown> | undefined, ...keys: string[]): number | null {
+    for (const key of keys) {
+      const value = Number(entity?.[key]);
+      if (Number.isFinite(value) && value > 0) return value;
+    }
+    return null;
+  }
+
+  private textValue(entity: Record<string, unknown> | undefined, ...keys: string[]): string | null {
+    for (const key of keys) {
+      const value = entity?.[key];
+      if (typeof value === 'string' && value.trim()) return value.trim();
+    }
+    return null;
+  }
+
   private updateName(name: string, content: string): void {
     this.meta.updateTag({ name, content }, `name="${name}"`);
   }
@@ -441,6 +504,7 @@ export class SeoService {
   }
 
   private applyDocumentLanguage(language: 'en' | 'ar'): void {
+    if (this.siteStructuredDataLanguage !== language) this.setSiteStructuredData(language);
     const root = this.document.documentElement;
     root.lang = language;
     root.dir = language === 'ar' ? 'rtl' : 'ltr';

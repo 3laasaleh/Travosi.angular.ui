@@ -26,6 +26,30 @@ import { UsersOne } from '../../shared/components/users-one/users-one';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 
+/**
+ * One slide of the home hero slider. Add, remove or reorder entries in `Home.heroSlides`
+ * to change the slider — the template renders whatever is in the array.
+ *
+ * The `*Key` fields are translation keys resolved from `assets/lang/en.json` and `ar.json`.
+ * A key that does not exist is rendered as-is, so plain text also works for a quick change.
+ */
+export interface HomeHeroSlide {
+  /** Background image path, e.g. `assets/images/bg/2.jpg`. */
+  image: string;
+  /** Small illustration above the title. Omit to hide it on this slide. */
+  icon?: string;
+  /** Translation key for the icon's alt text. */
+  iconAltKey?: string;
+  /** Translation key for the headline. */
+  titleKey: string;
+  /** Translation key for the supporting paragraph. Omit to hide it. */
+  descriptionKey?: string;
+  /** Translation key for the button label. Omit to hide the button. */
+  ctaKey?: string;
+  /** Router link the button navigates to, e.g. `/packages`. */
+  ctaLink?: string;
+}
+
 @Component({
   selector: 'app-home',
   imports: [
@@ -47,9 +71,29 @@ import { RouterLink } from '@angular/router';
 export class Home implements OnInit, AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
   isLoading = true;
-  bg2 = 'assets/images/bg/2.jpg';
-  bg3 = 'assets/images/bg/3.jpg';
-  map = 'assets/images/map-plane.png';
+
+  /** Edit this array to add, remove or reword the hero slides. */
+  readonly heroSlides: HomeHeroSlide[] = [
+    {
+      image: 'assets/images/bg/2.jpg',
+      icon: 'assets/images/map-plane.png',
+      iconAltKey: 'travelAroundWorld',
+      titleKey: 'homeHeroPackagesTitle',
+      descriptionKey: 'homeHeroPackagesDescription',
+      ctaKey: 'explorePackages',
+      ctaLink: '/packages',
+    },
+    {
+      image: 'assets/images/bg/3.jpg',
+      icon: 'assets/images/map-plane.png',
+      iconAltKey: 'travelAroundWorld',
+      titleKey: 'homeHeroDestinationsTitle',
+      descriptionKey: 'homeHeroDestinationsDescription',
+      ctaKey: 'exploreDestinations',
+      ctaLink: '/destinations',
+    },
+  ];
+
   visitorTotal = 0;
   packageTotal = 0;
 
@@ -68,7 +112,10 @@ export class Home implements OnInit, AfterViewInit {
       this.isLoading = false;
       return;
     }
-    Promise.all([this.bg2, this.bg3, this.map].map((source) => this.preloadImage(source)))
+    const heroImages = new Set(
+      this.heroSlides.flatMap((slide) => [slide.image, slide.icon]).filter((source): source is string => !!source),
+    );
+    Promise.all([...heroImages].map((source) => this.preloadImage(source)))
       .finally(() => {
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -81,7 +128,8 @@ export class Home implements OnInit, AfterViewInit {
   }
 
   private initializeSlider(): void {
-    if (!document.querySelector('.swiper-container .swiper')) return;
+    // A single slide must not loop or paginate, otherwise Swiper clones it into a fake carousel.
+    if (this.heroSlides.length < 2 || !document.querySelector('.swiper-container .swiper')) return;
     new Swiper('.swiper-container .swiper', {
       modules: [Navigation, Autoplay, Pagination],
       autoplay: true,

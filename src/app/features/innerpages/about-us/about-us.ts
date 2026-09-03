@@ -18,10 +18,11 @@ import { environment } from '../../../../environments/environment';
 import { AgencyOne } from '../../../shared/components/agency-one/agency-one';
 import { TeamOne, TeamMember } from '../../../shared/components/team-one/team-one';
 import { UsersOne } from '../../../shared/components/users-one/users-one';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-about-us',
-  imports: [
+  imports: [Breadcrumbs, 
     RouterLink,
     TranslatePipe,
     HomeNavbar,

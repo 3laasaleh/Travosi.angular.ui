@@ -5,10 +5,11 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 
 import { packageData } from '../../../data/data';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-user-account',
-  imports: [HomeNavbar, AccountTab, FooterOne],
+  imports: [Breadcrumbs, HomeNavbar, AccountTab, FooterOne],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-account.html',
 })

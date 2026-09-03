@@ -26,11 +26,12 @@ import { DestinationCitiesCarousel } from '../../../shared/components/destinatio
 import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-home-destination-detail',
   standalone: true,
-  imports: [
+  imports: [Breadcrumbs, 
     RouterLink,
     TranslatePipe,
     HomeNavbar,

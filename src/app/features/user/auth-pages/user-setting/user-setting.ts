@@ -9,10 +9,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { finalize } from 'rxjs';
+import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-user-setting',
-  imports: [HomeNavbar, AccountTab, FooterOne, ReactiveFormsModule, TranslatePipe],
+  imports: [Breadcrumbs, HomeNavbar, AccountTab, FooterOne, ReactiveFormsModule, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-setting.html',
 })
