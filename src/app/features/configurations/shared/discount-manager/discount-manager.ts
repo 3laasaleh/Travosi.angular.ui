@@ -27,6 +27,7 @@ export class DiscountManager implements OnInit {
   isLoading = true;
   isSaving = false;
   stoppingId: number | null = null;
+  notifyingId: number | null = null;
   errorMessage = '';
   percentage = 10;
   dateFrom = '';
@@ -181,6 +182,49 @@ export class DiscountManager implements OnInit {
     });
   }
 
+  async notifyCustomers(discount: any): Promise<void> {
+    if (this.notifyingId !== null) return;
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('notifyCustomers'),
+      text: this.translate.instant('confirmNotifyCustomers'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('notifyCustomers'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#0f766e',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.notifyingId = Number(discount.id);
+    this.apiService.post(`Discounts/${discount.id}/notify-customers`, {}).pipe(
+      catchError((error) => of({
+        isSuccess: false,
+        message: error?.error?.message ?? this.translate.instant('discountNotifyError'),
+      })),
+      finalize(() => {
+        this.notifyingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response?.isSuccess === false) {
+        this.errorMessage = this.responseError(response);
+        return;
+      }
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        iconColor: '#00a884',
+        title: this.translate.instant('discountNotificationsQueued'),
+        showConfirmButton: false,
+        timer: 2600,
+        timerProgressBar: true,
+      });
+      this.loadHistory();
+    });
+  }
+
   prepareRestart(discount: any): void {
     this.restartSource = discount;
     this.percentage = Number(discount?.percentage ?? 10);
@@ -202,6 +246,10 @@ export class DiscountManager implements OnInit {
 
   canRestart(discount: any): boolean {
     return ['Stopped', 'Expired'].includes(discount?.status);
+  }
+
+  canNotifyCustomers(discount: any): boolean {
+    return discount?.canNotifyCustomers === true;
   }
 
   statusClass(status: string): string {
