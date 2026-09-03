@@ -22,11 +22,12 @@ import { formatHomePrice } from '../home-price.util';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [
+  imports: [Breadcrumbs, 
     RouterLink,
     TranslatePipe,
     HomeNavbar,

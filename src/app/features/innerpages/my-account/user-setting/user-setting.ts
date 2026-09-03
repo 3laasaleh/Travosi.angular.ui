@@ -4,10 +4,11 @@ import { AccountTab } from '../../../user/account-tab/account-tab';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-user-setting',
-  imports: [HomeNavbar, AccountTab, FooterOne, TranslatePipe],
+  imports: [Breadcrumbs, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-setting.html',
 })

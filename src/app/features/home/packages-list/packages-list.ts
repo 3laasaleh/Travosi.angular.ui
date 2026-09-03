@@ -20,6 +20,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { formatHomePrice } from '../home-price.util';
 import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 interface PaginationInfo {
   page: number;
@@ -31,7 +32,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-packages-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker],
+  imports: [Breadcrumbs, RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker],
   templateUrl: './packages-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -908,6 +908,7 @@
   "tourImageNumber": "Tour image {{number}}",
   "agent": "Agent",
   "back": "Back",
+  "breadcrumbNavigation": "Breadcrumb",
   "home": "Home",
   "valueShouldBeMoreThanZero": "The value must be greater than zero.",
   "whatsappseaworldHolidays": "Contact Sea World Holidays on WhatsApp",

@@ -18,11 +18,12 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks],
+  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks],
   templateUrl: './city-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

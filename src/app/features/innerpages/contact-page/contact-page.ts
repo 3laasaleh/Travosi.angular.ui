@@ -12,6 +12,7 @@ import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 export interface ContactMessageDTO {
   id: number;
@@ -27,7 +28,7 @@ export interface ContactMessageDTO {
 
 @Component({
   selector: 'app-contact-page',
-  imports: [HomeNavbar, FooterOne, ReactiveFormsModule, TranslatePipe],
+  imports: [Breadcrumbs, HomeNavbar, FooterOne, ReactiveFormsModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './contact-page.html',
 })

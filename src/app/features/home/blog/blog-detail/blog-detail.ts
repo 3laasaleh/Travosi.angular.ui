@@ -16,11 +16,12 @@ import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { SeoService } from '../../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../../shared/components/description-links/description-links';
+import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [
+  imports: [Breadcrumbs, 
     RouterLink,
     DatePipe,
     TranslatePipe,

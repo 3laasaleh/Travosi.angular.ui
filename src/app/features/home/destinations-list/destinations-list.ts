@@ -16,6 +16,7 @@ import { LanguageService } from '../../../core/services/language.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
+import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 
 interface PaginationInfo {
   page: number;
@@ -27,7 +28,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-destinations-list',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
+  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
   templateUrl: './destinations-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
