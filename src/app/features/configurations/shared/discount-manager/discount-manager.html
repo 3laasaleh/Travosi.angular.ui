@@ -52,8 +52,9 @@
                 </div>
                 <p class="mt-3 text-xs leading-5 text-slate-600"><i class="mdi mdi-calendar-range me-1 text-primary"></i>{{ discount.dateFromUtc | date:'medium' }}<br><span class="ms-5">{{ discount.dateToUtc | date:'medium' }}</span></p>
                 <p class="mt-2 text-xs text-slate-400"><i class="mdi mdi-email-fast-outline me-1"></i>{{ 'emailsQueued' | translate:{ count: discount.emailsQueued || 0 } }}</p>
-                @if (canStop(discount) || canRestart(discount)) {
+                @if (canNotifyCustomers(discount) || canStop(discount) || canRestart(discount)) {
                   <div class="mt-3 flex gap-2 border-t border-slate-100 pt-3">
+                    @if (canNotifyCustomers(discount)) { <button type="button" [disabled]="notifyingId !== null" class="inline-flex items-center gap-1 rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50" (click)="notifyCustomers(discount)">@if (notifyingId === discount.id) { <i class="mdi mdi-loading mdi-spin"></i> } @else { <i class="mdi mdi-email-fast-outline"></i> }{{ 'notifyCustomers' | translate }}</button> }
                     @if (canStop(discount)) { <button type="button" [disabled]="stoppingId !== null" class="inline-flex items-center gap-1 rounded-full border border-rose-200 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 disabled:opacity-50" (click)="stop(discount)">@if (stoppingId === discount.id) { <i class="mdi mdi-loading mdi-spin"></i> } @else { <i class="mdi mdi-stop-circle-outline"></i> }{{ 'stop' | translate }}</button> }
                     @if (canRestart(discount)) { <button type="button" class="inline-flex items-center gap-1 rounded-full border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/5" (click)="prepareRestart(discount)"><i class="mdi mdi-restart"></i>{{ 'restart' | translate }}</button> }
                   </div>
