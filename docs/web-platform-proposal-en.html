@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Travel Web Platform — Functionality &amp; Investment Proposal</title>
+<style>
+  @page { size: A4; margin: 15mm 14mm 16mm 14mm; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #17202b; font-size: 10pt; line-height: 1.5; margin: 0; }
+  h1, h2, h3 { color: #0d2a45; line-height: 1.25; margin: 0 0 8px; }
+  h1 { font-size: 24pt; }
+  h2 { font-size: 15pt; border-bottom: 2px solid #1e7fb8; padding-bottom: 5px; margin-top: 22px; }
+  h3 { font-size: 11.5pt; margin-top: 15px; color: #12557f; }
+  p { margin: 0 0 8px; }
+  ul { margin: 0 0 9px; padding-inline-start: 17px; }
+  li { margin-bottom: 2px; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 8.5pt; background: #eef3f7; padding: 1px 4px; border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9pt; }
+  th, td { border: 1px solid #cdd8e2; padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #0d2a45; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f8fb; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tfoot td { font-weight: 700; background: #e3edf5; }
+  .note { background: #f2f7fb; border-inline-start: 4px solid #1e7fb8; padding: 8px 11px; margin: 9px 0 13px; font-size: 9pt; }
+  .muted { color: #667889; font-size: 8.5pt; }
+  .tag { display: inline-block; background: #e3edf5; color: #12557f; border-radius: 10px; padding: 1px 9px; font-size: 8.5pt; }
+  .lead { font-size: 12pt; color: #4a5c6d; margin-bottom: 12px; }
+  .pagebreak { page-break-before: always; }
+  .pricebox { border: 2px solid #1e7fb8; border-radius: 8px; padding: 14px 16px; margin: 12px 0 14px; background: #f7fbfe; }
+  .pricebox .old { color: #8b97a3; text-decoration: line-through; font-size: 13pt; }
+  .pricebox .new { color: #0d2a45; font-size: 27pt; font-weight: 700; letter-spacing: -0.5px; }
+  .pricebox .save { display: inline-block; background: #1e7fb8; color: #fff; border-radius: 12px; padding: 2px 11px; font-size: 9pt; font-weight: 600; vertical-align: 6px; margin-inline-start: 8px; }
+  .cols { display: table; width: 100%; }
+  .col { display: table-cell; width: 50%; vertical-align: top; padding-inline-end: 10px; }
+  footer.docfoot { margin-top: 22px; border-top: 1px solid #cdd8e2; padding-top: 7px; font-size: 8pt; color: #667889; }
+  .sig { margin-top: 26px; display: table; width: 100%; }
+  .sig div { display: table-cell; width: 50%; border-top: 1px solid #96a5b4; padding-top: 6px; font-size: 9pt; }
+</style>
+</head>
+<body>
+
+<span class="tag">Part 1 of 2 — Public Web Platform</span>
+<h1>Travel Agency Web Platform</h1>
+<p class="lead">A bilingual, search-engine-optimised website that sells tours, Nile cruises, holiday
+   packages, destinations, cities and travel articles — and turns visitors into booking requests.</p>
+<p class="muted">Prepared for: ................................................ &nbsp;·&nbsp;
+   Date: ................................ &nbsp;·&nbsp; Proposal reference: WEB-01 &nbsp;·&nbsp; Valid 30 days</p>
+
+<div class="pricebox">
+  <span class="old">EGP 200,000</span><br />
+  <span class="new">EGP 120,000</span><span class="save">Save 80,000 — 40% off</span>
+  <p style="margin:8px 0 0;"><strong>One-time delivery price, including one year of hosting and a domain name.</strong><br />
+  Alternative: <strong>annual subscription — EGP 24,000 per year</strong> (20% of the package price),
+  covering hosting, domain renewal, updates and support.</p>
+</div>
+
+<h2>1. What the platform is</h2>
+<p>A complete, production-ready travel website built on <strong>Angular 22 with server-side rendering</strong>.
+   Every public page is rendered on the server before it reaches the browser, so Google, Bing and social
+   networks see the full content instantly — this is the single biggest difference between this platform
+   and an ordinary single-page website.</p>
+<p>The site runs fully in <strong>English and Arabic</strong>, on separate, indexable URLs
+   (<code>/en/tours</code> and <code>/ar/tours</code>), with automatic right-to-left layout for Arabic.
+   Prices are shown in <strong>EGP or USD</strong> using a live exchange rate.</p>
+
+<h3>1.1 Who uses it</h3>
+<table>
+  <thead><tr><th style="width:22%">Audience</th><th>What they do</th></tr></thead>
+  <tbody>
+    <tr><td>Visitors</td><td>Browse destinations, cities, tours, Nile cruises, packages and articles; search; compare prices; submit a booking request.</td></tr>
+    <tr><td>Customers</td><td>Register, activate their account, sign in, follow their bookings and review completed trips.</td></tr>
+    <tr><td>Search engines</td><td>Read fully rendered pages with structured data, so listings appear as rich results.</td></tr>
+  </tbody>
+</table>
+
+<h2>2. Catalogue &amp; content modules</h2>
+
+<h3>2.1 Destinations</h3>
+<ul>
+  <li>Paginated destinations index; each card carries its own image carousel.</li>
+  <li>Destination detail page: full photo gallery with a full-screen lightbox viewer, bilingual description, the cities that belong to the destination, and a carousel of tours available there.</li>
+  <li>Clean, human-readable URLs driven by a slug, e.g. <code>/en/destinations/hurghada</code>.</li>
+</ul>
+
+<h3>2.2 Cities</h3>
+<ul>
+  <li>City landing pages linked to their parent destination.</li>
+  <li>Shows the top tours inside the city plus recommended tours from the wider destination, so the visitor always has something to click.</li>
+</ul>
+
+<h3>2.3 Tours &amp; Nile cruises</h3>
+<ul>
+  <li>Tour catalogue with <strong>text search, travel date-range filter and pagination</strong> (10/20/50 per page).</li>
+  <li>A dedicated <strong>Nile cruises</strong> catalogue driven by the same engine.</li>
+  <li>Tour detail page: photo gallery and lightbox, key facts, price with discount badge, day-by-day itinerary timeline, customer reviews, and a booking card.</li>
+  <li><strong>Booking card</strong> — adults / children selection, travel dates, live seat-availability check against the back office, automatic total price with child pricing and active discounts, special requests, and a sign-in gate that returns the visitor to the same tour after login.</li>
+  <li>Time-limited <strong>discount campaigns</strong> are reflected automatically as badges and struck-through prices.</li>
+</ul>
+
+<h3>2.4 Holiday packages</h3>
+<ul>
+  <li>Package catalogue with the same search, date filter and pagination.</li>
+  <li>Package detail: gallery, itinerary, highlights, what is included and excluded, related tours, reviews and the same booking card.</li>
+</ul>
+
+<h3>2.5 Blogs &amp; travel content</h3>
+<ul>
+  <li>Article index with cover images, dates and excerpts.</li>
+  <li>Bilingual, section-based article pages with image galleries and safe link rendering — built for organic search traffic.</li>
+</ul>
+
+<h3>2.6 Home page &amp; global elements</h3>
+<ul>
+  <li>Hero slider, featured destinations, tours, packages and articles — all live from the database.</li>
+  <li><strong>Autocomplete search box</strong> in the header: one query returns destinations, tours and packages, grouped, and jumps straight to the right page.</li>
+  <li>Mega-menus for destinations and tours, language switcher, currency switcher and account menu.</li>
+  <li>Footer with company details, payment logos and a working <strong>newsletter subscription</strong>.</li>
+  <li>Floating contact overlay: WhatsApp, phone, Instagram and Facebook on every page.</li>
+</ul>
+
+<h3>2.7 Information &amp; support pages</h3>
+<ul>
+  <li>About us — live team/agent cards and company statistics from the back office.</li>
+  <li>Contact us — validated contact form that lands directly in the back-office inbox.</li>
+  <li>Help centre, FAQs, guides, support, terms and privacy pages (content supplied by the client).</li>
+  <li>Custom 404 page.</li>
+</ul>
+
+<div class="pagebreak"></div>
+
+<h2>3. Customer accounts</h2>
+<table>
+  <thead><tr><th style="width:30%">Feature</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Registration</td><td>Full profile capture: name, mobile, e-mail, date of birth, gender, passport, password, terms acceptance — with live validation.</td></tr>
+    <tr><td>E-mail activation</td><td>Secure token link that activates the account.</td></tr>
+    <tr><td>Sign in</td><td>JWT-secured login; staff are routed to the back office, customers back to the page they came from.</td></tr>
+    <tr><td>Forgot / reset password</td><td>E-mail reset request and token-validated password reset with expiry checking.</td></tr>
+    <tr><td>My bookings</td><td>Booking history with status and totals, paginated.</td></tr>
+    <tr><td>Reviews</td><td>Only customers with a <em>completed</em> booking can review — no fake reviews.</td></tr>
+    <tr><td>Account settings</td><td>Update personal details and change password.</td></tr>
+    <tr><td>Profile photo</td><td>Upload and remove a profile picture.</td></tr>
+  </tbody>
+</table>
+
+<h2>4. Search engine optimisation (SEO)</h2>
+<p>SEO is not an add-on here; it is engineered into the framework. A single service governs every
+   page's search presence, so nothing is ever forgotten on a new page.</p>
+<table>
+  <thead><tr><th style="width:32%">Capability</th><th>Delivered</th></tr></thead>
+  <tbody>
+    <tr><td>Server-side rendering</td><td>Every public page is rendered on the server, so crawlers receive complete HTML — not an empty shell.</td></tr>
+    <tr><td>Titles &amp; meta descriptions</td><td>Generated per page and per language from the actual content of the tour, package, destination or article.</td></tr>
+    <tr><td>Open Graph &amp; social cards</td><td>Correct title, description and image when a page is shared on Facebook, WhatsApp, X or LinkedIn.</td></tr>
+    <tr><td>Canonical URLs</td><td>One authoritative URL per page — prevents duplicate-content penalties.</td></tr>
+    <tr><td><code>hreflang</code> alternates</td><td>English and Arabic versions are formally linked, so Google serves the right language to the right user.</td></tr>
+    <tr><td>Structured data (JSON-LD)</td><td><code>TouristTrip</code> for tours and packages, <code>TouristDestination</code>, <code>City</code>, <code>BlogPosting</code>, <code>Organization</code>, <code>WebPage</code> and <code>BreadcrumbList</code> — the schemas Google uses for rich results.</td></tr>
+    <tr><td>Breadcrumbs</td><td>Visible breadcrumb trail on every page, localised, and published as breadcrumb structured data.</td></tr>
+    <tr><td>SEO-friendly URLs</td><td>Slug-based routes for every product and article, in both languages.</td></tr>
+    <tr><td>Robots control</td><td><code>robots.txt</code> plus <code>noindex</code> headers on private pages (account, back office, login) so only sales pages are indexed.</td></tr>
+    <tr><td>Company knowledge panel data</td><td>Legal name, address, phone, WhatsApp, e-mail, social profiles, accepted payments and currencies published once as Organization data.</td></tr>
+  </tbody>
+</table>
+
+<h2>5. Technical foundation</h2>
+<div class="cols">
+  <div class="col">
+    <ul>
+      <li>Angular 22, standalone components, signals.</li>
+      <li>Server-side rendering + hydration with an HTTP transfer cache (no duplicate API calls on load).</li>
+      <li>Lazy-loaded routes — the browser downloads only what the page needs.</li>
+      <li>OnPush change detection throughout for fast rendering.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <ul>
+      <li>Tailwind CSS, fully responsive from mobile to desktop.</li>
+      <li>Full RTL support for Arabic.</li>
+      <li>JWT authentication with route guards.</li>
+      <li>Live currency conversion (EGP / USD) with caching and fallback.</li>
+      <li>Built-in visitor tracking for on-site statistics.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="pagebreak"></div>
+
+<h2>6. Investment</h2>
+<table>
+  <thead><tr><th>Item</th><th class="num">List price (EGP)</th><th class="num">Your price (EGP)</th></tr></thead>
+  <tbody>
+    <tr><td>Public web platform — catalogue, content, accounts, booking requests, SEO, EN/AR</td><td class="num">200,000</td><td class="num">120,000</td></tr>
+    <tr><td>Hosting — first year</td><td class="num">Included</td><td class="num">Included</td></tr>
+    <tr><td>Domain name — first year</td><td class="num">Included</td><td class="num">Included</td></tr>
+    <tr><td>SSL certificate &amp; deployment</td><td class="num">Included</td><td class="num">Included</td></tr>
+    <tr><td>Handover, training session and 30 days of post-launch support</td><td class="num">Included</td><td class="num">Included</td></tr>
+  </tbody>
+  <tfoot><tr><td>Total, one-time</td><td class="num">200,000</td><td class="num">120,000</td></tr></tfoot>
+</table>
+<p><strong>You save EGP 80,000 (40%).</strong></p>
+
+<h3>6.1 Payment schedule</h3>
+<table>
+  <thead><tr><th>Milestone</th><th class="num">%</th><th class="num">EGP</th></tr></thead>
+  <tbody>
+    <tr><td>On signature — project kick-off</td><td class="num">40%</td><td class="num">48,000</td></tr>
+    <tr><td>On delivery of the catalogue, content and SEO modules for review</td><td class="num">30%</td><td class="num">36,000</td></tr>
+    <tr><td>On go-live and acceptance</td><td class="num">30%</td><td class="num">36,000</td></tr>
+  </tbody>
+  <tfoot><tr><td>Total</td><td class="num">100%</td><td class="num">120,000</td></tr></tfoot>
+</table>
+
+<h3>6.2 Annual subscription — from year two</h3>
+<div class="note">
+  <strong>EGP 24,000 per year</strong> — 20% of the package price, billed annually.<br />
+  Covers: hosting, domain renewal, SSL, security patches and framework updates, monitoring and backups,
+  bug fixes, and up to 8 hours of minor content or layout changes per month.
+  <br /><span class="muted">The first year is already included in the one-time price above.</span>
+</div>
+
+<h2>7. Scope notes</h2>
+<h3>7.1 Included</h3>
+<ul>
+  <li>All pages and features listed in sections 2–5.</li>
+  <li>English and Arabic wiring for every screen, with RTL verification.</li>
+  <li>Responsive implementation and QA on desktop, tablet and mobile.</li>
+  <li>Deployment to production, first-year hosting, domain and SSL.</li>
+  <li>One round of revisions per delivered module and a training session for your team.</li>
+</ul>
+<h3>7.2 Not included (quoted separately if required)</h3>
+<ul>
+  <li>Online card payment gateway — the booking flow captures and confirms requests; it does not charge cards.</li>
+  <li>Content entry: photography, copywriting, translation and legal text for terms, privacy, FAQs and guides.</li>
+  <li>Paid advertising, link building and ongoing SEO campaign management.</li>
+  <li>Third-party supplier / GDS integrations.</li>
+  <li>Native mobile applications.</li>
+</ul>
+
+<div class="note"><strong>Companion document.</strong> The back-office CRM — quotations, invoices, vouchers,
+  bookings, customers, hotels, airlines, flights, tasks and inbox — is described and priced in the separate
+  <em>CRM &amp; Back-Office Proposal</em> (reference CRM-01).</div>
+
+<div class="sig">
+  <div>Client — name, signature, date</div>
+  <div>Supplier — name, signature, date</div>
+</div>
+
+<footer class="docfoot">
+  Travel Agency Web Platform — Functionality &amp; Investment Proposal · Reference WEB-01 · Version 1.0 ·
+  Prices in Egyptian Pounds and exclusive of any applicable taxes · Offer valid for 30 days from issue.
+</footer>
+
+</body>
+</html>
