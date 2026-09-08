@@ -9,18 +9,27 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
-import {
-  ImageUploadValidationError,
-  normalizeImageUpload,
-} from '../../shared/image-upload.util';
+import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
-import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
+import {
+  arabicTextValidator,
+  startsWithArabic,
+} from '../../../../core/validators/arabic-text.validator';
 
 interface BlogImageUpload {
   id?: number;
@@ -40,10 +49,12 @@ interface BlogHeaderDataValue {
   descriptionAr: string;
 }
 
-const notBefore = (minimum: string) => (control: AbstractControl): ValidationErrors | null => {
-  const value = String(control.value ?? '');
-  return value && value < minimum ? { minDate: true } : null;
-};
+const notBefore =
+  (minimum: string) =>
+  (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value ?? '');
+    return value && value < minimum ? { minDate: true } : null;
+  };
 
 @Component({
   selector: 'app-blogs-form-card',
@@ -73,13 +84,24 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   form = new FormGroup({
     titleEng: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)],
+      validators: [
+        Validators.required,
+        Validators.maxLength(200),
+        Validators.pattern(/^[A-Za-z].*$/),
+      ],
     }),
     titleAr: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
-    routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
+    routeName: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/),
+      ],
+    }),
     summaryEng: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500)],
@@ -134,33 +156,23 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.images = (Array.isArray(storedImages) ? storedImages : [])
       .slice(0, this.maxImages)
       .map((image: any, index: number) => ({
-        id: image?.id ?? image?.Id,
+        id: image?.id,
         existing: true,
-        url: image?.imageUrl ?? image?.ImageUrl ?? image?.url ?? image?.Url ?? '',
-        name:
-          image?.imageName ??
-          image?.ImageName ??
-          image?.name ??
-          this.translate.instant('blogImageNumber', { number: index + 1 }),
-        altEng: image?.altEng ?? image?.AltEng ?? '',
-        altAr: image?.altAr ?? image?.AltAr ?? '',
+        url: image?.imageUrl,
+        name: image?.imageName ?? '',
+        altEng: image?.altEng ?? '',
+        altAr: image?.altAr ?? '',
       }))
       .filter((image: BlogImageUpload) => !!image.url);
-
     this.form.reset({
-      titleEng: blog?.titleEng ?? blog?.TitleEng ?? '',
-      titleAr: blog?.titleAr ?? blog?.TitleAr ?? '',
-      routeName: blog?.routeName ?? blog?.RouteName ?? '',
-      summaryEng: blog?.summaryEng ?? blog?.SummaryEng ?? '',
-      summaryAr: blog?.summaryAr ?? blog?.SummaryAr ?? '',
-      publishedAt: this.dateInput(blog?.publishedAt ?? blog?.PublishedAt) || this.today,
+      titleEng: blog?.titleEng,
+      titleAr: blog?.titleAr,
+      routeName: blog?.routeName,
+      summaryEng: blog?.summaryEng,
+      summaryAr: blog?.summaryAr,
+      publishedAt: blog?.publishedAt,
     });
-    this.setHeaderData(
-      blog?.headerData ?? blog?.HeaderData ?? [],
-      blog?.contentEng ?? blog?.ContentEng ?? '',
-      blog?.contentAr ?? blog?.ContentAr ?? '',
-      blog,
-    );
+    this.setHeaderData(blog?.headerData, blog?.contentEng, blog?.contentAr, blog);
   }
 
   async onFiles(event: Event): Promise<void> {
@@ -175,7 +187,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       this.isProcessingImages ||
       this.deletingImageIndex !== null ||
       files.length === 0
-    ) return;
+    )
+      return;
 
     if (this.images.length + files.length > this.maxImages) {
       this.imageValidationMessage = 'blogImageLimit';
@@ -209,9 +222,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
           });
         } catch (error) {
           this.imageValidationMessage =
-            error instanceof ImageUploadValidationError
-              ? error.translationKey
-              : 'imageReadError';
+            error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
         }
       }
     } finally {
@@ -335,8 +346,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       )
       .subscribe((response: any) => {
         if (response?.isSuccess === false || response?.IsSuccess === false) {
-          this.errorMessage =
-            response?.message ?? response?.Message ?? 'Unable to save this blog.';
+          this.errorMessage = response?.message ?? response?.Message ?? 'Unable to save this blog.';
           return;
         }
         if (response) this.saved.emit();
@@ -374,7 +384,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       }),
       headerEng: new FormControl(String(value.headerEng ?? ''), {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(/^[A-Za-z].*$/),
+        ],
       }),
       headerAr: new FormControl(String(value.headerAr ?? ''), {
         nonNullable: true,
@@ -395,13 +409,17 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.headerData.clear();
     const sections = Array.isArray(headerData) ? headerData.slice(0, this.maxHeaderData) : [];
     if (sections.length > 0) {
-      sections.forEach((section) => this.headerData.push(this.createHeaderDataGroup({
-        headerType: section?.headerType ?? section?.HeaderType,
-        headerEng: section?.headerEng ?? section?.HeaderEng,
-        headerAr: section?.headerAr ?? section?.HeaderAr,
-        descriptionEng: section?.descriptionEng ?? section?.DescriptionEng,
-        descriptionAr: section?.descriptionAr ?? section?.DescriptionAr,
-      })));
+      sections.forEach((section) =>
+        this.headerData.push(
+          this.createHeaderDataGroup({
+            headerType: section?.headerType ?? section?.HeaderType,
+            headerEng: section?.headerEng ?? section?.HeaderEng,
+            headerAr: section?.headerAr ?? section?.HeaderAr,
+            descriptionEng: section?.descriptionEng ?? section?.DescriptionEng,
+            descriptionAr: section?.descriptionAr ?? section?.DescriptionAr,
+          }),
+        ),
+      );
       return;
     }
 
@@ -410,36 +428,44 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     const legacyCount = Math.min(this.maxHeaderData, Math.max(english.length, arabic.length));
     if (legacyCount > 0) {
       for (let index = 0; index < legacyCount; index++) {
-        this.headerData.push(this.createHeaderDataGroup({
-          headerType: english[index]?.headerType ?? arabic[index]?.headerType ?? 2,
-          headerEng: english[index]?.header ?? '',
-          descriptionEng: english[index]?.description ?? '',
-          headerAr: arabic[index]?.header ?? '',
-          descriptionAr: arabic[index]?.description ?? '',
-        }));
+        this.headerData.push(
+          this.createHeaderDataGroup({
+            headerType: english[index]?.headerType ?? arabic[index]?.headerType ?? 2,
+            headerEng: english[index]?.header ?? '',
+            descriptionEng: english[index]?.description ?? '',
+            headerAr: arabic[index]?.header ?? '',
+            descriptionAr: arabic[index]?.description ?? '',
+          }),
+        );
       }
       return;
     }
 
-    this.headerData.push(this.createHeaderDataGroup({
+    this.headerData.push(
+      this.createHeaderDataGroup({
         headerType: 2,
         headerEng: contentEng ? (blog?.titleEng ?? blog?.TitleEng ?? '') : '',
         descriptionEng: contentEng,
         headerAr: contentAr ? (blog?.titleAr ?? blog?.TitleAr ?? '') : '',
         descriptionAr: contentAr,
-    }));
+      }),
+    );
   }
 
-  private parseLegacyContentSections(content: string): Array<{ headerType: number; header: string; description: string }> {
+  private parseLegacyContentSections(
+    content: string,
+  ): Array<{ headerType: number; header: string; description: string }> {
     if (!content?.trim()) return [];
     try {
       const parsed = JSON.parse(content);
       return Array.isArray(parsed)
-        ? parsed.filter((item) => item && typeof item === 'object').map((item) => ({
-            headerType: Number(item.headerType) || 2,
-            header: String(item.header ?? ''),
-            description: String(item.description ?? ''),
-          }))
+        ? parsed
+            .filter((item) => item && typeof item === 'object')
+            .map((item) => ({
+              headerType: Number(item.headerType) || 2,
+              header: String(item.header ?? ''),
+              description: String(item.description ?? ''),
+            }))
         : [];
     } catch {
       return [];
@@ -467,9 +493,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   }
 
   private revokeNewImageUrls(): void {
-    this.images
-      .filter((image) => image.file)
-      .forEach((image) => URL.revokeObjectURL(image.url));
+    this.images.filter((image) => image.file).forEach((image) => URL.revokeObjectURL(image.url));
   }
 
   private dateInput(value: unknown): string {

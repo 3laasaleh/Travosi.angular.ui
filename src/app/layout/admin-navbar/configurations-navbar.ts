@@ -15,8 +15,7 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
 import { catchError, finalize, of } from 'rxjs';
-import { timer } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ApiService } from '../../core/services/apiservice.service';
 import { TaskNotificationsService } from '../../core/services/task-notifications.service';
 import { LanguageService } from '../../core/services/language.service';

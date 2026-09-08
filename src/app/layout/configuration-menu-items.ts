@@ -9,11 +9,11 @@ export const CONFIGURATION_MENU_ITEMS: readonly ConfigurationMenuItem[] = [
   { label: 'cities', path: '/configurations/cities', icon: 'mdi-city-variant-outline' },
   { label: 'tours', path: '/configurations/tours', icon: 'mdi-compass-outline' },
   { label: 'packages', path: '/configurations/packages', icon: 'mdi-package-variant-closed' },
-  { label: 'bookings', path: '/configurations/bookings', icon: 'mdi-calendar-check-outline' },
   { label: 'blogs', path: '/configurations/blogs', icon: 'mdi-post-outline' },
 
   { label: 'customers', path: '/configurations/customers', icon: 'mdi-account-group-outline' },
   { label: 'tasks', path: '/configurations/tasks', icon: 'mdi-checkbox-marked-outline' },
+  { label: 'bookings', path: '/configurations/bookings', icon: 'mdi-calendar-check-outline' },
   { label: 'airlines', path: '/configurations/airlines', icon: 'mdi-airplane' },
   { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
   { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },

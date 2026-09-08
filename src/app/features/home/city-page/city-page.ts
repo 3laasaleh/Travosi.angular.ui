@@ -70,12 +70,16 @@ export class CityPage implements OnInit {
   }
   cityImage(): string {
     return this.imageUrl(
-      this.destination?.coverImageUrl ??
+      this.city?.coverImageUrl ??
+        this.city?.imageUrl ??
+        this.city?.images?.[0] ??
+        this.destination?.coverImageUrl ??
         this.destination?.imageUrl ??
-        this.destination?.images?.[0] ??
-        this.city?.coverImageUrl ??
-        this.city?.imageUrl,
+        this.destination?.images?.[0],
     );
+  }
+  cityImageAlt(): string {
+    return this.seo.imageAlt(this.city?.images?.[0], this.cityName());
   }
   imageUrl(source: any): string {
     const raw = typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? '');
@@ -184,7 +188,8 @@ export class CityPage implements OnInit {
       });
   }
   private updateSeo(_destinationId: number, _cityId: number): void {
-    const image = this.destination?.coverImageUrl ?? this.destination?.imageUrl ?? this.destination?.images?.[0];
+    const image = this.city?.coverImageUrl ?? this.city?.imageUrl ?? this.city?.images?.[0]
+      ?? this.destination?.coverImageUrl ?? this.destination?.imageUrl ?? this.destination?.images?.[0];
     this.seo.updateFrom(this.city, { image, imageUrl: this.cityImage(), schemaType: 'City' });
   }
   private entity(response: any, key: string): any {
