@@ -22,7 +22,6 @@ import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrum
   selector: 'app-blog-detail',
   standalone: true,
   imports: [Breadcrumbs, 
-    RouterLink,
     DatePipe,
     TranslatePipe,
     HomeNavbar,
