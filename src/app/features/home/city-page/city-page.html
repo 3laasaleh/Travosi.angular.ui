@@ -13,8 +13,7 @@
 
 <main class="py-16 md:py-24">
   <div class="container mb-8">
-    <img [src]="cityImage()" [alt]="cityImageAlt()"
-      class="aspect-[16/7] w-full rounded-3xl object-cover shadow-sm" />
+    <img [src]="cityImage()" [alt]="cityImageAlt()" class="aspect-[16/7] w-full rounded-3xl object-cover shadow-sm" />
   </div>
   <div class="container grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
     <aside class="self-start rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-28">
@@ -24,17 +23,25 @@
       (recommendedTours.length) { <div class="mt-5 space-y-3 border-t border-slate-100 pt-4">
         <p class="text-sm font-semibold">{{ 'moreDestinationTours' | translate }}</p>@for (tour of recommendedTours;
         track tour.id) { <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
-          class="flex gap-3 rounded-xl p-1 transition hover:bg-slate-50"><img [src]="tourImage(tour)"
-            [alt]="tourImageAlt(tour)" class="h-14 w-16 rounded-lg object-cover" /><span class="min-w-0"><span
-              class="line-clamp-2 text-sm font-semibold hover:text-primary">{{ tourTitle(tour) }}</span><span
-              class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}</span></span></a> }
+          class="flex gap-3 rounded-xl p-1 transition hover:bg-slate-50">
+          <img [src]="tourImage(tour)" [alt]="tourImageAlt(tour)" class="h-14 w-16 rounded-lg object-cover" />
+          <div class="min-w-0">
+            <span class="line-clamp-2 text-sm font-semibold"> {{ tourTitle(tour) }} </span>
+            <span class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}
+                    <span class="text-sm font-semibold text-slate-500 transition hover:text-primary">{{ 'bookNow' |
+                translate }} </span>
+            </span>
+           
+          </div>
+        </a>
+        }
       </div> }
     </aside>
     <section>
       @if (cityDescription(); as description) {
-        <div class="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <app-description-links [text]="description" />
-        </div>
+      <div class="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <app-description-links [text]="description" />
+      </div>
       }
       <div class="mb-8 flex items-end justify-between gap-4">
         <div>
@@ -50,8 +57,18 @@
           <div class="p-4">
             <h3 class="line-clamp-2 font-semibold group-hover:text-primary">{{ tourTitle(tour) }}</h3>
             <p class="mt-2 line-clamp-2 text-sm text-slate-500">{{ tour.description }}</p>
-            <div class="mt-4 border-t border-slate-100 pt-3 text-lg font-semibold text-primary">{{
-              formattedTourPrice(tour) }}</div>
+            <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+            </div>
+            <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+              <div><strong class="text-lg text-primary">{{ formattedTourPrice(tour) }}</strong>@if
+                (tour.activeDiscount?.isCurrentlyActive) {
+                <span class="ms-2 text-xs text-slate-400 line-through">{{
+                  formattedOriginalPrice(tour) }}</span> }
+              </div>
+              <span class="text-sm font-semibold text-slate-500 transition group-hover:text-primary">{{ 'bookNow' |
+                translate }} </span>
+
+            </div>
           </div>
         </a> } @empty { <div
           class="col-span-full rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">{{

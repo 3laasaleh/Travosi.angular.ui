@@ -108,6 +108,9 @@ export class CityPage implements OnInit {
       tour,
     );
   }
+    formattedOriginalPrice(tour: any): string {
+    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
+  }
   get isArabic(): boolean {
     return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
   }

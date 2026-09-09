@@ -5,11 +5,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 
 @Component({
   selector: 'app-discount-manager',
   standalone: true,
-  imports: [FormsModule, DatePipe, TranslatePipe],
+  imports: [FormsModule, DatePipe, TranslatePipe, DatePicker],
   templateUrl: './discount-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

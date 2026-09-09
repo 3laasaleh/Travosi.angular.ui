@@ -27,6 +27,7 @@ import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs'
 import { formatHomePrice } from '../home-price.util';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
+import { PaginationModel } from '../../../core/models/pagination.model';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -258,12 +259,11 @@ export class HomeTourPage implements OnInit {
 
     this.apiService.getUnauthntecated(`Tours?page=1&pageSize=12&destinationId=${destinationId}`)
       .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
-      .subscribe((response:IGenericResponse<TourHomeDTO>) => {
+      .subscribe((response:IGenericResponse<PaginationModel<TourHomeDTO>>) => {
         if (Number(this.tour?.id ?? this.tour?.tourId) !== tourId) return;
-        const rows = response?.data ?? response;
+        const rows = response?.data?.data ?? response;
         this.relatedTours = (Array.isArray(rows) ? rows : [])
-          .filter((item) => item?.isActive !== false && Number(item?.id ?? item?.tourId) !== tourId)
-          .filter((item) => Number(item?.destinationId ?? item?.destination?.id ?? destinationId) === destinationId)
+          .filter((item) =>  Number(item?.id ) !== tourId)
           .slice(0, 10);
         this.cdr.markForCheck();
       });
