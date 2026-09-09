@@ -3,7 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,6 +13,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
@@ -21,6 +24,9 @@ import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { formatHomePrice } from '../home-price.util';
+import { IGenericResponse } from '../../../core/models/genericReponse.model';
+import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -36,8 +42,12 @@ export class HomeTourPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly currencyService = inject(CurrencyService);
+
+  @ViewChild('relatedToursTrack') private relatedToursTrack?: ElementRef<HTMLElement>;
 
   tour: any = null;
+  relatedTours: any[] = [];
   isLoading = true;
   errorMessage = '';
   selectedImageIndex = 0;
@@ -88,6 +98,32 @@ export class HomeTourPage implements OnInit {
 
   get destinationName(): string {
     return this.tour?.destinationName ?? '';
+  }
+
+  relatedTourTitle(tour: any): string {
+    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return isArabic
+      ? (tour?.titleAr ?? tour?.titleEng ?? tour?.title ?? '')
+      : (tour?.titleEng ?? tour?.title ?? tour?.titleAr ?? '');
+  }
+
+  relatedTourDescription(tour: any): string {
+    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return isArabic
+      ? (tour?.descriptionAr ?? tour?.descriptionEng ?? tour?.description ?? '')
+      : (tour?.descriptionEng ?? tour?.description ?? tour?.descriptionAr ?? '');
+  }
+
+  relatedTourPrice(tour: any): string {
+    return formatHomePrice(
+      this.currencyService,
+      tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price,
+      tour,
+    );
+  }
+
+  scrollRelatedTours(direction: -1 | 1): void {
+    this.relatedToursTrack?.nativeElement.scrollBy({ left: direction * 320, behavior: 'smooth' });
   }
 
   ngOnInit(): void {
@@ -173,6 +209,7 @@ export class HomeTourPage implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     this.tour = null;
+    this.relatedTours = [];
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
 
@@ -192,6 +229,7 @@ export class HomeTourPage implements OnInit {
           return;
         }
         this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
+        this.loadRelatedTours(tour);
       });
   }
 
@@ -211,6 +249,24 @@ export class HomeTourPage implements OnInit {
         ? response.data
         : response;
     return data?.[key] ?? data;
+  }
+
+  private loadRelatedTours(tour: any): void {
+    const destinationId = Number(tour?.destinationId ?? tour?.destination?.id);
+    const tourId = Number(tour?.id ?? tour?.tourId);
+    if (!Number.isInteger(destinationId) || destinationId <= 0) return;
+
+    this.apiService.getUnauthntecated(`Tours?page=1&pageSize=12&destinationId=${destinationId}`)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response:IGenericResponse<TourHomeDTO>) => {
+        if (Number(this.tour?.id ?? this.tour?.tourId) !== tourId) return;
+        const rows = response?.data ?? response;
+        this.relatedTours = (Array.isArray(rows) ? rows : [])
+          .filter((item) => item?.isActive !== false && Number(item?.id ?? item?.tourId) !== tourId)
+          .filter((item) => Number(item?.destinationId ?? item?.destination?.id ?? destinationId) === destinationId)
+          .slice(0, 10);
+        this.cdr.markForCheck();
+      });
   }
 
 }

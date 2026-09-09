@@ -27,8 +27,30 @@
           {{ 'availableBookingDateRange' | translate:{ from: availableDateFrom, to: availableDateTo } }}
         </p>
       </div>
+    } @else if (isOneDayTour) {
+      <div class="mb-3 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2" role="note">
+        <i class="mdi mdi-calendar-check-outline shrink-0 text-lg text-primary" aria-hidden="true"></i>
+        <p class="text-xs font-semibold leading-5 text-slate-700">{{ 'oneDayTourDateHint' | translate }}</p>
+      </div>
     }
 
+    @if (isOneDayTour) {
+      <div class="mb-3">
+        <label for="bookingTravelDate" class="text-xs font-semibold text-slate-600">{{ 'travelDate' | translate }}</label>
+        <app-date-picker
+          id="bookingTravelDate"
+          formControlName="dateFrom"
+          [min]="minTravelDate"
+          [max]="maxTravelDate"
+          [placeholder]="'travelDate' | translate"
+          [ariaLabel]="'travelDate' | translate"
+          class="mt-1 block"
+          [inputClass]="'h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800'" />
+        @if (bookingForm.controls.dateFrom.touched && bookingForm.controls.dateFrom.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">{{ 'travelDateRequired' | translate }}</p>
+        }
+      </div>
+    } @else {
     <div class="mb-3 grid grid-cols-2 gap-2.5">
       <div>
         <label for="bookingDateFrom" class="text-xs font-semibold text-slate-600">{{ 'dateFrom' | translate }}</label>
@@ -65,6 +87,7 @@
       </div>
     
     </div>
+    }
    <div class="mb-3 grid grid-cols-1 gap-2.5">
         <span class="text-amber-600 text-xs font-semibold ">{{'bookingIsAvlAfterThreeDays'|translate}}</span>
     </div>

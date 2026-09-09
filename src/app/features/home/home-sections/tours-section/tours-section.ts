@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
@@ -24,7 +30,6 @@ export interface TourHomeDTO {
   pricePerPerson?: number;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
-  
 }
 @Component({
   selector: 'app-tours-section',
@@ -32,7 +37,6 @@ export interface TourHomeDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tours-section.html',
 })
-
 export class ToursSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -50,24 +54,32 @@ export class ToursSection implements OnInit {
   loadTours(): void {
     this.isLoading = true;
     this.hasError = false;
-    this.apiService.getUnauthntecated('tours/GetHomePage').pipe(
-      catchError(() => {
-        this.hasError = true;
-        return of(null);
-      }),
-      finalize(() => {
+    this.apiService
+      .getUnauthntecated('tours/GetHomePage')
+      .pipe(
+        catchError(() => {
+          this.hasError = true;
+          return of(null);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe((response: IGenericResponse<PaginationModel<TourHomeDTO>>) => {
+        var res = response?.data;
+        this.tours = res?.data ?? [];
         this.isLoading = false;
         this.cdr.markForCheck();
-      }),
-    ).subscribe((response: IGenericResponse<PaginationModel<TourHomeDTO>>) => {
-     var res= response?.data;
- 
-      this.tours = Array.isArray(res?.data ) ? res.data : [];
-    });
+      });
   }
 
   formattedPrice(item: any): string {
-    return formatHomePrice(this.currencyService, item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price, item);
+    return formatHomePrice(
+      this.currencyService,
+      item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price,
+      item,
+    );
   }
 
   formattedOriginalPrice(item: any): string {
@@ -78,19 +90,37 @@ export class ToursSection implements OnInit {
     const url = item?.coverImageUrl ?? item?.imageUrl ?? '';
     if (!url) return 'assets/images/bg/3.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    const path = String(url)
+      .replace(/^\/+/, '')
+      .replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
   tourTitle(item: any): string {
-    return this.isArabic ? (item?.titleAr || item?.titleEng || '') : (item?.titleEng || item?.titleAr || '');
+    return this.isArabic
+      ? item?.titleAr || item?.titleEng || ''
+      : item?.titleEng || item?.titleAr || '';
   }
 
   tourDescription(item: any): string {
     return this.isArabic
-      ? (item?.descriptionAr || item?.fullDescriptionAr || item?.descriptionEng || item?.fullDescriptionEng || item?.description || item?.fullDescription || '')
-      : (item?.descriptionEng || item?.fullDescriptionEng || item?.description || item?.fullDescription || item?.descriptionAr || item?.fullDescriptionAr || '');
+      ? item?.descriptionAr ||
+          item?.fullDescriptionAr ||
+          item?.descriptionEng ||
+          item?.fullDescriptionEng ||
+          item?.description ||
+          item?.fullDescription ||
+          ''
+      : item?.descriptionEng ||
+          item?.fullDescriptionEng ||
+          item?.description ||
+          item?.fullDescription ||
+          item?.descriptionAr ||
+          item?.fullDescriptionAr ||
+          '';
   }
 
-  private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  private get isArabic(): boolean {
+    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+  }
 }
