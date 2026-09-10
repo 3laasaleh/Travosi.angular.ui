@@ -194,6 +194,10 @@ export class HomePackagePage implements OnInit {
     return this.utilityService.imageUrl(source);
   }
 
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event);
+  }
+
   imageAlt(source: any, fallback = this.title): string {
     return this.utilityService.imageAlt(source, fallback);
   }
