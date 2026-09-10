@@ -160,7 +160,9 @@ export class HomeTourPage implements OnInit {
     return this.utilityService.imageAlt(source, fallback);
   }
 
-
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event);
+  }
 
   private imageMatchesCover(image: any, cover: string): boolean {
     return this.normalizeImagePath(this.imageUrl(image)) === this.normalizeImagePath(cover);

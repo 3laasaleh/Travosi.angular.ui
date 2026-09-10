@@ -122,6 +122,10 @@ export class ProductReviews implements OnChanges {
     });
   }
 
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
+  }
+
   authorImageUrl(source: ProductReview): string {
     const value = source.authorImageUrl;
     if (!value) return '';
