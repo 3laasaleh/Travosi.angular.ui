@@ -15,7 +15,7 @@
     @if (images.length) {
     <div class="mt-8">
       <div class="group relative mx-auto overflow-hidden rounded-[28px] bg-slate-100 shadow-sm">
-        <img [src]="images[selectedImageIndex]" [alt]="imageAlt(selectedImageIndex)"
+        <img [src]="images[selectedImageIndex]" [alt]="imageAlt(selectedImageIndex)" (error)="onImageError($event)"
           class="aspect-[16/9] max-h-[620px] w-full cursor-zoom-in object-cover transition duration-300 group-hover:scale-[1.01]"
           (click)="openImageViewer()" />
 
@@ -48,7 +48,7 @@
         <button type="button" class="shrink-0 overflow-hidden rounded-xl border-2 transition"
           [class.border-primary]="index === selectedImageIndex"
           [class.border-transparent]="index !== selectedImageIndex" (click)="selectImage(index)">
-          <img [src]="image" [alt]="imageAlt(index)" class="h-24 w-36 object-cover sm:h-28 sm:w-44" />
+          <img [src]="image" [alt]="imageAlt(index)" (error)="onImageError($event)" class="h-24 w-36 object-cover sm:h-28 sm:w-44" />
         </button>
         }
       </div>

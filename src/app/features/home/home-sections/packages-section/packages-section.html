@@ -30,7 +30,7 @@
       <a [routerLink]="['/packages', item.routeName]"
         class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 ">
         <article class="flex w-full flex-col">
-          <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="packageTitle(item)" loading="lazy"
+          <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="packageTitle(item)" loading="lazy" (error)="onImageError($event)"
               class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />@if (item.activeDiscount?.isCurrentlyActive) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount.percentage }}%</span> }</div>
           <div class="flex flex-1 flex-col p-4">
             <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ packageTitle(item) }}

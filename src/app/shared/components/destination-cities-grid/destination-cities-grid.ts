@@ -12,4 +12,5 @@ export class DestinationCitiesGrid {
   cityName(city: any): string { return this.isArabic ? city?.titleAr ?? city?.titleEng ?? city?.title ?? '' : city?.titleEng ?? city?.titleAr ?? city?.title ?? ''; }
   get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   cityImage(city: any): string { return this.utilityService.imageUrl(city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? ''); }
+  onCityImageError(event: Event): void { this.utilityService.onCityImageError(event); }
 }

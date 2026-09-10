@@ -51,14 +51,14 @@
                 tour.activeDiscount.percentage } }}</span> }
               <button type="button" class="group relative block h-full w-full overflow-hidden"
                 (click)="openImageViewer(0)">
-                <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])"
+                <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" (error)="onImageError($event)"
                   class=" h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
               </button>
               @if (images.length > 1) {
               <div class="hidden min-h-0 gap-2 md:grid" [class.grid-cols-2]="images.length > 3">
                 @for (image of images.slice(1, 5); track $index; let imageIndex = $index) {
                 <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
-                  <img [src]="imageUrl(image)" [alt]="imageAlt(image)"
+                  <img [src]="imageUrl(image)" [alt]="imageAlt(image)" (error)="onImageError($event)"
                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 </button>
                 }

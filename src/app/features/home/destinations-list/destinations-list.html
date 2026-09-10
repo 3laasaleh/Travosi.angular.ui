@@ -59,7 +59,7 @@
             </span>
             }
             <img [src]="imageAt(destination, getImageIndex('destination-' + destinationIndex))"
-              [alt]="destinationName(destination)" loading="lazy"
+              [alt]="destinationName(destination)" loading="lazy" (error)="onImageError($event)"
               class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
           </div>
           <div class="flex flex-1 flex-col p-4">

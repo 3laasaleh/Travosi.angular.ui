@@ -11,9 +11,9 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
@@ -42,6 +42,7 @@ export class HomePackagesList implements OnInit {
   private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
@@ -213,16 +214,15 @@ export class HomePackagesList implements OnInit {
     return this.imageAt(item, 0);
   }
 
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
+  }
+
   imageAt(item: any, index: number): string {
     const images = this.imageItems(item);
     const source = images[Math.max(0, Math.min(index, images.length - 1))] ?? null;
     const url = source?.imageUrl ?? source?.url ?? source?.path ?? item?.coverImageUrl ?? item?.imageUrl ?? '';
-
-    if (!url) return 'assets/images/bg/2.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+    return this.utilityService.imageUrl(url || 'assets/images/bg/2.jpg');
   }
 
   getImageIndex(key: string): number {

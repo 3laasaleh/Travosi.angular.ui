@@ -31,4 +31,5 @@ export class BlogPage implements OnInit {
   title(blog: any): string { return blog.title ?? blog.Title ?? (this.isArabic ? (blog.titleAr || blog.titleEng) : (blog.titleEng || blog.titleAr)); }
   summary(blog: any): string { return blog.summary ?? blog.Summary ?? (this.isArabic ? (blog.summaryAr || blog.summaryEng) : (blog.summaryEng || blog.summaryAr)); }
   image(blog: any): string { const url = blog?.images?.[0]?.imageUrl ?? blog?.images?.[0]?.url; return this.utilityService.imageUrl(url ?? 'assets/images/blog/1.jpg'); }
+  onImageError(event: Event): void { this.utilityService.onImageError(event, 'assets/images/blog/1.jpg'); }
 }

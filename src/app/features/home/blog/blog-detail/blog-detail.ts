@@ -10,7 +10,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { environment } from '../../../../../environments/environment';
+import { UtilityService } from '../../../../core/services/utilityservice';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../../shared/components/image-viewer-modal/image-viewer-modal';
@@ -38,6 +38,7 @@ export class BlogDetail implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly utilityService = inject(UtilityService);
   blog: any = null;
   isLoading = true;
   errorMessage = '';
@@ -142,11 +143,11 @@ export class BlogDetail implements OnInit {
   imageAlt(index: number): string {
     return this.seo.imageAlt(this.imageSources[index], this.title);
   }
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event, 'assets/images/blog/1.jpg');
+  }
   image(image: any): string {
-    const url = image?.imageUrl ?? image?.ImageUrl ?? image?.url ?? image?.Url ?? image;
-    return /^(https?:|data:|blob:)/i.test(url ?? '')
-      ? url
-      : `${environment.imageUrl}${String(url ?? '').replace(/^\/+/, '')}`;
+    return this.utilityService.imageUrl(image ?? 'assets/images/blog/1.jpg');
   }
   selectImage(index: number): void {
     if (index < 0 || index >= this.images.length) return;

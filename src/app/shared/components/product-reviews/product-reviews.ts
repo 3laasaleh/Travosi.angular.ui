@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { AuthService } from '../../../features/user/_services/auth.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { environment } from '../../../../environments/environment';
 
 interface ProductReview {
@@ -30,6 +31,7 @@ export class ProductReviews implements OnChanges {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly authService = inject(AuthService);
+  private readonly utilityService = inject(UtilityService);
 
   reviews: ProductReview[] = [];
   isLoading = false;

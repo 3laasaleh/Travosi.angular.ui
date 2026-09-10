@@ -76,4 +76,8 @@ export class PackagesSection implements OnInit {
     const image = Array.isArray(item?.images) ? item.images[0] : null;
     return this.utilityService.imageUrl(image ?? item?.imageUrl ?? '');
   }
+
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
+  }
 }

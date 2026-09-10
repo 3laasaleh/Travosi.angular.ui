@@ -10,9 +10,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { LanguageService } from '../../../core/services/language.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -37,6 +37,7 @@ export class HomeDestinationsList implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
+  private readonly utilityService = inject(UtilityService);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
@@ -133,16 +134,15 @@ export class HomeDestinationsList implements OnInit {
     return this.imageAt(destination, 0);
   }
 
+  onImageError(event: Event): void {
+    this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
+  }
+
   imageAt(destination: any, index: number): string {
     const images = this.imageItems(destination);
     const source = images[Math.max(0, Math.min(index, images.length - 1))] ?? null;
     const url = source?.imageUrl ?? source?.url ?? source?.path ?? destination?.coverImageUrl ?? destination?.imageUrl ?? '';
-
-    if (!url) return 'assets/images/bg/2.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+    return this.utilityService.imageUrl(url || 'assets/images/bg/2.jpg');
   }
 
   getImageIndex(key: string): number {
