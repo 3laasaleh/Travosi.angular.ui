@@ -19,7 +19,7 @@ export interface TourHomeDTO {
   id: number;
   routeName?: string | null;
   coverImageUrl: string | null;
-  images:TourImageDTO[],
+  images: TourImageDTO[];
   title: string;
   destinationName: string;
   description?: string | null;
@@ -29,7 +29,7 @@ export interface TourHomeDTO {
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
 }
 
-export interface  TourImageDTO {
+export interface TourImageDTO {
   id?: number;
   imageName?: string;
   imageUrl?: string;
@@ -94,27 +94,11 @@ export class ToursSection implements OnInit {
   }
 
   tourTitle(item: any): string {
-    return this.isArabic
-      ? item?.titleAr || item?.titleEng || ''
-      : item?.titleEng || item?.titleAr || '';
+    return item?.title ?? item?.name ?? '';
   }
 
   tourDescription(item: any): string {
-    return this.isArabic
-      ? item?.descriptionAr ||
-          item?.fullDescriptionAr ||
-          item?.descriptionEng ||
-          item?.fullDescriptionEng ||
-          item?.description ||
-          item?.fullDescription ||
-          ''
-      : item?.descriptionEng ||
-          item?.fullDescriptionEng ||
-          item?.description ||
-          item?.fullDescription ||
-          item?.descriptionAr ||
-          item?.fullDescriptionAr ||
-          '';
+    return item?.description ?? item?.fullDescription ?? item?.subDescription ?? '';
   }
 
   private get isArabic(): boolean {

@@ -329,8 +329,7 @@
             ><app-date-picker
               formControlName="dateFrom"
               id="package-date-from"
-              [min]="today"
-              [max]="packageForm.controls.dateTo.value || null"
+              [min]="tomorrow"
               [ariaLabel]="'dateFrom' | translate"
               inputClass="rounded-2xl border px-3 py-2 pe-11"
             />
@@ -339,6 +338,11 @@
               packageForm.controls.dateFrom.hasError('required')
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'dateFromRequired' | translate }}</p>
+            } @else if (
+              packageForm.controls.dateFrom.touched &&
+              packageForm.controls.dateFrom.hasError('minDate')
+            ) {
+              <p class="mt-1 text-xs text-red-600">{{ 'packageStartDateTomorrow' | translate }}</p>
             }
           </div>
           <div>
@@ -346,7 +350,7 @@
             ><app-date-picker
               formControlName="dateTo"
               id="package-date-to"
-              [min]="packageForm.controls.dateFrom.value || null"
+              [min]="minimumPackageEndDate"
               [ariaLabel]="'dateTo' | translate"
               inputClass="rounded-2xl border px-3 py-2 pe-11"
             />
@@ -357,10 +361,9 @@
               <p class="mt-1 text-xs text-red-600">{{ 'dateToRequired' | translate }}</p>
             } @else if (
               packageForm.controls.dateTo.touched &&
-              packageForm.controls.dateFrom.value &&
-              packageForm.controls.dateTo.value <= packageForm.controls.dateFrom.value
+              packageForm.hasError('invalidPackageDateRange')
             ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'bookingDateRangeInvalid' | translate }}</p>
+              <p class="mt-1 text-xs text-red-600">{{ 'packageEndDateAfterStart' | translate }}</p>
             }
           </div>
         </div>
@@ -590,7 +593,6 @@
                       [(ngModel)]="itineraryDraft.arrivalDate"
                       [ngModelOptions]="{ standalone: true }"
                       [min]="packageForm.controls.dateFrom.value || null"
-                      [max]="packageForm.controls.dateTo.value || null"
                       [ariaLabel]="'date' | translate"
                       inputClass="cursor-pointer rounded-xl border bg-white py-3 pe-12 ps-12"
                     />

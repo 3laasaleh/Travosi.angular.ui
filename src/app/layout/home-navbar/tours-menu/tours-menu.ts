@@ -41,9 +41,7 @@ export class ToursMenu {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   tourName(tour: any): string {
-    return this.isArabic
-      ? tour?.titleAr ?? tour?.titleEng ?? ''
-      : tour?.titleEng ?? tour?.titleAr ?? '';
+    return tour?.title ?? tour?.name ?? '';
   }
 
   get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }

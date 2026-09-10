@@ -132,7 +132,8 @@
     } @else if (availabilityStatus === 'unavailable') {
       <div class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700" role="alert">
         <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-calendar-remove-outline text-lg"></i>{{ 'selectionUnavailable' | translate }}</p>
-        @if (availabilitySeats > 0) { <p class="mt-1 text-xs">{{ 'onlySeatsAvailable' | translate:{ seats: availabilitySeats } }}</p> }
+        @if (availabilitySeats ===0) { <p class="mt-1 text-xs">{{ 'onlySeatsAvailable' | translate:{ seats: availabilitySeats } }}</p> }
+        @else  { <p class="mt-1 text-xs">{{errorMessage }}</p> }
       </div>
     }
 
@@ -150,3 +151,79 @@
     </button>
   </form>
 </div>
+
+@if (guestBookingOpen) {
+  <div class="fixed inset-0 z-[100] flex items-end bg-slate-950/55 p-4 sm:items-center sm:justify-center" (click)="closeGuestBookingModal()">
+    <section class="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog" aria-modal="true"
+      [attr.aria-label]="'guestBookingTitle' | translate" (click)="$event.stopPropagation()">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary">{{ 'bookNow' | translate }}</p>
+          <h2 class="mt-1 text-xl font-bold text-slate-900">{{ 'guestBookingTitle' | translate }}</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">{{ 'guestBookingDescription' | translate }}</p>
+        </div>
+        <button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100"
+          [attr.aria-label]="'close' | translate" (click)="closeGuestBookingModal()">
+          <i class="mdi mdi-close text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form class="mt-5 space-y-4" [formGroup]="guestBookingForm" (ngSubmit)="submitGuestBooking()">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="guestFirstName" class="mb-1.5 block text-sm font-semibold text-slate-700">{{ 'firstName' | translate }}</label>
+            <input id="guestFirstName" type="text" formControlName="firstName" autocomplete="given-name"
+              [placeholder]="'firstNamePlaceholder' | translate"
+              class="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none transition focus:border-primary" />
+            @if (guestBookingForm.controls.firstName.touched && guestBookingForm.controls.firstName.hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'firstNameRequired' | translate }}</p>
+            } @else if (guestBookingForm.controls.firstName.touched && guestBookingForm.controls.firstName.hasError('minlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'firstNameMin' | translate }}</p>
+            }
+          </div>
+          <div>
+            <label for="guestLastName" class="mb-1.5 block text-sm font-semibold text-slate-700">{{ 'lastName' | translate }}</label>
+            <input id="guestLastName" type="text" formControlName="lastName" autocomplete="family-name"
+              [placeholder]="'lastNamePlaceholder' | translate"
+              class="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none transition focus:border-primary" />
+            @if (guestBookingForm.controls.lastName.touched && guestBookingForm.controls.lastName.hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'lastNameRequired' | translate }}</p>
+            } @else if (guestBookingForm.controls.lastName.touched && guestBookingForm.controls.lastName.hasError('minlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'lastNameMin' | translate }}</p>
+            }
+          </div>
+        </div>
+        <div>
+          <label for="guestEmail" class="mb-1.5 block text-sm font-semibold text-slate-700">{{ 'email' | translate }}</label>
+          <input id="guestEmail" type="email" formControlName="email" autocomplete="email"
+            [placeholder]="'emailPlaceholder' | translate"
+            class="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none transition focus:border-primary" />
+          @if (guestBookingForm.controls.email.touched && guestBookingForm.controls.email.hasError('required')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'emailRequired' | translate }}</p>
+          } @else if (guestBookingForm.controls.email.touched && guestBookingForm.controls.email.hasError('email')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'emailInvalid' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label for="guestMobile" class="mb-1.5 block text-sm font-semibold text-slate-700">{{ 'mobile' | translate }}</label>
+          <input id="guestMobile" type="tel" formControlName="mobile" autocomplete="tel"
+            [placeholder]="'mobilePlaceholder' | translate"
+            class="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none transition focus:border-primary" />
+          @if (guestBookingForm.controls.mobile.touched && guestBookingForm.controls.mobile.hasError('required')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'mobileRequired' | translate }}</p>
+          } @else if (guestBookingForm.controls.mobile.touched && guestBookingForm.controls.mobile.hasError('pattern')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'mobileInvalid' | translate }}</p>
+          }
+        </div>
+
+        <p class="rounded-xl bg-primary/5 px-3 py-2.5 text-xs leading-5 text-slate-600"><i class="mdi mdi-information-outline me-1 text-primary"></i>{{ 'guestBookingNotice' | translate }}</p>
+
+        <button type="submit" [disabled]="isSubmitting"
+          class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">
+          @if (isSubmitting) { <i class="mdi mdi-loading mdi-spin"></i>{{ 'creatingBooking' | translate }} }
+          @else { <i class="mdi mdi-calendar-check-outline"></i>{{ 'guestBookingSubmit' | translate }} }
+        </button>
+      </form>
+    </section>
+  </div>
+}

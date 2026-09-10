@@ -111,16 +111,22 @@ export class HomeDestinationsList implements OnInit {
 
   destinationName(destination: any): string {
     const isArabic = this.languageService.getCurrentLanguage() === 'ar';
+    const title = destination?.title ?? '';
+    const titleAr = destination?.titleAr ?? '';
+    const titleEng = destination?.titleEng ?? '';
     return isArabic
-      ? destination?.titleAr ?? destination?.titleEng ?? destination?.title ?? ''
-      : destination?.titleEng ?? destination?.title ?? destination?.titleAr ?? '';
+      ? title || titleAr || titleEng
+      : title || titleEng || titleAr;
   }
 
   destinationDescription(destination: any): string {
     const isArabic = this.languageService.getCurrentLanguage() === 'ar';
+    const description = destination?.description ?? destination?.subDescription ?? '';
+    const descriptionAr = destination?.descriptionAr ?? destination?.subDescriptionAr ?? '';
+    const descriptionEng = destination?.descriptionEng ?? destination?.subDescriptionEng ?? '';
     return isArabic
-      ? (destination?.subDescriptionAr || destination?.descriptionAr || destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || '')
-      : (destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || destination?.subDescriptionAr || destination?.descriptionAr || '');
+      ? (description || descriptionAr || descriptionEng || '')
+      : (description || descriptionEng || descriptionAr || '');
   }
 
   imageItems(destination: any): any[] {

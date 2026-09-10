@@ -91,9 +91,12 @@ export class HomeTourPage implements OnInit {
   /** The brief description belongs below the gallery; the detail component keeps the full text. */
   get shortDescription(): string {
     const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    const description = this.tour?.description ?? '';
+    const descriptionAr = this.tour?.descriptionAr ?? '';
+    const descriptionEng = this.tour?.descriptionEng ?? '';
     return isArabic
-      ? (this.tour?.descriptionAr ?? this.tour?.description ?? this.tour?.descriptionEng ?? '')
-      : (this.tour?.descriptionEng ?? this.tour?.description ?? this.tour?.descriptionAr ?? '');
+      ? (description || descriptionAr || descriptionEng || '')
+      : (description || descriptionEng || descriptionAr || '');
   }
 
   get destinationName(): string {

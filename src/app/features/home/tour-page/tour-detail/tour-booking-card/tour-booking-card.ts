@@ -17,7 +17,6 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -37,14 +36,12 @@ import { formatHomePrice } from '../../../home-price.util';
 export class TourBookingCard implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
   private bookingLoaderElement: HTMLElement | null = null;
-
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
 
@@ -57,7 +54,10 @@ export class TourBookingCard implements OnInit {
   }
 
   get isOneDayTour(): boolean {
-    return !this.isPackage && (this.product?.isOneDayTour === true || this.product?.IsOneDayTour === true);
+    return (
+      !this.isPackage &&
+      (this.product?.isOneDayTour === true || this.product?.IsOneDayTour === true)
+    );
   }
 
   isSubmitting = false;
@@ -67,6 +67,7 @@ export class TourBookingCard implements OnInit {
   availabilitySeats = 0;
   errorMessage = '';
   successMessage = '';
+  guestBookingOpen = false;
 
   bookingForm = new FormGroup(
     {
@@ -87,6 +88,25 @@ export class TourBookingCard implements OnInit {
     },
     { validators: TourBookingCard.dateRangeValidator },
   );
+
+  guestBookingForm = new FormGroup({
+    firstName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
+    }),
+    lastName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email, Validators.maxLength(254)],
+    }),
+    mobile: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/^\+?[0-9\s()-]{7,20}$/)],
+    }),
+  });
 
   get isLoggedIn(): boolean {
     return this.authService.getCurentUser() !== null && !this.authService.isTokenExpired();
@@ -113,7 +133,7 @@ export class TourBookingCard implements OnInit {
   get formattedOriginalPricePerPerson(): string {
     return formatHomePrice(
       this.currencyService,
-      this.product?.pricePerPerson ?? this.product?.price,
+      this.product?.pricePerPerson ,
       this.product,
     );
   }
@@ -173,10 +193,12 @@ export class TourBookingCard implements OnInit {
   }
 
   get maxTravelDate(): string | null {
-    return this.toDateInput(this.product?.endDate ?? this.product?.dateTo) || null;
+
+    return this.toDateInput(this.product?.endDate) || null;
   }
 
   get minDateTo(): string {
+
     return this.bookingForm.controls.dateFrom.value || this.minTravelDate;
   }
 
@@ -244,25 +266,15 @@ export class TourBookingCard implements OnInit {
         this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
         this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
         this.availabilityConfirmed = isAvailable;
+        debugger;
         if (!isAvailable && response?.isSuccess === false) {
           this.errorMessage = 'availabilityCheckError';
         }
       });
   }
 
-  goToLogin(): void {
-    this.router.navigate(['/login'], {
-      queryParams: { returnUrl: this.router.url },
-    });
-  }
-
   bookNow(): void {
     if (this.isSubmitting) return;
-
-    if (!this.isLoggedIn) {
-      this.goToLogin();
-      return;
-    }
 
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
@@ -283,7 +295,10 @@ export class TourBookingCard implements OnInit {
 
     const form = this.bookingForm.getRawValue();
     const selectedDateTo = this.isOneDayTour ? form.dateFrom : form.dateTo;
-    if (form.dateFrom < this.minTravelDate || Boolean(this.maxTravelDate && selectedDateTo > this.maxTravelDate!)) {
+    if (
+      form.dateFrom < this.minTravelDate ||
+      Boolean(this.maxTravelDate && selectedDateTo > this.maxTravelDate!)
+    ) {
       this.errorMessage = 'bookingDateOutsideAvailability';
       this.showToast('error', this.errorMessage);
       return;
@@ -297,12 +312,60 @@ export class TourBookingCard implements OnInit {
     const payload = this.createBookingPayload();
     if (!payload) return;
 
+    if (!this.isLoggedIn) {
+      this.openGuestBookingModal();
+      return;
+    }
+
+    this.submitBooking(payload, false);
+  }
+
+  openGuestBookingModal(): void {
+    this.guestBookingOpen = true;
+    this.errorMessage = '';
+    this.cdr.markForCheck();
+  }
+
+  closeGuestBookingModal(): void {
+    if (this.isSubmitting) return;
+    this.guestBookingOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  submitGuestBooking(): void {
+    if (this.isSubmitting) return;
+
+    if (this.guestBookingForm.invalid) {
+      this.guestBookingForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.createBookingPayload();
+    if (!payload) return;
+
+    const guest = this.guestBookingForm.getRawValue();
+    this.submitBooking(
+      {
+        ...payload,
+        GuestFirstName: guest.firstName.trim(),
+        GuestLastName: guest.lastName.trim(),
+        GuestEmail: guest.email.trim(),
+        GuestMobile: guest.mobile.trim(),
+      },
+      true,
+    );
+  }
+
+  private submitBooking(payload: Record<string, unknown>, isGuestBooking: boolean): void {
     this.isSubmitting = true;
     this.showBookingLoader();
     this.errorMessage = '';
     this.successMessage = '';
-    this.apiService
-      .post('Bookings', payload)
+    const request = isGuestBooking
+      ? this.apiService.postUnauthenticated('Bookings/Guest', payload)
+      : this.apiService.post('Bookings', payload);
+
+    request
       .pipe(
         catchError((error) => {
           this.errorMessage = this.bookingErrorMessage(error?.error?.message);
@@ -324,6 +387,8 @@ export class TourBookingCard implements OnInit {
         }
         this.successMessage = 'bookingCreated';
         this.showBookingConfirmation(response?.data ?? response);
+        this.guestBookingOpen = false;
+        this.guestBookingForm.reset({ firstName: '', lastName: '', email: '', mobile: '' });
         this.bookingForm.reset({
           dateFrom: '',
           dateTo: '',
@@ -471,6 +536,7 @@ export class TourBookingCard implements OnInit {
   }
 
   private setDefaultDates(): void {
+   
     const dateFrom = this.minTravelDate;
     if (!dateFrom) return;
 
@@ -480,11 +546,11 @@ export class TourBookingCard implements OnInit {
     }
 
     let dateTo = this.maxTravelDate;
-    if (!dateTo) {
+    if (!dateTo||dateTo<=dateFrom) {
       // If no end date, add 7 days from start date
       const date = new Date(`${dateFrom}T00:00:00`);
       if (!Number.isNaN(date.getTime())) {
-        date.setDate(date.getDate() + 7);
+        date.setDate(date.getDate() + 1);
         dateTo = this.toDateInput(date);
       }
     }
@@ -493,5 +559,6 @@ export class TourBookingCard implements OnInit {
       dateFrom,
       dateTo: dateTo || dateFrom,
     });
+    this.cdr.markForCheck();
   }
 }

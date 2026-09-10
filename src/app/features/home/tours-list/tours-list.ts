@@ -165,13 +165,13 @@ export class HomeToursList implements OnInit {
   }
 
   tourTitle(tour: any): string {
-    return tour?.title ?? '';
+    return tour?.title ?? tour?.name ?? '';
   }
 
   private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   destinationName(tour: any): string {
-    return tour?.destinationName ?? tour?.destination?.titleEng ?? tour?.destination?.title ?? '';
+    return tour?.destinationName ?? tour?.destination?.title ?? tour?.destination?.name ?? '';
   }
 
   private updatePagination(pageData: any, rowCount: number): void {

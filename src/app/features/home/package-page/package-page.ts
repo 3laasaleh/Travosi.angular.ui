@@ -63,9 +63,16 @@ export class HomePackagePage implements OnInit {
 
   get description(): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    const fullDescription = this.travelPackage?.fullDescription ?? '';
+    const description = this.travelPackage?.description ?? '';
+    const fullDescriptionAr = this.travelPackage?.fullDescriptionAr ?? '';
+    const descriptionAr = this.travelPackage?.descriptionAr ?? '';
+    const fullDescriptionEng = this.travelPackage?.fullDescriptionEng ?? '';
+    const descriptionEng = this.travelPackage?.descriptionEng ?? '';
+
     return arabic
-      ? this.travelPackage?.fullDescriptionAr || this.travelPackage?.descriptionAr || this.travelPackage?.fullDescriptionEng || this.travelPackage?.descriptionEng || this.travelPackage?.fullDescription || this.travelPackage?.description || ''
-      : this.travelPackage?.fullDescriptionEng || this.travelPackage?.descriptionEng || this.travelPackage?.fullDescription || this.travelPackage?.description || this.travelPackage?.fullDescriptionAr || this.travelPackage?.descriptionAr || '';
+      ? (fullDescription || description || fullDescriptionAr || descriptionAr || fullDescriptionEng || descriptionEng || '')
+      : (fullDescription || description || fullDescriptionEng || descriptionEng || fullDescriptionAr || descriptionAr || '');
   }
 
   get images(): any[] {
@@ -118,13 +125,14 @@ export class HomePackagePage implements OnInit {
   }
 
   get destinationName(): string {
-    return (
-      this.travelPackage?.destinationName ??
-      this.travelPackage?.destination?.titleEng ??
-      this.travelPackage?.destination?.name ??
-      this.travelPackage?.destinations?.[0]?.destinationName ??
-      ''
-    );
+    const destination = this.travelPackage?.destination ?? this.travelPackage?.destinations?.[0] ?? null;
+    const title = destination?.title ?? destination?.name ?? '';
+    const titleEng = destination?.titleEng ?? '';
+    const titleAr = destination?.titleAr ?? '';
+    const currentLanguage = this.translate.currentLang()?.toLowerCase() ?? '';
+    return this.travelPackage?.destinationName
+      ?? (currentLanguage.startsWith('ar') ? (title || titleAr || titleEng) : (title || titleEng || titleAr))
+      ?? '';
   }
 
   get formattedPrice(): string {
@@ -212,21 +220,10 @@ export class HomePackagePage implements OnInit {
 
   tourTitle(tour: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (tour?.titleAr ??
-          tour?.nameAr ??
-          tour?.titleEng ??
-          tour?.nameEng ??
-          tour?.title ??
-          tour?.name ??
-          '')
-      : (tour?.titleEng ??
-          tour?.nameEng ??
-          tour?.title ??
-          tour?.name ??
-          tour?.titleAr ??
-          tour?.nameAr ??
-          '');
+    const title = tour?.title ?? tour?.name ?? '';
+    const titleAr = tour?.titleAr ?? tour?.nameAr ?? '';
+    const titleEng = tour?.titleEng ?? tour?.nameEng ?? '';
+    return arabic ? (title || titleAr || titleEng) : (title || titleEng || titleAr);
   }
 
   private loadPackage(routeName: string): void {

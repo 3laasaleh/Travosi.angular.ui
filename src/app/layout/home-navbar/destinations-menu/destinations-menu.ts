@@ -41,12 +41,15 @@ export class DestinationsMenu {
   activeCityId: number | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  destinationName(item: any): string { return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? ''; }
-  cityName(item: any): string { return this.destinationName(item); }
+  destinationName(item: any): string { return item?.title ?? item?.name ?? ''; }
+  cityName(item: any): string { return item?.title ?? item?.name ?? ''; }
   cities(destination: any): any[] { return destination?.cities ?? []; }
   tours(city: any): any[] { return city?.tours ?? []; }
   tourName(item: any): string {
-    return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? '';
+    const title = item?.title ?? '';
+    const titleAr = item?.titleAr ?? '';
+    const titleEng = item?.titleEng ?? '';
+    return this.isArabic ? (title || titleAr || titleEng) : (title || titleEng || titleAr);
   }
   get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   get isMobile(): boolean { return this.layout === 'mobile'; }

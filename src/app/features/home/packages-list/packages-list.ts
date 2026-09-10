@@ -179,15 +179,15 @@ export class HomePackagesList implements OnInit {
   }
 
   packageTitle(item: any): string {
-    return item?.name ?? '';
+    return item?.title ?? item?.name ?? '';
   }
 
   packageDescription(item: any): string {
-    return item?.description ?? '';
+    return item?.description ?? item?.fullDescription ?? item?.subDescription ?? '';
   }
 
   destinationName(item: any): string {
-    return item?.destinationName ?? item?.destination?.titleEng ?? item?.destination?.title ?? '';
+    return item?.destinationName ?? item?.destination?.title ?? item?.destination?.name ?? '';
   }
 
   durationDays(item: any): number | null {

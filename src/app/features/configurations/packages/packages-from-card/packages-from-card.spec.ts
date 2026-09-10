@@ -39,6 +39,16 @@ describe('PackagesFromCard validation', () => {
     expect(component.currentStepInvalid).toBe(true);
   });
 
+  it('starts packages tomorrow and keeps the end date at least one day later', () => {
+    expect(component.packageForm.controls.dateFrom.value).toBe(component.tomorrow);
+    expect(component.packageForm.controls.dateTo.value).toBe(component.dayAfterTomorrow);
+    expect(component.minimumPackageEndDate).toBe(component.dayAfterTomorrow);
+
+    component.packageForm.controls.dateFrom.setValue('2030-06-10');
+
+    expect(component.minimumPackageEndDate).toBe('2030-06-11');
+  });
+
   it('disables the images and itinerary steps until their content is valid', () => {
     component.savedPackageId = 10;
     component.activeStep = 2;

@@ -83,6 +83,23 @@ describe('CurrencyService', () => {
     expect(api.getUnauthntecated).not.toHaveBeenCalled();
   });
 
+  it('rounds EGP display values to a whole number', () => {
+    localStorage.setItem(optionsCacheKey, JSON.stringify({
+      cachedAt: Date.now(),
+      value: [
+        { id: 2, code: 'USD', name: 'US Dollar', symbol: '$' },
+        { id: 1, code: 'EGP', name: 'Egyptian Pound', symbol: 'EGP' },
+      ],
+    }));
+    localStorage.setItem(rateCacheKey, JSON.stringify({
+      cachedAt: Date.now(),
+      value: { fromCurrency: 'USD', toCurrency: 'EGP', rate: 1, rateDate: '2026-08-13', provider: 'CBE' },
+    }));
+    const service = TestBed.inject(CurrencyService);
+
+    expect(service.formatPrice(2534.94, 'EGP')).toBe('2,535 EGP');
+  });
+
   it('refreshes a structurally invalid cache instead of trusting its timestamp', () => {
     localStorage.setItem(optionsCacheKey, JSON.stringify({
       cachedAt: Date.now(),

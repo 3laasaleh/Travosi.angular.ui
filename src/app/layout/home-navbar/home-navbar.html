@@ -36,7 +36,8 @@
           @else {
           <span class="text-base font-bold leading-none" aria-hidden="true">{{
             currencyService.currentCurrency().symbol}}</span> }
-          <span class="uppercase">{{ currencyService.currentCurrency().code }}</span><i
+          <span class="uppercase">{{ currencyService.currentCurrency().code }}</span>
+          <i
             class="mdi text-base leading-none" [class.mdi-chevron-down]="!currencyMenuOpen"
             [class.mdi-chevron-up]="currencyMenuOpen"></i>
         </button>
@@ -59,9 +60,9 @@
               }</button>
             }
           </div>
-          @if (currencyService.currentCurrency().code === 'EGP' && currencyService.usdToEgpRate()) { <p
+          <!-- @if (currencyService.currentCurrency().code === 'EGP' && currencyService.usdToEgpRate()) { <p
             class="mx-4 mb-3 border-t border-slate-100 pt-2 text-xs text-slate-500">1 USD = {{
-            currencyService.usdToEgpRate() | number:'1.2-4' }} EGP<br>{{ currencyService.rateProvider() }}</p> }
+            currencyService.usdToEgpRate() | number:'1.2-4' }} EGP<br>{{ currencyService.rateProvider() }}</p> } -->
         </div>
         }
       </div>

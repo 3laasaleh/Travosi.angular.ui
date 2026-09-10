@@ -39,10 +39,7 @@ export class PackagesMenu {
   get isMobile(): boolean { return this.layout === 'mobile'; }
 
   packageName(item: any): string {
-    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    return arabic
-      ? (item?.nameAr ?? item?.titleAr ?? item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? '')
-      : (item?.nameEng ?? item?.titleEng ?? item?.name ?? item?.title ?? item?.nameAr ?? item?.titleAr ?? '');
+    return item?.title ?? item?.name ?? '';
   }
 
   toggleMenu(event: MouseEvent): void {

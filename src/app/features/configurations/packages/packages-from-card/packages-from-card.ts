@@ -11,7 +11,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -57,7 +57,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
   readonly today = this.localDate(new Date());
-  readonly tomorrow = this.localDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+  readonly tomorrow = this.addDays(this.today, 1);
+  readonly dayAfterTomorrow = this.addDays(this.tomorrow, 1);
   readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
     const hours = Math.floor(index / 4).toString().padStart(2, '0');
     const minutes = ((index % 4) * 15).toString().padStart(2, '0');
@@ -136,6 +137,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   get excludesArray(): FormArray<FormGroup> { return this.packageForm.controls.excludes; }
 
   get screenLoaderVisible(): boolean { return this.isSaving || this.deletingImageIndex !== null; }
+  get minimumPackageEndDate(): string {
+    return this.addDays(this.packageForm.controls.dateFrom.value || this.tomorrow, 1);
+  }
   get screenLoaderMessage(): string {
     return this.deletingImageIndex !== null ? 'deletingPackageImage' : (this.apiLoadingMessage || 'pleaseWaitForRequest');
   }
@@ -153,6 +157,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.pricePerPerson,
       controls.pricePerChild,
       controls.maxCapacity,
+      controls.dateFrom,
+      controls.dateTo,
       controls.destinationIds,
       controls.highlights,
       controls.includes,
@@ -166,7 +172,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       && controls.dateTo.value <= controls.dateFrom.value;
     return requiredControls.some((control) => control.invalid)
       || cancellationPolicyMissing
-      || dateRangeInvalid;
+      || dateRangeInvalid
+      || controls.dateFrom.value < this.tomorrow;
   }
 
   get currentStepInvalid(): boolean {
@@ -515,8 +522,14 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
-      dateFrom: new FormControl(this.today, { nonNullable: true }),
-      dateTo: new FormControl(this.tomorrow, { nonNullable: true }),
+      dateFrom: new FormControl(this.tomorrow, {
+        nonNullable: true,
+        validators: [Validators.required, this.notBeforeDateValidator(this.tomorrow)],
+      }),
+      dateTo: new FormControl(this.dayAfterTomorrow, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
       itinerary: new FormControl<TourItineraryItem[]>([], { nonNullable: true }),
@@ -524,7 +537,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       highlights: new FormArray<FormGroup>([]),
       includes: new FormArray<FormGroup>([]),
       excludes: new FormArray<FormGroup>([]),
-    });
+    }, { validators: PackagesFromCard.packageDateRangeValidator });
   }
 
   private createListItemGroup(item: any = {}): FormGroup {
@@ -572,10 +585,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.includesArray.markAllAsTouched();
     this.excludesArray.markAllAsTouched();
     const values = this.packageForm.getRawValue();
-    if (values.dateFrom && values.dateTo && values.dateTo < values.dateFrom) {
-      this.packageForm.controls.dateTo.setErrors({ dateRange: true });
-    }
     return names.every((name) => this.packageForm.controls[name].valid)
+      && !this.packageForm.hasError('invalidPackageDateRange')
       && (values.isFreeCancelation || (this.cancellationPoliciesArray.valid && this.toLocalizedListPayload(values.cancellationPolicies).length > 0))
       && this.highlightsArray.valid
       && this.includesArray.valid
@@ -662,7 +673,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.initialItinerarySnapshot = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
-      dateFrom: this.today, dateTo: this.tomorrow, destinationIds: [], images: [], itinerary: [] });
+      dateFrom: this.tomorrow, dateTo: this.dayAfterTomorrow, destinationIds: [], images: [], itinerary: [] });
     this.setCancellationPolicies([]);
     this.setLocalizedListItems(this.highlightsArray, []);
     this.setLocalizedListItems(this.includesArray, []);
@@ -685,6 +696,21 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private extractPackageId(response: any): number | null { const data = response?.data ?? response?.result ?? response; return this.toOptionalId(data?.id ?? data?.packageId ?? data?.data?.id ?? data?.data?.packageId ?? data); }
   private toOptionalId(value: unknown): number | null { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }
   private toDateInput(value: unknown): string { const text = String(value ?? ''); return /^\d{4}-\d{2}-\d{2}/.test(text) ? text.slice(0, 10) : ''; }
+  private notBeforeDateValidator(minDate: string) {
+    return (control: AbstractControl): ValidationErrors | null =>
+      !control.value || String(control.value) >= minDate ? null : { minDate: true };
+  }
+  private static packageDateRangeValidator(control: AbstractControl): ValidationErrors | null {
+    const dateFrom = String(control.get('dateFrom')?.value ?? '');
+    const dateTo = String(control.get('dateTo')?.value ?? '');
+    return !dateFrom || !dateTo || dateTo > dateFrom ? null : { invalidPackageDateRange: true };
+  }
+  private addDays(value: string, days: number): string {
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    date.setDate(date.getDate() + days);
+    return this.localDate(date);
+  }
   private localDate(value: Date): string { return `${value.getFullYear().toString().padStart(4, '0')}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${value.getDate().toString().padStart(2, '0')}`; }
   private resolveImageUrl(image: any): string { return this.getImageUrl(String(typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? ''))); }
   private revokeNewImageUrls(): void { this.imageUploads.filter((image) => image.file).forEach((image) => URL.revokeObjectURL(image.url)); }

@@ -81,40 +81,19 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationTitle(): string {
-    return this.destination?.name ?? (this.isArabic
-      ? this.destination?.titleAr || this.destination?.titleEng || ''
-      : this.destination?.titleEng || this.destination?.titleAr || '');
+    return this.destinationTitleHomeResolver(this.destination);
+  }
+
+  destinationTitleHomeResolver(destination: any): string {
+    return destination?.title ?? destination?.name ?? '';
   }
 
   destinationShortDescription(): string {
-    return this.isArabic
-      ? this.destination?.subDescriptionAr ||
-          this.destination?.descriptionAr ||
-          this.destination?.subDescriptionEng ||
-          this.destination?.subDescription ||
-          ''
-      : this.destination?.subDescriptionEng ||
-          this.destination?.subDescription ||
-          this.destination?.subDescriptionAr ||
-          '';
+    return this.destination?.description ?? this.destination?.subDescription ?? this.destination?.fullDescription ?? '';
   }
 
   destinationDescription(): string {
-    return this.isArabic
-      ? this.destination?.fullDescriptionAr ||
-          this.destination?.descriptionAr ||
-          this.destination?.fullDescriptionEng ||
-          this.destination?.descriptionEng ||
-          this.destination?.fullDescription ||
-          this.destination?.description ||
-          ''
-      : this.destination?.fullDescriptionEng ||
-          this.destination?.descriptionEng ||
-          this.destination?.fullDescription ||
-          this.destination?.description ||
-          this.destination?.fullDescriptionAr ||
-          this.destination?.descriptionAr ||
-          '';
+    return this.destination?.description ?? this.destination?.fullDescription ?? this.destination?.subDescription ?? '';
   }
 
   ngOnInit(): void {

@@ -177,7 +177,12 @@ export class CurrencyService {
     this.ensureRateFor(sourceCurrency);
     const amount = this.convert(value, sourceCurrency);
     const code = this.displayCurrencyCode(sourceCurrency);
-    const formatted = this.amountFormatter.format(amount);
+    const displayAmount = code === 'EGP' ? Math.round(amount) : amount;
+    const formatter = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: code === 'EGP' ? 0 : 2,
+    });
+    const formatted = formatter.format(displayAmount);
     return code === 'EGP' ? `${formatted} EGP` : `${formatted}$`;
   }
 

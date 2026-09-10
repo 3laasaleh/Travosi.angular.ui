@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../core/services/currency.service';
@@ -13,9 +13,11 @@ import type { TourHomeDTO } from '../../../features/home/home-sections/tours-sec
   host: { class: 'block h-full min-w-0' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TourCard {
+export class TourCard implements OnChanges {
+  ngOnChanges(_changes: SimpleChanges): void {
+    // no-op: the card reads the current DTO and re-renders via Angular change detection.
+  }
   private readonly currencyService = inject(CurrencyService);
-  private readonly translate = inject(TranslateService);
   private readonly utilityService = inject(UtilityService);
 
   @Input({ required: true }) tour: TourHomeDTO|null=null;
@@ -55,7 +57,5 @@ export class TourCard {
     return this.utilityService.discountPercentage(this.tour);
   }
 
-  private get isArabic(): boolean {
-    return this.utilityService.isArabic(this.translate);
-  }
+
 }

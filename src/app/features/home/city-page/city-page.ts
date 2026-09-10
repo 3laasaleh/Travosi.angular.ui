@@ -6,7 +6,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
@@ -29,6 +29,7 @@ import { TourCard } from '../../../shared/components/tour-card/tour-card';
 })
 export class CityPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly translate = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -55,19 +56,23 @@ export class CityPage implements OnInit {
   }
 
   cityName(): string {
-    return this.city?.name ?? (this.isArabic
-      ? (this.city?.titleAr ?? this.city?.titleEng ?? '')
-      : (this.city?.titleEng ?? this.city?.titleAr ?? ''));
+    return this.cityNameHomeResolver(this.city);
   }
+
+  cityNameHomeResolver(city: any): string {
+    return city?.title ?? city?.name ?? '';
+  }
+
   cityDescription(): string {
-    return this.isArabic
-      ? this.city?.fullDescriptionAr || this.city?.descriptionAr || this.city?.fullDescriptionEng || this.city?.descriptionEng || this.city?.fullDescription || this.city?.description || ''
-      : this.city?.fullDescriptionEng || this.city?.descriptionEng || this.city?.fullDescription || this.city?.description || this.city?.fullDescriptionAr || this.city?.descriptionAr || '';
+    return this.city?.description ?? this.city?.fullDescription ?? this.city?.subDescription ?? '';
   }
+
   destinationName(): string {
-    return this.isArabic
-      ? (this.destination?.titleAr ?? this.destination?.titleEng ?? '')
-      : (this.destination?.titleEng ?? this.destination?.titleAr ?? '');
+    return this.destinationTitleHomeResolver(this.destination);
+  }
+
+  destinationTitleHomeResolver(destination: any): string {
+    return destination?.title ?? destination?.name ?? '';
   }
   cityImage(): string {
     return this.imageUrl(
@@ -201,5 +206,9 @@ export class CityPage implements OnInit {
     const data = response?.data ?? response;
     const rows = data?.data ?? data?.items ?? data?.[key] ?? data;
     return Array.isArray(rows) ? rows : [];
+  }
+
+  onBookNowClick(routeName:string){
+    this.router.navigate([`/tours/${routeName}`]);
   }
 }

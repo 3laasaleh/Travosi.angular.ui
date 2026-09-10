@@ -64,17 +64,11 @@ export class DestinationsSection implements OnInit {
   }
 
   destinationName(destination: any): string {
-    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
-    return isArabic
-      ? destination?.titleAr ?? destination?.titleEng ?? destination?.title ?? ''
-      : destination?.titleEng ?? destination?.title ?? destination?.titleAr ?? '';
+    return destination?.title ?? destination?.name ?? '';
   }
 
   destinationDescription(destination: any): string {
-    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
-    return isArabic
-      ? (destination?.subDescriptionAr || destination?.descriptionAr || destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || '')
-      : (destination?.subDescriptionEng || destination?.descriptionEng || destination?.subDescription || destination?.description || destination?.subDescriptionAr || destination?.descriptionAr || '');
+    return destination?.description ?? destination?.subDescription ?? destination?.fullDescription ?? '';
   }
 
   imageUrl(destination: any): string {
