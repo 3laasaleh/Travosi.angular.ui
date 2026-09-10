@@ -4,7 +4,8 @@ import { RouterLink } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
-import { environment } from '../../../../environments/environment';
+import { CityDTO } from '../../../features/configurations/cities/cities-from-card/cities-from-card';
+import { UtilityService } from '../../../core/services/utilityservice';
 
 @Component({
   selector: 'app-destination-cities-carousel',
@@ -16,8 +17,9 @@ import { environment } from '../../../../environments/environment';
 export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly utilityService = inject(UtilityService);
   @Input() destinationId!: number;
-  @Input() cities: any[] = [];
+  @Input() cities: CityDTO[] = [];
   private swiper: Swiper | null = null;
   readonly instanceId = 'destination-cities-carousel';
 
@@ -28,13 +30,14 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
   ngOnDestroy(): void { this.swiper?.destroy(true, true); }
 
   get selector(): string { return `#${this.instanceId}`; }
-  cityName(city: any): string { return this.isArabic ? city?.titleAr ?? city?.titleEng ?? city?.title ?? '' : city?.titleEng ?? city?.titleAr ?? city?.title ?? ''; }
-  get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  cityName(city: any): string { return city?.title; }
+  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   cityImage(city: any): string {
-    const raw = city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? city?.images?.[0]?.url ?? '';
-    if (!raw) return 'assets/images/bg/2.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(raw)) return raw;
-    return `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`;
+    return this.utilityService.imageUrl(city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? '');
+  }
+
+  onCityImageError(event: Event): void {
+    this.utilityService.onCityImageError(event);
   }
 
   private initialize(): void {

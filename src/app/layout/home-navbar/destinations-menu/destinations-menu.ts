@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 
 @Component({
   selector: 'app-destinations-menu', standalone: true, imports: [NgClass, RouterLink, TranslatePipe],
@@ -24,6 +25,7 @@ export class DestinationsMenu {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
 
   /** `desktop` renders a full-width mega menu bar, `mobile` renders an inline collapsible panel. */
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
@@ -46,7 +48,7 @@ export class DestinationsMenu {
   tourName(item: any): string {
     return this.isArabic ? item?.titleAr ?? item?.titleEng ?? '' : item?.titleEng ?? item?.titleAr ?? '';
   }
-  get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   get isMobile(): boolean { return this.layout === 'mobile'; }
 
   toggleMenu(event: MouseEvent): void {

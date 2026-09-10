@@ -12,13 +12,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { environment } from '../../../../environments/environment';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
-import { formatHomePrice } from '../home-price.util';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
@@ -50,6 +49,7 @@ export class HomePackagePage implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
   private readonly seo = inject(SeoService);
+  private readonly utilityService = inject(UtilityService);
 
   travelPackage: any = null;
   isLoading = true;
@@ -128,29 +128,19 @@ export class HomePackagePage implements OnInit {
   }
 
   get formattedPrice(): string {
-    return formatHomePrice(
-      this.currencyService,
-      this.travelPackage?.discountedPricePerPerson ??
-        this.travelPackage?.pricePerPerson ??
-        this.travelPackage?.price,
-      this.travelPackage,
-    );
+    return this.utilityService.formattedPrice(this.currencyService, this.travelPackage);
   }
 
   get formattedOriginalPrice(): string {
-    return formatHomePrice(
-      this.currencyService,
-      this.travelPackage?.pricePerPerson ?? this.travelPackage?.price,
-      this.travelPackage,
-    );
+    return this.utilityService.formattedOriginalPrice(this.currencyService, this.travelPackage);
   }
 
   get hasDiscount(): boolean {
-    return this.travelPackage?.activeDiscount?.isCurrentlyActive === true;
+    return this.utilityService.hasDiscount(this.travelPackage);
   }
 
   get discountPercentage(): number {
-    return Number(this.travelPackage?.activeDiscount?.percentage ?? 0);
+    return this.utilityService.discountPercentage(this.travelPackage);
   }
 
   get duration(): string {
@@ -201,18 +191,11 @@ export class HomePackagePage implements OnInit {
   }
 
   imageUrl(source: any): string {
-    const url =
-      typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
-    if (!url) return 'assets/images/bg/2.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url)
-      .replace(/^\/+/, '')
-      .replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+    return this.utilityService.imageUrl(source);
   }
 
   imageAlt(source: any, fallback = this.title): string {
-    return this.seo.imageAlt(source, fallback);
+    return this.utilityService.imageAlt(source, fallback);
   }
 
   itemText(item: any): string {

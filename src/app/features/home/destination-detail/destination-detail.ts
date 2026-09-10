@@ -16,8 +16,8 @@ import { PLATFORM_ID } from '@angular/core';
 import { Observable, catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
 import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
@@ -50,6 +50,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly utilityService = inject(UtilityService);
   private readonly platformId = inject(PLATFORM_ID);
 
   destination: any = null;
@@ -76,7 +77,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isArabic(): boolean {
-    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return this.utilityService.isArabic(this.translate);
   }
 
   destinationTitle(): string {
@@ -149,12 +150,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   imageUrl(source: any, fallback = 'assets/images/bg/2.jpg'): string {
-    const url =
-      typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
-
-    if (!url) return fallback;
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
+    return this.utilityService.imageUrl(source, fallback);
   }
 
   destinationImage(): string {
@@ -162,7 +158,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   imageAlt(source: any, fallback = this.destinationTitle()): string {
-    return this.seo.imageAlt(source, fallback);
+    return this.utilityService.imageAlt(source, fallback);
   }
 
   selectImage(index: number): void {

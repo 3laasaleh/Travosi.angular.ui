@@ -13,9 +13,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { environment } from '../../../../environments/environment';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
@@ -42,6 +42,7 @@ export class HomeTourPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly utilityService = inject(UtilityService);
 
   @ViewChild('relatedToursTrack') private relatedToursTrack?: ElementRef<HTMLElement>;
 
@@ -152,18 +153,11 @@ export class HomeTourPage implements OnInit {
   }
 
   imageUrl(source: any): string {
-    const url =
-      typeof source === 'string'
-        ? source
-        : (source?.imageUrl ?? source?.url ?? source?.path ?? '');
-
-    if (!url) return 'assets/images/bg/3.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    return `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`;
+    return this.utilityService.imageUrl(source);
   }
 
   imageAlt(source: any, fallback = this.title): string {
-    return this.seo.imageAlt(source, fallback);
+    return this.utilityService.imageAlt(source, fallback);
   }
 
 

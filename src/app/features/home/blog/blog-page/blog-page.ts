@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { environment } from '../../../../../environments/environment';
+import { UtilityService } from '../../../../core/services/utilityservice';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
@@ -14,6 +14,7 @@ export class BlogPage implements OnInit {
   private readonly api = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
   blogs: any[] = [];
   isLoading = false;
   errorMessage = '';
@@ -26,8 +27,8 @@ export class BlogPage implements OnInit {
       finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }),
     ).subscribe(response => { const page = response?.data ?? response; this.blogs = Array.isArray(page?.data) ? page.data : []; });
   }
-  get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   title(blog: any): string { return blog.title ?? blog.Title ?? (this.isArabic ? (blog.titleAr || blog.titleEng) : (blog.titleEng || blog.titleAr)); }
   summary(blog: any): string { return blog.summary ?? blog.Summary ?? (this.isArabic ? (blog.summaryAr || blog.summaryEng) : (blog.summaryEng || blog.summaryAr)); }
-  image(blog: any): string { const url = blog?.images?.[0]?.imageUrl ?? blog?.images?.[0]?.url; return !url ? 'assets/images/blog/1.jpg' : (/^(https?:|data:|blob:)/i.test(url) ? url : `${environment.imageUrl}${String(url).replace(/^\/+/, '')}`); }
+  image(blog: any): string { const url = blog?.images?.[0]?.imageUrl ?? blog?.images?.[0]?.url; return this.utilityService.imageUrl(url ?? 'assets/images/blog/1.jpg'); }
 }

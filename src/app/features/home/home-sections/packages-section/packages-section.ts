@@ -2,10 +2,9 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject }
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
-import { formatHomePrice } from '../../home-price.util';
+import { UtilityService } from '../../../../core/services/utilityservice';
 
 @Component({
   selector: 'app-packages-section',
@@ -18,6 +17,7 @@ export class PackagesSection implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly utilityService = inject(UtilityService);
 
   packages: any[] = [];
   isLoading = false;
@@ -51,11 +51,11 @@ export class PackagesSection implements OnInit {
   }
 
   formattedPrice(item: any): string {
-    return formatHomePrice(this.currencyService, item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price, item);
+    return this.utilityService.formattedPrice(this.currencyService, item);
   }
 
   formattedOriginalPrice(item: any): string {
-    return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
+    return this.utilityService.formattedOriginalPrice(this.currencyService, item);
   }
 
   packageTitle(item: any): string {
@@ -74,8 +74,6 @@ export class PackagesSection implements OnInit {
 
   imageUrl(item: any): string {
     const image = Array.isArray(item?.images) ? item.images[0] : null;
-    const url = image?.imageUrl ?? image?.url ?? item?.imageUrl ?? '';
-    if (!url) return 'assets/images/bg/2.jpg';
-    return url.startsWith('http') ? url : environment.imageUrl + url;
+    return this.utilityService.imageUrl(image ?? item?.imageUrl ?? '');
   }
 }

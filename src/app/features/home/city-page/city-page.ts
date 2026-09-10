@@ -10,13 +10,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { SeoService } from '../../../core/services/seo.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { formatHomePrice } from '../home-price.util';
-import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
@@ -36,6 +35,7 @@ export class CityPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
   private readonly seo = inject(SeoService);
+  private readonly utilityService = inject(UtilityService);
   destinationId = 0;
   city: any = null;
   destination: any = null;
@@ -82,29 +82,21 @@ export class CityPage implements OnInit {
   cityImageAlt(): string {
     return this.seo.imageAlt(this.city?.images?.[0], this.cityName());
   }
+  onCityImageError(event: Event): void {
+    this.utilityService.onCityImageError(event);
+  }
   imageUrl(source: any): string {
-    const raw = typeof source === 'string' ? source : (source?.imageUrl ?? source?.url ?? '');
-    return !raw
-      ? 'assets/images/bg/3.jpg'
-      : /^(blob:|data:|https?:\/\/)/i.test(raw)
-        ? raw
-        : `${environment.imageUrl}${String(raw).replace(/^\/+/, '')}`;
+    return this.utilityService.imageUrl(source);
   }
   tourImage(tour: any): string {
     return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl);
   }
   onTourImageError(event: Event): void {
-    const target = event.target as HTMLImageElement | null;
-    if (!target) return;
-
-    if (target.getAttribute('data-fallback-applied') === 'true') return;
-
-    target.setAttribute('data-fallback-applied', 'true');
-    target.src = 'assets/images/bg/3.jpg';
+    this.utilityService.onImageError(event);
   }
   tourImageAlt(tour: any): string {
     const image = tour?.images?.[0];
-    return this.seo.imageAlt(image, this.tourTitle(tour));
+    return this.utilityService.imageAlt(image, this.tourTitle(tour));
   }
   tourTitle(tour: any): string {
     return tour?.title ?? (this.isArabic
@@ -112,17 +104,13 @@ export class CityPage implements OnInit {
       : (tour?.titleEng ?? tour?.titleAr ?? ''));
   }
   formattedTourPrice(tour: any): string {
-    return formatHomePrice(
-      this.currencyService,
-      tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price,
-      tour,
-    );
+    return this.utilityService.formattedPrice(this.currencyService, tour);
   }
     formattedOriginalPrice(tour: any): string {
-    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
+    return this.utilityService.formattedOriginalPrice(this.currencyService, tour);
   }
   get isArabic(): boolean {
-    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return this.utilityService.isArabic(this.translate);
   }
 
   private load(city: any, destinationId: number, cityId: number): void {

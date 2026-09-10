@@ -8,12 +8,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { UtilityService } from '../../../../core/services/utilityservice';
 import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
-import { formatHomePrice } from '../../home-price.util';
 import { TourCard } from '../../../../shared/components/tour-card/tour-card';
 export interface TourHomeDTO {
   [key: string]: any;
@@ -49,6 +48,7 @@ export class ToursSection implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
 
   tours: TourHomeDTO[] = [];
   isLoading = false;
@@ -82,25 +82,15 @@ export class ToursSection implements OnInit {
   }
 
   formattedPrice(item: any): string {
-    return formatHomePrice(
-      this.currencyService,
-      item?.discountedPricePerPerson ?? item?.pricePerPerson ?? item?.price,
-      item,
-    );
+    return this.utilityService.formattedPrice(this.currencyService, item);
   }
 
   formattedOriginalPrice(item: any): string {
-    return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
+    return this.utilityService.formattedOriginalPrice(this.currencyService, item);
   }
 
   imageUrl(item: any): string {
-    const url = item?.coverImageUrl ?? item?.imageUrl ?? '';
-    if (!url) return 'assets/images/bg/3.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url)
-      .replace(/^\/+/, '')
-      .replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+    return this.utilityService.imageUrl(item?.coverImageUrl ?? item?.imageUrl ?? '');
   }
 
   tourTitle(item: any): string {
@@ -128,6 +118,6 @@ export class ToursSection implements OnInit {
   }
 
   private get isArabic(): boolean {
-    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return this.utilityService.isArabic(this.translate);
   }
 }

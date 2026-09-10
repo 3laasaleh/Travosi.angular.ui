@@ -13,7 +13,7 @@
 
 <main class="py-16 md:py-24">
   <div class="container mb-8">
-    <img [src]="cityImage()" [alt]="cityImageAlt()" class="aspect-[16/7] w-full rounded-3xl object-cover shadow-sm" />
+    <img [src]="cityImage()" [alt]="cityImageAlt()" loading="lazy" (error)="onCityImageError($event)" class="aspect-[16/7] w-full rounded-3xl object-cover shadow-sm" />
   </div>
   <div class="container grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
     <aside class="self-start rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-28">
@@ -25,7 +25,7 @@
         track tour.id) {
         <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
           class="flex gap-3 rounded-xl p-1 transition hover:bg-slate-50">
-          <img [src]="tourImage(tour)" [alt]="tourImageAlt(tour)" class="h-14 w-16 rounded-lg object-cover" />
+          <img [src]="tourImage(tour)" [alt]="tourImageAlt(tour)" loading="lazy" (error)="onTourImageError($event)" class="h-14 w-16 rounded-lg object-cover" />
           <div class="min-w-0">
             <span class="line-clamp-2 text-sm font-semibold  hover:text-primary"> {{ tourTitle(tour) }} </span>
             <div class="grid gap-2 inline-flex">

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../../core/services/currency.service';
-import { formatHomePrice } from '../../../home-price.util';
+import { UtilityService } from '../../../../../core/services/utilityservice';
 import { DescriptionLinks } from '../../../../../shared/components/description-links/description-links';
 
 @Component({
@@ -18,6 +18,7 @@ import { DescriptionLinks } from '../../../../../shared/components/description-l
 export class TourDetail {
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
   @Input() tour: any = null;
 
   get title(): string {
@@ -69,15 +70,15 @@ export class TourDetail {
   }
 
   get formattedPrice(): string {
-    return formatHomePrice(this.currencyService, this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ?? this.tour?.price, this.tour);
+    return this.utilityService.formattedPrice(this.currencyService, this.tour);
   }
 
   get formattedOriginalPrice(): string {
-    return formatHomePrice(this.currencyService, this.tour?.pricePerPerson ?? this.tour?.price, this.tour);
+    return this.utilityService.formattedOriginalPrice(this.currencyService, this.tour);
   }
 
   get hasDiscount(): boolean {
-    return this.tour?.activeDiscount?.isCurrentlyActive === true;
+    return this.utilityService.hasDiscount(this.tour);
   }
 
   get description(): string {
@@ -87,7 +88,7 @@ export class TourDetail {
   }
 
   private get isArabic(): boolean {
-    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return this.utilityService.isArabic(this.translate);
   }
 
   get highlightItems(): any[] {

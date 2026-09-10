@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { UtilityService } from '../../../core/services/utilityservice';
 
 @Component({
   selector: 'app-tours-menu',
@@ -26,6 +27,7 @@ export class ToursMenu {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
 
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
   @Input() nileCruisesOnly = false;
@@ -44,7 +46,7 @@ export class ToursMenu {
       : tour?.titleEng ?? tour?.titleAr ?? '';
   }
 
-  get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   get isMobile(): boolean { return this.layout === 'mobile'; }
   get menuLabelKey(): string { return this.nileCruisesOnly ? 'nileCruises' : 'tours'; }
   get emptyLabelKey(): string { return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound'; }

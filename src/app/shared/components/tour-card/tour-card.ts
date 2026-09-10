@@ -1,11 +1,8 @@
-import { Title } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../../environments/environment';
 import { CurrencyService } from '../../../core/services/currency.service';
-import { SeoService } from '../../../core/services/seo.service';
-import { formatHomePrice } from '../../../features/home/home-price.util';
+import { UtilityService } from '../../../core/services/utilityservice';
 import type { TourHomeDTO } from '../../../features/home/home-sections/tours-section/tours-section';
 
 @Component({
@@ -19,8 +16,7 @@ import type { TourHomeDTO } from '../../../features/home/home-sections/tours-sec
 export class TourCard {
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
-  private readonly seo = inject(SeoService);
-  private readonly fallbackImage = 'assets/images/bg/3.jpg';
+  private readonly utilityService = inject(UtilityService);
 
   @Input({ required: true }) tour: TourHomeDTO|null=null;
   @Input() compact = false;
@@ -31,56 +27,35 @@ export class TourCard {
 
   get imageUrl(): string {
     const images = Array.isArray(this.tour?.images) ? this.tour.images : [];
-    const source = this.tour?.coverImageUrl ?? images[0] ;
-    const url = typeof source === 'string'
-      ? source
-      : (source?.imageUrl ?? source?.url ?? '');
-    if (!url) return this.fallbackImage;
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+    return this.utilityService.imageUrl(this.tour?.coverImageUrl ?? images[0]);
   }
 
   onImageError(event: Event): void {
-    const target = event.target as HTMLImageElement | null;
-    if (!target) return;
-
-    if (target.getAttribute('data-fallback-applied') === 'true') return;
-
-    target.setAttribute('data-fallback-applied', 'true');
-    target.src = this.fallbackImage;
+    this.utilityService.onImageError(event);
   }
 
   get imageAlt(): string {
     const images = Array.isArray(this.tour?.images) ? this.tour.images : [];
-    return this.seo.imageAlt(images[0], this.tour?.title ?? "" );
+    return this.utilityService.imageAlt(images[0], this.tour?.title ?? '');
   }
 
   get formattedPrice(): string {
-    return formatHomePrice(
-      this.currencyService,
-      this.tour?.discountedPricePerPerson ?? this.tour?.pricePerPerson ,
-      this.tour,
-    );
+    return this.utilityService.formattedPrice(this.currencyService, this.tour);
   }
 
   get formattedOriginalPrice(): string {
-    return formatHomePrice(
-      this.currencyService,
-      this.tour?.pricePerPerson ?? this.tour?.pricePerPerson,
-      this.tour,
-    );
+    return this.utilityService.formattedOriginalPrice(this.currencyService, this.tour);
   }
 
   get hasDiscount(): boolean {
-    return this.tour?.activeDiscount?.isCurrentlyActive === true;
+    return this.utilityService.hasDiscount(this.tour);
   }
 
   get discountPercentage(): number {
-    return Number(this.tour?.activeDiscount?.percentage ?? 0);
+    return this.utilityService.discountPercentage(this.tour);
   }
 
   private get isArabic(): boolean {
-    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+    return this.utilityService.isArabic(this.translate);
   }
 }
