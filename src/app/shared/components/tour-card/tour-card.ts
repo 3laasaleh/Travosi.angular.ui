@@ -20,6 +20,7 @@ export class TourCard {
   private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
+  private readonly fallbackImage = 'assets/images/bg/3.jpg';
 
   @Input({ required: true }) tour: TourHomeDTO|null=null;
   @Input() compact = false;
@@ -34,10 +35,20 @@ export class TourCard {
     const url = typeof source === 'string'
       ? source
       : (source?.imageUrl ?? source?.url ?? '');
-    if (!url) return 'assets/images/bg/3.jpg';
+    if (!url) return this.fallbackImage;
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement | null;
+    if (!target) return;
+
+    if (target.getAttribute('data-fallback-applied') === 'true') return;
+
+    target.setAttribute('data-fallback-applied', 'true');
+    target.src = this.fallbackImage;
   }
 
   get imageAlt(): string {

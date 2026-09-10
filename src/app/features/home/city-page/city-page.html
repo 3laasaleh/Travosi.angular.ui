@@ -22,14 +22,21 @@
       <p class="mt-3 text-sm leading-6 text-slate-500">{{ 'cityToursSidebarHint' | translate }}</p>@if
       (recommendedTours.length) { <div class="mt-5 space-y-3 border-t border-slate-100 pt-4">
         <p class="text-sm font-semibold">{{ 'moreDestinationTours' | translate }}</p>@for (tour of recommendedTours;
-        track tour.id) { <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
+        track tour.id) {
+        <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
           class="flex gap-3 rounded-xl p-1 transition hover:bg-slate-50">
           <img [src]="tourImage(tour)" [alt]="tourImageAlt(tour)" class="h-14 w-16 rounded-lg object-cover" />
           <div class="min-w-0">
             <span class="line-clamp-2 text-sm font-semibold  hover:text-primary"> {{ tourTitle(tour) }} </span>
-            <span class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}
+            <div class="grid gap-2 inline-flex">
+              <span class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}
+              </span>
+              <span
+                class="h-6 w-full flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 ">
+                {{ 'bookNow'|translate }}
+              </span>
 
-            </span>
+            </div>
 
           </div>
         </a>

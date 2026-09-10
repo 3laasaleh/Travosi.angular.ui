@@ -93,6 +93,15 @@ export class CityPage implements OnInit {
   tourImage(tour: any): string {
     return this.imageUrl(tour?.coverImageUrl ?? tour?.images?.[0] ?? tour?.imageUrl);
   }
+  onTourImageError(event: Event): void {
+    const target = event.target as HTMLImageElement | null;
+    if (!target) return;
+
+    if (target.getAttribute('data-fallback-applied') === 'true') return;
+
+    target.setAttribute('data-fallback-applied', 'true');
+    target.src = 'assets/images/bg/3.jpg';
+  }
   tourImageAlt(tour: any): string {
     const image = tour?.images?.[0];
     return this.seo.imageAlt(image, this.tourTitle(tour));
