@@ -23,12 +23,12 @@ import { ProductReviews } from '../../../shared/components/product-reviews/produ
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
   imports: [Breadcrumbs, 
-    RouterLink,
     TranslatePipe,
     HomeNavbar,
     FooterOne,
@@ -37,6 +37,7 @@ import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs'
     ImageViewerModal,
     ProductReviews,
     DescriptionLinks,
+    TourCard,
   ],
   templateUrl: './package-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

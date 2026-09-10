@@ -18,15 +18,14 @@ import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
-import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
 @Component({
   selector: 'app-home-destination-detail',
@@ -39,6 +38,7 @@ import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs'
     ImageViewerModal,
     DestinationCitiesCarousel,
     DescriptionLinks,
+    TourCard,
   ],
   templateUrl: './destination-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +48,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly currencyService = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
   private readonly platformId = inject(PLATFORM_ID);
@@ -189,57 +188,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
 
   closeImageViewer(): void {
     this.imageViewerOpen = false;
-  }
-
-  tourImage(tour: any): string {
-    const image = Array.isArray(tour?.images) ? tour.images[0] : null;
-    return this.imageUrl(tour?.coverImageUrl ?? image ?? tour?.imageUrl, 'assets/images/bg/3.jpg');
-  }
-
-  tourTitle(tour: any): string {
-    return this.isArabic
-      ? tour?.titleAr ||
-          tour?.nameAr ||
-          tour?.titleEng ||
-          tour?.nameEng ||
-          tour?.title ||
-          tour?.name ||
-          ''
-      : tour?.titleEng ||
-          tour?.nameEng ||
-          tour?.title ||
-          tour?.name ||
-          tour?.titleAr ||
-          tour?.nameAr ||
-          '';
-  }
-
-  tourDescription(tour: any): string {
-    return this.isArabic
-      ? tour?.descriptionAr ||
-          tour?.fullDescriptionAr ||
-          tour?.descriptionEng ||
-          tour?.description ||
-          ''
-      : tour?.descriptionEng || tour?.description || tour?.descriptionAr || '';
-  }
-
-  formattedTourPrice(tour: any): string {
-    return formatHomePrice(
-      this.currencyService,
-      tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price,
-      tour,
-    );
-  }
-
-  tourDestinationName(tour: any): string {
-    return (
-      tour?.destinationName ??
-      tour?.destination?.titleEng ??
-      this.destination?.titleEng ??
-      this.destination?.name ??
-      ''
-    );
   }
 
   private loadDestination(routeName: string): void {

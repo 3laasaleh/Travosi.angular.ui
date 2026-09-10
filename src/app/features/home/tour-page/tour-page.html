@@ -130,23 +130,8 @@
         </div>
 
         <div #relatedToursTrack class="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
-          @for (relatedTour of relatedTours; track relatedTour.id ?? relatedTour.tourId) {
-            <a [routerLink]="relatedTour.routeName ? ['/tours', relatedTour.routeName] : ['/tours']"
-              class="group flex w-[280px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg sm:w-[300px]">
-              <img [src]="imageUrl(relatedTour.coverImageUrl ?? relatedTour.images?.[0] ?? relatedTour.imageUrl)"
-                [alt]="imageAlt(relatedTour.coverImageUrl ?? relatedTour.images?.[0] ?? relatedTour.imageUrl, relatedTourTitle(relatedTour))"
-                loading="lazy" class="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105" />
-              <div class="flex flex-1 flex-col p-4">
-                <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ relatedTourTitle(relatedTour) }}</h3>
-                @if (relatedTourDescription(relatedTour); as description) {
-                  <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ description }}</p>
-                }
-                <div class="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <strong class="text-lg text-primary">{{ relatedTourPrice(relatedTour) }}</strong>
-                  <span class="text-sm font-semibold text-slate-600 transition group-hover:text-primary">{{ 'bookNow' | translate }} <i class="mdi mdi-arrow-right rtl:rotate-180"></i></span>
-                </div>
-              </div>
-            </a>
+          @for (relatedTour of relatedTours; track relatedTour.id ) {
+            <app-tour-card [tour]="relatedTour" class="w-[280px] shrink-0 snap-start sm:w-[300px]" />
           }
         </div>
       </section>

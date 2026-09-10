@@ -14,26 +14,33 @@ import { CurrencyService } from '../../../../core/services/currency.service';
 import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { formatHomePrice } from '../../home-price.util';
+import { TourCard } from '../../../../shared/components/tour-card/tour-card';
 export interface TourHomeDTO {
+  [key: string]: any;
   id: number;
   routeName?: string | null;
   coverImageUrl: string | null;
-  titleAr: string;
-  titleEng: string;
+  images:TourImageDTO[],
+  title: string;
   destinationName: string;
   description?: string | null;
   fullDescription?: string | null;
-  descriptionEng?: string | null;
-  descriptionAr?: string | null;
-  fullDescriptionEng?: string | null;
-  fullDescriptionAr?: string | null;
   pricePerPerson?: number;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
 }
+
+export interface  TourImageDTO {
+  id?: number;
+  imageName?: string;
+  imageUrl?: string;
+  url?: string;
+  altEng?: string;
+  altAr?: string;
+}
 @Component({
   selector: 'app-tours-section',
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, TourCard],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tours-section.html',
 })

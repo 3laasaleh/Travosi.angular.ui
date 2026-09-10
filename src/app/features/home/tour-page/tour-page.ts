@@ -13,7 +13,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../core/services/currency.service';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { environment } from '../../../../environments/environment';
@@ -24,7 +23,7 @@ import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
-import { formatHomePrice } from '../home-price.util';
+import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
 import { PaginationModel } from '../../../core/models/pagination.model';
@@ -32,7 +31,7 @@ import { PaginationModel } from '../../../core/models/pagination.model';
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews],
+  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews, TourCard],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +42,6 @@ export class HomeTourPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
-  private readonly currencyService = inject(CurrencyService);
 
   @ViewChild('relatedToursTrack') private relatedToursTrack?: ElementRef<HTMLElement>;
 
@@ -99,28 +97,6 @@ export class HomeTourPage implements OnInit {
 
   get destinationName(): string {
     return this.tour?.destinationName ?? '';
-  }
-
-  relatedTourTitle(tour: any): string {
-    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    return isArabic
-      ? (tour?.titleAr ?? tour?.titleEng ?? tour?.title ?? '')
-      : (tour?.titleEng ?? tour?.title ?? tour?.titleAr ?? '');
-  }
-
-  relatedTourDescription(tour: any): string {
-    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    return isArabic
-      ? (tour?.descriptionAr ?? tour?.descriptionEng ?? tour?.description ?? '')
-      : (tour?.descriptionEng ?? tour?.description ?? tour?.descriptionAr ?? '');
-  }
-
-  relatedTourPrice(tour: any): string {
-    return formatHomePrice(
-      this.currencyService,
-      tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price,
-      tour,
-    );
   }
 
   scrollRelatedTours(direction: -1 | 1): void {

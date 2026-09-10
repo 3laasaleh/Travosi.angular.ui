@@ -19,11 +19,12 @@ import { formatHomePrice } from '../home-price.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks],
+  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks,TourCard],
   templateUrl: './city-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

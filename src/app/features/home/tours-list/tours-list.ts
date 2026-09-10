@@ -8,19 +8,17 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CurrencyService } from '../../../core/services/currency.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
-import { formatHomePrice } from '../home-price.util';
 import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
 interface PaginationInfo {
   page: number;
@@ -32,7 +30,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-tours-list',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker],
+  imports: [Breadcrumbs, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker, TourCard],
   templateUrl: './tours-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,14 +38,12 @@ export class HomeToursList implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly currencyService = inject(CurrencyService);
   private readonly route = inject(ActivatedRoute);
   private readonly translate = inject(TranslateService);
 
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
   readonly nileCruisesOnly = this.route.snapshot.data['nileCruisesOnly'] === true;
-  private readonly imageIndexMap = new Map<string, number>();
 
   tours: any[] = [];
   private allTours: any[] = [];
@@ -172,69 +168,10 @@ export class HomeToursList implements OnInit {
     return tour?.title ?? '';
   }
 
-  tourDescription(tour: any): string {
-    return tour?.description ?? tour?.fullDescription ?? '';
-  }
-
   private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
 
   destinationName(tour: any): string {
     return tour?.destinationName ?? tour?.destination?.titleEng ?? tour?.destination?.title ?? '';
-  }
-
-  durationDays(tour: any): number | null {
-    const value = Number(tour?.durationDays ?? tour?.days);
-    return Number.isFinite(value) && value > 0 ? value : null;
-  }
-
-  formattedPrice(tour: any): string {
-    return formatHomePrice(this.currencyService, tour?.discountedPricePerPerson ?? tour?.pricePerPerson ?? tour?.price, tour);
-  }
-
-  formattedOriginalPrice(tour: any): string {
-    return formatHomePrice(this.currencyService, tour?.pricePerPerson ?? tour?.price, tour);
-  }
-
-  imageItems(tour: any): any[] {
-    const images = Array.isArray(tour?.images) ? tour.images : [];
-    if (images.length) return images;
-    const fallback = tour?.coverImageUrl ?? tour?.imageUrl;
-    return fallback ? [{ imageUrl: fallback }] : [];
-  }
-
-  imageUrl(tour: any): string {
-    return this.imageAt(tour, 0);
-  }
-
-  imageAt(tour: any, index: number): string {
-    const images = this.imageItems(tour);
-    const source = images[Math.max(0, Math.min(index, images.length - 1))] ?? null;
-    const url = source?.imageUrl ?? source?.url ?? source?.path ?? tour?.coverImageUrl ?? tour?.imageUrl ?? '';
-    if (!url) return 'assets/images/bg/3.jpg';
-    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
-    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
-    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
-  }
-
-  getImageIndex(key: string): number {
-    return this.imageIndexMap.get(key) ?? 0;
-  }
-
-  setImageIndex(key: string, index: number, total: number): void {
-    if (!total) return;
-    this.imageIndexMap.set(key, ((index % total) + total) % total);
-  }
-
-  prevImage(key: string, total: number): void {
-    if (!total) return;
-    const current = this.getImageIndex(key);
-    this.setImageIndex(key, current - 1, total);
-  }
-
-  nextImage(key: string, total: number): void {
-    if (!total) return;
-    const current = this.getImageIndex(key);
-    this.setImageIndex(key, current + 1, total);
   }
 
   private updatePagination(pageData: any, rowCount: number): void {
