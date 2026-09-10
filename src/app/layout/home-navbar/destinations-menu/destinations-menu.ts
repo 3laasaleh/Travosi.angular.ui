@@ -53,11 +53,14 @@ export class DestinationsMenu {
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
     if (this.menuOpen) {
-      this.opened.emit();
-      if (!this.loaded && !this.isLoading) this.loadHierarchy();
+      this.closeMenu();
+      return;
     }
+
+    this.menuOpen = true;
+    this.opened.emit();
+    if (!this.loaded && !this.isLoading) this.loadHierarchy();
   }
 
   openMenu(): void {
@@ -77,6 +80,37 @@ export class DestinationsMenu {
   activateCity(city: any): void {
     if (this.isMobile) return;
     this.activeCityId = Number(city?.id) || null;
+  }
+
+  toggleDestination(destination: any, event: MouseEvent): void {
+    event.stopPropagation();
+    if (!this.isMobile) return;
+
+    const destinationId = this.itemId(destination);
+    if (destinationId === null) return;
+
+    this.activeDestinationId = this.activeDestinationId === destinationId ? null : destinationId;
+    this.activeCityId = null;
+  }
+
+  toggleCity(city: any, event: MouseEvent): void {
+    event.stopPropagation();
+    if (!this.isMobile) return;
+
+    const cityId = this.itemId(city);
+    if (cityId === null) return;
+
+    this.activeCityId = this.activeCityId === cityId ? null : cityId;
+  }
+
+  isDestinationExpanded(destination: any): boolean {
+    const destinationId = this.itemId(destination);
+    return destinationId !== null && this.activeDestinationId === destinationId;
+  }
+
+  isCityExpanded(city: any): boolean {
+    const cityId = this.itemId(city);
+    return cityId !== null && this.activeCityId === cityId;
   }
 
   scheduleClose(): void {
@@ -106,6 +140,11 @@ export class DestinationsMenu {
   }
 
   retry(): void { this.loaded = false; this.loadHierarchy(); }
+
+  private itemId(item: any): number | null {
+    const id = Number(item?.id);
+    return Number.isFinite(id) ? id : null;
+  }
 
   private loadHierarchy(): void {
     this.isLoading = true;
