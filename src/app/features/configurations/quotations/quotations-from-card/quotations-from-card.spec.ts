@@ -87,7 +87,7 @@ describe('QuotationsFromCard', () => {
 
     expect(apiService.get).toHaveBeenCalledWith('Customers?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Packages?page=1&pageSize=100');
-    expect(apiService.get).toHaveBeenCalledWith('Tours?page=1&pageSize=100');
+    expect(apiService.get).toHaveBeenCalledWith('Tours/GetAll?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Hotels?page=1&pageSize=100');
     expect(apiService.get).toHaveBeenCalledWith('Flights/GetAll?page=1&pageSize=100');
     expect(component.customers).toEqual([{ id: 7, firstName: 'Mona', lastName: 'Ali' }]);

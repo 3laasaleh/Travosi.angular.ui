@@ -21,9 +21,13 @@ export interface TourHomeDTO {
   coverImageUrl: string | null;
   images: TourImageDTO[];
   title: string;
+  destinationId: number;
   destinationName: string;
+  cityId?: number | null;
   description?: string | null;
   fullDescription?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
   pricePerPerson?: number;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;

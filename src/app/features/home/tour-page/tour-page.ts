@@ -232,11 +232,12 @@ export class HomeTourPage implements OnInit {
     const tourId = Number(tour?.id ?? tour?.tourId);
     if (!Number.isInteger(destinationId) || destinationId <= 0) return;
 
-    this.apiService.getUnauthntecated(`Tours?page=1&pageSize=12&destinationId=${destinationId}`)
+    this.apiService.getUnauthntecated(`Tours/RelatedTours?page=1&pageSize=12&destinationId=${destinationId}`)
       .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
       .subscribe((response:IGenericResponse<PaginationModel<TourHomeDTO>>) => {
-        if (Number(this.tour?.id ?? this.tour?.tourId) !== tourId) return;
+        if (Number(this.tour?.id) !== tourId) return;
         const rows = response?.data?.data ?? response;
+
         this.relatedTours = (Array.isArray(rows) ? rows : [])
           .filter((item) =>  Number(item?.id ) !== tourId)
           .slice(0, 10);

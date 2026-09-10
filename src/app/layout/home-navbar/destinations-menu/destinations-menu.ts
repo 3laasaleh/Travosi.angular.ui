@@ -11,10 +11,30 @@ import {
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { UtilityService } from '../../../core/services/utilityservice';
+import { CityDTO } from '../../../features/configurations/cities/cities-from-card/cities-from-card';
+
+interface DestinationTourNavigationDTO {
+  id: number;
+  routeName?: string | null;
+  title: string;
+}
+
+interface DestinationCityNavigationDTO {
+  id: number;
+  routeName?: string | null;
+  title: string;
+  tours: DestinationTourNavigationDTO[];
+}
+
+interface DestinationNavigationDTO {
+  id: number;
+  routeName?: string | null;
+  title: string;
+  cities: DestinationCityNavigationDTO[];
+}
 
 @Component({
   selector: 'app-destinations-menu', standalone: true, imports: [NgClass, RouterLink, TranslatePipe],
@@ -24,8 +44,6 @@ export class DestinationsMenu {
   private readonly api = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
-  private readonly translate = inject(TranslateService);
-  private readonly utilityService = inject(UtilityService);
 
   /** `desktop` renders a full-width mega menu bar, `mobile` renders an inline collapsible panel. */
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
@@ -36,22 +54,16 @@ export class DestinationsMenu {
   isLoading = false;
   loaded = false;
   loadFailed = false;
-  destinations: any[] = [];
+  destinations: DestinationNavigationDTO[] = [];
   activeDestinationId: number | null = null;
   activeCityId: number | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  destinationName(item: any): string { return item?.title ?? item?.name ?? ''; }
-  cityName(item: any): string { return item?.title ?? item?.name ?? ''; }
-  cities(destination: any): any[] { return destination?.cities ?? []; }
-  tours(city: any): any[] { return city?.tours ?? []; }
-  tourName(item: any): string {
-    const title = item?.title ?? '';
-    const titleAr = item?.titleAr ?? '';
-    const titleEng = item?.titleEng ?? '';
-    return this.isArabic ? (title || titleAr || titleEng) : (title || titleEng || titleAr);
-  }
-  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
+  destinationName(item: DestinationNavigationDTO): string { return item.title; }
+  cityName(item: DestinationCityNavigationDTO): string { return item.title; }
+  cities(destination: DestinationNavigationDTO): DestinationCityNavigationDTO[] { return destination.cities ?? []; }
+  tours(city: DestinationCityNavigationDTO): DestinationTourNavigationDTO[] { return city.tours ?? []; }
+  tourName(item: DestinationTourNavigationDTO): string { return item.title; }
   get isMobile(): boolean { return this.layout === 'mobile'; }
 
   toggleMenu(event: MouseEvent): void {
@@ -74,18 +86,18 @@ export class DestinationsMenu {
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
   }
 
-  activateDestination(destination: any): void {
+  activateDestination(destination: DestinationNavigationDTO): void {
     if (this.isMobile) return;
     this.activeDestinationId = Number(destination?.id) || null;
     this.activeCityId = null;
   }
 
-  activateCity(city: any): void {
+  activateCity(city: DestinationCityNavigationDTO): void {
     if (this.isMobile) return;
     this.activeCityId = Number(city?.id) || null;
   }
 
-  toggleDestination(destination: any, event: MouseEvent): void {
+  toggleDestination(destination: DestinationNavigationDTO, event: MouseEvent): void {
     event.stopPropagation();
     if (!this.isMobile) return;
 
@@ -96,7 +108,7 @@ export class DestinationsMenu {
     this.activeCityId = null;
   }
 
-  toggleCity(city: any, event: MouseEvent): void {
+  toggleCity(city: DestinationCityNavigationDTO, event: MouseEvent): void {
     event.stopPropagation();
     if (!this.isMobile) return;
 
@@ -106,12 +118,12 @@ export class DestinationsMenu {
     this.activeCityId = this.activeCityId === cityId ? null : cityId;
   }
 
-  isDestinationExpanded(destination: any): boolean {
+  isDestinationExpanded(destination: DestinationNavigationDTO): boolean {
     const destinationId = this.itemId(destination);
     return destinationId !== null && this.activeDestinationId === destinationId;
   }
 
-  isCityExpanded(city: any): boolean {
+  isCityExpanded(city: DestinationCityNavigationDTO): boolean {
     const cityId = this.itemId(city);
     return cityId !== null && this.activeCityId === cityId;
   }
@@ -144,8 +156,8 @@ export class DestinationsMenu {
 
   retry(): void { this.loaded = false; this.loadHierarchy(); }
 
-  private itemId(item: any): number | null {
-    const id = Number(item?.id);
+  private itemId(item: { id: number }): number | null {
+    const id = Number(item.id);
     return Number.isFinite(id) ? id : null;
   }
 

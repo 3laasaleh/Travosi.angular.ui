@@ -474,7 +474,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     forkJoin({
       customers: this.apiService.get('Customers?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       packages: this.apiService.get('Packages?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
-      tours: this.apiService.get('Tours?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
+      tours: this.apiService.get('Tours/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       hotels: this.apiService.get('Hotels?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       flights: this.apiService.get('Flights/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
     }).pipe(finalize(() => {

@@ -351,7 +351,7 @@ export class Vouchers implements OnInit {
       customers: safeGet('Customers?page=1&pageSize=100'),
       flights: safeGet('Flights/GetAll?page=1&pageSize=100'),
       hotels: safeGet('Hotels?page=1&pageSize=100'),
-      tours: safeGet('Tours?page=1&pageSize=100'),
+      tours: safeGet('Tours/GetAll?page=1&pageSize=100'),
       packages: safeGet('Packages?page=1&pageSize=100'),
     }).pipe(finalize(() => {
       this.isOptionsLoading = false;
