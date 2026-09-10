@@ -10,19 +10,10 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-
-interface TourNavigationDTO {
-  id: number;
-  routeName?: string | null;
-  title: string;
-}
-
-interface NavigationResponse {
-  data?: TourNavigationDTO[];
-}
+import { UtilityService } from '../../../core/services/utilityservice';
 
 @Component({
   selector: 'app-tours-menu',
@@ -35,6 +26,8 @@ export class ToursMenu {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly translate = inject(TranslateService);
+  private readonly utilityService = inject(UtilityService);
 
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
   @Input() nileCruisesOnly = false;
@@ -44,13 +37,14 @@ export class ToursMenu {
   menuOpen = false;
   isLoading = false;
   loaded = false;
-  tours: TourNavigationDTO[] = [];
+  tours: any[] = [];
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  tourName(tour: TourNavigationDTO): string {
-    return tour.title;
+  tourName(tour: any): string {
+    return tour?.title ;
   }
 
+  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
   get isMobile(): boolean { return this.layout === 'mobile'; }
   get menuLabelKey(): string { return this.nileCruisesOnly ? 'nileCruises' : 'tours'; }
   get emptyLabelKey(): string { return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound'; }
@@ -101,18 +95,17 @@ export class ToursMenu {
   private loadTours(): void {
     this.isLoading = true;
     const nileCruiseFilter = this.nileCruisesOnly ? '&isNileCruise=true' : '';
-    this.apiService.getUnauthntecated<NavigationResponse | TourNavigationDTO[]>(
-      `Tours/Navigation?take=8${nileCruiseFilter}`,
-    ).pipe(
+    this.apiService.getUnauthntecated(`Tours?page=1&pageSize=8${nileCruiseFilter}`).pipe(
       catchError(() => of(null)),
       finalize(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((response) => {
+    ).subscribe((response: any) => {
       if (response === null) return;
-      const rows = Array.isArray(response) ? response : response.data;
-      this.tours = Array.isArray(rows) ? rows : [];
+      const pageData = response?.data ?? response;
+      const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
+      this.tours = Array.isArray(rows) ? rows.slice(0, 8) : [];
       this.loaded = true;
     });
   }
