@@ -23,7 +23,7 @@ export class PackagesSection implements OnInit {
   private readonly currencyService = inject(CurrencyService);
   private readonly utilityService = inject(UtilityService);
 
-  packages: any[] = [];
+  packages: PackageDTO[] = [];
   isLoading = false;
   hasError = false;
 
@@ -34,7 +34,9 @@ export class PackagesSection implements OnInit {
   loadPackages(): void {
     this.isLoading = true;
     this.hasError = false;
-    this.apiService.getUnauthntecated('Packages?page=1&pageSize=8').pipe(
+    this.apiService
+      .getUnauthntecated<IGenericResponse<PaginationModel<PackageDTO>>>('Packages?page=1&pageSize=8')
+      .pipe(
       catchError(() => {
         this.hasError = true;
         return of(null);
@@ -43,7 +45,7 @@ export class PackagesSection implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: IGenericResponse<PaginationModel<PackageDTO[]>>) => {
+    ).subscribe((response) => {
       if (response === null) {
         this.packages = [];
         return;
@@ -53,25 +55,20 @@ export class PackagesSection implements OnInit {
     });
   }
 
-  formattedPrice(item: any): string {
+  formattedPrice(item: PackageDTO): string {
     return this.utilityService.formattedPrice(this.currencyService, item);
   }
 
-  formattedOriginalPrice(item: any): string {
+  formattedOriginalPrice(item: PackageDTO): string {
     return this.utilityService.formattedOriginalPrice(this.currencyService, item);
   }
 
-  packageTitle(item: any): string {
-    return item?.title ?? item?.name ?? '';
+  destinationName(item: PackageDTO): string {
+    return item.destinations[0]?.destinationName ?? '';
   }
 
-  packageDescription(item: any): string {
-    return item?.description ?? item?.fullDescription ?? item?.subDescription ?? '';
-  }
-
-  imageUrl(item: any): string {
-    const image = Array.isArray(item?.images) ? item.images[0] : null;
-    return this.utilityService.imageUrl(image ?? item?.imageUrl ?? '');
+  imageUrl(item: PackageDTO): string {
+    return this.utilityService.imageUrl(item.images[0] ?? '');
   }
 
   onImageError(event: Event): void {
