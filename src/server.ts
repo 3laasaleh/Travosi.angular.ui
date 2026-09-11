@@ -18,7 +18,7 @@ const allowedHosts = (process.env['NG_ALLOWED_HOSTS']
   .filter(Boolean);
 const angularApp = new AngularNodeAppEngine({ allowedHosts });
 const publicBaseUrl = (process.env['PUBLIC_BASE_URL'] || environment.publicBaseUrl).replace(/\/+$/, '');
-const apiBaseUrl = process.env['API_BASE_URL'] || environment.baseUrl;
+const apiBaseUrl = process.env['API_BASE_URL'] || environment.serverBaseUrl;
 const apiOrigin = new URL(apiBaseUrl).origin;
 
 app.disable('x-powered-by');

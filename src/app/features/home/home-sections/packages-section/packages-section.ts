@@ -1,3 +1,4 @@
+import { PaginationModel } from './../../../../shared/models/pagination.model';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
@@ -5,6 +6,9 @@ import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { UtilityService } from '../../../../core/services/utilityservice';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { PackageDTO } from './package.model';
+
 
 @Component({
   selector: 'app-packages-section',
@@ -39,14 +43,13 @@ export class PackagesSection implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: any) => {
+    ).subscribe((response: IGenericResponse<PaginationModel<PackageDTO[]>>) => {
       if (response === null) {
         this.packages = [];
         return;
       }
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
-      this.packages = Array.isArray(rows) ? rows.slice(0, 8) : [];
+      const data = response?.data?.data ?? [];
+      this.packages = data;
     });
   }
 

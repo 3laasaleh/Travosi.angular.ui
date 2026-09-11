@@ -60,11 +60,11 @@ export class CityPage implements OnInit {
   }
 
   cityNameHomeResolver(city: any): string {
-    return city?.title ?? city?.name ?? '';
+    return city?.title ?? '';
   }
 
   cityDescription(): string {
-    return this.city?.description ?? this.city?.fullDescription ?? this.city?.subDescription ?? '';
+    return this.city?.description ?? '';
   }
 
   destinationName(): string {
@@ -138,7 +138,7 @@ export class CityPage implements OnInit {
         .pipe(catchError(() => of(null))),
       tours: this.api
         .getUnauthntecated(
-          `Tours?page=1&pageSize=10&destinationId=${destinationId}&cityId=${cityId}`,
+          `Tours?page=1&pageSize=10&cityId=${cityId}`,
         )
         .pipe(catchError(() => of(null))),
       recommended: this.api

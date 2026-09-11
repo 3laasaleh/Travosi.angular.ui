@@ -1,11 +1,19 @@
 import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, PLATFORM_ID, SimpleChanges, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
-import { CityDTO } from '../../../features/configurations/cities/cities-from-card/cities-from-card';
 import { UtilityService } from '../../../core/services/utilityservice';
+
+interface CityHomeDTO {
+  id: number;
+  routeName?: string | null;
+  title?: string | null;
+  destinationId?: number | null;
+  images?: Array<{ imageUrl?: string | null }>;
+  coverImageUrl?: string | null;
+  imageUrl?: string | null;
+}
 
 @Component({
   selector: 'app-destination-cities-carousel',
@@ -15,11 +23,9 @@ import { UtilityService } from '../../../core/services/utilityservice';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDestroy {
-  private readonly translate = inject(TranslateService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly utilityService = inject(UtilityService);
-  @Input() destinationId!: number;
-  @Input() cities: CityDTO[] = [];
+  @Input() cities: CityHomeDTO[] = [];
   private swiper: Swiper | null = null;
   readonly instanceId = 'destination-cities-carousel';
 
@@ -30,8 +36,10 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
   ngOnDestroy(): void { this.swiper?.destroy(true, true); }
 
   get selector(): string { return `#${this.instanceId}`; }
-  cityName(city: any): string { return city?.title; }
-  get isArabic(): boolean { return this.utilityService.isArabic(this.translate); }
+  cityName(city: CityHomeDTO): string {
+    debugger
+    return city.title ?? '';
+  }
   cityImage(city: any): string {
     return this.utilityService.imageUrl(city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? '');
   }
