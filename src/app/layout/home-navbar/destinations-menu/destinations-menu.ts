@@ -14,7 +14,6 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CityDTO } from '../../../features/configurations/cities/cities-from-card/cities-from-card';
 
 interface DestinationTourNavigationDTO {
   id: number;
@@ -65,6 +64,13 @@ export class DestinationsMenu {
   tours(city: DestinationCityNavigationDTO): DestinationTourNavigationDTO[] { return city.tours ?? []; }
   tourName(item: DestinationTourNavigationDTO): string { return item.title; }
   get isMobile(): boolean { return this.layout === 'mobile'; }
+  get menuId(): string { return `destinations-mega-menu-${this.layout}`; }
+  get selectedDestination(): DestinationNavigationDTO | null {
+    return this.destinations.find((item) => item.id === this.activeDestinationId) ?? null;
+  }
+  get selectedCity(): DestinationCityNavigationDTO | null {
+    return this.selectedDestination?.cities.find((item) => item.id === this.activeCityId) ?? null;
+  }
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
@@ -76,6 +82,7 @@ export class DestinationsMenu {
     this.menuOpen = true;
     this.opened.emit();
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
+    else this.ensureDesktopSelection();
   }
 
   openMenu(): void {
@@ -84,12 +91,14 @@ export class DestinationsMenu {
     this.menuOpen = true;
     this.opened.emit();
     if (!this.loaded && !this.isLoading) this.loadHierarchy();
+    else this.ensureDesktopSelection();
   }
 
   activateDestination(destination: DestinationNavigationDTO): void {
     if (this.isMobile) return;
-    this.activeDestinationId = Number(destination?.id) || null;
-    this.activeCityId = null;
+    this.activeDestinationId = this.itemId(destination);
+    this.activeCityId=null;
+   
   }
 
   activateCity(city: DestinationCityNavigationDTO): void {
@@ -176,8 +185,17 @@ export class DestinationsMenu {
       const rows = data?.data ?? data?.destinations ?? data;
       this.destinations = Array.isArray(rows) ? rows : [];
       this.loaded = true;
+      this.ensureDesktopSelection();
     });
   }
+
+  private ensureDesktopSelection(): void {
+    if (this.isMobile || !this.destinations.length) return;
+
+
+  }
+
+
 
   @HostListener('document:keydown.escape') closeOnEscape(): void { this.closeMenu(); }
   @HostListener('document:click', ['$event']) closeOnOutsideClick(event: MouseEvent): void {

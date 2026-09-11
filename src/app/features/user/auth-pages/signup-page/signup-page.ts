@@ -42,6 +42,7 @@ export class SignupPage implements AfterViewInit {
   bg = 'assets/images/bg/6.jpg';
   logo = 'assets/images/main-logo.png';
   isSubmitting = false;
+  submitAttempted = false;
   errorMessage = '';
   successMessage = '';
   showPassword = false;
@@ -59,11 +60,11 @@ export class SignupPage implements AfterViewInit {
     {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      mobile: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s-]{7,15}$/)]],
+      mobile: ['', [Validators.required, Validators.pattern(/^\+?[0-9 ()-]{7,20}$/)]],
       email: ['', [Validators.required, Validators.email]],
       dateOfBirth: ['', Validators.required],
       gender: [null as number | null, Validators.required],
-      passportNumber: ['', [Validators.pattern(/^\d*$/), Validators.minLength(8), Validators.maxLength(20)]],
+      passportNumber: ['', [Validators.required, Validators.pattern(/^\d*$/), Validators.minLength(8), Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       acceptTerms: [false, Validators.requiredTrue],
@@ -79,6 +80,8 @@ export class SignupPage implements AfterViewInit {
 
   onSubmit(): void {
     if (this.isSubmitting) return;
+
+    this.submitAttempted = true;
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -108,19 +111,38 @@ export class SignupPage implements AfterViewInit {
       }),
     ).subscribe({
       next: (res: IGenericResponse<string>) => {
-        if(res.isSuccess){
-        this.successMessage = res.data ?? 'signupCompleted';
-        this.router.navigateByUrl('/login');
-        }
-        else{
-        this.errorMessage = res.message ?? 'signupFailed';
+        if (res.isSuccess) {
+          this.successMessage = res.data ?? 'signupCompleted';
+          this.router.navigateByUrl('/login');
+        } else {
+          this.errorMessage = this.resolveApiError(res, 'signupFailed');
         }
       },
       error: (error) => {
-        this.errorMessage =
-          error?.error?.message || error?.message || 'registrationFailed';
+        this.errorMessage = this.resolveApiError(error?.error ?? error, 'registrationFailed');
       },
     });
+  }
+
+  private resolveApiError(response: any, fallback: string): string {
+    const errors = response?.errors;
+
+    if (Array.isArray(errors)) {
+      const messages = errors.filter((value): value is string =>
+        typeof value === 'string' && value.trim().length > 0,
+      );
+      if (messages.length > 0) return messages.join(' ');
+    } else if (errors && typeof errors === 'object') {
+      const messages = Object.values(errors)
+        .flatMap((value) => Array.isArray(value) ? value : [value])
+        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0);
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    if (typeof response?.message === 'string' && response.message.trim()) return response.message;
+    if (typeof response?.detail === 'string' && response.detail.trim()) return response.detail;
+    if (typeof response?.title === 'string' && response.title.trim()) return response.title;
+    return fallback;
   }
 
   private passwordMatchValidator(control: AbstractControl) {

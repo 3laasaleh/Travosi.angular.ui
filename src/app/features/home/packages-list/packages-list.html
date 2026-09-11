@@ -109,8 +109,9 @@
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @for (item of packages; track item.id ?? item.packageId ?? $index; let itemIndex = $index) {
           <a
-            [routerLink]="['/packages', item.routeName]"
-            class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-slate-800 "
+            [routerLink]="item.routeName ? ['/packages', item.routeName] : ['/packages']"
+            class="group flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/25 dark:border-slate-800"
+            [attr.aria-label]="packageTitle(item)"
           >
             <article class="flex w-full flex-col">
               <div class="relative overflow-hidden">
@@ -160,9 +161,12 @@
                     </p>
                   }
                   <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-                    <div><strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>@if (item.activeDiscount?.isCurrentlyActive) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }</div>
-                    <span class="text-sm font-semibold text-slate-500 transition group-hover:text-primary">
-                      {{ 'exploreNow' | translate }} <i class="mdi mdi-arrow-right rtl:rotate-180"></i>
+                    <div class="flex flex-col">
+                      @if (item.activeDiscount?.isCurrentlyActive) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
+                      <strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>
+                    </div>
+                    <span class="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 group-hover:bg-primary-700">
+                      {{ 'bookNow' | translate }}
                     </span>
                   </div>
                 </div>
