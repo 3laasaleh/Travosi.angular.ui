@@ -11,8 +11,10 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { LanguageService } from '../../../../core/services/language.service';
+import { PaginationModel } from '../../../../shared/models/pagination.model';
+import { DestinationHomeDTO } from './destination.model';
 
 @Component({
   selector: 'app-destinations-section',
@@ -24,9 +26,8 @@ export class DestinationsSection implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly languageService = inject(LanguageService);
 
-  destinations: any[] = [];
+  destinations: DestinationHomeDTO[] = [];
   isLoading = true;
   hasError = false;
 
@@ -39,7 +40,7 @@ export class DestinationsSection implements OnInit {
     this.hasError = false;
 
     this.apiService
-      .getUnauthntecated('destinations?page=1&pageSize=12')
+      .getUnauthntecated<IGenericResponse<PaginationModel<DestinationHomeDTO>>>('destinations?page=1&pageSize=12')
       .pipe(
         catchError(() => {
           this.hasError = true;
@@ -51,35 +52,26 @@ export class DestinationsSection implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((response: any) => {
+      .subscribe((response) => {
         if (response === null) {
           this.destinations = [];
           return;
         }
 
-        const pageData = response?.data ?? response;
-        const rows = pageData?.data ?? pageData?.items ?? pageData?.destinations ?? pageData;
-        this.destinations = Array.isArray(rows) ? rows.slice(0, 12) : [];
+        this.destinations = response.data.data.slice(0, 12);
       });
   }
 
-  destinationName(destination: any): string {
-    return destination?.title ?? destination?.name ?? '';
+  destinationName(destination: DestinationHomeDTO): string {
+    return destination.title;
   }
 
-  destinationDescription(destination: any): string {
-    return destination?.description ?? destination?.subDescription ?? destination?.fullDescription ?? '';
+  destinationDescription(destination: DestinationHomeDTO): string {
+    return destination.subDescription ?? destination.description ?? '';
   }
 
-  imageUrl(destination: any): string {
-    const image = Array.isArray(destination?.images) ? destination.images[0] : null;
-    const url =
-      image?.imageUrl ??
-      image?.url ??
-      image?.path ??
-      destination?.coverImageUrl ??
-      destination?.imageUrl ??
-      '';
+  imageUrl(destination: DestinationHomeDTO): string {
+    const url = destination.images[0]?.imageUrl ?? '';
 
     if (!url) return 'assets/images/bg/2.jpg';
     if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;

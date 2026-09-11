@@ -160,10 +160,12 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
     input.value = '';
     this.imageValidationMessage = '';
     this.imageAltErrorsVisible = false;
-    if (this.imageUploads.length + files.length > this.maxImages) {
+    if (files.length > this.maxImages) {
       this.imageValidationMessage = 'cityImageLimit';
       return;
     }
+
+    const replacementUploads: CityImageUpload[] = [];
     for (const file of files) {
       if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
         this.imageValidationMessage = 'invalidImageType';
@@ -175,11 +177,19 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
       }
       try {
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
-        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, altEng: '', altAr: '' });
+        replacementUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, altEng: '', altAr: '' });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
     }
+
+    if (replacementUploads.length) {
+      this.imageUploads.forEach((image) => {
+        if (image.file) URL.revokeObjectURL(image.url);
+      });
+      this.imageUploads = replacementUploads;
+    }
+
     this.syncImagesControl();
     this.cdr.markForCheck();
   }

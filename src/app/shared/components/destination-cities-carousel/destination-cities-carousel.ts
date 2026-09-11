@@ -4,16 +4,7 @@ import { RouterLink } from '@angular/router';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import { UtilityService } from '../../../core/services/utilityservice';
-
-interface CityHomeDTO {
-  id: number;
-  routeName?: string | null;
-  title?: string | null;
-  destinationId?: number | null;
-  images?: Array<{ imageUrl?: string | null }>;
-  coverImageUrl?: string | null;
-  imageUrl?: string | null;
-}
+import { CityHomeDTO } from '../../models/city-home.model';
 
 @Component({
   selector: 'app-destination-cities-carousel',
@@ -37,11 +28,10 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
 
   get selector(): string { return `#${this.instanceId}`; }
   cityName(city: CityHomeDTO): string {
-    debugger
     return city.title ?? '';
   }
-  cityImage(city: any): string {
-    return this.utilityService.imageUrl(city?.coverImageUrl ?? city?.imageUrl ?? city?.images?.[0]?.imageUrl ?? '');
+  cityImage(city: CityHomeDTO): string {
+    return this.utilityService.imageUrl(city.coverImageUrl ?? city.imageUrl ?? city.images?.[0]?.imageUrl ?? '');
   }
 
   onCityImageError(event: Event): void {
