@@ -164,4 +164,39 @@ describe('ToursFromCard validation', () => {
     expect(component.itineraryDraft).toBeNull();
     expect(component.itineraryArray.length).toBe(1);
   });
+
+  it('matches package itinerary date sequencing and last-step deletion rules', () => {
+    component.tourForm.patchValue({ startDate: '2030-01-01', endDate: '2030-12-31' });
+    const firstStep = (component as any).createItineraryGroup({
+      titleEng: 'First step',
+      arrivalDate: '2030-03-01',
+      startTime: '09:00',
+      endTime: '10:00',
+    });
+    const secondStep = (component as any).createItineraryGroup({
+      titleEng: 'Second step',
+      arrivalDate: '2030-03-02',
+      startTime: '10:15',
+      endTime: '11:00',
+    });
+    component.itineraryArray.push(firstStep);
+    component.itineraryArray.push(secondStep);
+
+    expect(component.canRemoveItineraryStep(component.itineraryArray, 0)).toBe(false);
+    expect(component.canRemoveItineraryStep(component.itineraryArray, 1)).toBe(true);
+
+    component.openItineraryStepEditor();
+    const arrivalDate = component.itineraryDraft!.controls['arrivalDate'];
+    expect(arrivalDate.hasError('required')).toBe(false);
+
+    arrivalDate.setValue('2029-12-31');
+    expect(component.itineraryDraft!.hasError('itineraryDateBeforeTour')).toBe(true);
+
+    arrivalDate.setValue('2030-02-01');
+    expect(component.itineraryDraft!.hasError('itineraryDateBeforePrevious')).toBe(true);
+
+    arrivalDate.setValue('2030-03-03');
+    expect(component.itineraryDraft!.hasError('itineraryDateBeforeTour')).toBe(false);
+    expect(component.itineraryDraft!.hasError('itineraryDateBeforePrevious')).toBe(false);
+  });
 });

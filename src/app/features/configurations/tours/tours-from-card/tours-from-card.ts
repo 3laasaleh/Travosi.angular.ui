@@ -110,6 +110,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   itineraryDraftIsChild = false;
   private itineraryDraftCollection: FormArray<FormGroup> | null = null;
   private itineraryDraftIndex: number | null = null;
+  private itineraryDraftParent: FormGroup | null = null;
   private initialItinerarySnapshot = '';
 
   private get defaultCurrencyId(): number {
@@ -645,6 +646,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraft = this.createItineraryGroup(step);
     this.itineraryDraftCollection = this.itineraryArray;
     this.itineraryDraftIndex = null;
+    this.itineraryDraftParent = null;
     this.itineraryDraftIsChild = false;
     this.attachItineraryScheduleValidator();
   }
@@ -661,16 +663,18 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraft = this.createItineraryGroup(child);
     this.itineraryDraftCollection = this.itineraryChildrenArray(parentGroup);
     this.itineraryDraftIndex = null;
+    this.itineraryDraftParent = parentGroup;
     this.itineraryDraftIsChild = true;
     this.attachItineraryScheduleValidator();
   }
 
-  editItineraryStep(collection: FormArray<FormGroup>, index: number, isChild: boolean): void {
+  editItineraryStep(collection: FormArray<FormGroup>, index: number, isChild: boolean, parent: FormGroup | null = null): void {
     if (this.itineraryDraft) return;
     this.resetItineraryValidationFeedback();
     this.itineraryDraft = this.createItineraryGroup(collection.at(index).getRawValue());
     this.itineraryDraftCollection = collection;
     this.itineraryDraftIndex = index;
+    this.itineraryDraftParent = parent;
     this.itineraryDraftIsChild = isChild;
     this.attachItineraryScheduleValidator();
   }
@@ -711,10 +715,31 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return group.controls['childs'] as FormArray<FormGroup>;
   }
 
-  removeItineraryStep(collection: FormArray<FormGroup>, index: number): void {
-    if (this.itineraryDraft) return;
+  canRemoveItineraryStep(collection: FormArray<FormGroup>, index: number): boolean {
+    return !this.itineraryDraft
+      && index === collection.length - 1
+      && this.itineraryChildrenArray(collection.at(index)).length === 0;
+  }
+
+  async removeItineraryStep(collection: FormArray<FormGroup>, index: number): Promise<void> {
+    if (!this.canRemoveItineraryStep(collection, index)) {
+      this.showApiToast('error', 'deleteLastItineraryFirst');
+      return;
+    }
+    const confirmation = await Swal.fire({
+      title: this.translate.instant('confirmDeleteItinerary'),
+      text: this.translate.instant('itineraryDeleteWarning'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('delete'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
     collection.removeAt(index);
     this.tourForm.markAsDirty();
+    this.cdr.markForCheck();
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -1215,6 +1240,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraft = null;
     this.itineraryDraftCollection = null;
     this.itineraryDraftIndex = null;
+    this.itineraryDraftParent = null;
     this.itineraryDraftIsChild = false;
   }
 
@@ -1222,6 +1248,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (!this.itineraryDraft) return;
     this.itineraryDraft.addValidators([
       this.itineraryTimeConflictValidator,
+      this.itineraryDateSequenceValidator,
       this.itineraryTimeSequenceValidator,
     ]);
     this.itineraryDraft.updateValueAndValidity();
@@ -1522,6 +1549,35 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       : null;
   };
 
+  private readonly itineraryDateSequenceValidator = (control: AbstractControl): ValidationErrors | null => {
+    const arrivalDate = String(control.get('arrivalDate')?.value ?? '');
+    if (!arrivalDate || control.get('arrivalDate')?.hasError('invalidDate')) return null;
+
+    const tourStartDate = String(this.tourForm.controls.startDate.value ?? '');
+    if (tourStartDate && arrivalDate < tourStartDate) {
+      return { itineraryDateBeforeTour: true };
+    }
+
+    const previousStepDate = this.previousItineraryDate();
+    return previousStepDate && arrivalDate < previousStepDate
+      ? { itineraryDateBeforePrevious: true }
+      : null;
+  };
+
+  private previousItineraryDate(): string {
+    if (!this.itineraryDraftCollection) return '';
+    const draftPosition = this.itineraryDraftIndex ?? this.itineraryDraftCollection.length;
+
+    for (let index = draftPosition - 1; index >= 0; index--) {
+      const value = String(this.itineraryDraftCollection.at(index).controls['arrivalDate']?.value ?? '');
+      if (value) return value;
+    }
+
+    return this.itineraryDraftIsChild
+      ? String(this.itineraryDraftParent?.controls['arrivalDate']?.value ?? '')
+      : '';
+  }
+
   private previousItineraryStep(): FormGroup | null {
     if (!this.itineraryDraftCollection) return null;
     const draftPosition = this.itineraryDraftIndex ?? this.itineraryDraftCollection.length;
@@ -1530,6 +1586,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get minimumItineraryStartTime(): string | null {
     return String(this.previousItineraryStep()?.controls['endTime']?.value ?? '') || null;
+  }
+
+  get minimumItineraryDate(): string | null {
+    const tourStartDate = String(this.tourForm.controls.startDate.value ?? '');
+    const previousStepDate = this.previousItineraryDate();
+    return [tourStartDate, previousStepDate].filter(Boolean).sort().at(-1) ?? null;
   }
 
   private readonly itineraryTimeConflictValidator = (

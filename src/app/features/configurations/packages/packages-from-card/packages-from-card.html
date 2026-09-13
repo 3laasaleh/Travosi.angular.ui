@@ -737,12 +737,16 @@
               </div>
                  <div>
                 <label class="mb-1 block text-xs font-medium">{{ 'date' | translate }}</label><app-date-picker formControlName="arrivalDate"
-                  [min]="packageForm.controls.dateFrom.value || null" [max]="packageForm.controls.dateTo.value || null"
+                  [min]="minimumItineraryDate" [max]="packageForm.controls.dateTo.value || null"
                   [ariaLabel]="'date' | translate"
                   inputClass="cursor-pointer rounded-xl border bg-white py-3 pe-12 ps-12" />
                 @if (itineraryDraft.controls['arrivalDate'].value &&itineraryDraft.controls['arrivalDate'].touched &&
                 itineraryDraft.controls['arrivalDate'].hasError('invalidDate')) {
                 <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+                } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.hasError('itineraryDateBeforePackage')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'itineraryDateBeforePackage' | translate }}</p>
+                } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.hasError('itineraryDateBeforePrevious')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'itineraryDateBeforePrevious' | translate }}</p>
                 }
               </div>
             </div>

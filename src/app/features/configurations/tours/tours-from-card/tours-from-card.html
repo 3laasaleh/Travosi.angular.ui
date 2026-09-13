@@ -758,10 +758,14 @@
               <div>
                 <label class="mb-1 block text-xs font-medium">{{ 'date' | translate }}</label>
                 <app-date-picker formControlName="arrivalDate" [ariaLabel]="'date' | translate"
-                  [min]="tourForm.controls.startDate.value || null" [max]="tourForm.controls.endDate.value || null"
+                  [min]="minimumItineraryDate" [max]="tourForm.controls.endDate.value || null"
                   inputClass="cursor-pointer rounded-2xl border border-slate-200 bg-white py-3 pe-12 ps-12" />
                 @if (itineraryDraft.controls['arrivalDate'].value && itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.controls['arrivalDate'].hasError('invalidDate')) {
                 <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+                } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.hasError('itineraryDateBeforeTour')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'itineraryDateBeforeTour' | translate }}</p>
+                } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.hasError('itineraryDateBeforePrevious')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'itineraryDateBeforePrevious' | translate }}</p>
                 }
               </div>
               <div>
@@ -867,6 +871,7 @@
 
         <div class="rounded-2xl border border-slate-200 p-4">
           <h3 class="mb-3 font-semibold">{{ 'itinerarySteps' | translate }}</h3>
+          <p class="mb-3 text-xs text-slate-500">{{ 'deleteLastItineraryFirst' | translate }}</p>
           <div class="max-h-[70vh] overflow-y-auto pe-1">
             <ol
               class="relative space-y-7 before:absolute before:bottom-4 before:start-4 before:top-4 before:w-0.5 before:bg-rose-200">
@@ -894,15 +899,15 @@
                       <button type="button" [disabled]="!!itineraryDraft"
                         class="rounded-full border border-emerald-200 px-2.5 py-1 text-xs text-emerald-600 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
                         (click)="openItineraryChildEditor(stepGroup)">
-                        <i class="mdi mdi-plus"></i> {{ 'addChild' | translate }}</button><button type="button"
+                      <i class="mdi mdi-plus"></i> {{ 'addChild' | translate }}</button><button type="button"
                         [disabled]="!!itineraryDraft"
                         class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60"
                         (click)="editItineraryStep(itineraryArray, stepIndex, false)">
                         <i class="mdi mdi-pencil-outline"></i></button><button type="button"
-                        [disabled]="!!itineraryDraft"
+                        [disabled]="!canRemoveItineraryStep(itineraryArray, stepIndex)"
                         class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                         (click)="removeItineraryStep(itineraryArray, stepIndex)">
-                        <i class="mdi mdi-close"></i>
+                        <i class="mdi mdi-delete-outline"></i>
                       </button>
                     </div>
                   </div>
@@ -951,12 +956,12 @@
                         <div class="flex gap-1">
                           <button type="button" [disabled]="!!itineraryDraft"
                             class="grid h-7 w-7 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-60"
-                            (click)="editItineraryStep(children, childIndex, true)">
+                            (click)="editItineraryStep(children, childIndex, true, stepGroup)">
                             <i class="mdi mdi-pencil-outline"></i></button><button type="button"
-                            [disabled]="!!itineraryDraft"
+                            [disabled]="!canRemoveItineraryStep(children, childIndex)"
                             class="grid h-7 w-7 place-items-center rounded-full border text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                             (click)="removeItineraryStep(children, childIndex)">
-                            <i class="mdi mdi-close"></i>
+                            <i class="mdi mdi-delete-outline"></i>
                           </button>
                         </div>
                       </div>
