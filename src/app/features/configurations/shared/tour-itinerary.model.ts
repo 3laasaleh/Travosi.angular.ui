@@ -1,3 +1,5 @@
+import { orderItineraryItems } from '../../../shared/utils/itinerary-order.util';
+
 export interface TourItineraryItem {
   id: number;
   orderNumber: number;
@@ -56,7 +58,7 @@ export function readTourItinerary(
     startTime: toTimeInput(item?.startTime ?? item?.StartTime),
     endTime: toTimeInput(item?.endTime ?? item?.EndTime),
     tourId: toOptionalId(item?.tourId ?? item?.TourId) ?? fallbackTourId,
-    childs: readChildren(item).map((child) => readTourItinerary(child, fallbackTourId)),
+    childs: orderItineraryItems(readChildren(item)).map((child) => readTourItinerary(child, fallbackTourId)),
   };
 }
 
@@ -107,8 +109,17 @@ function toDateInput(value: unknown): string {
 
 function toTimeInput(value: unknown): string | null {
   if (typeof value !== 'string' || !value.trim()) return null;
-  const match = value.trim().match(/^(\d{2}):(\d{2})/);
-  return match ? `${match[1]}:${match[2]}` : null;
+
+  const match = value.trim().match(/(\d{1,2}):(\d{2})/);
+  if (!match) return null;
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (!Number.isInteger(hours) || !Number.isInteger(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return null;
+  }
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 function toApiTime(value: unknown): string | null {

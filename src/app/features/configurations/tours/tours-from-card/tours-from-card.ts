@@ -27,6 +27,8 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { orderItineraryItems } from '../../../../shared/utils/itinerary-order.util';
 import { validDate } from '../../../../core/services/custom.validators';
 
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
@@ -59,7 +61,7 @@ type TourFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -80,13 +82,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     maxWidth: this.maxImageWidth,
     maxHeight: this.maxImageHeight,
   };
-  readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
-    const hours = Math.floor(index / 4)
-      .toString()
-      .padStart(2, '0');
-    const minutes = ((index % 4) * 15).toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  });
   readonly formSteps = [
     { id: 1, label: 'tourDetailsStep', icon: 'mdi-file-document-edit-outline' },
     { id: 2, label: 'tourImagesStep', icon: 'mdi-image-multiple-outline' },
@@ -224,10 +219,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.highlights,
       this.tourForm.controls.includes,
       this.tourForm.controls.excludes,
-      this.tourForm.controls.cancellationPolicies,
     ];
+    const cancellationPoliciesValid = this.tourForm.controls.isFreeCancelation.value === true
+      || (this.cancellationPoliciesArray.valid
+        && this.cancellationPoliciesArray.getRawValue().some((item: any) =>
+          String(item?.valueEng ?? '').trim() && String(item?.valueAr ?? '').trim()));
     return (
       controls.some((control) => control.invalid) ||
+      !cancellationPoliciesValid ||
       this.tourForm.hasError('invalidDateRange') ||
       this.tourForm.hasError('invalidTourDuration')
     );
@@ -640,6 +639,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   openItineraryStepEditor(): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     const tourId = this.currentTourId;
     const step = createEmptyTourItinerary(tourId);
     this.itineraryDraft = this.createItineraryGroup(step);
@@ -651,6 +651,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   openItineraryChildEditor(parentGroup: FormGroup): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     const tourId = this.currentTourId;
     const parentId = this.toOptionalId(parentGroup.controls['id'].value);
     const child = createEmptyTourItinerary(tourId);
@@ -666,6 +667,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   editItineraryStep(collection: FormArray<FormGroup>, index: number, isChild: boolean): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     this.itineraryDraft = this.createItineraryGroup(collection.at(index).getRawValue());
     this.itineraryDraftCollection = collection;
     this.itineraryDraftIndex = index;
@@ -685,6 +687,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.itineraryDraftCollection.setControl(this.itineraryDraftIndex, this.itineraryDraft);
     }
     this.tourForm.markAsDirty();
+    this.validationSubmitted = false;
+    this.errorMessage = '';
     this.closeItineraryEditor();
   }
 
@@ -1109,14 +1113,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''),
         {
           nonNullable: true,
-          validators: [Validators.required],
+          validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000)],
         },
       ),
       valueAr: new FormControl(
         String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''),
         {
           nonNullable: true,
-          validators: [Validators.required, arabicTextValidator()],
+          validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000), arabicTextValidator()],
         },
       ),
     });
@@ -1200,8 +1204,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   private setItinerary(itinerary: any[]): void {
     this.itineraryArray.clear();
-    const items = Array.isArray(itinerary) ? itinerary : [];
-    items.forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
+    orderItineraryItems(itinerary).forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
   }
 
   private serializeItinerary(value: unknown): string {
@@ -1217,7 +1220,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   private attachItineraryScheduleValidator(): void {
     if (!this.itineraryDraft) return;
-    this.itineraryDraft.addValidators(this.itineraryTimeConflictValidator);
+    this.itineraryDraft.addValidators([
+      this.itineraryTimeConflictValidator,
+      this.itineraryTimeSequenceValidator,
+    ]);
     this.itineraryDraft.updateValueAndValidity();
   }
 
@@ -1289,7 +1295,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const children = Array.isArray(item?.childs) ? item.childs : [];
     return {
       Id: Number(item?.id) || 0,
-      OrderNumber: Number(item?.orderNumber) || orderNumber,
+      OrderNumber: orderNumber,
       ParentId: this.toOptionalId(item?.parentId),
       IsChildNode: item?.isChildNode === true,
       TitleAr: String(item?.titleAr ?? '').trim(),
@@ -1488,10 +1494,42 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return String(endTime) > String(startTime) ? null : { invalidItineraryTimeRange: true };
   }
 
-  private quarterHourTimeValidator(control: AbstractControl): ValidationErrors | null {
+  private resetItineraryValidationFeedback(): void {
+    this.validationSubmitted = false;
+    this.errorMessage = '';
+  }
+
+  private readonly quarterHourTimeValidator = (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
     if (value === null || value === undefined || value === '') return null;
     return isQuarterHourTime(value) ? null : { invalidQuarterHourTime: true };
+  };
+
+  private readonly itineraryTimeSequenceValidator = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const startTime = String(control.get('startTime')?.value ?? '');
+    const previousStep = this.previousItineraryStep();
+    if (!startTime || !previousStep) return null;
+
+    const arrivalDate = String(control.get('arrivalDate')?.value ?? '');
+    const previousDate = String(previousStep.controls['arrivalDate']?.value ?? '');
+    if (arrivalDate && previousDate && arrivalDate !== previousDate) return null;
+
+    const previousEndTime = String(previousStep.controls['endTime']?.value ?? '');
+    return previousEndTime && startTime <= previousEndTime
+      ? { itineraryTimeBeforePrevious: true }
+      : null;
+  };
+
+  private previousItineraryStep(): FormGroup | null {
+    if (!this.itineraryDraftCollection) return null;
+    const draftPosition = this.itineraryDraftIndex ?? this.itineraryDraftCollection.length;
+    return draftPosition > 0 ? this.itineraryDraftCollection.at(draftPosition - 1) : null;
+  }
+
+  get minimumItineraryStartTime(): string | null {
+    return String(this.previousItineraryStep()?.controls['endTime']?.value ?? '') || null;
   }
 
   private readonly itineraryTimeConflictValidator = (

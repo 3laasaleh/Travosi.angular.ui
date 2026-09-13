@@ -9,8 +9,13 @@ interface ItineraryScheduleItem {
   childs?: unknown;
 }
 
+export function isValidTime(value: unknown): boolean {
+  return typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value.trim());
+}
+
 export function isQuarterHourTime(value: unknown): boolean {
-  return typeof value === 'string' && /^([01]\d|2[0-3]):(00|15|30|45)$/.test(value.trim());
+  if (!isValidTime(value)) return false;
+  return Number(String(value).trim().slice(3, 5)) % 15 === 0;
 }
 
 export function hasInvalidItinerary(items: ItineraryScheduleItem[]): boolean {

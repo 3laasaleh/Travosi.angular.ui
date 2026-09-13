@@ -18,6 +18,8 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { orderItineraryItems } from '../../../../shared/utils/itinerary-order.util';
 import { validDate } from '../../../../core/services/custom.validators';
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
@@ -47,7 +49,7 @@ type PackageFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-packages-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker],
   templateUrl: './packages-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -63,11 +65,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   readonly today = this.localDate(new Date());
   readonly tomorrow = this.addDays(this.today, 1);
   readonly dayAfterTomorrow = this.addDays(this.tomorrow, 1);
-  readonly itineraryTimeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
-    const hours = Math.floor(index / 4).toString().padStart(2, '0');
-    const minutes = ((index % 4) * 15).toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  });
   readonly formSteps = [
     { id: 1, label: 'packageDetailsStep', icon: 'mdi-file-document-edit-outline' },
     { id: 2, label: 'packageImagesStep', icon: 'mdi-image-multiple-outline' },
@@ -99,6 +96,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   itineraryDraftIsChild = false;
   private itineraryDraftCollection: FormArray<FormGroup> | null = null;
   private itineraryDraftIndex: number | null = null;
+  private itineraryDraftParent: FormGroup | null = null;
   private initialItinerarySnapshot = '';
 
   constructor(
@@ -118,7 +116,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void { this.revokeNewImageUrls(); }
 
   get currentPackageId(): number | null {
-    return this.savedPackageId ?? this.toOptionalId(this.selectedPackage?.id ?? this.selectedPackage?.packageId);
+    return this.savedPackageId ?? this.toOptionalId(this.selectedPackage?.id );
   }
 
   get filteredDestinations(): any[] {
@@ -143,8 +141,21 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   get itineraryArray(): FormArray<FormGroup> { return this.packageForm.controls.itinerary; }
 
   get screenLoaderVisible(): boolean { return this.isSaving || this.deletingImageIndex !== null; }
+  get minimumPackageStartDate(): string {
+    return this.toDateInput(
+      this.selectedPackage?.dateFrom
+      ?? this.selectedPackage?.DateFrom
+      ?? this.selectedPackage?.dateFromUtc
+      ?? this.selectedPackage?.DateFromUtc,
+    ) || this.tomorrow;
+  }
   get minimumPackageEndDate(): string {
     return this.addDays(this.packageForm.controls.dateFrom.value || this.tomorrow, 1);
+  }
+  get minimumItineraryDate(): string | null {
+    const packageStartDate = String(this.packageForm.controls.dateFrom.value ?? '');
+    const previousStepDate = this.previousItineraryDate();
+    return [packageStartDate, previousStepDate].filter(Boolean).sort().at(-1) ?? null;
   }
   get screenLoaderMessage(): string {
     return this.deletingImageIndex !== null ? 'deletingPackageImage' : (this.apiLoadingMessage || 'pleaseWaitForRequest');
@@ -179,7 +190,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return requiredControls.some((control) => control.invalid)
       || cancellationPolicyMissing
       || dateRangeInvalid
-      || controls.dateFrom.value < this.tomorrow;
+      || controls.dateFrom.value < this.minimumPackageStartDate;
   }
 
   get currentStepInvalid(): boolean {
@@ -208,9 +219,29 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   saveCurrentStep(): void {
     this.validationSubmitted = true;
-    if (this.activeStep === 1) this.savePackageDetails();
-    else if (this.activeStep === 2) this.savePackageImages();
-    else this.savePackageItinerary();
+    if (this.activeStep === 1) {
+      if (this.shouldSkipDetailsStepSave()) {
+        this.completedStep = Math.max(this.completedStep, 1);
+        this.enterImagesStep();
+        return;
+      }
+      this.savePackageDetails();
+    } else if (this.activeStep === 2) {
+      if (this.shouldSkipImagesStepSave()) {
+        this.completeImagesStep();
+        return;
+      }
+      this.savePackageImages();
+    } else {
+      if (this.shouldSkipItineraryStepSave()) {
+        this.completedStep = 3;
+        this.showToast('success', 'packageItineraryAlreadySaved');
+        this.packageSaved.emit();
+        this.resetForm(false);
+        return;
+      }
+      this.savePackageItinerary();
+    }
   }
 
   markCurrentStepTouched(): void {
@@ -220,6 +251,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   savePackageDetails(): void {
     if (this.isSaving || !this.validateDetailsStep()) return;
     const existingId = this.currentPackageId;
+    debugger
     const payload = this.buildDetailsPayload(existingId);
     this.beginRequest('savingPackageDetails');
     const request$ = existingId
@@ -231,7 +263,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
           return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
         }
 
-        const packageId = existingId ?? this.extractPackageId(detailsResponse);
+        const packageId = existingId ??detailsResponse.id;
         if (!packageId) {
           return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
         }
@@ -297,7 +329,11 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   savePackageItinerary(): void {
     if (this.isSaving || !this.currentPackageId) return;
-    if (this.itineraryDraft) { this.errorMessage = 'saveItineraryStepFirst'; return; }
+    if (this.itineraryDraft) {
+      this.itineraryDraft.markAllAsTouched();
+      this.errorMessage = 'saveItineraryStepFirst';
+      return;
+    }
     const itinerary = this.itineraryArray.getRawValue();
     if (!itinerary.length || hasInvalidItinerary(itinerary)) {
       this.errorMessage = 'itineraryTitleAndTimesRequired';
@@ -317,7 +353,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.beginRequest('savingPackageItinerary');
     this.adminService.addPackageItinerary({
       PackageId: this.currentPackageId,
-      Itinerary: itinerary.map((item) => this.toItineraryPayload(item)),
+      Itinerary: this.buildItineraryPayload(itinerary),
     }).pipe(
       switchMap((itineraryResponse: any) => {
         if (itineraryResponse?.isSuccess !== true) {
@@ -449,15 +485,18 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   openItineraryStepEditor(): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     this.itineraryDraft = this.createItineraryGroup(createEmptyTourItinerary(this.currentPackageId));
     this.itineraryDraftCollection = this.itineraryArray;
     this.itineraryDraftIndex = null;
+    this.itineraryDraftParent = null;
     this.itineraryDraftIsChild = false;
     this.attachItineraryScheduleValidator();
   }
 
   openItineraryChildEditor(parent: FormGroup): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     const child = createEmptyTourItinerary(this.currentPackageId);
     child.parentId = this.toOptionalId(parent.controls['id'].value);
     child.arrivalDate = String(parent.controls['arrivalDate'].value ?? '');
@@ -465,20 +504,24 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.itineraryDraft = this.createItineraryGroup(child);
     this.itineraryDraftCollection = this.itineraryChildrenArray(parent);
     this.itineraryDraftIndex = null;
+    this.itineraryDraftParent = parent;
     this.itineraryDraftIsChild = true;
     this.attachItineraryScheduleValidator();
   }
 
-  editItineraryStep(collection: FormArray<FormGroup>, index: number, isChild: boolean): void {
+  editItineraryStep(collection: FormArray<FormGroup>, index: number, isChild: boolean, parent: FormGroup | null = null): void {
     if (this.itineraryDraft) return;
+    this.resetItineraryValidationFeedback();
     this.itineraryDraft = this.createItineraryGroup(collection.at(index).getRawValue());
     this.itineraryDraftCollection = collection;
     this.itineraryDraftIndex = index;
+    this.itineraryDraftParent = parent;
     this.itineraryDraftIsChild = isChild;
     this.attachItineraryScheduleValidator();
   }
 
   saveItineraryStep(): void {
+
     if (!this.itineraryDraft || !this.itineraryDraftCollection) return;
     if (this.itineraryDraft.invalid) {
       this.itineraryDraft.markAllAsTouched();
@@ -487,6 +530,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.itineraryDraftIndex === null) this.itineraryDraftCollection.push(this.itineraryDraft);
     else this.itineraryDraftCollection.setControl(this.itineraryDraftIndex, this.itineraryDraft);
     this.packageForm.markAsDirty();
+    this.validationSubmitted = false;
+    this.errorMessage = '';
     this.closeItineraryEditor();
   }
 
@@ -558,7 +603,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       isActive: new FormControl(true, { nonNullable: true }),
       dateFrom: new FormControl(this.tomorrow, {
         nonNullable: true,
-        validators: [Validators.required, validDate(), this.notBeforeDateValidator(this.tomorrow)],
+        validators: [Validators.required, validDate(), this.notBeforePackageStartValidator()],
       }),
       dateTo: new FormControl(this.dayAfterTomorrow, {
         nonNullable: true,
@@ -584,8 +629,14 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private createLocalizedListItemGroup(item: any = {}): FormGroup {
     return new FormGroup({
       id: new FormControl(Number(item?.id) || 0, { nonNullable: true }),
-      valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required] }),
-      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), { nonNullable: true, validators: [Validators.required, arabicTextValidator()] }),
+      valueEng: new FormControl(String(item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000)],
+      }),
+      valueAr: new FormControl(String(item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? ''), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000), arabicTextValidator()],
+      }),
     });
   }
 
@@ -653,7 +704,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private toItineraryPayload(item: any, orderNumber = 1): any {
     return {
       Id: Number(item?.id) || 0,
-      OrderNumber: Number(item?.orderNumber) || orderNumber,
+      OrderNumber: orderNumber,
       ParentId: this.toOptionalId(item?.parentId),
       IsChildNode: item?.isChildNode === true,
       TitleAr: String(item?.titleAr ?? '').trim(), TitleEng: String(item?.titleEng ?? '').trim(), ValueAr: String(item?.valueAr ?? '').trim(), ValueEng: String(item?.valueEng ?? '').trim(),
@@ -677,7 +728,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       altEngTouched: false,
       altArTouched: false,
     })).filter((image: PackageImageUpload) => !!image.url);
-    this.savedPackageId = this.toOptionalId(item?.id ?? item?.packageId);
+    this.savedPackageId = this.toOptionalId(item?.id );
     const destinationIds = (Array.isArray(item?.destinations) ? item.destinations : [])
       .sort((a: any, b: any) => Number(a.displayOrder) - Number(b.displayOrder))
       .map((destination: any) => Number(destination.destinationId ?? destination.id)).filter(Number.isFinite);
@@ -690,7 +741,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       maxCapacity: Number(item?.maxCapacity) || 1,
       isFreeCancelation: item?.isFreeCancelation === true,
       isActive: item?.isActive !== false,
-      dateFrom: this.toDateInput(item?.dateFrom), dateTo: this.toDateInput(item?.dateTo), destinationIds,
+      dateFrom: this.toDateInput(item?.dateFrom ?? item?.DateFrom ?? item?.dateFromUtc ?? item?.DateFromUtc),
+      dateTo: this.toDateInput(item?.dateTo ?? item?.DateTo ?? item?.dateToUtc ?? item?.DateToUtc),
+      destinationIds,
       images: this.imageUploads.map((image) => image.url),
       cancellationPolicies: [],
       highlights: [], includes: [], excludes: [],
@@ -723,7 +776,22 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     if (emitCancel) this.editCancelled.emit();
   }
 
-  private completeImagesStep(): void { this.completedStep = Math.max(this.completedStep, 2); this.activeStep = 3; this.errorMessage = ''; this.cdr.markForCheck(); }
+  private shouldSkipDetailsStepSave(): boolean {
+    return !!this.selectedPackage && !this.packageForm.dirty && !this.itineraryDraft;
+  }
+
+  private shouldSkipImagesStepSave(): boolean {
+    if (!this.currentPackageId) return false;
+    return !this.packageForm.controls.images.dirty && this.imageUploads.every((image) => image.uploaded || !image.file);
+  }
+
+  private shouldSkipItineraryStepSave(): boolean {
+    if (!!this.itineraryDraft) return false;
+    const itinerary = this.itineraryArray.getRawValue();
+    return this.initialItinerarySnapshot === this.serializeItinerary(itinerary) && !this.packageForm.dirty;
+  }
+
+  private completeImagesStep(): void { this.completedStep = Math.max(this.completedStep, 2); this.activeStep = 3; this.errorMessage = ''; this.validationSubmitted = false; this.cdr.markForCheck(); }
   private enterImagesStep(): void {
     this.activeStep = 2;
     this.errorMessage = '';
@@ -739,7 +807,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       image.altArTouched = false;
     });
   }
-  private closeItineraryEditor(): void { this.itineraryDraft = null; this.itineraryDraftCollection = null; this.itineraryDraftIndex = null; this.itineraryDraftIsChild = false; }
+  private closeItineraryEditor(): void { this.itineraryDraft = null; this.itineraryDraftCollection = null; this.itineraryDraftIndex = null; this.itineraryDraftParent = null; this.itineraryDraftIsChild = false; }
 
   private createItineraryGroup(item: any, depth = 0): FormGroup {
     const itinerary = readTourItinerary(item, this.currentPackageId);
@@ -754,7 +822,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       valueAr: new FormControl(itinerary.valueAr, { nonNullable: true, validators: [Validators.required, Validators.maxLength(2000), arabicTextValidator()] }),
       notesEng: new FormControl(itinerary.notesEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
       notesAr: new FormControl(itinerary.notesAr, { nonNullable: true, validators: [Validators.maxLength(2000), arabicTextValidator()] }),
-      arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [Validators.required, validDate()] }),
+      arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [validDate()] }),
       startTime: new FormControl<string | null>(itinerary.startTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
       endTime: new FormControl<string | null>(itinerary.endTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
       packageId: new FormControl<number | null>(this.currentPackageId),
@@ -764,13 +832,50 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private setItinerary(itinerary: any[]): void {
     this.itineraryArray.clear();
-    (Array.isArray(itinerary) ? itinerary : []).forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
+    orderItineraryItems(itinerary).forEach((item) => this.itineraryArray.push(this.createItineraryGroup(item)));
+  }
+
+  private buildItineraryPayload(items: any[] = this.itineraryArray.getRawValue()): any[] {
+    return items.map((item, index) => this.toItineraryPayload(item, index + 1));
   }
 
   private attachItineraryScheduleValidator(): void {
     if (!this.itineraryDraft) return;
-    this.itineraryDraft.addValidators(this.itineraryTimeConflictValidator);
+    this.itineraryDraft.addValidators([
+      this.itineraryTimeConflictValidator,
+      this.itineraryDateSequenceValidator,
+      this.itineraryTimeSequenceValidator,
+    ]);
     this.itineraryDraft.updateValueAndValidity();
+  }
+
+  private readonly itineraryDateSequenceValidator = (control: AbstractControl): ValidationErrors | null => {
+    const arrivalDate = String(control.get('arrivalDate')?.value ?? '');
+    if (!arrivalDate || control.get('arrivalDate')?.hasError('invalidDate')) return null;
+
+    const packageStartDate = String(this.packageForm.controls.dateFrom.value ?? '');
+    if (packageStartDate && arrivalDate < packageStartDate) {
+      return { itineraryDateBeforePackage: true };
+    }
+
+    const previousStepDate = this.previousItineraryDate();
+    return previousStepDate && arrivalDate < previousStepDate
+      ? { itineraryDateBeforePrevious: true }
+      : null;
+  };
+
+  private previousItineraryDate(): string {
+    if (!this.itineraryDraftCollection) return '';
+    const draftPosition = this.itineraryDraftIndex ?? this.itineraryDraftCollection.length;
+
+    for (let index = draftPosition - 1; index >= 0; index--) {
+      const value = String(this.itineraryDraftCollection.at(index).controls['arrivalDate']?.value ?? '');
+      if (value) return value;
+    }
+
+    return this.itineraryDraftIsChild
+      ? String(this.itineraryDraftParent?.controls['arrivalDate']?.value ?? '')
+      : '';
   }
 
   private itineraryTimeRangeValidator = (control: AbstractControl): ValidationErrors | null => {
@@ -780,11 +885,40 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return String(endTime) > String(startTime) ? null : { invalidItineraryTimeRange: true };
   };
 
-  private quarterHourTimeValidator = (control: AbstractControl): ValidationErrors | null => {
+  private readonly quarterHourTimeValidator = (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
     if (value === null || value === undefined || value === '') return null;
     return isQuarterHourTime(value) ? null : { invalidQuarterHourTime: true };
   };
+
+  private readonly itineraryTimeSequenceValidator = (control: AbstractControl): ValidationErrors | null => {
+    const startTime = String(control.get('startTime')?.value ?? '');
+    const previousStep = this.previousItineraryStep();
+    if (!startTime || !previousStep) return null;
+
+    const arrivalDate = String(control.get('arrivalDate')?.value ?? '');
+    const previousDate = String(previousStep.controls['arrivalDate']?.value ?? '');
+    if (arrivalDate && previousDate && arrivalDate !== previousDate) return null;
+
+    const previousEndTime = String(previousStep.controls['endTime']?.value ?? '');
+    return previousEndTime && startTime <= previousEndTime
+      ? { itineraryTimeBeforePrevious: true }
+      : null;
+  };
+
+  private previousItineraryStep(): FormGroup | null {
+    if (!this.itineraryDraftCollection) return null;
+    const draftPosition = this.itineraryDraftIndex ?? this.itineraryDraftCollection.length;
+    return draftPosition > 0 ? this.itineraryDraftCollection.at(draftPosition - 1) : null;
+  }
+  private resetItineraryValidationFeedback(): void {
+    this.validationSubmitted = false;
+    this.errorMessage = '';
+  }
+
+  get minimumItineraryStartTime(): string | null {
+    return String(this.previousItineraryStep()?.controls['endTime']?.value ?? '') || null;
+  }
 
   private readonly itineraryTimeConflictValidator = (control: AbstractControl): ValidationErrors | null => {
     const startTime = control.get('startTime')?.value;
@@ -806,12 +940,12 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private handleRequestError(error: any, fallback: string): void { this.errorMessage = error?.error?.message || fallback; this.showToast('error', this.errorMessage); }
   private acceptResponse(response: any, fallback: string): boolean { if (response?.isSuccess !== true) { this.errorMessage = response?.message || fallback; this.showToast('error', this.errorMessage); return false; } return true; }
   private showToast(icon: 'success' | 'error', message: string): void { Swal.fire({ toast: true, position: 'top-end', icon, iconColor: icon === 'success' ? '#00d492' : undefined, title: this.translate.instant(message), showConfirmButton: false, timer: icon === 'success' ? 2500 : 4500, timerProgressBar: true }); }
-  private extractPackageId(response: any): number | null { const data = response?.data ?? response?.result ?? response; return this.toOptionalId(data?.id ?? data?.packageId ?? data?.data?.id ?? data?.data?.packageId ?? data); }
+
   private toOptionalId(value: unknown): number | null { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }
   private toDateInput(value: unknown): string { const text = String(value ?? ''); return /^\d{4}-\d{2}-\d{2}/.test(text) ? text.slice(0, 10) : ''; }
-  private notBeforeDateValidator(minDate: string) {
+  private notBeforePackageStartValidator() {
     return (control: AbstractControl): ValidationErrors | null =>
-      !control.value || String(control.value) >= minDate ? null : { minDate: true };
+      !control.value || String(control.value) >= this.minimumPackageStartDate ? null : { minDate: true };
   }
   private static packageDateRangeValidator(control: AbstractControl): ValidationErrors | null {
     const dateFrom = String(control.get('dateFrom')?.value ?? '');

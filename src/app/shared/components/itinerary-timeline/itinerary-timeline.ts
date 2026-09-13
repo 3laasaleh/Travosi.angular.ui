@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { orderItineraryItems } from '../../utils/itinerary-order.util';
 
 @Component({
   selector: 'app-itinerary-timeline',
@@ -12,12 +13,11 @@ export class ItineraryTimeline {
   @Input() items: any[] | null | undefined = [];
 
   get itinerary(): any[] {
-    return Array.isArray(this.items) ? this.items : [];
+    return orderItineraryItems(this.items);
   }
 
   children(item: any): any[] {
-    const children = item?.childs ;
-    return Array.isArray(children) ? children : [];
+    return orderItineraryItems(item?.childs ?? item?.Childs ?? item?.children);
   }
 
   date(item: any): string {

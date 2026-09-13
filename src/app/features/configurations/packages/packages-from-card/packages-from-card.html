@@ -1,30 +1,23 @@
 @if (screenLoaderVisible) {
-  <div
-    class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm"
-    role="status"
-    aria-live="assertive"
-  >
-    <div
-      class="flex min-w-64 flex-col items-center rounded-3xl bg-white px-8 py-7 text-center shadow-2xl"
-    >
-      <span class="mdi mdi-loading mdi-spin text-5xl text-primary"></span>
-      <p class="mt-4 font-semibold text-slate-800">{{ screenLoaderMessage | translate }}</p>
-    </div>
+<div class="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm" role="status"
+  aria-live="assertive">
+  <div class="flex min-w-64 flex-col items-center rounded-3xl bg-white px-8 py-7 text-center shadow-2xl">
+    <span class="mdi mdi-loading mdi-spin text-5xl text-primary"></span>
+    <p class="mt-4 font-semibold text-slate-800">{{ screenLoaderMessage | translate }}</p>
   </div>
+</div>
 }
 
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 md:p-6">
   @if (errorMessage) {
-    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-      {{ errorMessage | translate }}
-    </div>
+  <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+    {{ errorMessage | translate }}
+  </div>
   }
   @if (successMessage) {
-    <div
-      class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600"
-    >
-      {{ successMessage | translate }}
-    </div>
+  <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">
+    {{ successMessage | translate }}
+  </div>
   }
 
   <div class="mb-6">
@@ -36,873 +29,911 @@
 
   <ol class="mb-7 grid gap-3 md:grid-cols-3">
     @for (step of formSteps; track step.id) {
-      <li
-        class="flex items-center gap-3 rounded-2xl border bg-white p-3"
-        [class.border-primary]="activeStep === step.id"
-        [class.bg-primary-50]="activeStep === step.id"
-      >
-        <span
-          class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
-          [class.bg-primary]="activeStep === step.id"
-          [class.text-white]="activeStep === step.id"
-          [class.bg-emerald-100]="completedStep >= step.id && activeStep !== step.id"
-          [class.text-emerald-600]="completedStep >= step.id && activeStep !== step.id"
-          [class.bg-slate-100]="completedStep < step.id && activeStep !== step.id"
-        >
-          <i
-            class="mdi"
-            [class]="
+    <li class="flex items-center gap-3 rounded-2xl border bg-white p-3" [class.border-primary]="activeStep === step.id"
+      [class.bg-primary-50]="activeStep === step.id">
+      <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
+        [class.bg-primary]="activeStep === step.id" [class.text-white]="activeStep === step.id"
+        [class.bg-emerald-100]="completedStep >= step.id && activeStep !== step.id"
+        [class.text-emerald-600]="completedStep >= step.id && activeStep !== step.id"
+        [class.bg-slate-100]="completedStep < step.id && activeStep !== step.id">
+        <i class="mdi" [class]="
               completedStep >= step.id && activeStep !== step.id
                 ? 'mdi mdi-check'
                 : 'mdi ' + step.icon
-            "
-          ></i>
-        </span>
-        <div>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            {{ 'step' | translate }} {{ step.id }}
-          </p>
-          <p class="text-sm font-semibold">{{ step.label | translate }}</p>
-        </div>
-      </li>
+            "></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          {{ 'step' | translate }} {{ step.id }}
+        </p>
+        <p class="text-sm font-semibold">{{ step.label | translate }}</p>
+      </div>
+    </li>
     }
   </ol>
 
   <form class="configuration-form" [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
-    @if (validationSubmitted && currentStepInvalid) { <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
+    @if (validationSubmitted && currentStepInvalid && activeStep !== 3) { <p
+      class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{
+      'pleaseCorrectFormErrors' | translate }}</p> }
     @if (activeStep === 1) {
-      <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
-        <div>
-          <h3 class="font-semibold">{{ 'packageDetailsStep' | translate }}</h3>
-          <p class="mt-1 text-xs text-slate-500">{{ 'packageDetailsHint' | translate }}</p>
-        </div>
+    <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
+      <div>
+        <h3 class="font-semibold">{{ 'packageDetailsStep' | translate }}</h3>
+        <p class="mt-1 text-xs text-slate-500">{{ 'packageDetailsHint' | translate }}</p>
+      </div>
 
-        <div class="grid gap-4 md:grid-cols-2">
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><input
-              formControlName="nameEng"
-              maxlength="200"
-              class="w-full rounded-2xl border border-slate-300 px-3 py-2"
-            />
-            @if (
-              packageForm.controls.nameEng.touched &&
-              packageForm.controls.nameEng.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
-            } @else if (
-              packageForm.controls.nameEng.touched &&
-              packageForm.controls.nameEng.hasError('maxlength')
-            ) {
-              <p class="mt-1 text-xs text-red-600">
-                {{ 'maximumCharacters' | translate: { count: 200 } }}
-              </p>
-            } @else if (packageForm.controls.nameEng.touched && packageForm.controls.nameEng.hasError('pattern')) {
-              <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><input
-              formControlName="nameAr"
-              maxlength="200"
-              dir="rtl"
-              class="w-full rounded-2xl border border-slate-300 px-3 py-2"
-            />
-            @if (
-              packageForm.controls.nameAr.touched &&
-              packageForm.controls.nameAr.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
-            } @else if (
-              packageForm.controls.nameAr.touched &&
-              packageForm.controls.nameAr.hasError('maxlength')
-            ) {
-              <p class="mt-1 text-xs text-red-600">
-                {{ 'maximumCharacters' | translate: { count: 200 } }}
-              </p>
-            }
-            @if (packageForm.controls.nameAr.touched && packageForm.controls.nameAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-          </div>
-        </div>
-
+      <div class="grid gap-4 md:grid-cols-2">
         <div>
-          <label class="mb-2 block text-sm font-medium">{{ 'routeName' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-          <input formControlName="routeName" maxlength="100" placeholder="packages/route-name" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-          @if (packageForm.controls.routeName.touched && packageForm.controls.routeName.invalid) {
-            <p class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p>
-          }
-        </div>
-
-        <div>
-          <label class="mb-2 block text-sm font-medium" id="packageDestinationLabel">
-            {{ 'destinations' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-          </label>
-          <div
-            class="relative"
-            (click)="$event.stopPropagation()"
-            (keydown.escape)="closeDestinationMenu()"
-          >
-            <button
-              type="button"
-              class="flex w-full items-center justify-between rounded-2xl border border-slate-300 px-3 py-2 text-start disabled:opacity-60"
-              [disabled]="destinationsLoading"
-              [attr.aria-expanded]="destinationMenuOpen"
-              (click)="toggleDestinationMenu($event)"
-            >
-              <span class="text-slate-500"
-                >{{
-                  (selectedDestinations.length ? 'selectedDestinationsCount' : 'selectDestinations')
-                    | translate
-                }}
-                @if (selectedDestinations.length) {
-                  : {{ selectedDestinations.length }}
-                }
-              </span>
-              <i
-                class="mdi"
-                [class.mdi-chevron-down]="!destinationMenuOpen"
-                [class.mdi-chevron-up]="destinationMenuOpen"
-              ></i>
-            </button>
-            @if (destinationMenuOpen) {
-              <div
-                class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border bg-white shadow-xl"
-              >
-                <div class="border-b p-2">
-                  <input
-                    type="search"
-                    class="w-full rounded-xl border px-3 py-2 text-sm"
-                    [value]="destinationSearchTerm"
-                    [placeholder]="'searchDestinations' | translate"
-                    (input)="updateDestinationSearch($event)"
-                  />
-                </div>
-                <div
-                  class="max-h-60 overflow-y-auto p-2"
-                  role="listbox"
-                  aria-multiselectable="true"
-                >
-                  @for (
-                    destination of filteredDestinations;
-                    track destination.id ?? destination.destinationId
-                  ) {
-                    <button
-                      type="button"
-                      class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-start text-sm hover:bg-primary/5"
-                      [class.bg-primary-50]="isDestinationSelected(destination)"
-                      [class.text-primary]="isDestinationSelected(destination)"
-                      (click)="toggleDestination(destination)"
-                    >
-                      <span>{{ destinationLabel(destination) }}</span
-                      ><i
-                        class="mdi"
-                        [class.mdi-checkbox-marked]="isDestinationSelected(destination)"
-                        [class.mdi-checkbox-blank-outline]="!isDestinationSelected(destination)"
-                      ></i>
-                    </button>
-                  } @empty {
-                    <p class="p-4 text-center text-sm text-slate-500">
-                      {{ 'noDestinationsFound' | translate }}
-                    </p>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-          @if (selectedDestinations.length) {
-            <div class="mt-2 flex flex-wrap gap-2">
-              @for (
-                destination of selectedDestinations;
-                track destinationId(destination);
-                let index = $index
-              ) {
-                <span
-                  class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                  ><span>{{ index + 1 }}. {{ destinationLabel(destination) }}</span
-                  ><button type="button" (click)="removeDestination(destinationId(destination))">
-                    <i class="mdi mdi-close"></i></button
-                ></span>
-              }
-            </div>
-          }
+          <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><input formControlName="nameEng" maxlength="200"
+            class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
           @if (
-            packageForm.controls.destinationIds.touched &&
-            packageForm.controls.destinationIds.invalid
+          packageForm.controls.nameEng.touched &&
+          packageForm.controls.nameEng.hasError('required')
           ) {
-            <p class="mt-1 text-xs text-red-600">{{ 'selectDestinations' | translate }}</p>
+          <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
+          } @else if (
+          packageForm.controls.nameEng.touched &&
+          packageForm.controls.nameEng.hasError('maxlength')
+          ) {
+          <p class="mt-1 text-xs text-red-600">
+            {{ 'maximumCharacters' | translate: { count: 200 } }}
+          </p>
+          } @else if (packageForm.controls.nameEng.touched && packageForm.controls.nameEng.hasError('pattern')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p>
           }
         </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><input formControlName="nameAr" maxlength="200" dir="rtl"
+            class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+          @if (
+          packageForm.controls.nameAr.touched &&
+          packageForm.controls.nameAr.hasError('required')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
+          } @else if (
+          packageForm.controls.nameAr.touched &&
+          packageForm.controls.nameAr.hasError('maxlength')
+          ) {
+          <p class="mt-1 text-xs text-red-600">
+            {{ 'maximumCharacters' | translate: { count: 200 } }}
+          </p>
+          }
+          @if (packageForm.controls.nameAr.touched && packageForm.controls.nameAr.hasError('arabicText')) { <p
+            class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+        </div>
+      </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><input
-              formControlName="durationDays"
-              type="text"
-              appNumbersOnly
-              inputmode="numeric"
-              class="w-full rounded-2xl border px-3 py-2"
-            />
-            @if (
-              packageForm.controls.durationDays.touched && packageForm.controls.durationDays.invalid
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'durationHours' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><input
-              formControlName="durationHours"
-              type="text"
-              appNumbersOnly
-              inputmode="numeric"
-              class="w-full rounded-2xl border px-3 py-2"
-            />
-            @if (
-              packageForm.controls.durationHours.touched &&
-              packageForm.controls.durationHours.invalid
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'maxCapacity' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><input
-              formControlName="maxCapacity"
-              type="text"
-              appNumbersOnly
-              inputmode="numeric"
-              class="w-full rounded-2xl border px-3 py-2"
-            />
-            @if (
-              packageForm.controls.maxCapacity.touched && packageForm.controls.maxCapacity.invalid
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
-          </div>
-          <div></div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-            <div class="relative">
-              <span
-                class="absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500"
-                >$</span
-              ><input
-                formControlName="pricePerPerson"
-                type="number"
-                min="0"
-                step="0.01"
-                class="w-full rounded-2xl border py-2 pe-3 ps-12"
-              />
-            </div>
-            @if (
-              packageForm.controls.pricePerPerson.touched &&
-              packageForm.controls.pricePerPerson.invalid
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'pricePerChild' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-            <div class="relative">
-              <span
-                class="absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500"
-                >$</span
-              ><input
-                formControlName="pricePerChild"
-                type="number"
-                min="0"
-                step="0.01"
-                class="w-full rounded-2xl border py-2 pe-3 ps-12"
-              />
-            </div>
-            @if (
-              packageForm.controls.pricePerChild.touched &&
-              packageForm.controls.pricePerChild.invalid
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'dateFrom' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><app-date-picker
-              formControlName="dateFrom"
-              id="package-date-from"
-              [min]="tomorrow"
-              [ariaLabel]="'dateFrom' | translate"
-              inputClass="rounded-2xl border px-3 py-2 pe-11"
-            />
-            @if (
-              packageForm.controls.dateFrom.touched &&
-              packageForm.controls.dateFrom.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'dateFromRequired' | translate }}</p>
-            } @else if (
-              packageForm.controls.dateFrom.touched &&
-              packageForm.controls.dateFrom.hasError('invalidDate')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
-            } @else if (
-              packageForm.controls.dateFrom.touched &&
-              packageForm.controls.dateFrom.hasError('minDate')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'packageStartDateTomorrow' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">{{ 'dateTo' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-            ><app-date-picker
-              formControlName="dateTo"
-              id="package-date-to"
-              [min]="minimumPackageEndDate"
-              [ariaLabel]="'dateTo' | translate"
-              inputClass="rounded-2xl border px-3 py-2 pe-11"
-            />
-            @if (
-              packageForm.controls.dateTo.touched &&
-              packageForm.controls.dateTo.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'dateToRequired' | translate }}</p>
-            } @else if (
-              packageForm.controls.dateTo.touched &&
-              packageForm.controls.dateTo.hasError('invalidDate')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
-            } @else if (
-              packageForm.controls.dateTo.touched &&
-              packageForm.hasError('invalidPackageDateRange')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'packageEndDateAfterStart' | translate }}</p>
-            }
-          </div>
-        </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'routeName' | translate }} <span class="text-rose-600"
+            aria-hidden="true">*</span></label>
+        <input formControlName="routeName" maxlength="100" placeholder="packages/route-name"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (packageForm.controls.routeName.touched && packageForm.controls.routeName.invalid) {
+        <p class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p>
+        }
+      </div>
 
-        <div class="grid gap-4 md:grid-cols-2">
-          <div>
-            <label class="mb-2 block text-sm font-medium">
-              {{ 'englishDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-            </label
-            ><textarea
-              formControlName="descriptionEng"
-              rows="5"
-              maxlength="4000"
-              class="w-full rounded-2xl border px-3 py-2"
-            ></textarea>
-            <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
-            @if (
-              packageForm.controls.descriptionEng.touched &&
-              packageForm.controls.descriptionEng.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="mb-2 block text-sm font-medium">
-              {{ 'arabicDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-            </label
-            ><textarea
-              formControlName="descriptionAr"
-              rows="5"
-              maxlength="4000"
-              dir="rtl"
-              class="w-full rounded-2xl border px-3 py-2"
-            ></textarea>
-            <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
-            @if (
-              packageForm.controls.descriptionAr.touched &&
-              packageForm.controls.descriptionAr.hasError('required')
-            ) {
-              <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
-            } @else if (packageForm.controls.descriptionAr.touched && packageForm.controls.descriptionAr.hasError('arabicText')) {
-              <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-            }
-          </div>
-        </div>
-        <div class="grid gap-4 xl:grid-cols-3">
-          <section class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4" formArrayName="highlights">
-            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'packageHighlights' | translate }}</h3><button type="button" class="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700" (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button></div>
-            <div class="space-y-2">@for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeHighlight(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noHighlightsAdded' | translate }}</p> }</div>
-          </section>
-          <section class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4" formArrayName="includes">
-            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'tourIncludes' | translate }}</h3><button type="button" class="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-700" (click)="addInclude()"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button></div>
-            <div class="space-y-2">@for (itemGroup of includesArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeInclude(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noTourIncludesAdded' | translate }}</p> }</div>
-          </section>
-          <section class="rounded-2xl border border-rose-200 bg-rose-50/40 p-4" formArrayName="excludes">
-            <div class="mb-3 flex items-center justify-between gap-3"><h3 class="text-sm font-semibold">{{ 'tourExcludes' | translate }}</h3><button type="button" class="rounded-full border border-rose-300 bg-white px-3 py-1 text-xs font-semibold text-rose-700" (click)="addExclude()"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button></div>
-            <div class="space-y-2">@for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) { <div [formGroupName]="index" class="grid gap-2"><input formControlName="valueEng" type="text" [placeholder]="'englishValue' | translate" class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'arabicValue' | translate" class="w-full rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm" /><button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-rose-200 bg-white text-rose-600" (click)="removeExclude(index)"><i class="mdi mdi-close"></i></button></div> } @empty { <p class="text-xs text-slate-500">{{ 'noTourExcludesAdded' | translate }}</p> }</div>
-          </section>
-        </div>
-        <div class="rounded-2xl border bg-slate-50 p-4">
-          <label class="flex items-center gap-2 text-sm font-medium"
-            ><input formControlName="isFreeCancelation" type="checkbox" />{{
-              'freeCancellation' | translate
-            }}</label
-          >
-          <div class="mt-3 flex items-center justify-between gap-3">
-            <label class="text-sm font-medium">
-              {{ 'cancellationPolicies' | translate }}
-              @if (!packageForm.controls.isFreeCancelation.value) {
-                <span class="text-rose-600" aria-hidden="true">*</span>
+      <div>
+        <label class="mb-2 block text-sm font-medium" id="packageDestinationLabel">
+          {{ 'destinations' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+        </label>
+        <div class="relative" (click)="$event.stopPropagation()" (keydown.escape)="closeDestinationMenu()">
+          <button type="button"
+            class="flex w-full items-center justify-between rounded-2xl border border-slate-300 px-3 py-2 text-start disabled:opacity-60"
+            [disabled]="destinationsLoading" [attr.aria-expanded]="destinationMenuOpen"
+            (click)="toggleDestinationMenu($event)">
+            <span class="text-slate-500">{{
+              (selectedDestinations.length ? 'selectedDestinationsCount' : 'selectDestinations')
+              | translate
+              }}
+              @if (selectedDestinations.length) {
+              : {{ selectedDestinations.length }}
               }
-            </label>
-            <button type="button" class="rounded-full border border-primary px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/5" (click)="addCancellationPolicy()"><i class="mdi mdi-plus"></i> {{ 'addCancellationPolicy' | translate }}</button>
+            </span>
+            <i class="mdi" [class.mdi-chevron-down]="!destinationMenuOpen"
+              [class.mdi-chevron-up]="destinationMenuOpen"></i>
+          </button>
+          @if (destinationMenuOpen) {
+          <div class="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border bg-white shadow-xl">
+            <div class="border-b p-2">
+              <input type="search" class="w-full rounded-xl border px-3 py-2 text-sm" [value]="destinationSearchTerm"
+                [placeholder]="'searchDestinations' | translate" (input)="updateDestinationSearch($event)" />
+            </div>
+            <div class="max-h-60 overflow-y-auto p-2" role="listbox" aria-multiselectable="true">
+              @for (
+              destination of filteredDestinations;
+              track destination.id ?? destination.destinationId
+              ) {
+              <button type="button"
+                class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-start text-sm hover:bg-primary/5"
+                [class.bg-primary-50]="isDestinationSelected(destination)"
+                [class.text-primary]="isDestinationSelected(destination)" (click)="toggleDestination(destination)">
+                <span>{{ destinationLabel(destination) }}</span><i class="mdi"
+                  [class.mdi-checkbox-marked]="isDestinationSelected(destination)"
+                  [class.mdi-checkbox-blank-outline]="!isDestinationSelected(destination)"></i>
+              </button>
+              } @empty {
+              <p class="p-4 text-center text-sm text-slate-500">
+                {{ 'noDestinationsFound' | translate }}
+              </p>
+              }
+            </div>
           </div>
-          <div class="mt-3 space-y-3" formArrayName="cancellationPolicies">
-            @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
-              <div [formGroupName]="index" class="grid items-start gap-2 sm:grid-cols-[1fr_1fr_auto]">
-                <div>
-                  <label class="mb-1 block text-xs font-medium">
-                    {{ 'englishValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                  </label>
-                  <input formControlName="valueEng" type="text" [placeholder]="'cancellationPolicyPlaceholder' | translate" class="w-full rounded-2xl border bg-white px-3 py-2" />
-                  @if (itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].hasError('required')) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
-                  }
-                </div>
-                <div>
-                  <label class="mb-1 block text-xs font-medium">
-                    {{ 'arabicValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                  </label>
-                  <input formControlName="valueAr" type="text" dir="rtl" [placeholder]="'cancellationPolicyPlaceholder' | translate" class="w-full rounded-2xl border bg-white px-3 py-2" />
-                  @if (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].hasError('required')) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
-                  } @else if (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].hasError('arabicText')) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-                  }
-                </div>
-                <button type="button" class="mt-6 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50" (click)="removeCancellationPolicy(index)" [attr.aria-label]="'remove' | translate"><i class="mdi mdi-close"></i></button>
-              </div>
-            } @empty {
-              <p class="rounded-xl border border-dashed border-slate-300 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">{{ 'noCancellationPoliciesAdded' | translate }}</p>
-            }
-          </div>
-          @if (validationSubmitted && !packageForm.controls.isFreeCancelation.value && cancellationPoliciesArray.length === 0) {
-            <p class="mt-2 text-xs text-red-600">{{ 'cancellationPolicyRequired' | translate }}</p>
           }
         </div>
-      </section>
+        @if (selectedDestinations.length) {
+        <div class="mt-2 flex flex-wrap gap-2">
+          @for (
+          destination of selectedDestinations;
+          track destinationId(destination);
+          let index = $index
+          ) {
+          <span
+            class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"><span>{{
+              index + 1 }}. {{ destinationLabel(destination) }}</span><button type="button"
+              (click)="removeDestination(destinationId(destination))">
+              <i class="mdi mdi-close"></i></button></span>
+          }
+        </div>
+        }
+        @if (
+        packageForm.controls.destinationIds.touched &&
+        packageForm.controls.destinationIds.invalid
+        ) {
+        <p class="mt-1 text-xs text-red-600">{{ 'selectDestinations' | translate }}</p>
+        }
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><input formControlName="durationDays" type="text" appNumbersOnly
+            inputmode="numeric" class="w-full rounded-2xl border px-3 py-2" />
+          @if (
+          packageForm.controls.durationDays.touched && packageForm.controls.durationDays.invalid
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'durationHours' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><input formControlName="durationHours" type="text" appNumbersOnly
+            inputmode="numeric" class="w-full rounded-2xl border px-3 py-2" />
+          @if (
+          packageForm.controls.durationHours.touched &&
+          packageForm.controls.durationHours.invalid
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'maxCapacity' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><input formControlName="maxCapacity" type="text" appNumbersOnly
+            inputmode="numeric" class="w-full rounded-2xl border px-3 py-2" />
+          @if (
+          packageForm.controls.maxCapacity.touched && packageForm.controls.maxCapacity.invalid
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
+          }
+        </div>
+        <div></div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'pricePerPerson' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label>
+          <div class="relative">
+            <span
+              class="absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+              formControlName="pricePerPerson" type="number" min="0" step="0.01"
+              class="w-full rounded-2xl border py-2 pe-3 ps-12" />
+          </div>
+          @if (
+          packageForm.controls.pricePerPerson.touched &&
+          packageForm.controls.pricePerPerson.invalid
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'pricePerChild' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label>
+          <div class="relative">
+            <span
+              class="absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+              formControlName="pricePerChild" type="number" min="0" step="0.01"
+              class="w-full rounded-2xl border py-2 pe-3 ps-12" />
+          </div>
+          @if (
+          packageForm.controls.pricePerChild.touched &&
+          packageForm.controls.pricePerChild.invalid
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'nonNegativeValueRequired' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'dateFrom' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><app-date-picker formControlName="dateFrom" id="package-date-from"
+            [min]="minimumPackageStartDate" [ariaLabel]="'dateFrom' | translate"
+            inputClass="rounded-2xl border px-3 py-2 pe-11" />
+          @if (
+          packageForm.controls.dateFrom.touched &&
+          packageForm.controls.dateFrom.hasError('required')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'dateFromRequired' | translate }}</p>
+          } @else if (
+          packageForm.controls.dateFrom.touched &&
+          packageForm.controls.dateFrom.hasError('invalidDate')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+          } @else if (
+          packageForm.controls.dateFrom.touched &&
+          packageForm.controls.dateFrom.hasError('minDate')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'packageStartDateTomorrow' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'dateTo' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label><app-date-picker formControlName="dateTo" id="package-date-to"
+            [min]="minimumPackageEndDate" [ariaLabel]="'dateTo' | translate"
+            inputClass="rounded-2xl border px-3 py-2 pe-11" />
+          @if (
+          packageForm.controls.dateTo.touched &&
+          packageForm.controls.dateTo.hasError('required')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'dateToRequired' | translate }}</p>
+          } @else if (
+          packageForm.controls.dateTo.touched &&
+          packageForm.controls.dateTo.hasError('invalidDate')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+          } @else if (
+          packageForm.controls.dateTo.touched &&
+          packageForm.hasError('invalidPackageDateRange')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'packageEndDateAfterStart' | translate }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <label class="mb-2 block text-sm font-medium">
+            {{ 'englishDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+          </label><textarea formControlName="descriptionEng" rows="5" maxlength="4000"
+            class="w-full rounded-2xl border px-3 py-2"></textarea>
+          <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+          @if (
+          packageForm.controls.descriptionEng.touched &&
+          packageForm.controls.descriptionEng.hasError('required')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">
+            {{ 'arabicDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+          </label><textarea formControlName="descriptionAr" rows="5" maxlength="4000" dir="rtl"
+            class="w-full rounded-2xl border px-3 py-2"></textarea>
+          <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+          @if (
+          packageForm.controls.descriptionAr.touched &&
+          packageForm.controls.descriptionAr.hasError('required')
+          ) {
+          <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
+          } @else if (packageForm.controls.descriptionAr.touched &&
+          packageForm.controls.descriptionAr.hasError('arabicText')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+          }
+        </div>
+      </div>
+      <div class="grid gap-4 xl:grid-cols-2">
+        <section class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4" formArrayName="highlights">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h3 class="text-sm font-semibold">{{ 'packageHighlights' | translate }}</h3><button type="button"
+              class="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700"
+              (click)="addHighlight()"><i class="mdi mdi-plus"></i> {{ 'addHighlight' | translate }}</button>
+          </div>
+          <div class="space-y-2">
+            @for (itemGroup of highlightsArray.controls; track itemGroup; let index = $index) {
+            <div [formGroupName]="index"
+              class="grid items-start gap-2 rounded-2xl border border-amber-200 bg-white/80 p-3 shadow-sm">
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'englishValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueEng" rows="2" maxlength="1000"
+                  [placeholder]="'englishValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueEng'].hasError('required') ||
+                itemGroup.controls['valueEng'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                itemGroup.controls['valueEng'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueAr" rows="2" maxlength="1000" dir="rtl"
+                  [placeholder]="'arabicValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-amber-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueAr'].hasError('required') ||
+                itemGroup.controls['valueAr'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('arabicText')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <button type="button"
+                class="grid h-9 w-9 place-items-center justify-self-end rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+                (click)="removeHighlight(index)" [attr.aria-label]="'delete' | translate"><i
+                  class="mdi mdi-delete-outline"></i></button>
+            </div>
+            } @empty { <p class="text-xs text-slate-500">{{ 'noHighlightsAdded' | translate }}</p> }
+          </div>
+        </section>
+        <section class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4" formArrayName="includes">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h3 class="text-sm font-semibold">{{ 'packageIncludes' | translate }}</h3><button type="button"
+              class="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-700"
+              (click)="addInclude()"><i class="mdi mdi-plus"></i> {{ 'addIncluded' | translate }}</button>
+          </div>
+          <div class="space-y-2">
+            @for (itemGroup of includesArray.controls; track itemGroup; let index = $index) {
+            <div [formGroupName]="index"
+              class="grid items-start gap-2 rounded-2xl border border-emerald-200 bg-white/80 p-3 shadow-sm">
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'englishValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueEng" rows="2" maxlength="1000"
+                  [placeholder]="'englishValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueEng'].hasError('required') ||
+                itemGroup.controls['valueEng'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                itemGroup.controls['valueEng'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueAr" rows="2" maxlength="1000" dir="rtl"
+                  [placeholder]="'arabicValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueAr'].hasError('required') ||
+                itemGroup.controls['valueAr'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('arabicText')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <button type="button"
+                class="grid h-9 w-9 place-items-center justify-self-end rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+                (click)="removeInclude(index)" [attr.aria-label]="'delete' | translate"><i
+                  class="mdi mdi-delete-outline"></i></button>
+            </div>
+            } @empty { <p class="text-xs text-slate-500">{{ 'noPackageIncludesAdded' | translate }}</p> }
+          </div>
+        </section>
+     
+      </div>
+     <div class="grid gap-4 xl:grid-cols-2">
+           <section class="rounded-2xl border border-rose-200 bg-rose-50/40 p-4" formArrayName="excludes">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h3 class="text-sm font-semibold">{{ 'packageExcludes' | translate }}</h3><button type="button"
+              class="rounded-full border border-rose-300 bg-white px-3 py-1 text-xs font-semibold text-rose-700"
+              (click)="addExclude()"><i class="mdi mdi-plus"></i> {{ 'addExcluded' | translate }}</button>
+          </div>
+          <div class="space-y-3">
+            @for (itemGroup of excludesArray.controls; track itemGroup; let index = $index) {
+            <div [formGroupName]="index"
+              class="grid items-start gap-2 rounded-2xl border border-rose-200 bg-white/80 p-3 shadow-sm">
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'englishValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueEng" rows="2" maxlength="1000"
+                  [placeholder]="'englishValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueEng'].hasError('required') ||
+                itemGroup.controls['valueEng'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+                itemGroup.controls['valueEng'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <textarea formControlName="valueAr" rows="2" maxlength="1000" dir="rtl"
+                  [placeholder]="'arabicValue' | translate"
+                  class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border border-rose-200 bg-white px-3 py-2 text-sm"></textarea>
+                @if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                (itemGroup.controls['valueAr'].hasError('required') ||
+                itemGroup.controls['valueAr'].hasError('pattern'))) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('arabicText')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+                } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+                itemGroup.controls['valueAr'].hasError('maxlength')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+                }
+              </div>
+              <button type="button"
+                class="grid h-9 w-9 place-items-center justify-self-end rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+                (click)="removeExclude(index)" [attr.aria-label]="'delete' | translate"><i
+                  class="mdi mdi-delete-outline"></i></button>
+            </div>
+            } @empty { <p class="text-xs text-slate-500">{{ 'noPackageExcludesAdded' | translate }}</p> }
+          </div>
+        </section>
+      <div class="rounded-2xl border bg-slate-50 p-4">
+        <label class="flex items-center gap-2 text-sm font-medium">
+          <input formControlName="isFreeCancelation"
+            type="checkbox" />{{
+          'freeCancellation' | translate
+          }}</label>
+        <div class="mt-3 flex items-center justify-between gap-3">
+          <label class="text-sm font-medium">
+            {{ 'cancellationPolicies' | translate }}
+            @if (!packageForm.controls.isFreeCancelation.value) {
+            <span class="text-rose-600" aria-hidden="true">*</span>
+            }
+          </label>
+          <button type="button"
+            class="rounded-full border border-primary px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/5"
+            (click)="addCancellationPolicy()"><i class="mdi mdi-plus"></i> {{ 'addCancellationPolicy' | translate
+            }}</button>
+        </div>
+        <div class="mt-3 space-y-3" formArrayName="cancellationPolicies">
+          @for (itemGroup of cancellationPoliciesArray.controls; track itemGroup; let index = $index) {
+          <div [formGroupName]="index"
+            class="grid items-start gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <div>
+              <label class="mb-1 block text-xs font-medium">
+                {{ 'englishValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+              </label>
+              <textarea formControlName="valueEng" rows="2" maxlength="1000"
+                [placeholder]="'cancellationPolicyPlaceholder' | translate"
+                class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border bg-white px-3 py-2"></textarea>
+              @if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+              (itemGroup.controls['valueEng'].hasError('required') ||
+              itemGroup.controls['valueEng'].hasError('pattern'))) {
+              <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+              } @else if ((itemGroup.controls['valueEng'].touched || validationSubmitted) &&
+              itemGroup.controls['valueEng'].hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+              }
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-medium">
+                {{ 'arabicValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+              </label>
+              <textarea formControlName="valueAr" rows="2" maxlength="1000" dir="rtl"
+                [placeholder]="'cancellationPolicyPlaceholder' | translate"
+                class="min-h-[4.5rem] max-h-32 w-full resize-y overflow-y-auto rounded-2xl border bg-white px-3 py-2"></textarea>
+              @if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+              (itemGroup.controls['valueAr'].hasError('required') || itemGroup.controls['valueAr'].hasError('pattern')))
+              {
+              <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+              } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+              itemGroup.controls['valueAr'].hasError('arabicText')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+              } @else if ((itemGroup.controls['valueAr'].touched || validationSubmitted) &&
+              itemGroup.controls['valueAr'].hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 1000 } }}</p>
+              }
+            </div>
+            <button type="button"
+              class="grid h-9 w-9 shrink-0 place-items-center justify-self-end rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
+              (click)="removeCancellationPolicy(index)" [attr.aria-label]="'delete' | translate"><i
+                class="mdi mdi-delete-outline"></i></button>
+          </div>
+          } @empty {
+          <p
+            class="rounded-xl border border-dashed border-slate-300 bg-white/70 px-3 py-5 text-center text-xs text-slate-500">
+            {{ 'noCancellationPoliciesAdded' | translate }}</p>
+          }
+        </div>
+        @if (validationSubmitted && !packageForm.controls.isFreeCancelation.value && cancellationPoliciesArray.length
+        === 0) {
+        <p class="mt-2 text-xs text-red-600">{{ 'cancellationPolicyRequired' | translate }}</p>
+        }
+      </div>
+      </div>
+
+    </section>
     }
 
     @if (activeStep === 2) {
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
-        <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
-          <div class="flex items-start gap-3">
-            <span
-              class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"
-              ><i class="mdi mdi-image-multiple-outline"></i
-            ></span>
-            <div>
-              <h3 class="font-semibold">{{ 'packageImagesStep' | translate }}</h3>
-              <p class="mt-1 text-xs text-slate-500">{{ 'packageImagesHint' | translate }}</p>
-            </div>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
+      <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i
+              class="mdi mdi-image-multiple-outline"></i></span>
+          <div>
+            <h3 class="font-semibold">{{ 'packageImagesStep' | translate }}</h3>
+            <p class="mt-1 text-xs text-slate-500">{{ 'packageImagesHint' | translate }}</p>
           </div>
-          @if (currentPackageId) {
-            <span
-              class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"
-              ><i class="mdi mdi-check-circle me-1"></i>{{ 'savedPackageNumber' | translate }} #{{
-                currentPackageId
-              }}</span
-            >
-          }
         </div>
-        <div class="rounded-2xl border border-dashed border-slate-300 p-4">
-          <div class="mb-2 flex items-center justify-between">
-            <label for="packageImages" class="text-sm font-medium">
-              {{ 'packageImages' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-            </label
-            ><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{ maxImages }}</span>
-          </div>
-          <label
-            for="packageImages"
-            class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-9 text-center transition hover:border-primary hover:bg-primary/5"
-            [class.cursor-not-allowed]="
+        @if (currentPackageId) {
+        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"><i
+            class="mdi mdi-check-circle me-1"></i>{{ 'savedPackageNumber' | translate }} #{{
+          currentPackageId
+          }}</span>
+        }
+      </div>
+      <div class="rounded-2xl border border-dashed border-slate-300 p-4">
+        <div class="mb-2 flex items-center justify-between">
+          <label for="packageImages" class="text-sm font-medium">
+            {{ 'packageImages' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+          </label><span class="text-xs text-slate-500">{{ imageUploads.length }} / {{ maxImages }}</span>
+        </div>
+        <label for="packageImages"
+          class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-9 text-center transition hover:border-primary hover:bg-primary/5"
+          [class.cursor-not-allowed]="
               imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null
-            "
-            [class.opacity-60]="
+            " [class.opacity-60]="
               imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null
-            "
-          >
-            <span
-              class="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary"
-              ><i class="mdi mdi-cloud-upload-outline"></i
-            ></span>
-            <span class="mt-3 text-sm font-semibold text-primary">{{
-              'chooseImages' | translate
+            ">
+          <span class="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-3xl text-primary"><i
+              class="mdi mdi-cloud-upload-outline"></i></span>
+          <span class="mt-3 text-sm font-semibold text-primary">{{
+            'chooseImages' | translate
             }}</span>
-            <span class="mt-1 text-xs text-slate-500">{{ 'packageImageRules' | translate }}</span>
-          </label>
-          <input
-            id="packageImages"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            class="sr-only"
-            [disabled]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null"
-            (change)="onImagesSelected($event)"
-          />
-          @if (imageValidationMessage) {
-            <p class="mt-2 text-xs font-medium text-red-600" role="alert">
-              {{ imageValidationMessage | translate }}
-            </p>
-          }
-          @if (validationSubmitted && packageForm.controls.images.invalid) {
-            <p class="mt-2 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p>
-          }
-          @if (imageUploads.length) {
-            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-              @for (image of imageUploads; track image.url; let index = $index) {
-                <div class="overflow-hidden rounded-xl bg-slate-200 shadow-sm">
-                  <div class="relative">
-                  <img
-                    [src]="getImageUrl(image.url)"
-                    [alt]="image.altEng || image.altAr || ''"
-                    class="aspect-[3/2] w-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-                    [disabled]="deletingImageIndex !== null || isSaving"
-                    [attr.aria-label]="'removeImage' | translate"
-                    [attr.title]="'removeImage' | translate"
-                    (click)="removeImage(index)"
-                  >
-                    <i
-                      class="mdi"
-                      [class.mdi-loading]="deletingImageIndex === index"
-                      [class.mdi-spin]="deletingImageIndex === index"
-                      [class.mdi-close]="deletingImageIndex !== index"
-                    ></i>
-                  </button>
-                  @if (index === 0) {
-                    <span
-                      class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white"
-                      >{{ 'cover' | translate }}</span
-                    >
-                  }
-                  </div>
-                  <div class="grid gap-1 bg-white p-2">
-                    <label class="text-[10px] font-medium">{{ 'blogEnglishAltText' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-                    <input [(ngModel)]="image.altEng" (blur)="image.altEngTouched = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="(imageAltErrorsVisible || image.altEngTouched) && !image.altEng?.trim()" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
-                    <label class="mt-1 text-[10px] font-medium">{{ 'blogArabicAltText' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-                    <input [(ngModel)]="image.altAr" (blur)="image.altArTouched = true" [ngModelOptions]="{standalone: true}" [class.border-red-500]="(imageAltErrorsVisible || image.altArTouched) && (!image.altAr?.trim() || (image.altAr?.trim() && !startsWithArabicText(image.altAr)))" class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text" dir="rtl" />
-                    @if ((imageAltErrorsVisible || image.altEngTouched) && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogEnglishAltTextRequired' | translate }}</p> }
-                    @if ((imageAltErrorsVisible || image.altArTouched) && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if ((imageAltErrorsVisible || image.altArTouched) && !startsWithArabicText(image.altAr)) { <p class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-                  </div>
-                </div>
+          <span class="mt-1 text-xs text-slate-500">{{ 'packageImageRules' | translate }}</span>
+        </label>
+        <input id="packageImages" type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only"
+          [disabled]="imageUploads.length >= maxImages || isSaving || deletingImageIndex !== null"
+          (change)="onImagesSelected($event)" />
+        @if (imageValidationMessage) {
+        <p class="mt-2 text-xs font-medium text-red-600" role="alert">
+          {{ imageValidationMessage | translate }}
+        </p>
+        }
+        @if (validationSubmitted && packageForm.controls.images.invalid) {
+        <p class="mt-2 text-xs text-red-600">{{ 'imagesRequired' | translate }}</p>
+        }
+        @if (imageUploads.length) {
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          @for (image of imageUploads; track image.url; let index = $index) {
+          <div class="overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+            <div class="relative">
+              <img [src]="getImageUrl(image.url)" [alt]="image.altEng || image.altAr || ''"
+                class="aspect-[3/2] w-full object-cover" />
+              <button type="button"
+                class="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-lg text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="deletingImageIndex !== null || isSaving" [attr.aria-label]="'removeImage' | translate"
+                [attr.title]="'removeImage' | translate" (click)="removeImage(index)">
+                <i class="mdi" [class.mdi-loading]="deletingImageIndex === index"
+                  [class.mdi-spin]="deletingImageIndex === index" [class.mdi-close]="deletingImageIndex !== index"></i>
+              </button>
+              @if (index === 0) {
+              <span
+                class="absolute bottom-2 start-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
+                'cover' | translate }}</span>
               }
             </div>
+            <div class="grid gap-1 bg-white p-2">
+              <label class="text-[10px] font-medium">{{ 'blogEnglishAltText' | translate }} <span class="text-rose-600"
+                  aria-hidden="true">*</span></label>
+              <input [(ngModel)]="image.altEng" (blur)="image.altEngTouched = true"
+                [ngModelOptions]="{standalone: true}"
+                [class.border-red-500]="(imageAltErrorsVisible || image.altEngTouched) && !image.altEng?.trim()"
+                class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="English alt text" />
+              <label class="mt-1 text-[10px] font-medium">{{ 'blogArabicAltText' | translate }} <span
+                  class="text-rose-600" aria-hidden="true">*</span></label>
+              <input [(ngModel)]="image.altAr" (blur)="image.altArTouched = true" [ngModelOptions]="{standalone: true}"
+                [class.border-red-500]="(imageAltErrorsVisible || image.altArTouched) && (!image.altAr?.trim() || (image.altAr?.trim() && !startsWithArabicText(image.altAr)))"
+                class="w-full rounded border border-slate-200 px-2 py-1 text-xs" placeholder="Arabic alt text"
+                dir="rtl" />
+              @if ((imageAltErrorsVisible || image.altEngTouched) && !image.altEng?.trim()) { <p
+                class="text-[10px] text-red-600">{{ 'blogEnglishAltTextRequired' | translate }}</p> }
+              @if ((imageAltErrorsVisible || image.altArTouched) && !image.altAr?.trim()) { <p
+                class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if
+              ((imageAltErrorsVisible || image.altArTouched) && !startsWithArabicText(image.altAr)) { <p
+                class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+            </div>
+          </div>
           }
         </div>
-        <p class="mt-3 flex items-start gap-2 text-xs text-slate-500">
-          <i class="mdi mdi-information-outline mt-0.5 text-primary"></i
-          >{{ 'packageImagesUploadStepHint' | translate }}
-        </p>
-      </section>
+        }
+      </div>
+      <p class="mt-3 flex items-start gap-2 text-xs text-slate-500">
+        <i class="mdi mdi-information-outline mt-0.5 text-primary"></i>{{ 'packageImagesUploadStepHint' | translate }}
+      </p>
+    </section>
     }
 
     @if (activeStep === 3) {
-      <section class="rounded-2xl border bg-white p-5 md:p-6">
-        <div class="mb-5 flex items-center justify-between gap-3">
-          <div>
-            <h3 class="font-semibold">{{ 'packageItineraryStep' | translate }}</h3>
-            <p class="mt-1 text-xs text-slate-500">{{ 'itineraryStepHint' | translate }}</p>
-          </div>
-          <button
-            type="button"
-            [disabled]="!!itineraryDraft"
-            class="rounded-full border border-primary px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-50"
-            (click)="openItineraryStepEditor()"
-          >
-            <i class="mdi mdi-plus"></i> {{ 'addStep' | translate }}
-          </button>
+    <section class="rounded-2xl border bg-white p-5 md:p-6">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="font-semibold">{{ 'packageItineraryStep' | translate }}</h3>
+          <p class="mt-1 text-xs text-slate-500">{{ 'itineraryStepHint' | translate }}</p>
         </div>
-        <div class="grid gap-4 xl:grid-cols-2">
-          <div class="rounded-2xl border bg-slate-50 p-4">
-            <h4 class="mb-3 font-semibold">
-              {{ (itineraryDraftIsChild ? 'childStepDetails' : 'stepDetails') | translate }}
-            </h4>
-            @if (itineraryDraft) {
-              <div [formGroup]="itineraryDraft" class="space-y-3">
-                <div class="grid gap-3 md:grid-cols-2">
-                  <div>
-                    <label class="mb-1 block text-xs font-medium">{{ 'date' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-                    ><app-date-picker
-                      formControlName="arrivalDate"
-                      [min]="packageForm.controls.dateFrom.value || null"
-                      [max]="packageForm.controls.dateTo.value || null"
-                      [ariaLabel]="'date' | translate"
-                      inputClass="cursor-pointer rounded-xl border bg-white py-3 pe-12 ps-12"
-                    />
-                    @if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.controls['arrivalDate'].hasError('required')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
-                    } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.controls['arrivalDate'].hasError('invalidDate')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
-                    }
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium">
-                      {{ 'englishTitle' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                    </label
-                    ><input
-                      formControlName="titleEng"
-                      maxlength="200"
-                      class="w-full rounded-xl border bg-white px-3 py-2"
-                    />
-                    @if (itineraryDraft.controls['titleEng'].touched && itineraryDraft.controls['titleEng'].invalid) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p>
-                    }
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium">{{ 'arabicTitle' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-                    <input formControlName="titleAr" dir="rtl" maxlength="200" class="w-full rounded-xl border bg-white px-3 py-2" />
-                    @if (itineraryDraft.controls['titleAr'].touched && itineraryDraft.controls['titleAr'].hasError('required')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p>
-                    } @else if (itineraryDraft.controls['titleAr'].touched && itineraryDraft.controls['titleAr'].hasError('arabicText')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-                    }
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium">
-                      {{ 'startTime' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                    </label
-                    ><select
-                      formControlName="startTime"
-                      class="w-full rounded-xl border bg-white px-3 py-2"
-                    >
-                      <option [ngValue]="null">--:--</option>
-                      @for (timeOption of itineraryTimeOptions; track timeOption) {
-                        <option [value]="timeOption">{{ timeOption }}</option>
-                      }
-                    </select>
-                    @if (itineraryDraft.controls['startTime'].touched && itineraryDraft.controls['startTime'].hasError('required')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimesRequired' | translate }}</p>
-                    }
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium">{{ 'endTime' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label
-                    ><select
-                      formControlName="endTime"
-                      class="w-full rounded-xl border bg-white px-3 py-2"
-                    >
-                      <option [ngValue]="null">--:--</option>
-                      @for (timeOption of itineraryTimeOptions; track timeOption) {
-                        <option [value]="timeOption">{{ timeOption }}</option>
-                      }
-                    </select>
-                    @if (itineraryDraft.controls['endTime'].touched && itineraryDraft.controls['endTime'].hasError('required')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'itineraryTimesRequired' | translate }}</p>
-                    } @else if ((itineraryDraft.controls['startTime'].touched || itineraryDraft.controls['endTime'].touched) && itineraryDraft.hasError('invalidItineraryTimeRange')) {
-                      <p class="mt-1 text-xs text-red-600">{{ 'endTimeAfterStart' | translate }}</p>
-                    }
-                  </div>
-                </div>
-                <div>
-                  <label class="mb-1 block text-xs font-medium">
-                    {{ 'englishValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                  </label
-                  ><textarea
-                    formControlName="valueEng"
-                    rows="3"
-                    maxlength="2000"
-                    class="w-full rounded-xl border bg-white px-3 py-2"
-                  ></textarea>
-                  @if (itineraryDraft.controls['valueEng'].touched && itineraryDraft.controls['valueEng'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'validItineraryStepRequired' | translate }}</p>
-                  }
-                </div>
-                <div>
-                  <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span></label>
-                  <textarea formControlName="valueAr" dir="rtl" rows="3" maxlength="2000" class="w-full rounded-xl border bg-white px-3 py-2"></textarea>
-                  @if (itineraryDraft.controls['valueAr'].touched && itineraryDraft.controls['valueAr'].hasError('required')) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'validItineraryStepRequired' | translate }}</p>
-                  } @else if (itineraryDraft.controls['valueAr'].touched && itineraryDraft.controls['valueAr'].hasError('arabicText')) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
-                  }
-                </div>
-                <div class="grid gap-3 md:grid-cols-2">
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'englishNotes' | translate }}</label><textarea formControlName="notesEng" rows="3" maxlength="2000" [placeholder]="'itineraryNotesPlaceholder' | translate" class="w-full rounded-xl border bg-white px-3 py-2"></textarea></div>
-                  <div><label class="mb-1 block text-xs font-medium">{{ 'arabicNotes' | translate }}</label><textarea formControlName="notesAr" dir="rtl" rows="3" maxlength="2000" class="w-full rounded-xl border bg-white px-3 py-2"></textarea>@if (itineraryDraft.controls['notesAr'].touched && itineraryDraft.controls['notesAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }</div>
-                </div>
-                @if (itineraryDraft.hasError('itineraryTimeOverlap')) {
-                  <p
-                    class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600"
-                    role="alert"
-                  >
-                    <i class="mdi mdi-clock-alert-outline me-1"></i
-                    >{{ 'itineraryTimeConflict' | translate }}
-                  </p>
+        <button type="button" [disabled]="!!itineraryDraft"
+          class="rounded-full border border-primary px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-50"
+          (click)="openItineraryStepEditor()">
+          <i class="mdi mdi-plus"></i> {{ 'addStep' | translate }}
+        </button>
+      </div>
+      <div class="grid gap-4 xl:grid-cols-2">
+        <div class="rounded-2xl border bg-slate-50 p-4">
+          <h4 class="mb-3 font-semibold">
+            {{ (itineraryDraftIsChild ? 'childStepDetails' : 'stepDetails') | translate }}
+          </h4>
+          @if (itineraryDraft) {
+          <div [formGroup]="itineraryDraft" class="space-y-3">
+            <div class="grid gap-3 md:grid-cols-2">
+     
+              <div>
+                <label class="mb-1 block text-xs font-medium">
+                  {{ 'englishTitle' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+                </label><input formControlName="titleEng" maxlength="200"
+                  class="w-full rounded-xl border bg-white px-3 py-2" />
+                @if (itineraryDraft.controls['titleEng'].touched && itineraryDraft.controls['titleEng'].invalid) {
+                <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p>
                 }
-                <div class="flex gap-2">
-                  <button
-                    type="button"
-                    class="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
-                    (click)="saveItineraryStep()"
-                  >
-                    {{ 'saveStep' | translate }}</button
-                  ><button
-                    type="button"
-                    class="rounded-full border px-4 py-2 text-xs"
-                    (click)="cancelItineraryStep()"
-                  >
-                    {{ 'cancel' | translate }}
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'arabicTitle' | translate }} <span
+                    class="text-rose-600" aria-hidden="true">*</span></label>
+                <input formControlName="titleAr" dir="rtl" maxlength="200"
+                  class="w-full rounded-xl border bg-white px-3 py-2" />
+                @if (itineraryDraft.controls['titleAr'].touched &&
+                itineraryDraft.controls['titleAr'].hasError('required')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p>
+                } @else if (itineraryDraft.controls['titleAr'].touched &&
+                itineraryDraft.controls['titleAr'].hasError('arabicText')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+                }
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">
+                  {{ 'startTime' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+                </label>
+                <app-time-picker formControlName="startTime" [min]="minimumItineraryStartTime" [minExclusive]="true"
+                  [ariaLabel]="'startTime' | translate" inputClass="rounded-xl border bg-white px-3 py-2" />
+                @if (itineraryDraft.controls['startTime'].touched &&
+                itineraryDraft.controls['startTime'].hasError('required')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'startTimeRequired' | translate }}</p>
+                } @else if (itineraryDraft.controls['startTime'].touched &&
+                itineraryDraft.hasError('itineraryTimeBeforePrevious')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'startTimeAfterPreviousStep' | translate }}</p>
+                }
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'endTime' | translate }} <span class="text-rose-600"
+                    aria-hidden="true">*</span></label><app-time-picker formControlName="endTime"
+                  [min]="itineraryDraft.controls['startTime'].value" [minExclusive]="true"
+                  [ariaLabel]="'endTime' | translate" inputClass="rounded-xl border bg-white px-3 py-2" />
+                @if (itineraryDraft.controls['endTime'].touched &&
+                itineraryDraft.controls['endTime'].hasError('required')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'endTimeRequired' | translate }}</p>
+                } @else if ((itineraryDraft.controls['startTime'].touched || itineraryDraft.controls['endTime'].touched)
+                && itineraryDraft.hasError('invalidItineraryTimeRange')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'endTimeAfterStart' | translate }}</p>
+                }
+              </div>
+                 <div>
+                <label class="mb-1 block text-xs font-medium">{{ 'date' | translate }}</label><app-date-picker formControlName="arrivalDate"
+                  [min]="packageForm.controls.dateFrom.value || null" [max]="packageForm.controls.dateTo.value || null"
+                  [ariaLabel]="'date' | translate"
+                  inputClass="cursor-pointer rounded-xl border bg-white py-3 pe-12 ps-12" />
+                @if (itineraryDraft.controls['arrivalDate'].value &&itineraryDraft.controls['arrivalDate'].touched &&
+                itineraryDraft.controls['arrivalDate'].hasError('invalidDate')) {
+                <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+                }
+              </div>
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-medium">
+                {{ 'englishValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
+              </label><textarea formControlName="valueEng" rows="3" maxlength="2000"
+                class="w-full rounded-xl border bg-white px-3 py-2"></textarea>
+              @if (itineraryDraft.controls['valueEng'].touched &&
+              itineraryDraft.controls['valueEng'].hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+              } @else if (itineraryDraft.controls['valueEng'].touched &&
+              itineraryDraft.controls['valueEng'].hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'stepDescriptionMaxLength' | translate }}</p>
+              }
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span class="text-rose-600"
+                  aria-hidden="true">*</span></label>
+              <textarea formControlName="valueAr" dir="rtl" rows="3" maxlength="2000"
+                class="w-full rounded-xl border bg-white px-3 py-2"></textarea>
+              @if (itineraryDraft.controls['valueAr'].touched &&
+              itineraryDraft.controls['valueAr'].hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+              } @else if (itineraryDraft.controls['valueAr'].touched &&
+              itineraryDraft.controls['valueAr'].hasError('arabicText')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+              } @else if (itineraryDraft.controls['valueAr'].touched &&
+              itineraryDraft.controls['valueAr'].hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'stepDescriptionMaxLength' | translate }}</p>
+              }
+            </div>
+            <div class="grid gap-3 md:grid-cols-2">
+              <div><label class="mb-1 block text-xs font-medium">{{ 'englishNotes' | translate }}</label><textarea
+                  formControlName="notesEng" rows="3" maxlength="2000"
+                  [placeholder]="'itineraryNotesPlaceholder' | translate"
+                  class="w-full rounded-xl border bg-white px-3 py-2"></textarea></div>
+              <div><label class="mb-1 block text-xs font-medium">{{ 'arabicNotes' | translate }}</label><textarea
+                  formControlName="notesAr" dir="rtl" rows="3" maxlength="2000"
+                  class="w-full rounded-xl border bg-white px-3 py-2"></textarea>@if
+                (itineraryDraft.controls['notesAr'].touched &&
+                itineraryDraft.controls['notesAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{
+                  'arabicNameInvalid' | translate }}</p> }</div>
+            </div>
+            @if (itineraryDraft.hasError('itineraryTimeOverlap')) {
+            <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600"
+              role="alert">
+              <i class="mdi mdi-clock-alert-outline me-1"></i>{{ 'itineraryTimeConflict' | translate }}
+            </p>
+            }
+            <div class="flex gap-2">
+              <button type="button"
+                class="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                (click)="saveItineraryStep()">
+                {{ 'saveStep' | translate }}</button><button type="button" class="rounded-full border px-4 py-2 text-xs"
+                (click)="cancelItineraryStep()">
+                {{ 'cancel' | translate }}
+              </button>
+            </div>
+          </div>
+          } @else {
+          <div
+            class="grid min-h-48 place-items-center rounded-xl border border-dashed bg-white text-center text-sm text-slate-400">
+            {{ 'clickAddStepToStart' | translate }}
+          </div>
+          }
+        </div>
+        <div class="rounded-2xl border p-4">
+          <h4 class="mb-3 font-semibold">{{ 'itinerarySteps' | translate }}</h4>
+          <p class="mb-3 text-xs text-slate-500">{{ 'deleteLastItineraryFirst' | translate }}</p>
+          <ol class="space-y-3">
+            @for (
+            stepGroup of itineraryArray.controls;
+            track stepGroup;
+            let stepIndex = $index
+            ) {
+            <li class="rounded-xl border p-3">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="text-xs font-semibold text-primary">
+                    {{ 'arrivalDate' | translate }} {{ stepGroup.controls['arrivalDate'].value || '-' }} · {{
+                    'journeyStep' | translate }}
+                    {{ stepIndex + 1 }}
+                  </p>
+                  <h5 class="mt-1 font-semibold">{{ stepGroup.controls['titleEng'].value }}</h5>
+                  @if (stepGroup.controls['startTime'].value || stepGroup.controls['endTime'].value) {
+                  <p class="mt-1 text-xs text-slate-500">
+                    {{ stepGroup.controls['startTime'].value || '--:--' }} - {{ stepGroup.controls['endTime'].value ||
+                    '--:--' }}
+                  </p>
+                  }
+                  @if (stepGroup.controls['valueEng'].value) {
+                  <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{
+                    stepGroup.controls['valueEng'].value }}</p>
+                  }
+                  @if (stepGroup.controls['notesEng'].value) {
+                  <p class="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800"><i
+                      class="mdi mdi-note-text-outline me-1"></i>{{ stepGroup.controls['notesEng'].value }}</p>
+                  }
+                </div>
+                <div class="flex gap-1">
+                  <button type="button" [disabled]="!!itineraryDraft"
+                    class="rounded-full border px-2 py-1 text-xs text-primary"
+                    (click)="openItineraryChildEditor(stepGroup)">
+                    <i class="mdi mdi-plus"></i></button><button type="button" [disabled]="!!itineraryDraft"
+                    class="grid h-7 w-7 place-items-center rounded-full border" (click)="
+                          editItineraryStep(itineraryArray, stepIndex, false)
+                        ">
+                    <i class="mdi mdi-pencil-outline"></i></button><button type="button"
+                    [disabled]="!canRemoveItineraryStep(itineraryArray, stepIndex)"
+                    class="grid h-7 w-7 place-items-center rounded-full border text-red-500" (click)="
+                          removeItineraryStep(itineraryArray, stepIndex)
+                        ">
+                    <i class="mdi mdi-close"></i>
                   </button>
                 </div>
               </div>
-            } @else {
-              <div
-                class="grid min-h-48 place-items-center rounded-xl border border-dashed bg-white text-center text-sm text-slate-400"
-              >
-                {{ 'clickAddStepToStart' | translate }}
-              </div>
-            }
-          </div>
-          <div class="rounded-2xl border p-4">
-            <h4 class="mb-3 font-semibold">{{ 'itinerarySteps' | translate }}</h4>
-            <p class="mb-3 text-xs text-slate-500">{{ 'deleteLastItineraryFirst' | translate }}</p>
-            <ol class="space-y-3">
-              @for (
-                stepGroup of itineraryArray.controls;
-                track stepGroup;
-                let stepIndex = $index
-              ) {
-                <li class="rounded-xl border p-3">
-                  <div class="flex items-start justify-between gap-2">
-                    <div>
-                      <p class="text-xs font-semibold text-primary">
-                        {{ 'arrivalDate' | translate }} {{ stepGroup.controls['arrivalDate'].value || '-' }} · {{ 'journeyStep' | translate }}
-                        {{ stepIndex + 1 }}
-                      </p>
-                      <h5 class="mt-1 font-semibold">{{ stepGroup.controls['titleEng'].value }}</h5>
-                      @if (stepGroup.controls['startTime'].value || stepGroup.controls['endTime'].value) {
-                        <p class="mt-1 text-xs text-slate-500">
-                          {{ stepGroup.controls['startTime'].value || '--:--' }} - {{ stepGroup.controls['endTime'].value || '--:--' }}
-                        </p>
-                      }
-                      @if (stepGroup.controls['valueEng'].value) {
-                        <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ stepGroup.controls['valueEng'].value }}</p>
-                      }
-                      @if (stepGroup.controls['notesEng'].value) {
-                        <p class="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800"><i class="mdi mdi-note-text-outline me-1"></i>{{ stepGroup.controls['notesEng'].value }}</p>
-                      }
-                    </div>
-                    <div class="flex gap-1">
-                      <button
-                        type="button"
-                        [disabled]="!!itineraryDraft"
-                        class="rounded-full border px-2 py-1 text-xs text-primary"
-                        (click)="openItineraryChildEditor(stepGroup)"
-                      >
-                        <i class="mdi mdi-plus"></i></button
-                      ><button
-                        type="button"
-                        [disabled]="!!itineraryDraft"
-                        class="grid h-7 w-7 place-items-center rounded-full border"
-                        (click)="
-                          editItineraryStep(itineraryArray, stepIndex, false)
-                        "
-                      >
-                        <i class="mdi mdi-pencil-outline"></i></button
-                      ><button
-                        type="button"
-                        [disabled]="!canRemoveItineraryStep(itineraryArray, stepIndex)"
-                        class="grid h-7 w-7 place-items-center rounded-full border text-red-500"
-                        (click)="
-                          removeItineraryStep(itineraryArray, stepIndex)
-                        "
-                      >
-                        <i class="mdi mdi-close"></i>
-                      </button>
-                    </div>
+              @if (itineraryChildrenArray(stepGroup); as children) {
+              @if (children.length) {
+              <div class="mt-3 space-y-2 border-s ps-4">
+                @for (childGroup of children.controls; track childGroup; let childIndex = $index) {
+                <div class="flex justify-between gap-2">
+                  <div>
+                    <p class="text-[10px] text-emerald-600">
+                      {{ childGroup.controls['arrivalDate'].value || '-' }} · {{ 'childStep' | translate }} {{
+                      childIndex + 1 }}
+                    </p>
+                    <p class="text-sm font-medium">{{ childGroup.controls['titleEng'].value }}</p>
+                    @if (childGroup.controls['startTime'].value || childGroup.controls['endTime'].value) {
+                    <p class="mt-1 text-xs text-slate-500">{{ childGroup.controls['startTime'].value || '--:--' }} - {{
+                      childGroup.controls['endTime'].value || '--:--' }}</p>
+                    }
+                    @if (childGroup.controls['valueEng'].value) { <p class="mt-1 text-sm leading-6 text-slate-600">{{
+                      childGroup.controls['valueEng'].value }}</p> }
+                    @if (childGroup.controls['notesEng'].value) { <p class="mt-1 text-xs text-amber-700">{{
+                      childGroup.controls['notesEng'].value }}</p> }
                   </div>
-                  @if (itineraryChildrenArray(stepGroup); as children) {
-                  @if (children.length) {
-                    <div class="mt-3 space-y-2 border-s ps-4">
-                      @for (childGroup of children.controls; track childGroup; let childIndex = $index) {
-                        <div class="flex justify-between gap-2">
-                          <div>
-                            <p class="text-[10px] text-emerald-600">
-                              {{ childGroup.controls['arrivalDate'].value || '-' }} · {{ 'childStep' | translate }} {{ childIndex + 1 }}
-                            </p>
-                            <p class="text-sm font-medium">{{ childGroup.controls['titleEng'].value }}</p>
-                            @if (childGroup.controls['startTime'].value || childGroup.controls['endTime'].value) {
-                              <p class="mt-1 text-xs text-slate-500">{{ childGroup.controls['startTime'].value || '--:--' }} - {{ childGroup.controls['endTime'].value || '--:--' }}</p>
-                            }
-                            @if (childGroup.controls['valueEng'].value) { <p class="mt-1 text-sm leading-6 text-slate-600">{{ childGroup.controls['valueEng'].value }}</p> }
-                            @if (childGroup.controls['notesEng'].value) { <p class="mt-1 text-xs text-amber-700">{{ childGroup.controls['notesEng'].value }}</p> }
-                          </div>
-                          <div class="flex gap-1">
-                            <button
-                              type="button"
-                              class="grid h-7 w-7 place-items-center rounded-full border"
-                              [disabled]="!!itineraryDraft"
-                              (click)="editItineraryStep(children, childIndex, true)"
-                            >
-                              <i class="mdi mdi-pencil-outline"></i></button
-                            ><button
-                              type="button"
-                              class="grid h-7 w-7 place-items-center rounded-full border text-red-500"
-                              [disabled]="!canRemoveItineraryStep(children, childIndex)"
-                              (click)="removeItineraryStep(children, childIndex)"
-                            >
-                              <i class="mdi mdi-close"></i>
-                            </button>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
-                  }
-                </li>
-              } @empty {
-                <li class="rounded-xl border border-dashed p-8 text-center text-sm text-slate-400">
-                  {{ 'noItineraryAdded' | translate }}
-                </li>
+                  <div class="flex gap-1">
+                    <button type="button" class="grid h-7 w-7 place-items-center rounded-full border"
+                      [disabled]="!!itineraryDraft" (click)="editItineraryStep(children, childIndex, true)">
+                      <i class="mdi mdi-pencil-outline"></i></button><button type="button"
+                      class="grid h-7 w-7 place-items-center rounded-full border text-red-500"
+                      [disabled]="!canRemoveItineraryStep(children, childIndex)"
+                      (click)="removeItineraryStep(children, childIndex)">
+                      <i class="mdi mdi-close"></i>
+                    </button>
+                  </div>
+                </div>
+                }
+              </div>
               }
-            </ol>
-          </div>
+              }
+            </li>
+            } @empty {
+            <li class="rounded-xl border border-dashed p-8 text-center text-sm text-slate-400">
+              {{ 'noItineraryAdded' | translate }}
+            </li>
+            }
+          </ol>
         </div>
-        <label
-          class="mt-5 flex items-center gap-2 rounded-2xl border bg-slate-50 p-4 text-sm font-medium"
-          ><input formControlName="isActive" type="checkbox" />{{
-            'activePackage' | translate
-          }}</label
-        >
-      </section>
+      </div>
+      <label class="mt-5 flex items-center gap-2 rounded-2xl border bg-slate-50 p-4 text-sm font-medium"><input
+          formControlName="isActive" type="checkbox" />{{
+        'activePackage' | translate
+        }}</label>
+    </section>
     }
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-5">
       <div>
         @if (activeStep > 1) {
-          <button
-            type="button"
-            [disabled]="isSaving || deletingImageIndex !== null"
-            class="rounded-full border bg-white px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
-            (click)="previousStep()"
-          >
-            <i class="mdi mdi-arrow-left rtl:rotate-180"></i> {{ 'previous' | translate }}
-          </button>
+        <button type="button" [disabled]="isSaving || deletingImageIndex !== null"
+          class="rounded-full border bg-white px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+          (click)="previousStep()">
+          <i class="mdi mdi-arrow-left rtl:rotate-180"></i> {{ 'previous' | translate }}
+        </button>
         }
       </div>
       <div class="flex gap-3">
-        <button
-          type="button"
-          [disabled]="isSaving || deletingImageIndex !== null"
+        <button type="button" [disabled]="isSaving || deletingImageIndex !== null"
           class="rounded-full border bg-white px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
-          (click)="cancelEdit()"
-        >
-          {{ 'close' | translate }}</button
-        ><button
-          type="submit"
+          (click)="cancelEdit()">
+          {{ 'close' | translate }}</button><button type="submit"
           [disabled]="isSaving || deletingImageIndex !== null || destinationsLoading"
-          class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-        >
+          class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
           @if (activeStep === 1) {
-            {{ 'saveDetailsAndContinue' | translate }}
+          {{ 'saveDetailsAndContinue' | translate }}
           } @else if (activeStep === 2) {
-            {{ 'saveImagesAndContinue' | translate }}
+          {{ 'saveImagesAndContinue' | translate }}
           } @else {
-            <i class="mdi mdi-check-circle-outline"></i>{{ 'saveItineraryAndFinish' | translate }}
+          <i class="mdi mdi-check-circle-outline"></i>{{ 'saveItineraryAndFinish' | translate }}
           }
         </button>
       </div>
