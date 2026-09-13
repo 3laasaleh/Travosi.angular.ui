@@ -26,6 +26,9 @@ export interface PackageDTO {
   isActive: boolean;
 
   cancellationPolicies: PolicyDTO[];
+  highlights: PackageHighlightDTO[];
+  includes: PackageIncludeDTO[];
+  excludes: PackageExcludeDTO[];
   isFreeCancelation: boolean;
 
   dateFrom: string;
@@ -131,4 +134,22 @@ export interface PackageItineraryDTO {
   endTime?: string | null;
 
   childs: PackageItineraryDTO[];
+}
+
+export interface PackageHighlightDTO {
+  id: number;
+  valueEng: string;
+  valueAr: string;
+}
+
+export interface PackageIncludeDTO {
+  id: number;
+  valueEng: string;
+  valueAr: string;
+}
+
+export interface PackageExcludeDTO {
+  id: number;
+  valueEng: string;
+  valueAr: string;
 }
