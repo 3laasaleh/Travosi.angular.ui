@@ -655,9 +655,9 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       OrderNumber: Number(item?.orderNumber) || orderNumber,
       ParentId: this.toOptionalId(item?.parentId),
       IsChildNode: item?.isChildNode === true,
-      TitleAr: item.titleAr.trim(), TitleEng: item.titleEng.trim(), ValueAr: item.valueAr.trim(), ValueEng: item.valueEng.trim(),
-      NotesEng: item.notesEng.trim(), NotesAr: item.notesAr.trim(), ArrivalDate: item.arrivalDate || null, StartTime: item.startTime || null, EndTime: item.endTime || null,
-      Childs: (item.childs ?? []).map((child: any, index: number) => this.toItineraryPayload(child, index + 1)),
+      TitleAr: String(item?.titleAr ?? '').trim(), TitleEng: String(item?.titleEng ?? '').trim(), ValueAr: String(item?.valueAr ?? '').trim(), ValueEng: String(item?.valueEng ?? '').trim(),
+      NotesEng: String(item?.notesEng ?? '').trim(), NotesAr: String(item?.notesAr ?? '').trim(), ArrivalDate: item?.arrivalDate || null, StartTime: item?.startTime || null, EndTime: item?.endTime || null,
+      Childs: (item?.childs ?? []).map((child: any, index: number) => this.toItineraryPayload(child, index + 1)),
     };
   }
 

@@ -41,21 +41,21 @@ export function readTourItinerary(
   fallbackTourId: number | null = null,
 ): TourItineraryItem {
   return {
-    id: toRequiredId(item?.id),
-    orderNumber: Number(item?.orderNumber) || 0,
-    parentId: toOptionalId(item?.parentId),
-    isChildNode: item?.isChildNode === true,
-    titleAr: String(item?.titleAr ?? item?.title ?? ''),
-    titleEng: String(item?.titleEng ?? item?.title ?? ''),
-    valueAr: String(item?.valueAr ?? item?.value ?? ''),
-    valueEng: String(item?.valueEng ?? item?.value ?? ''),
+    id: toRequiredId(item?.id ?? item?.Id),
+    orderNumber: Number(item?.orderNumber ?? item?.OrderNumber) || 0,
+    parentId: toOptionalId(item?.parentId ?? item?.ParentId),
+    isChildNode: (item?.isChildNode ?? item?.IsChildNode) === true,
+    titleAr: String(item?.titleAr ?? item?.TitleAr ?? item?.title ?? ''),
+    titleEng: String(item?.titleEng ?? item?.TitleEng ?? item?.title ?? ''),
+    valueAr: String(item?.valueAr ?? item?.ValueAr ?? item?.value ?? ''),
+    valueEng: String(item?.valueEng ?? item?.ValueEng ?? item?.value ?? ''),
     // Keep a legacy one-language note usable when editing existing records.
     notesEng: String(item?.notesEng ?? item?.NotesEng ?? item?.notes ?? item?.Notes ?? ''),
     notesAr: String(item?.notesAr ?? item?.NotesAr ?? item?.notes ?? item?.Notes ?? ''),
     arrivalDate: toDateInput(item?.arrivalDate ?? item?.ArrivalDate ?? item?.date ?? item?.Date),
-    startTime: toTimeInput(item?.startTime),
-    endTime: toTimeInput(item?.endTime),
-    tourId: toOptionalId(item?.tourId) ?? fallbackTourId,
+    startTime: toTimeInput(item?.startTime ?? item?.StartTime),
+    endTime: toTimeInput(item?.endTime ?? item?.EndTime),
+    tourId: toOptionalId(item?.tourId ?? item?.TourId) ?? fallbackTourId,
     childs: readChildren(item).map((child) => readTourItinerary(child, fallbackTourId)),
   };
 }
@@ -85,7 +85,7 @@ export function toTourItineraryPayload(
 }
 
 function readChildren(item: any): any[] {
-  const children = item?.childs ?? item?.children ?? item?.childItineraries;
+  const children = item?.childs ?? item?.Childs ?? item?.children ?? item?.childItineraries;
   return Array.isArray(children) ? children : [];
 }
 

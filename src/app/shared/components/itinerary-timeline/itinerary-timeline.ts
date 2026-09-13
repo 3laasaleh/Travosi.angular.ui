@@ -16,7 +16,6 @@ export class ItineraryTimeline {
   }
 
   children(item: any): any[] {
-    debugger;
     const children = item?.childs ;
     return Array.isArray(children) ? children : [];
   }
@@ -26,7 +25,6 @@ export class ItineraryTimeline {
   }
 
   title(item: any): string {
-    debugger;
     return String(item?.title ?? item?.titleEng ??  '');
   }
 

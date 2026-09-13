@@ -142,7 +142,7 @@
 
     <div>
       <label for="blog-publish-date" class="block text-sm font-medium">{{ 'publishDate' | translate }}</label>
-      <app-date-picker formControlName="PublishedAt" id="blog-publish-date" [min]="today"
+      <app-date-picker formControlName="publishedAt" id="blog-publish-date" [min]="dateMinimum"
         [placeholder]="'publishDate' | translate" [ariaLabel]="'publishDate' | translate" class="mt-1 block max-w-sm"
         inputClass="rounded-xl border border-slate-300 bg-white px-3 py-2.5 pe-11 shadow-sm" />
       <p class="mt-1 text-xs text-slate-500">{{ 'blogPublishDateHint' | translate }}</p>

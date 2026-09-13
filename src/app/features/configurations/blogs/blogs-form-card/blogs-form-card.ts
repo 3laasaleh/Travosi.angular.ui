@@ -49,13 +49,6 @@ interface BlogHeaderDataValue {
   descriptionAr: string;
 }
 
-const notBefore =
-  (minimum: string) =>
-  (control: AbstractControl): ValidationErrors | null => {
-    const value = String(control.value ?? '');
-    return value && value < minimum ? { minDate: true } : null;
-  };
-
 @Component({
   selector: 'app-blogs-form-card',
   standalone: true,
@@ -75,6 +68,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   readonly maxHeaderData = 5;
   readonly headerTypes = [1, 2, 3, 4, 5];
   readonly today = this.localDate(new Date());
+  originalPublishedAt = '';
 
   private readonly imageConstraints = {
     maxWidth: this.maxImageWidth,
@@ -113,7 +107,14 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     headerData: new FormArray<FormGroup>([]),
     publishedAt: new FormControl(this.today, {
       nonNullable: true,
-      validators: [Validators.required, notBefore(this.today)],
+      validators: [
+        Validators.required,
+        (control: AbstractControl): ValidationErrors | null => {
+          const value = String(control.value ?? '');
+          if (!value || value === this.originalPublishedAt) return null;
+          return value < this.today ? { minDate: true } : null;
+        },
+      ],
     }),
   });
 
@@ -137,6 +138,12 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     return this.form.controls.headerData;
   }
 
+  get dateMinimum(): string {
+    return this.originalPublishedAt && this.originalPublishedAt < this.today
+      ? this.originalPublishedAt
+      : this.today;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedBlog']) this.populate();
   }
@@ -152,27 +159,35 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.errorMessage = '';
 
     const blog = this.selectedBlog;
+    const originalDate = this.dateInput(blog?.publishedAt ?? blog?.PublishedAt);
+    this.originalPublishedAt = blog ? originalDate : '';
     const storedImages = blog?.images ?? blog?.Images ?? [];
     this.images = (Array.isArray(storedImages) ? storedImages : [])
       .slice(0, this.maxImages)
-      .map((image: any, index: number) => ({
-        id: image?.id,
+      .map((image: any) => ({
+        id: image?.id ?? image?.Id,
         existing: true,
-        url: image?.imageUrl,
-        name: image?.imageName ?? '',
-        altEng: image?.altEng ?? '',
-        altAr: image?.altAr ?? '',
+        url: image?.imageUrl ?? image?.ImageUrl,
+        name: image?.imageName ?? image?.ImageName ?? '',
+        altEng: image?.altEng ?? image?.AltEng ?? '',
+        altAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: BlogImageUpload) => !!image.url);
     this.form.reset({
-      titleEng: blog?.titleEng,
-      titleAr: blog?.titleAr,
-      routeName: blog?.routeName,
-      summaryEng: blog?.summaryEng,
-      summaryAr: blog?.summaryAr,
-      publishedAt: blog?.publishedAt,
+      titleEng: blog?.titleEng ?? blog?.TitleEng,
+      titleAr: blog?.titleAr ?? blog?.TitleAr,
+      routeName: blog?.routeName ?? blog?.RouteName,
+      summaryEng: blog?.summaryEng ?? blog?.SummaryEng,
+      summaryAr: blog?.summaryAr ?? blog?.SummaryAr,
+      publishedAt: originalDate || (blog ? '' : this.today),
     });
-    this.setHeaderData(blog?.headerData, blog?.contentEng, blog?.contentAr, blog);
+    this.setHeaderData(
+      blog?.headerData ?? blog?.HeaderData,
+      blog?.contentEng ?? blog?.ContentEng,
+      blog?.contentAr ?? blog?.ContentAr,
+      blog,
+    );
+    this.cdr.markForCheck();
   }
 
   async onFiles(event: Event): Promise<void> {
@@ -498,8 +513,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
   private dateInput(value: unknown): string {
     if (!value) return '';
-    const date = new Date(String(value));
-    return Number.isNaN(date.valueOf()) ? '' : date.toISOString().slice(0, 10);
+    const text = String(value);
+    const match = text.match(/^\d{4}-\d{2}-\d{2}/);
+    if (match) return match[0];
+    const date = new Date(text);
+    return Number.isNaN(date.valueOf()) ? '' : this.localDate(date);
   }
 
   private localDate(date: Date): string {
