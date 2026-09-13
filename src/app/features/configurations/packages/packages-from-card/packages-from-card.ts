@@ -524,6 +524,20 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
     if (!this.itineraryDraft || !this.itineraryDraftCollection) return;
     if (this.itineraryDraft.invalid) {
+  this.itineraryDraft.markAllAsTouched();
+
+  Object.keys(this.itineraryDraft.controls).forEach(key => {
+    const control = this.itineraryDraft?.get(key);
+    if (control?.invalid) {
+      console.log('Invalid control:', key);
+      console.log('Value:', control.value);
+      console.log('Errors:', control.errors);
+    }
+  });
+
+  return;
+}
+    if (this.itineraryDraft.invalid) {
       this.itineraryDraft.markAllAsTouched();
       return;
     }
@@ -823,8 +837,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       notesEng: new FormControl(itinerary.notesEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
       notesAr: new FormControl(itinerary.notesAr, { nonNullable: true, validators: [Validators.maxLength(2000), arabicTextValidator()] }),
       arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [validDate()] }),
-      startTime: new FormControl<string | null>(itinerary.startTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
-      endTime: new FormControl<string | null>(itinerary.endTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
+      startTime: new FormControl<string | null>(itinerary.startTime, { validators: [Validators.required] }),
+      endTime: new FormControl<string | null>(itinerary.endTime, { validators: [Validators.required] }),
       packageId: new FormControl<number | null>(this.currentPackageId),
       childs: new FormArray<FormGroup>(depth === 0 ? itinerary.childs.map((child) => this.createItineraryGroup(child, 1)) : []),
     }, { validators: this.itineraryTimeRangeValidator });
@@ -885,11 +899,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     return String(endTime) > String(startTime) ? null : { invalidItineraryTimeRange: true };
   };
 
-  private readonly quarterHourTimeValidator = (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (value === null || value === undefined || value === '') return null;
-    return isQuarterHourTime(value) ? null : { invalidQuarterHourTime: true };
-  };
+
 
   private readonly itineraryTimeSequenceValidator = (control: AbstractControl): ValidationErrors | null => {
     const startTime = String(control.get('startTime')?.value ?? '');

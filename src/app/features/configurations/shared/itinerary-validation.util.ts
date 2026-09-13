@@ -24,16 +24,22 @@ export function hasInvalidItinerary(items: ItineraryScheduleItem[]): boolean {
     const endMinutes = timeToMinutes(item?.endTime);
     const children = readChildren(item);
 
-    return (
+    let parentRes= (
       !String(item?.titleEng ?? '').trim() ||
       !String(item?.titleAr ?? '').trim() ||
       !String(item?.valueEng ?? '').trim() ||
       !String(item?.valueAr ?? '').trim() ||
       startMinutes === null ||
       endMinutes === null ||
-      endMinutes <= startMinutes ||
-      hasInvalidItinerary(children)
+      endMinutes <= startMinutes 
     );
+
+    if(children.length>0 )
+    {
+      return parentRes ||  hasInvalidItinerary(children)
+    }
+    else
+     return parentRes
   });
 }
 
