@@ -17,6 +17,7 @@
       [attr.id]="inputId"
       [attr.aria-label]="ariaLabel || placeholder || 'Date'"
       [placeholder]="placeholder"
+      (change)="handleDateInputChange($event)"
       (blur)="handleDateInputBlur()" />
   </div>
 

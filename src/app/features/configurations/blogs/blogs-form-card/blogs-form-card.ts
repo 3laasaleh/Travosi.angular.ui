@@ -39,6 +39,8 @@ interface BlogImageUpload {
   existing: boolean;
   altEng?: string;
   altAr?: string;
+  altEngTouched?: boolean;
+  altArTouched?: boolean;
 }
 
 interface BlogHeaderDataValue {
@@ -68,6 +70,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   readonly maxHeaderData = 5;
   readonly headerTypes = [1, 2, 3, 4, 5];
   readonly today = this.localDate(new Date());
+  readonly maximumPublishDate = this.localDate(this.addYears(new Date(), 1));
   originalPublishedAt = '';
 
   private readonly imageConstraints = {
@@ -111,8 +114,12 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
         Validators.required,
         (control: AbstractControl): ValidationErrors | null => {
           const value = String(control.value ?? '');
-          if (!value || value === this.originalPublishedAt) return null;
-          return value < this.today ? { minDate: true } : null;
+          if (!value) return null;
+          const normalized = this.validDateInput(value);
+          if (!normalized) return { invalidDate: true };
+          if (normalized === this.originalPublishedAt) return null;
+          if (normalized < this.today) return { minDate: true };
+          return normalized > this.maximumPublishDate ? { maxDate: true } : null;
         },
       ],
     }),
@@ -125,6 +132,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   errorMessage = '';
   imageValidationMessage = '';
   imageAltErrorsVisible = false;
+  validationSubmitted = false;
 
   constructor(
     private readonly adminService: AdminService,
@@ -157,6 +165,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.imageValidationMessage = '';
     this.imageAltErrorsVisible = false;
     this.errorMessage = '';
+    this.validationSubmitted = false;
 
     const blog = this.selectedBlog;
     const originalDate = this.dateInput(blog?.publishedAt ?? blog?.PublishedAt);
@@ -171,6 +180,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
         name: image?.imageName ?? image?.ImageName ?? '',
         altEng: image?.altEng ?? image?.AltEng ?? '',
         altAr: image?.altAr ?? image?.AltAr ?? '',
+        altEngTouched: false,
+        altArTouched: false,
       }))
       .filter((image: BlogImageUpload) => !!image.url);
     this.form.reset({
@@ -234,6 +245,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
             existing: false,
             altEng: '',
             altAr: '',
+            altEngTouched: false,
+            altArTouched: false,
           });
         } catch (error) {
           this.imageValidationMessage =
@@ -309,15 +322,23 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
   save(): void {
     if (this.isSaving || this.isProcessingImages || this.deletingImageIndex !== null) return;
+    this.validationSubmitted = true;
+    this.errorMessage = '';
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.cdr.markForCheck();
       return;
     }
 
     const value = this.form.getRawValue();
     this.imageAltErrorsVisible = true;
     if (this.images.some((image) => image.file && this.hasInvalidImageAlt(image))) {
+      this.images.filter((image) => image.file).forEach((image) => {
+        image.altEngTouched = true;
+        image.altArTouched = true;
+      });
       this.errorMessage = 'imageAltRequired';
+      this.cdr.markForCheck();
       return;
     }
     const data = new FormData();
@@ -361,7 +382,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       )
       .subscribe((response: any) => {
         if (response?.isSuccess === false || response?.IsSuccess === false) {
-          this.errorMessage = response?.message ?? response?.Message ?? 'Unable to save this blog.';
+          this.form.markAllAsTouched();
+          const errors = response?.errors ?? response?.Errors;
+          this.errorMessage = Array.isArray(errors) && errors.length
+            ? errors.join(' ')
+            : response?.message ?? response?.Message ?? 'Unable to save this blog.';
           return;
         }
         if (response) this.saved.emit();
@@ -389,6 +414,12 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
   hasInvalidImageAlt(image: BlogImageUpload): boolean {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
+  }
+
+  showImageAltError(image: BlogImageUpload, language: 'eng' | 'ar'): boolean {
+    return this.validationSubmitted
+      || this.imageAltErrorsVisible
+      || (language === 'eng' ? image.altEngTouched === true : image.altArTouched === true);
   }
 
   private createHeaderDataGroup(value: any = {}): FormGroup {
@@ -514,10 +545,28 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   private dateInput(value: unknown): string {
     if (!value) return '';
     const text = String(value);
-    const match = text.match(/^\d{4}-\d{2}-\d{2}/);
-    if (match) return match[0];
+    const normalized = this.validDateInput(text);
+    if (normalized) return normalized;
     const date = new Date(text);
     return Number.isNaN(date.valueOf()) ? '' : this.localDate(date);
+  }
+
+  private validDateInput(value: string): string | null {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return null;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+      ? `${match[1]}-${match[2]}-${match[3]}`
+      : null;
+  }
+
+  private addYears(value: Date, years: number): Date {
+    const date = new Date(value.getTime());
+    date.setFullYear(date.getFullYear() + years);
+    return date;
   }
 
   private localDate(date: Date): string {

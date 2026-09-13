@@ -174,6 +174,15 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
     this.onTouched();
   }
 
+  handleDateInputChange(event: Event): void {
+    const rawValue = (event.target as HTMLInputElement).value.trim();
+    const parsed = this.parseDate(rawValue);
+    this.selectedDate = parsed;
+    this.onChange(parsed ? this.toModelValue(parsed) : rawValue);
+    this.onTouched();
+    this.cdr.markForCheck();
+  }
+
   handleTimeChange(event: Event): void {
     this.timeValue = (event.target as HTMLInputElement).value || '00:00';
     this.emitModelValue();
