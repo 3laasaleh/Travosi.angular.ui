@@ -16,33 +16,35 @@ export class ItineraryTimeline {
   }
 
   children(item: any): any[] {
-    const children = item?.childs ?? item?.Childs ?? item?.children ?? item?.childItineraries;
+    debugger;
+    const children = item?.childs ;
     return Array.isArray(children) ? children : [];
   }
 
   date(item: any): string {
-    return String(item?.date ?? item?.Date ?? '').slice(0, 10);
+    return String(item?.arrivalDate ?? '').slice(0, 10);
   }
 
   title(item: any): string {
-    return String(item?.title ?? item?.Title ?? '');
+    debugger;
+    return String(item?.title ?? item?.titleEng ??  '');
   }
 
   value(item: any): string {
-    return String(item?.value ?? item?.Value ?? '');
+    return String(item?.value ??  '');
   }
 
   description(item: any): string {
-    return String(item?.description ?? item?.Description ?? '');
+    return String(item?.value ??  '');
   }
 
   notes(item: any): string {
-    return String(item?.notes ?? item?.Notes ?? '');
+    return String(item?.notes ?? '');
   }
 
   time(item: any): string {
-    const start = this.formatTime(item?.startTime ?? item?.StartTime);
-    const end = this.formatTime(item?.endTime ?? item?.EndTime);
+    const start = this.formatTime(item?.startTime );
+    const end = this.formatTime(item?.endTime );
     if (start && end) return `${start} - ${end}`;
     return start || end;
   }

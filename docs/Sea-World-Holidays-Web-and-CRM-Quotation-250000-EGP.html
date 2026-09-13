@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sea World Holidays — Web Platform & CRM Quotation</title>
+  <style>
+    @page { size: A4; margin: 15mm 15mm 17mm; }
+    :root { --ink:#172033; --muted:#62708a; --blue:#0b5ea8; --blue-dark:#063f75; --blue-pale:#edf6ff; --orange:#e88823; --line:#dfe7f0; --soft:#f7fafc; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family:Arial, Helvetica, sans-serif; font-size:10.2pt; line-height:1.48; }
+    .document { max-width:180mm; margin:0 auto; }
+    .cover { min-height:252mm; display:flex; flex-direction:column; justify-content:space-between; padding:8mm 0 5mm; }
+    .brand { display:flex; align-items:center; gap:12px; color:var(--blue-dark); font-weight:700; font-size:15pt; letter-spacing:.2px; }
+    .brand img { width:52mm; max-height:20mm; object-fit:contain; object-position:left center; }
+    .eyebrow { color:var(--orange); font-weight:700; font-size:9pt; letter-spacing:1.6px; text-transform:uppercase; margin:22mm 0 6mm; }
+    h1 { font-size:31pt; line-height:1.12; margin:0; color:var(--blue-dark); letter-spacing:-.7px; max-width:145mm; }
+    .lead { max-width:145mm; font-size:14pt; line-height:1.5; color:#3f516e; margin:8mm 0 0; }
+    .cover-price { margin-top:16mm; border-left:5px solid var(--orange); background:var(--blue-pale); padding:8mm 9mm; width:100%; }
+    .cover-price .label { color:var(--blue-dark); font-size:9pt; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .cover-price strong { display:block; font-size:25pt; color:var(--blue-dark); margin-top:2mm; }
+    .split { margin-top:2mm; color:#48607f; font-size:10pt; }
+    .meta { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; margin-top:14mm; }
+    .meta div { background:var(--soft); border:1px solid var(--line); border-radius:4px; padding:4mm; }
+    .meta span { display:block; color:var(--muted); font-size:8pt; text-transform:uppercase; letter-spacing:.8px; margin-bottom:1mm; }
+    .meta strong { color:var(--ink); font-size:10pt; }
+    .cover-foot { border-top:1px solid var(--line); padding-top:5mm; color:var(--muted); font-size:8.5pt; }
+    .page-break { break-before:page; page-break-before:always; }
+    .section { padding-top:4mm; }
+    .section-label { color:var(--orange); font-size:8.5pt; font-weight:700; letter-spacing:1.3px; text-transform:uppercase; margin:0 0 2mm; }
+    h2 { font-size:20pt; line-height:1.2; color:var(--blue-dark); margin:0 0 4mm; }
+    h3 { color:var(--blue-dark); font-size:12pt; margin:7mm 0 2mm; }
+    h4 { color:var(--blue-dark); font-size:10.5pt; margin:0 0 2mm; }
+    p { margin:0 0 3.5mm; }
+    .intro { color:#40516b; font-size:11pt; max-width:160mm; }
+    .note { background:#fff7eb; border:1px solid #f7d7ad; border-left:4px solid var(--orange); padding:4mm 5mm; margin:5mm 0; color:#65441d; }
+    .scope-grid { display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-top:5mm; }
+    .scope-card { break-inside:avoid; border:1px solid var(--line); border-radius:5px; padding:4.5mm; background:#fff; }
+    .scope-card p { color:var(--muted); font-size:9pt; margin-bottom:0; }
+    ul { margin:2mm 0 0; padding-left:5mm; }
+    li { margin:1.4mm 0; }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:2mm; background:var(--blue-pale); color:var(--blue-dark); border-radius:4px; padding:4mm 5mm; font-weight:700; margin:4mm 0 5mm; }
+    .flow b { color:var(--orange); font-size:13pt; line-height:1; }
+    table { width:100%; border-collapse:collapse; margin:4mm 0 5mm; break-inside:avoid; }
+    th { background:var(--blue-dark); color:#fff; font-size:8.6pt; letter-spacing:.2px; text-align:left; padding:3mm; }
+    td { padding:3mm; border-bottom:1px solid var(--line); vertical-align:top; }
+    tr:nth-child(even) td { background:#fbfdff; }
+    td.price, th.price { text-align:right; white-space:nowrap; }
+    tfoot td { background:var(--blue-pale) !important; color:var(--blue-dark); font-size:11pt; font-weight:700; border-top:2px solid var(--blue); }
+    .price-summary { border:1px solid var(--line); border-radius:6px; overflow:hidden; margin:6mm 0; }
+    .price-summary .heading { background:var(--blue-dark); color:#fff; padding:4mm 5mm; font-weight:700; font-size:12pt; }
+    .price-summary .row { display:flex; justify-content:space-between; gap:10mm; padding:4mm 5mm; border-bottom:1px solid var(--line); }
+    .price-summary .row:last-child { border-bottom:0; background:var(--blue-pale); color:var(--blue-dark); font-size:15pt; font-weight:700; }
+    .price-summary .row span:last-child { white-space:nowrap; font-weight:700; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+    .panel { break-inside:avoid; border:1px solid var(--line); background:var(--soft); border-radius:5px; padding:5mm; }
+    .panel h3 { margin:0 0 2.5mm; }
+    .checklist { list-style:none; padding:0; margin:0; }
+    .checklist li { padding-left:5mm; position:relative; margin:2mm 0; }
+    .checklist li::before { content:"✓"; color:var(--orange); font-weight:700; position:absolute; left:0; }
+    .signature { display:grid; grid-template-columns:1fr 1fr; gap:12mm; margin-top:14mm; }
+    .signature div { border-top:1px solid #8b98aa; padding-top:3mm; min-height:18mm; color:var(--muted); font-size:8.5pt; }
+    .footer { margin-top:10mm; padding-top:4mm; border-top:1px solid var(--line); font-size:8pt; color:var(--muted); display:flex; justify-content:space-between; }
+    .small { color:var(--muted); font-size:8.7pt; }
+    @media print { .cover { min-height:252mm; } .page-break { break-before:page; } }
+  </style>
+</head>
+<body>
+  <main class="document">
+    <section class="cover">
+      <div>
+        <div class="brand"><img src="../src/assets/images/main-logo.png" alt="Sea World Holidays logo"> <span>Sea World Holidays</span></div>
+        <p class="eyebrow">Commercial Proposal &amp; Quotation</p>
+        <h1>Travel Web Platform<br>&amp; CRM Solution</h1>
+        <p class="lead">A bilingual travel booking website connected to a practical back-office CRM, designed to manage content, customers, bookings, quotations and operations in one workflow.</p>
+        <div class="cover-price">
+          <span class="label">One-time implementation investment</span>
+          <strong>EGP 250,000</strong>
+          <p class="split">Web Application: <b>EGP 150,000</b> &nbsp;•&nbsp; CRM &amp; Back Office: <b>EGP 100,000</b></p>
+        </div>
+        <div class="meta">
+          <div><span>Prepared for</span><strong>Prospective Travel Agency Client</strong></div>
+          <div><span>Reference</span><strong>SWH-SOFTWARE-2026-001</strong></div>
+          <div><span>Validity</span><strong>30 days from issue date</strong></div>
+        </div>
+      </div>
+      <div class="cover-foot">Prepared by Sea World Holidays · Digital Platform &amp; Operations Proposal · September 2026</div>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">01 — Executive Summary</p>
+      <h2>One connected travel business platform</h2>
+      <p class="intro">The proposal combines the public website that inspires and converts travellers with the internal CRM that turns enquiries into confirmed bookings, financial documents and organised travel operations.</p>
+      <div class="flow"><span>Visitor discovers a trip</span><b>→</b><span>Booking request</span><b>→</b><span>CRM follow-up</span><b>→</b><span>Quotation</span><b>→</b><span>Booking</span><b>→</b><span>Invoice &amp; voucher</span></div>
+      <div class="two-col">
+        <div class="panel"><h3>Public Web Application</h3><p>English and Arabic customer experience, responsive on mobile and desktop, with travel content and booking journeys.</p></div>
+        <div class="panel"><h3>CRM &amp; Back Office</h3><p>Role-protected operational workspace for the travel team to manage the catalogue, customers, quotes, bookings, documents and tasks.</p></div>
+      </div>
+      <h3>Commercial summary</h3>
+      <div class="price-summary">
+        <div class="heading">Implementation quotation — Egyptian Pounds (EGP)</div>
+        <div class="row"><span>Section 1 — Travel Web Application</span><span>EGP 150,000</span></div>
+        <div class="row"><span>Section 2 — CRM &amp; Back Office</span><span>EGP 100,000</span></div>
+        <div class="row"><span>Total project investment</span><span>EGP 250,000</span></div>
+      </div>
+      <p class="note"><strong>Scope boundary:</strong> The stated price covers the software functionality described in this quotation. Paid third-party services, payment-gateway charges, hosting, domain fees, bulk data entry and VAT (where legally applicable) are outside this implementation price unless separately agreed in writing.</p>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">02 — Section One</p>
+      <h2>Travel Web Application — EGP 150,000</h2>
+      <p class="intro">A customer-facing travel website that presents the agency's catalogue clearly, helps visitors discover relevant experiences, and guides qualified travellers into booking requests.</p>
+      <div class="scope-grid">
+        <article class="scope-card"><h4>Home &amp; navigation</h4><p>Hero content, featured destinations, tours, packages and blogs; responsive navigation, mega menus, language and currency controls.</p></article>
+        <article class="scope-card"><h4>Destinations &amp; cities</h4><p>Destination and city listing/detail pages, image galleries, contextual city discovery, related tours and human-readable URLs.</p></article>
+        <article class="scope-card"><h4>Tours &amp; Nile cruises</h4><p>Searchable listings with filters, price/discount presentation, tour detail galleries, itinerary, availability context and booking entry point.</p></article>
+        <article class="scope-card"><h4>Holiday packages</h4><p>Package discovery, date and search filtering, detail pages, itineraries, inclusions, related tours, price and booking journey.</p></article>
+        <article class="scope-card"><h4>Blogs &amp; travel content</h4><p>Article index and detail pages with bilingual content sections, imagery and SEO-ready page structure.</p></article>
+        <article class="scope-card"><h4>Accounts &amp; reviews</h4><p>Registration, sign-in, profile and booking history; completed-trip review workflow to support trustworthy customer feedback.</p></article>
+        <article class="scope-card"><h4>Booking experience</h4><p>Traveller counts, dates, special requests, active discounts, price calculation and a booking request hand-off to the CRM team.</p></article>
+        <article class="scope-card"><h4>SEO &amp; performance foundation</h4><p>Server-rendered public routes, metadata, canonical URLs, sitemap-ready structure, bilingual routing and responsive layouts.</p></article>
+      </div>
+      <h3>Web application deliverables</h3>
+      <ul class="checklist">
+        <li>Responsive experience for laptop, tablet and mobile.</li>
+        <li>English/Arabic content presentation with right-to-left Arabic layout.</li>
+        <li>Shared catalogue data for destinations, cities, tours, packages, blogs and reviews.</li>
+        <li>Connected booking flow that creates actionable requests for the operations team.</li>
+      </ul>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">03 — Web Application Detail</p>
+      <h2>Customer journeys included</h2>
+      <table>
+        <thead><tr><th>Journey</th><th>What the traveller can do</th><th>Business outcome</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Explore</strong></td><td>Browse destinations, cities, tours, Nile cruises, packages and blog content in the selected language.</td><td>Turns travel inspiration into relevant product discovery.</td></tr>
+          <tr><td><strong>Compare &amp; decide</strong></td><td>View images, itineraries, inclusions, availability information, prices and active discount badges.</td><td>Gives the customer enough context to submit a serious booking request.</td></tr>
+          <tr><td><strong>Book</strong></td><td>Choose travellers and travel dates, provide special requests and submit a booking request after account sign-in.</td><td>Creates a trackable booking lead for the CRM and agent team.</td></tr>
+          <tr><td><strong>Return</strong></td><td>Access profile and booking history; submit reviews after completed travel where permitted.</td><td>Supports repeat business and credible social proof.</td></tr>
+        </tbody>
+      </table>
+      <h3>Website catalogue covered</h3>
+      <div class="two-col">
+        <div class="panel"><h3>Public catalogue</h3><ul><li>Destinations</li><li>Cities</li><li>Tours and Nile cruises</li><li>Holiday packages</li><li>Blog articles</li><li>Customer reviews</li></ul></div>
+        <div class="panel"><h3>Conversion components</h3><ul><li>Search and filters</li><li>Booking forms</li><li>Price and discount display</li><li>Account access</li><li>Related content and recommendations</li><li>Contact and enquiry paths</li></ul></div>
+      </div>
+      <p class="small">Online card payment collection is not included in this quotation. The platform handles booking requests and operational confirmation; a payment gateway can be quoted as a separate integration if required.</p>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">04 — Section Two</p>
+      <h2>CRM &amp; Back Office — EGP 100,000</h2>
+      <p class="intro">A role-protected internal system for the agency team. It centralises operational work from customer record and quotation through booking, invoice, voucher and follow-up.</p>
+      <div class="flow"><span>Customer record</span><b>→</b><span>Travel quotation</span><b>→</b><span>Booking management</span><b>→</b><span>Invoice</span><b>→</b><span>Voucher</span></div>
+      <div class="scope-grid">
+        <article class="scope-card"><h4>Customers &amp; travellers</h4><p>Customer profiles, company/personal details, contact information and companion travellers for reusable trip planning.</p></article>
+        <article class="scope-card"><h4>Quotations</h4><p>Build, edit, duplicate, send and export branded PDF quotations using available tours, packages, hotels, flights and transfer lines.</p></article>
+        <article class="scope-card"><h4>Bookings desk</h4><p>Central booking queue with status workflow, cancellation handling, confirmation notes and agent assignment.</p></article>
+        <article class="scope-card"><h4>Invoices &amp; vouchers</h4><p>Create financial invoices and operational vouchers with downloadable branded PDF documents for customer and supplier communication.</p></article>
+        <article class="scope-card"><h4>Catalogue management</h4><p>Manage destinations, cities, tours, packages, blogs, hotels, airlines, flights and countries from the secure back office.</p></article>
+        <article class="scope-card"><h4>Tasks &amp; notifications</h4><p>Operational tasks, follow-up reminders and notification visibility for agents and administrators.</p></article>
+        <article class="scope-card"><h4>Pricing &amp; promotions</h4><p>Currency-aware product pricing, capacity controls and date-bound discount campaigns for tours and packages.</p></article>
+        <article class="scope-card"><h4>Inbox &amp; control</h4><p>Contact-message handling, publication status controls and authenticated access for administrative and agent workflows.</p></article>
+      </div>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">05 — CRM Components</p>
+      <h2>Operational modules included</h2>
+      <table>
+        <thead><tr><th>Module</th><th>Core capability</th><th>Connected outcome</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Customer management</strong></td><td>Profiles, contacts, company data and travellers.</td><td>A single customer record follows the complete sales and service journey.</td></tr>
+          <tr><td><strong>Quotations</strong></td><td>Catalogue-based lines, pricing, terms, versions, sending and PDF output.</td><td>Faster, consistent commercial proposals.</td></tr>
+          <tr><td><strong>Bookings</strong></td><td>Request review, status tracking, customer updates, assignment and cancellation workflow.</td><td>Clear ownership from web lead to completed trip.</td></tr>
+          <tr><td><strong>Invoices</strong></td><td>Invoice creation, line items, totals, payments context and PDF download.</td><td>Standardised financial communication.</td></tr>
+          <tr><td><strong>Vouchers</strong></td><td>Supplier/travel service voucher records for flights, hotels, tours and packages.</td><td>Operational handover documents for the trip.</td></tr>
+          <tr><td><strong>Travel catalogue</strong></td><td>Destinations, cities, tours, packages, hotels, airlines, flights, blogs and discount campaigns.</td><td>The CRM and website always use one managed content source.</td></tr>
+          <tr><td><strong>Tasks &amp; messages</strong></td><td>Agent tasks, follow-up notifications and contact-message inbox.</td><td>Less missed follow-up and better internal coordination.</td></tr>
+        </tbody>
+      </table>
+      <h3>Roles and access</h3>
+      <p>The back office is protected by authentication and role controls. Administrators manage configuration and visibility; agents work with their assigned bookings, customers, tasks and operational follow-up according to access rules.</p>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">06 — Investment &amp; Commercial Terms</p>
+      <h2>Quotation</h2>
+      <table>
+        <thead><tr><th>Section</th><th>Included scope</th><th class="price">One-time price</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Travel Web Application</strong></td><td>Public bilingual website, destinations, cities, tours, packages, blogs, reviews, accounts, booking requests and SEO-ready public experience.</td><td class="price">EGP 150,000</td></tr>
+          <tr><td><strong>2. CRM &amp; Back Office</strong></td><td>Customers, travellers, quotations, bookings, invoices, vouchers, catalogue management, discounts, tasks, notifications and contact messages.</td><td class="price">EGP 100,000</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Total implementation investment</td><td class="price">EGP 250,000</td></tr></tfoot>
+      </table>
+      <div class="two-col">
+        <div class="panel"><h3>Included</h3><ul class="checklist"><li>Implementation of the listed software modules</li><li>Responsive web interface and CRM interface</li><li>English/Arabic presentation where described</li><li>Branded quotation, invoice and voucher PDF outputs</li><li>Acceptance testing and handover of the agreed scope</li></ul></div>
+        <div class="panel"><h3>Not included unless agreed separately</h3><ul class="checklist"><li>Online payment-gateway fees and integration</li><li>Hosting, domain and paid third-party subscriptions</li><li>Large-scale data migration or content entry</li><li>New modules outside this scope</li><li>Taxes where legally applicable</li></ul></div>
+      </div>
+      <h3>Commercial notes</h3>
+      <ul>
+        <li>All amounts are in Egyptian Pounds (EGP) and represent one-time implementation fees.</li>
+        <li>This quotation is valid for 30 days from its issue date.</li>
+        <li>The detailed delivery plan, acceptance milestones, payment schedule and support arrangement will be confirmed in the final agreement.</li>
+        <li>Any scope change requested after approval will be assessed and quoted separately before implementation.</li>
+      </ul>
+      <div class="signature"><div><strong>Prepared by</strong><br>Sea World Holidays<br><br>Name / Signature / Date</div><div><strong>Accepted by</strong><br>Client representative<br><br>Name / Signature / Date</div></div>
+      <footer class="footer"><span>Sea World Holidays · Web Platform &amp; CRM Quotation</span><span>Reference SWH-SOFTWARE-2026-001 · EGP 250,000</span></footer>
+    </section>
+  </main>
+</body>
+</html>
