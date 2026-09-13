@@ -68,7 +68,7 @@
     }
   </ol>
 
-  <form [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
+  <form class="configuration-form" [formGroup]="packageForm" (ngSubmit)="saveCurrentStep()">
     @if (validationSubmitted && currentStepInvalid) { <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     @if (activeStep === 1) {
       <section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
@@ -340,6 +340,11 @@
               <p class="mt-1 text-xs text-red-600">{{ 'dateFromRequired' | translate }}</p>
             } @else if (
               packageForm.controls.dateFrom.touched &&
+              packageForm.controls.dateFrom.hasError('invalidDate')
+            ) {
+              <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+            } @else if (
+              packageForm.controls.dateFrom.touched &&
               packageForm.controls.dateFrom.hasError('minDate')
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'packageStartDateTomorrow' | translate }}</p>
@@ -359,6 +364,11 @@
               packageForm.controls.dateTo.hasError('required')
             ) {
               <p class="mt-1 text-xs text-red-600">{{ 'dateToRequired' | translate }}</p>
+            } @else if (
+              packageForm.controls.dateTo.touched &&
+              packageForm.controls.dateTo.hasError('invalidDate')
+            ) {
+              <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
             } @else if (
               packageForm.controls.dateTo.touched &&
               packageForm.hasError('invalidPackageDateRange')
@@ -626,6 +636,8 @@
                     />
                     @if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.controls['arrivalDate'].hasError('required')) {
                       <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
+                    } @else if (itineraryDraft.controls['arrivalDate'].touched && itineraryDraft.controls['arrivalDate'].hasError('invalidDate')) {
+                      <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
                     }
                   </div>
                   <div>
@@ -724,7 +736,6 @@
                 <div class="flex gap-2">
                   <button
                     type="button"
-                    [disabled]="itineraryDraft.invalid"
                     class="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
                     (click)="saveItineraryStep()"
                   >

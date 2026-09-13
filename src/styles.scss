@@ -43,6 +43,21 @@ input,textarea,select {
   background-color: #fff;
 }
 
+/* Configuration forms expose validation on the field after the user leaves it. */
+.configuration-form input.ng-invalid.ng-touched:not([type='checkbox']):not([type='file']),
+.configuration-form textarea.ng-invalid.ng-touched,
+.configuration-form select.ng-invalid.ng-touched,
+.configuration-form app-date-picker.ng-invalid.ng-touched input {
+  border-color: #ef4444 !important;
+}
+
+app-customers-from-card form label::after,
+.required-field-label::after {
+  margin-inline-start: 0.2rem;
+  color: #dc2626;
+  content: '*';
+}
+
 /* Keep the Flowbite datepicker above cards, drawers, and configuration modals. */
 .datepicker-dropdown {
   z-index: 9999 !important;

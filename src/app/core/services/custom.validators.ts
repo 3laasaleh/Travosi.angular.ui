@@ -20,6 +20,36 @@ export function isEmail(): ValidatorFn {
     }
 }
 
+/** Validates the exact date value emitted by app-date-picker, including manual input. */
+export function validDate(includeTime = false): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const value = control.value;
+        if (value == null || value === '') return null;
+        if (value instanceof Date) return Number.isNaN(value.getTime()) ? { invalidDate: true } : null;
+
+        const pattern = includeTime
+            ? /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/
+            : /^(\d{4})-(\d{2})-(\d{2})$/;
+        const match = String(value).match(pattern);
+        if (!match) return { invalidDate: true };
+
+        const year = Number(match[1]);
+        const month = Number(match[2]) - 1;
+        const day = Number(match[3]);
+        const hours = includeTime ? Number(match[4]) : 0;
+        const minutes = includeTime ? Number(match[5]) : 0;
+        const date = new Date(year, month, day, hours, minutes, 0, 0);
+
+        return date.getFullYear() === year
+            && date.getMonth() === month
+            && date.getDate() === day
+            && date.getHours() === hours
+            && date.getMinutes() === minutes
+            ? null
+            : { invalidDate: true };
+    };
+}
+
 
 export function hasNumricChar(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

@@ -76,6 +76,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   isLoading = false;
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  validationSubmitted = false;
   imageValidationMessage = '';
   imageAltErrorsVisible = false;
   successMessage = '';
@@ -97,6 +98,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
   saveDestination(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.destinationForm.invalid) {
       this.destinationForm.markAllAsTouched();
@@ -254,6 +256,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
   private populateForm(destination: any): void {
+    this.validationSubmitted = false;
     this.revokeNewImageUrls();
     this.imageValidationMessage = '';
     const images = Array.isArray(destination?.images) ? destination.images : [];
@@ -284,6 +287,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.revokeNewImageUrls();
     this.imageUploads = [];
     this.imageValidationMessage = '';

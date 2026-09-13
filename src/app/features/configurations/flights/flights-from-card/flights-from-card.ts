@@ -25,6 +25,7 @@ import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, swit
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { validDate } from '../../../../core/services/custom.validators';
 import { AirportSearchResult, AirportSearchService } from '../airport-search.service';
 import { FLIGHT_CLASS_OPTIONS, FlightClassEnum } from '../flight-class.enum';
 
@@ -69,6 +70,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   airlines: any[] = [];
   isLoading = false;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
   departureAirports: AirportSearchResult[] = [];
   arrivalAirports: AirportSearchResult[] = [];
@@ -123,6 +125,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   saveFlight(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.flightForm.invalid) {
       this.flightForm.markAllAsTouched();
@@ -262,6 +265,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   private populateForm(flight: FlightDTO): void {
+    this.validationSubmitted = false;
     const departureAirport = flight.departureAirport?.trim() ?? '';
     const arrivalAirport = flight.arrivalAirport?.trim() ?? '';
     this.flightForm.setValue({
@@ -286,6 +290,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.flightForm.reset({
       flightNumber: '',
       airlineId: null,
@@ -491,8 +496,8 @@ export class FlightsFromCard implements OnInit, OnChanges {
         validators: [Validators.required, Validators.maxLength(250)],
       }),
       arrivalAirportCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      departureTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      departureTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
+      arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
       price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       availableSeats: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       flightClass: new FormControl(FlightClassEnum.Economy, { nonNullable: true, validators: [Validators.required] }),

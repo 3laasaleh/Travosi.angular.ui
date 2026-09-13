@@ -416,6 +416,10 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
   }
 
+  hasInvalidArabicAlt(image: BlogImageUpload): boolean {
+    return !!image.altAr?.trim() && !startsWithArabic(image.altAr);
+  }
+
   showImageAltError(image: BlogImageUpload, language: 'eng' | 'ar'): boolean {
     return this.validationSubmitted
       || this.imageAltErrorsVisible

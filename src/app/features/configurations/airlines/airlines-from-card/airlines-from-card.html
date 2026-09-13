@@ -5,14 +5,14 @@
     class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
     successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedAirline ? 'editAirline' : 'addAirline') | translate }}</h2>
-  <form class="space-y-4" [formGroup]="airlineForm" (ngSubmit)="saveAirline()">
-    @if (airlineForm.invalid && (airlineForm.touched || airlineForm.dirty)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
+  <form class="configuration-form space-y-4" [formGroup]="airlineForm" (ngSubmit)="saveAirline()">
+    @if (validationSubmitted && airlineForm.invalid) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'airlineName' | translate }}</label><input
+      <div><label class="mb-2 block text-sm font-medium">{{ 'airlineName' | translate }} <span class="text-red-600">*</span></label><input
           formControlName="name" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
         (airlineForm.get('name')?.touched && airlineForm.get('name')?.hasError('required')) { <p
           class="mt-1 text-xs text-red-600">{{ 'airlineNameRequired' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'airlineCode' | translate }}</label><input
+      <div><label class="mb-2 block text-sm font-medium">{{ 'airlineCode' | translate }} <span class="text-red-600">*</span></label><input
           formControlName="code" type="text" maxlength="3"
           class="w-full rounded-2xl border border-slate-300 px-3 py-2 uppercase" />@if (airlineForm.get('code')?.touched
         && airlineForm.get('code')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
@@ -21,7 +21,7 @@
           translate }}</p> }</div>
     </div>
     <div>
-      <div class="mb-2 flex items-center justify-between"><label for="airlineLogo" class="text-sm font-medium">{{ 'airlineLogo' | translate }}</label><span class="text-xs text-slate-500">1 / 1</span></div>
+      <div class="mb-2 flex items-center justify-between"><label for="airlineLogo" class="text-sm font-medium">{{ 'airlineLogo' | translate }} <span class="text-red-600">*</span></label><span class="text-xs text-slate-500">1 / 1</span></div>
       <label for="airlineLogo" class="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-slate-300 bg-white px-4 py-6 text-center transition hover:border-primary hover:bg-primary/5"
         [class.cursor-not-allowed]="isLoading || isDeletingLogo" [class.opacity-60]="isLoading || isDeletingLogo">
         <span class="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-cloud-upload-outline"></i></span>
@@ -38,7 +38,7 @@
         </div>
       }
     </div>
-    <div class="flex gap-3"><button type="submit" [disabled]="isLoading || isDeletingLogo || airlineForm.invalid"
+    <div class="flex gap-3"><button type="submit" [disabled]="isLoading || isDeletingLogo"
         class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
         @if (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate
           }}</span> }

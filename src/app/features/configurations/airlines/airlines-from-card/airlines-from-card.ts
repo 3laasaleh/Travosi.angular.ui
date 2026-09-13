@@ -54,6 +54,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
   isLoading = false;
   isDeletingLogo = false;
   errorMessage = '';
+  validationSubmitted = false;
   imageValidationMessage = '';
   successMessage = '';
 
@@ -74,6 +75,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
   }
 
   saveAirline(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.airlineForm.invalid) {
       this.airlineForm.markAllAsTouched();
@@ -203,6 +205,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
   }
 
   private populateForm(airline: AirlineDTO): void {
+    this.validationSubmitted = false;
     this.revokeNewLogoUrl();
     const logoUrl = airline.logoUrl ?? '';
     this.logoUpload = logoUrl
@@ -216,6 +219,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.revokeNewLogoUrl();
     this.logoUpload = null;
     this.imageValidationMessage = '';

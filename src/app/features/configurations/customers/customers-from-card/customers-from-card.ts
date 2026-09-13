@@ -19,6 +19,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { AuthService } from '../../../user/_services/auth.service';
 import { CustomerTypeEnum } from '../customer-type.enum';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { validDate } from '../../../../core/services/custom.validators';
 
 enum GenderEnum { Male = 0, Female = 1 }
 enum TravelerTypeEnum { Adult = 1, Child = 2, Infant = 3 }
@@ -84,6 +85,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
   agents: any[] = [];
   isLoading = false;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
 
   constructor(
@@ -134,6 +136,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
   }
 
   saveCustomer(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched();
@@ -207,6 +210,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
   }
 
   private populateForm(customer: CustomerDTO): void {
+    this.validationSubmitted = false;
     const allTravelers = Array.isArray(customer.travelers) ? customer.travelers : [];
     const primary = allTravelers.find((traveler) => traveler.isPrimary) ?? allTravelers[0];
     this.customerForm.patchValue({
@@ -263,6 +267,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
   }
 
   private resetForm(emitCancel: boolean, keepMessage = false): void {
+    this.validationSubmitted = false;
     this.customerForm.reset({
       firstName: '', lastName: '', email: '', mobile: '', passportNumber: '', dateOfBirth: '',
       gender: GenderEnum.Male, customerType: CustomerTypeEnum.Individual,
@@ -283,7 +288,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       mobile: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^\+?[0-9 ()-]{7,20}$/)] }),
       passportNumber: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(20)] }),
-      dateOfBirth: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      dateOfBirth: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate()] }),
       gender: new FormControl(GenderEnum.Male, { nonNullable: true, validators: [Validators.required] }),
       customerType: new FormControl(CustomerTypeEnum.Individual, { nonNullable: true, validators: [Validators.required] }),
       companyName: new FormControl('', { nonNullable: true }),
@@ -300,7 +305,7 @@ export class CustomersFromCard implements OnInit, OnChanges {
       firstName: new FormControl(value.firstName ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
       lastName: new FormControl(value.lastName ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
       passportNumber: new FormControl(value.passportNumber ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(20)] }),
-      dateOfBirth: new FormControl(value.dateOfBirth ?? '', { nonNullable: true, validators: [Validators.required] }),
+      dateOfBirth: new FormControl(value.dateOfBirth ?? '', { nonNullable: true, validators: [Validators.required, validDate()] }),
       gender: new FormControl(value.gender ?? GenderEnum.Male, { nonNullable: true, validators: [Validators.required] }),
       travelerType: new FormControl(value.travelerType ?? TravelerTypeEnum.Adult, { nonNullable: true, validators: [Validators.required] }),
       relationship: new FormControl(value.relationship ?? 'Companion', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),

@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { validDate } from '../../../../core/services/custom.validators';
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import {
@@ -557,11 +558,11 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       isActive: new FormControl(true, { nonNullable: true }),
       dateFrom: new FormControl(this.tomorrow, {
         nonNullable: true,
-        validators: [Validators.required, this.notBeforeDateValidator(this.tomorrow)],
+        validators: [Validators.required, validDate(), this.notBeforeDateValidator(this.tomorrow)],
       }),
       dateTo: new FormControl(this.dayAfterTomorrow, {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, validDate()],
       }),
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
@@ -753,7 +754,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       valueAr: new FormControl(itinerary.valueAr, { nonNullable: true, validators: [Validators.required, Validators.maxLength(2000), arabicTextValidator()] }),
       notesEng: new FormControl(itinerary.notesEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),
       notesAr: new FormControl(itinerary.notesAr, { nonNullable: true, validators: [Validators.maxLength(2000), arabicTextValidator()] }),
-      arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [Validators.required] }),
+      arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [Validators.required, validDate()] }),
       startTime: new FormControl<string | null>(itinerary.startTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
       endTime: new FormControl<string | null>(itinerary.endTime, { validators: [Validators.required, this.quarterHourTimeValidator] }),
       packageId: new FormControl<number | null>(this.currentPackageId),

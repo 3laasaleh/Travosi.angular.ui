@@ -27,6 +27,7 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { validDate } from '../../../../core/services/custom.validators';
 
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
@@ -102,6 +103,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   apiLoadingMessage = '';
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  validationSubmitted = false;
   imageValidationMessage = '';
   imageAltErrorsVisible = false;
   successMessage = '';
@@ -308,6 +310,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   saveCurrentStep(): void {
+    this.validationSubmitted = true;
     if (this.activeStep === 1) {
       this.saveTourDetails();
       return;
@@ -327,6 +330,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.isSaving || !this.validateDetailsStep()) return;
 
     if (this.tourForm.pristine) {
+      this.validationSubmitted = false;
       this.savedTourId = this.currentTourId;
       this.completedStep = Math.max(this.completedStep, 1);
       this.activeStep = 2;
@@ -400,6 +404,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           return;
         }
         this.completedStep = Math.max(this.completedStep, 1);
+        this.validationSubmitted = false;
         this.activeStep = 2;
         this.successMessage =
           response?.message || (isCreating ? 'tourDetailsCreated' : 'tourDetailsUpdated');
@@ -500,12 +505,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     if (this.isSaving || this.activeStep === 1) return;
     this.errorMessage = '';
     this.successMessage = '';
+    this.validationSubmitted = false;
     this.activeStep = (this.activeStep - 1) as TourFormStep;
     this.closeItineraryEditor();
   }
 
   private completeImagesStep(): void {
     this.errorMessage = '';
+    this.validationSubmitted = false;
     this.completedStep = Math.max(this.completedStep, 2);
     this.activeStep = 3;
     this.cdr.markForCheck();
@@ -879,6 +886,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private populateForm(tour: any): void {
+    this.validationSubmitted = false;
     this.closeItineraryEditor();
     this.revokeNewImageUrls();
     this.imageValidationMessage = '';
@@ -954,6 +962,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.closeItineraryEditor();
     this.closeDestinationMenu();
     this.citiesRequestSequence++;
@@ -1073,8 +1082,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.required, Validators.min(1)],
         }),
-        startDate: new FormControl(),
-        endDate: new FormControl(),
+        startDate: new FormControl<string | null>(null, { validators: [validDate()] }),
+        endDate: new FormControl<string | null>(null, { validators: [validDate()] }),
         images: new FormControl<string[]>([], {
           nonNullable: true,
           validators: [Validators.required],
@@ -1145,7 +1154,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           nonNullable: true,
           validators: [Validators.maxLength(2000), arabicTextValidator()],
         }),
-        arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true }),
+        arrivalDate: new FormControl(itinerary.arrivalDate, { nonNullable: true, validators: [validDate()] }),
         startTime: new FormControl<string | null>(itinerary.startTime, {
           validators: [Validators.required, this.quarterHourTimeValidator],
         }),
@@ -1244,8 +1253,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       DurationDays: Number(form.durationDays),
       Durationhours: Number(form.durationHours),
       MaxSeats: Number(form.maxSeats),
-      StartDate: this.toApiDate(form.startDate),
-      EndDate: this.toApiDate(form.endDate),
+      StartDate: this.toApiDate(form.startDate ?? ''),
+      EndDate: this.toApiDate(form.endDate ?? ''),
       IsFreeCancelation: form.isFreeCancelation,
       IsNileCruise: form.isNileCruise,
       IsOneDayTour: form.isOneDayTour,

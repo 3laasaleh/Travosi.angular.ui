@@ -8,7 +8,7 @@
   <p class="mb-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{{ errorMessage }}</p>
   }
 
-  <form class="space-y-4" [formGroup]="form" (ngSubmit)="save()">
+  <form class="configuration-form space-y-4" [formGroup]="form" (ngSubmit)="save()">
     @if (validationSubmitted && form.invalid) { <p
       class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' |
       translate }}</p> }
@@ -232,11 +232,11 @@
               [class.border-red-500]="!!image.file && showImageAltError(image, 'eng') && !image.altEng?.trim()"
               class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="('blogEnglishAltText' | translate) + (image.file ? ' *' : '')" />
             <input [(ngModel)]="image.altAr" (blur)="image.altArTouched = true" [ngModelOptions]="{standalone: true}"
-              [class.border-red-500]="!!image.file && showImageAltError(image, 'ar') && (!image.altAr?.trim() || hasInvalidImageAlt(image))"
+              [class.border-red-500]="!!image.file && showImageAltError(image, 'ar') && (!image.altAr?.trim() || hasInvalidArabicAlt(image))"
               class="w-full rounded border border-slate-200 px-2 py-1 text-xs" [placeholder]="('blogArabicAltText' | translate) + (image.file ? ' *' : '')"
               dir="rtl" />
             @if (image.file && showImageAltError(image, 'eng') && !image.altEng?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogEnglishAltTextRequired' | translate }}</p> }
-            @if (image.file && showImageAltError(image, 'ar') && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if (image.file && showImageAltError(image, 'ar') && hasInvalidImageAlt(image)) { <p
+            @if (image.file && showImageAltError(image, 'ar') && !image.altAr?.trim()) { <p class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if (image.file && showImageAltError(image, 'ar') && hasInvalidArabicAlt(image)) { <p
               class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
           </div>
         </div>

@@ -42,6 +42,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   hotelForm = this.createForm();
   isLoading = false;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
   readonly starOptions = [1, 2, 3, 4, 5];
   destinations: any[] = [];
@@ -69,6 +70,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   }
 
   saveHotel(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.hotelForm.invalid) {
       this.hotelForm.markAllAsTouched();
@@ -122,6 +124,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   }
 
   private populateForm(hotel: HotelDTO): void {
+    this.validationSubmitted = false;
     this.hotelForm.setValue({
       name: hotel.name ?? '',
       starRating: hotel.starRating ?? 1,
@@ -136,6 +139,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.hotelForm.reset({
       name: '',
       starRating: 1,

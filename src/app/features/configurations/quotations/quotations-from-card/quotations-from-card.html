@@ -15,11 +15,11 @@
     </div>
   }
 
-  <form class="space-y-5" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
-    @if (quotationForm.invalid && (quotationForm.touched || quotationForm.dirty)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
+  <form class="configuration-form space-y-5" [formGroup]="quotationForm" (ngSubmit)="saveQuotation()">
+    @if (validationSubmitted && (quotationForm.invalid || !hasTravelItems)) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     <div class="grid gap-4 md:grid-cols-2">
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label>
         <select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
           <option value="">{{ 'selectCustomer' | translate }}</option>
           @for (customer of customers; track customer.id) {
@@ -31,7 +31,7 @@
         }
       </div>
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'currency' | translate }}</label>
         <select formControlName="currencyId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
           @for (currency of currencies; track currency.code) {
             <option [ngValue]="currency.id">{{ currency.symbol }} {{ currency.labelKey | translate }} ({{ currency.code }})</option>
@@ -42,7 +42,7 @@
         }
       </div>
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'travelStartDate' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'travelStartDate' | translate }}</label>
         <app-date-picker formControlName="travelStartDate" id="quotation-travel-start-date" [min]="today" [ariaLabel]="'travelStartDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
         @if (quotationForm.controls.travelStartDate.touched && quotationForm.controls.travelStartDate.hasError('required')) {
           <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
@@ -53,7 +53,7 @@
         }
       </div>
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'travelEndDate' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'travelEndDate' | translate }}</label>
         <app-date-picker formControlName="travelEndDate" id="quotation-travel-end-date" [min]="minimumTravelEndDate" [ariaLabel]="'travelEndDate' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
         @if (quotationForm.controls.travelEndDate.touched && quotationForm.controls.travelEndDate.hasError('required')) {
           <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
@@ -64,7 +64,7 @@
         }
       </div>
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'validUntil' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'validUntil' | translate }}</label>
         <app-date-picker formControlName="validUntil" id="quotation-valid-until" [min]="defaultValidUntil" [max]="quotationForm.controls.travelStartDate.value || null" [ariaLabel]="'validUntil' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
         @if (quotationForm.controls.validUntil.touched && quotationForm.controls.validUntil.hasError('required')) {
           <p class="mt-1 text-xs text-red-600">{{ 'dateRequired' | translate }}</p>
@@ -80,7 +80,7 @@
 
     <div class="grid gap-4 sm:grid-cols-3">
       <div>
-        <label class="mb-2 block text-sm font-medium">{{ 'adults' | translate }}</label>
+        <label class="required-field-label mb-2 block text-sm font-medium">{{ 'adults' | translate }}</label>
         <input formControlName="adults" type="number" min="1" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
         @if (quotationForm.controls.adults.touched && quotationForm.controls.adults.invalid) {
           <p class="mt-1 text-xs text-red-600">{{ 'adultsInvalid' | translate }}</p>
@@ -240,21 +240,21 @@
           <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3" [formGroupName]="index">
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_11rem_11rem_11rem_auto] xl:items-end">
               <div>
-                <label class="mb-2 block text-sm font-medium">{{ 'transferFrom' | translate }}</label>
+                <label class="required-field-label mb-2 block text-sm font-medium">{{ 'transferFrom' | translate }}</label>
                 <input formControlName="from" type="text" maxlength="250" [placeholder]="'transferFromPlaceholder' | translate" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2" />
                 @if (transfer.controls['from'].touched && transfer.controls['from'].invalid) {
                   <p class="mt-1 text-xs text-red-600">{{ 'transferFromRequired' | translate }}</p>
                 }
               </div>
               <div>
-                <label class="mb-2 block text-sm font-medium">{{ 'transferTo' | translate }}</label>
+                <label class="required-field-label mb-2 block text-sm font-medium">{{ 'transferTo' | translate }}</label>
                 <input formControlName="to" type="text" maxlength="250" [placeholder]="'transferToPlaceholder' | translate" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2" />
                 @if (transfer.controls['to'].touched && transfer.controls['to'].invalid) {
                   <p class="mt-1 text-xs text-red-600">{{ 'transferToRequired' | translate }}</p>
                 }
               </div>
               <div>
-                <label class="mb-2 block text-sm font-medium">{{ 'date' | translate }}</label>
+                <label class="required-field-label mb-2 block text-sm font-medium">{{ 'date' | translate }}</label>
                 <app-date-picker
                   formControlName="transferDate"
                   [id]="'quotation-transfer-date-' + index"
@@ -262,12 +262,14 @@
                   [placeholder]="'selectYourDate' | translate"
                   [ariaLabel]="'date' | translate"
                   inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
-                @if (transfer.controls['transferDate'].touched && transfer.controls['transferDate'].invalid) {
+                @if (transfer.controls['transferDate'].touched && transfer.controls['transferDate'].hasError('required')) {
                   <p class="mt-1 text-xs text-red-600">{{ 'transferDateRequired' | translate }}</p>
+                } @else if (transfer.controls['transferDate'].touched && transfer.controls['transferDate'].hasError('invalidDate')) {
+                  <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
                 }
               </div>
               <div>
-                <label class="mb-2 block text-sm font-medium">{{ 'fromTime' | translate }}</label>
+                <label class="required-field-label mb-2 block text-sm font-medium">{{ 'fromTime' | translate }}</label>
                 <app-time-picker formControlName="fromTime" [id]="'quotation-transfer-from-time-' + index" [min]="minTimeForTransferDate(transfer.controls['transferDate'].value)" [ariaLabel]="'fromTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
                 @if (transfer.controls['fromTime'].touched && transfer.controls['fromTime'].invalid) {
                   <p class="mt-1 text-xs text-red-600">{{ 'fromTimeRequired' | translate }}</p>
@@ -276,7 +278,7 @@
                 }
               </div>
               <div>
-                <label class="mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label>
+                <label class="required-field-label mb-2 block text-sm font-medium">{{ 'arrivalTime' | translate }}</label>
                 <app-time-picker formControlName="arrivalTime" [id]="'quotation-transfer-arrival-time-' + index" [min]="transfer.controls['fromTime'].value" [minExclusive]="true" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2" />
                 @if (transfer.controls['arrivalTime'].touched && transfer.controls['arrivalTime'].invalid) {
                   <p class="mt-1 text-xs text-red-600">{{ 'arrivalTimeRequired' | translate }}</p>
@@ -355,7 +357,7 @@
     </div>
 
     <div class="flex gap-3">
-      <button type="submit" [disabled]="!canSave" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+      <button type="submit" [disabled]="isLoading || optionsLoading" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
         @if (isLoading) {
           <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span>
         } @else {

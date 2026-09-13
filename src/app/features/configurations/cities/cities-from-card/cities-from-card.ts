@@ -79,6 +79,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
   destinationsLoading = false;
   deletingImageIndex: number | null = null;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
   imageValidationMessage = '';
   imageAltErrorsVisible = false;
@@ -100,6 +101,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void { this.revokeNewImageUrls(); }
 
   saveCity(): void {
+    this.validationSubmitted = true;
     if (this.isLoading || this.deletingImageIndex !== null) return;
     if (this.cityForm.invalid) {
       this.cityForm.markAllAsTouched();
@@ -259,6 +261,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private populateForm(city: CityDTO): void {
+    this.validationSubmitted = false;
     this.revokeNewImageUrls();
     this.imageValidationMessage = '';
     const images = Array.isArray(city.images) ? city.images : [];
@@ -278,6 +281,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.revokeNewImageUrls();
     this.imageUploads = [];
     this.imageValidationMessage = '';

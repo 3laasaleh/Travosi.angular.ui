@@ -15,6 +15,7 @@ import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { validDate } from '../../../../core/services/custom.validators';
 import { TASK_STATUS_OPTIONS, TaskStatusEnum } from '../task-status.enum';
 
 export interface TaskDTO {
@@ -44,6 +45,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   agents: any[] = [];
   isLoading = false;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
   readonly taskStatusOptions = TASK_STATUS_OPTIONS;
   readonly taskTypeOptions = [
@@ -85,6 +87,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   }
 
   async saveTask(): Promise<void> {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.taskForm.invalid) {
       this.taskForm.markAllAsTouched();
@@ -152,6 +155,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   }
 
   private populateForm(task: TaskDTO): void {
+    this.validationSubmitted = false;
     this.taskForm.setValue({
       title: task.title ?? '',
       description: task.description ?? '',
@@ -164,6 +168,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.taskForm.reset({
       title: '',
       description: '',
@@ -181,7 +186,7 @@ export class TasksFromCard implements OnInit, OnChanges {
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       description: new FormControl('', { nonNullable: true }),
       agentId: new FormControl<string | null>(null, { validators: [Validators.required] }),
-      dueDate: new FormControl('', { nonNullable: true }),
+      dueDate: new FormControl('', { nonNullable: true, validators: [validDate()] }),
       status: new FormControl(TaskStatusEnum.Pending, { nonNullable: true, validators: [Validators.required] }),
       taskType: new FormControl(7, { nonNullable: true, validators: [Validators.required] }),
       priority: new FormControl(2, { nonNullable: true, validators: [Validators.required] }),

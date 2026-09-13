@@ -31,6 +31,7 @@ export class BookingsFromCard implements OnInit, OnChanges {
   agents: any[] = [];
   isLoading = false;
   errorMessage = '';
+  validationSubmitted = false;
   successMessage = '';
   assignmentSucceeded = false;
 
@@ -67,6 +68,7 @@ export class BookingsFromCard implements OnInit, OnChanges {
   }
 
   saveAssignment(): void {
+    this.validationSubmitted = true;
     if (this.isLoading) return;
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
@@ -111,12 +113,14 @@ export class BookingsFromCard implements OnInit, OnChanges {
   }
 
   private populateForm(booking: any): void {
+    this.validationSubmitted = false;
     this.bookingForm.setValue({
       agentId: booking?.agentId ?? booking?.agent?.id ?? null,
     });
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.bookingForm.reset({ agentId: null });
     this.assignmentSucceeded = false;
     this.successMessage = '';

@@ -88,6 +88,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   isLoading = false;
   optionsLoading = false;
   optionsLoadError = false;
+  validationSubmitted = false;
 
   constructor(
     private apiService: ApiService,
@@ -165,7 +166,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   get travelServicesInvalid(): boolean {
-    return !this.optionsLoading && !this.hasTravelItems;
+    return this.validationSubmitted && !this.optionsLoading && !this.hasTravelItems;
   }
 
   get tax(): number {
@@ -401,6 +402,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   saveQuotation(): void {
     if (this.isLoading) return;
+    this.validationSubmitted = true;
     this.quotationForm.updateValueAndValidity();
     if (this.quotationForm.controls.discount.value > this.subTotal) {
       this.quotationForm.controls.discount.markAsTouched();
@@ -494,6 +496,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   retryOptions(): void { this.loadOptions(); }
 
   private populateForm(quotation: QuotationDTO): void {
+    this.validationSubmitted = false;
     this.quotationForm.patchValue({
       customerId: quotation.customerId ?? '',
       currencyId: quotation.currencyId ?? '',
@@ -547,6 +550,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.validationSubmitted = false;
     this.selectedPackageIds.clear();
     this.selectedTourIds.clear();
     this.selectedHotelIds.clear();
@@ -599,7 +603,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       }),
       transferDate: new FormControl(this.toInputDate(transfer?.transferDate) || defaults.date, {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, this.validDateValidator],
       }),
       fromTime: new FormControl(this.toInputTime(transfer?.fromTime) || defaults.fromTime, {
         nonNullable: true,
