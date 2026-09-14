@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import {
   AbstractControl,
   FormControl,
@@ -41,6 +42,7 @@ export class TourBookingCard implements OnInit {
   private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
+  private readonly router = inject(Router);
   private bookingLoaderElement: HTMLElement | null = null;
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
@@ -312,11 +314,25 @@ export class TourBookingCard implements OnInit {
     if (!payload) return;
 
     if (!this.isLoggedIn) {
-      this.openGuestBookingModal();
       return;
     }
 
     this.submitBooking(payload, false);
+  }
+
+  goToSignIn(): void {
+    this.navigateToAuth('/login');
+  }
+
+  goToSignUp(): void {
+    this.navigateToAuth('/signup');
+  }
+
+  private navigateToAuth(path: '/login' | '/signup'): void {
+    const currentUrl = this.document.defaultView?.location.pathname ?? '/';
+    const search = this.document.defaultView?.location.search ?? '';
+    const returnUrl = `${currentUrl}${search}` || '/';
+    this.router.navigate([path], { queryParams: { returnUrl } });
   }
 
   openGuestBookingModal(): void {

@@ -34,7 +34,7 @@
           <div class="relative overflow-hidden"><img [src]="imageUrl(item)" [alt]="item.name" loading="lazy" (error)="onImageError($event)"
               class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
       
-            @if (item.activeDiscount?.isCurrentlyActive) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount.percentage }}%</span> }
+            @if (hasDiscount(item)) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount?.percentage }}%</span> }
           </div>
           <div class="flex flex-1 flex-col p-4">
             <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.name }}
@@ -44,7 +44,7 @@
             <div class="mt-auto pt-4">
               <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
                 <div class="flex flex-col">
-                  @if (item.activeDiscount?.isCurrentlyActive) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
+                  @if (hasDiscount(item)) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
                   <strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>
                 </div>
                 <span class="inline-flex  items-center justify-center rounded-lg bg-primary-600 px-4 py-1 text-center text-sm font-semibold text-white duration-300 group-hover:bg-primary-700">

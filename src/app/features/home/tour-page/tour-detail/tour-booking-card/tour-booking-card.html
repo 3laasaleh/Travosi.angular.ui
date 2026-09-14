@@ -137,18 +137,35 @@
       </div>
     }
 
-    <button type="submit" [disabled]="isSubmitting || isCheckingAvailability || product?.isActive === false"
-      class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
-      @if (isCheckingAvailability) {
-        <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'checkingAvailability' | translate }}</span>
-      } @else if (isSubmitting) {
-        <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span>
-      } @else if (availabilityConfirmed) {
-        <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span>
-      } @else {
-        <i class="mdi mdi-calendar-search-outline"></i><span>{{ 'checkAvailability' | translate }}</span>
-      }
-    </button>
+    @if (availabilityConfirmed && !isLoggedIn) {
+      <div class="grid gap-2 sm:grid-cols-3">
+        <button type="button" (click)="goToSignIn()"
+          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700">
+          <i class="mdi mdi-login"></i><span>{{ 'signin' | translate }}</span>
+        </button>
+        <button type="button" (click)="goToSignUp()"
+          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-4 text-center text-sm font-semibold text-primary-700 duration-300 hover:border-primary-400 hover:bg-primary-100">
+          <i class="mdi mdi-account-plus-outline"></i><span>{{ 'signup' | translate }}</span>
+        </button>
+        <button type="button" (click)="openGuestBookingModal()"
+          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-center text-sm font-semibold text-slate-700 duration-300 hover:border-primary-300 hover:text-primary-700">
+          <i class="mdi mdi-account-multiple-plus-outline"></i><span>{{ 'guestBookingTitle' | translate }}</span>
+        </button>
+      </div>
+    } @else {
+      <button type="submit" [disabled]="isSubmitting || isCheckingAvailability || product?.isActive === false"
+        class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary-600">
+        @if (isCheckingAvailability) {
+          <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'checkingAvailability' | translate }}</span>
+        } @else if (isSubmitting) {
+          <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span>
+        } @else if (availabilityConfirmed) {
+          <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span>
+        } @else {
+          <i class="mdi mdi-calendar-search-outline"></i><span>{{ 'checkAvailability' | translate }}</span>
+        }
+      </button>
+    }
   </form>
 </div>
 

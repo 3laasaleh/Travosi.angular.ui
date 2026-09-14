@@ -203,6 +203,10 @@ export class HomePackagesList implements OnInit {
     return formatHomePrice(this.currencyService, item?.pricePerPerson ?? item?.price, item);
   }
 
+  hasDiscount(item: any): boolean {
+    return this.utilityService.hasDiscount(item);
+  }
+
   imageItems(item: any): any[] {
     const images = Array.isArray(item?.images) ? item.images : [];
     if (images.length) return images;

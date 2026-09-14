@@ -68,7 +68,19 @@ export class UtilityService {
   }
 
   hasDiscount(item: any): boolean {
-    return item?.activeDiscount?.isCurrentlyActive === true;
+    const percentage = Number(item?.activeDiscount?.percentage);
+    const originalPrice = Number(item?.pricePerPerson ?? item?.price);
+    const discountedPrice = Number(item?.discountedPricePerPerson);
+
+    return item?.activeDiscount?.isCurrentlyActive === true
+      && Number.isFinite(percentage)
+      && percentage > 0
+      && percentage < 100
+      && Number.isFinite(originalPrice)
+      && originalPrice > 0
+      && Number.isFinite(discountedPrice)
+      && discountedPrice >= 0
+      && discountedPrice < originalPrice;
   }
 
   discountPercentage(item: any): number {

@@ -63,6 +63,10 @@ export class PackagesSection implements OnInit {
     return this.utilityService.formattedOriginalPrice(this.currencyService, item);
   }
 
+  hasDiscount(item: PackageDTO): boolean {
+    return this.utilityService.hasDiscount(item);
+  }
+
   destinationName(item: PackageDTO): string {
     return item.destinations[0]?.destinationName ?? '';
   }

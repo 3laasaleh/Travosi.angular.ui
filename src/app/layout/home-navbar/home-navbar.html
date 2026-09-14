@@ -200,14 +200,14 @@
           <app-destinations-menu #mobileDestinationsMenu layout="mobile"
             (opened)="openMobileCatalogMenu('destinations')" (navigated)="closeMenus()" />
         </li>
-        <li (mouseenter)="openMobileCatalogMenu('tours')">
+        <!-- <li (mouseenter)="openMobileCatalogMenu('tours')">
           <app-tours-menu #mobileToursMenu layout="mobile"
             (opened)="openMobileCatalogMenu('tours')" (navigated)="closeMenus()" />
-        </li>
-        <!-- <li (mouseenter)="openMobileCatalogMenu('nileCruises')">
+        </li> -->
+        <li (mouseenter)="openMobileCatalogMenu('nileCruises')">
           <app-tours-menu #mobileNileCruisesMenu layout="mobile" [nileCruisesOnly]="true"
             (opened)="openMobileCatalogMenu('nileCruises')" (navigated)="closeMenus()" />
-        </li> -->
+        </li>
         <li (mouseenter)="openMobileCatalogMenu('packages')">
           <app-packages-menu #mobilePackagesMenu layout="mobile"
             (opened)="openMobileCatalogMenu('packages')" (navigated)="closeMenus()" />

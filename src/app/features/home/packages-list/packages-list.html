@@ -144,7 +144,7 @@
                     <i class="mdi mdi-map-marker-outline me-1 text-primary"></i>{{ destinationName(item) }}
                   </span>
                 }
-                @if (item.activeDiscount?.isCurrentlyActive) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount.percentage }}%</span> }
+                @if (hasDiscount(item)) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount?.percentage }}%</span> }
               </div>
 
               <div class="flex flex-1 flex-col p-4">
@@ -162,7 +162,7 @@
                   }
                   <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
                     <div class="flex flex-col">
-                      @if (item.activeDiscount?.isCurrentlyActive) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
+                      @if (hasDiscount(item)) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
                       <strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>
                     </div>
                     <span class="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 group-hover:bg-primary-700">
