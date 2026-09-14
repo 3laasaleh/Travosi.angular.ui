@@ -266,7 +266,6 @@ export class TourBookingCard implements OnInit {
         this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
         this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
         this.availabilityConfirmed = isAvailable;
-        debugger;
         if (!isAvailable && response?.isSuccess === false) {
           this.errorMessage = 'availabilityCheckError';
         }

@@ -251,7 +251,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   savePackageDetails(): void {
     if (this.isSaving || !this.validateDetailsStep()) return;
     const existingId = this.currentPackageId;
-    debugger
     const payload = this.buildDetailsPayload(existingId);
     this.beginRequest('savingPackageDetails');
     const request$ = existingId
