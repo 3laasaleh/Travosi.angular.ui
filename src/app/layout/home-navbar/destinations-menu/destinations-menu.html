@@ -158,20 +158,21 @@
               </h3>
               <div class="max-h-[55vh] space-y-1 overflow-y-auto pe-1">
                 @for (destination of destinations; track destination.id) {
-                  <button type="button"
-                    class="w-full rounded-xl border px-3 py-3 text-start text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  <a
+                    [routerLink]="destination.routeName ? ['/destinations', destination.routeName] : ['/destinations']"
+                    class="block w-full cursor-pointer rounded-xl border px-3 py-3 text-start text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                     [class.border-primary]="destination.id === activeDestinationId"
                     [class.bg-primary]="destination.id === activeDestinationId"
                     [class.text-white]="destination.id === activeDestinationId"
                     [class.border-transparent]="destination.id !== activeDestinationId"
                     [class.text-slate-700]="destination.id !== activeDestinationId"
                     [class.hover:bg-slate-50]="destination.id !== activeDestinationId"
-                    [attr.aria-pressed]="destination.id === activeDestinationId"
+                    [class.hover:text-primary]="destination.id !== activeDestinationId"
                     (mouseenter)="activateDestination(destination)"
                     (focus)="activateDestination(destination)"
-                    (click)="activateDestination(destination)">
+                    (click)="onNavigate()">
                     <span class="block truncate">{{ destinationName(destination) }}</span>
-                  </button>
+                  </a>
                 } @empty {
                   <p class="px-3 py-2 text-sm text-slate-400">{{ 'noDestinationsFound' | translate }}</p>
                 }
@@ -191,20 +192,21 @@
               <div class="max-h-[55vh] space-y-1 overflow-y-auto pe-1">
                 @if (selectedDestination; as destination) {
                   @for (city of cities(destination); track city.id) {
-                    <button type="button"
-                      class="w-full rounded-xl border px-3 py-3 text-start text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                    <a
+                      [routerLink]="city.routeName ? ['/cities', city.routeName] : ['/destinations']"
+                      class="block w-full cursor-pointer rounded-xl border px-3 py-3 text-start text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                       [class.border-primary]="city.id === activeCityId"
                       [class.bg-primary-50]="city.id === activeCityId"
                       [class.text-primary]="city.id === activeCityId"
                       [class.border-transparent]="city.id !== activeCityId"
                       [class.text-slate-600]="city.id !== activeCityId"
                       [class.hover:bg-slate-50]="city.id !== activeCityId"
-                      [attr.aria-pressed]="city.id === activeCityId"
+                      [class.hover:text-primary]="city.id !== activeCityId"
                       (mouseenter)="activateCity(city)"
                       (focus)="activateCity(city)"
-                      (click)="activateCity(city)">
+                      (click)="onNavigate()">
                       <span class="block truncate">{{ cityName(city) }}</span>
-                    </button>
+                    </a>
                   } @empty {
                     <p class="px-3 py-2 text-sm text-slate-400">{{ 'noCitiesForDestination' | translate }}</p>
                   }
