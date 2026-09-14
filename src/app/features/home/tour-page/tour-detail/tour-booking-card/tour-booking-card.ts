@@ -329,9 +329,7 @@ export class TourBookingCard implements OnInit {
   }
 
   private navigateToAuth(path: '/login' | '/signup'): void {
-    const currentUrl = this.document.defaultView?.location.pathname ?? '/';
-    const search = this.document.defaultView?.location.search ?? '';
-    const returnUrl = `${currentUrl}${search}` || '/';
+    const returnUrl = this.router.url || '/';
     this.router.navigate([path], { queryParams: { returnUrl } });
   }
 

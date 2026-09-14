@@ -103,14 +103,19 @@ readonly profileImageUrl = computed(() => {
           const isAdminOrAgent = userData.role === RoleEnum.Admin
             || userData.role === RoleEnum.Agent;
 
-          if (isAdminOrAgent) this._router.navigate(['/configurations']);
-          else if (returnUrl && returnUrl.startsWith('/')) this._router.navigateByUrl(returnUrl);
+          if (this.isSafeReturnUrl(returnUrl)) this._router.navigateByUrl(returnUrl);
+          else if (isAdminOrAgent) this._router.navigate(['/configurations']);
           else this._router.navigate(['/home']);
         }
         return res;
       }),
     );
   }
+
+  private isSafeReturnUrl(returnUrl: string | null): returnUrl is string {
+    return !!returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//');
+  }
+
   registeration(user: any): Observable<any> {
     return this.http.post(environment.baseUrl + 'Account/Registeration', user);
   }
@@ -118,9 +123,21 @@ readonly profileImageUrl = computed(() => {
     return this.http.put<any>(environment.baseUrl + 'Account/ChangePassword/', data);
   }
   logout() {
+    const currentUrl = this._router.url;
     this._coockiesService.deleteAll('/');
     this.currentUser.set(null);
-    this._router.navigate(['home']);
+
+    const primarySegments = this._router
+      .parseUrl(currentUrl)
+      .root.children['primary']?.segments.map((segment) => segment.path) ?? [];
+    const language = /^(en|ar)$/i.test(primarySegments[0] ?? '')
+      ? primarySegments[0].toLowerCase()
+      : null;
+    const pageSegment = primarySegments[language ? 1 : 0]?.toLowerCase();
+
+    if (pageSegment === 'configurations') {
+      this._router.navigateByUrl(language ? `/${language}/home` : '/home');
+    }
   }
   isTokenExpired(): boolean {
     const token = this.getToken();
