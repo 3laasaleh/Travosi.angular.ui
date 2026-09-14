@@ -138,17 +138,14 @@
     }
 
     @if (availabilityConfirmed && !isLoggedIn) {
-      <div class="grid gap-2 sm:grid-cols-3">
+      <div class="grid gap-2 sm:grid-cols-2">
         <button type="button" (click)="goToSignIn()"
           class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700">
           <i class="mdi mdi-login"></i><span>{{ 'signin' | translate }}</span>
         </button>
-        <button type="button" (click)="goToSignUp()"
-          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-4 text-center text-sm font-semibold text-primary-700 duration-300 hover:border-primary-400 hover:bg-primary-100">
-          <i class="mdi mdi-account-plus-outline"></i><span>{{ 'signup' | translate }}</span>
-        </button>
+     
         <button type="button" (click)="openGuestBookingModal()"
-          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-center text-sm font-semibold text-slate-700 duration-300 hover:border-primary-300 hover:text-primary-700">
+          class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-center text-xs font-semibold text-slate-700 duration-300 hover:border-primary-300 hover:text-primary-700">
           <i class="mdi mdi-account-multiple-plus-outline"></i><span>{{ 'guestBookingTitle' | translate }}</span>
         </button>
       </div>
