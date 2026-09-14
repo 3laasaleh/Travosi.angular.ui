@@ -8,8 +8,8 @@
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)">
     <span>{{ 'destinations' | translate }}</span>
-    <span class="ms-4 h-1.5 w-1.5 rounded-full bg-current transition-opacity" [class.opacity-100]="menuOpen"
-      [class.opacity-0]="!menuOpen" aria-hidden="true"></span>
+    <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"
+      aria-hidden="true"></i>
   </button>
 
   @if (menuOpen) {
@@ -41,16 +41,17 @@
                   @if (cities(destination).length) {
                     <button
                       type="button"
-                      class="me-2 min-h-11 rounded-lg border px-3 py-2 text-xs font-semibold transition"
-                      [class.border-primary]="isDestinationExpanded(destination)"
-                      [class.bg-primary]="isDestinationExpanded(destination)"
-                      [class.text-white]="isDestinationExpanded(destination)"
-                      [class.border-slate-200]="!isDestinationExpanded(destination)"
-                      [class.text-slate-600]="!isDestinationExpanded(destination)"
+                      class="me-2 grid size-9 shrink-0 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-primary"
+                      [class.text-primary]="isDestinationExpanded(destination)"
+                      [class.bg-primary/10]="isDestinationExpanded(destination)"
                       [attr.aria-controls]="menuId + '-destination-cities-' + destination.id"
                       [attr.aria-expanded]="isDestinationExpanded(destination)"
+                      [attr.aria-label]="'cities' | translate"
                       (click)="toggleDestination(destination, $event)">
-                      {{ 'cities' | translate }}
+                      <i class="mdi text-xl leading-none"
+                        [class.mdi-chevron-down]="!isDestinationExpanded(destination)"
+                        [class.mdi-chevron-up]="isDestinationExpanded(destination)"
+                        aria-hidden="true"></i>
                     </button>
                   }
                 </div>
@@ -68,16 +69,17 @@
                           </a>
                           @if (tours(city).length) {
                             <button type="button"
-                              class="me-2 min-h-11 rounded-lg border px-3 py-2 text-xs font-semibold transition"
-                              [class.border-primary]="isCityExpanded(city)"
-                              [class.bg-primary]="isCityExpanded(city)"
-                              [class.text-white]="isCityExpanded(city)"
-                              [class.border-slate-200]="!isCityExpanded(city)"
-                              [class.text-slate-600]="!isCityExpanded(city)"
+                              class="me-2 grid size-9 shrink-0 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-primary"
+                              [class.text-primary]="isCityExpanded(city)"
+                              [class.bg-primary/10]="isCityExpanded(city)"
                               [attr.aria-controls]="menuId + '-city-tours-' + city.id"
                               [attr.aria-expanded]="isCityExpanded(city)"
+                              [attr.aria-label]="'tours' | translate"
                               (click)="toggleCity(city, $event)">
-                              {{ 'tours' | translate }}
+                              <i class="mdi text-xl leading-none"
+                                [class.mdi-chevron-down]="!isCityExpanded(city)"
+                                [class.mdi-chevron-up]="isCityExpanded(city)"
+                                aria-hidden="true"></i>
                             </button>
                           }
                         </div>

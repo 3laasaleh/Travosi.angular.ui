@@ -45,6 +45,7 @@ export class HomeNavbar implements AfterViewInit {
   @ViewChild('mobileDestinationsMenu') private mobileDestinationsMenu?: DestinationsMenu;
   @ViewChild('mobileToursMenu') private mobileToursMenu?: ToursMenu;
   @ViewChild('mobileNileCruisesMenu') private mobileNileCruisesMenu?: ToursMenu;
+  @ViewChild('mobilePackagesMenu') private mobilePackagesMenu?: PackagesMenu;
 
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
@@ -135,10 +136,11 @@ export class HomeNavbar implements AfterViewInit {
     this.currencyMenuOpen = false;
   }
 
-  openMobileCatalogMenu(menu: 'destinations' | 'tours' | 'nileCruises'): void {
+  openMobileCatalogMenu(menu: 'destinations' | 'tours' | 'nileCruises' | 'packages'): void {
     if (menu !== 'destinations') this.mobileDestinationsMenu?.closeMenu();
     if (menu !== 'tours') this.mobileToursMenu?.closeMenu();
     if (menu !== 'nileCruises') this.mobileNileCruisesMenu?.closeMenu();
+    if (menu !== 'packages') this.mobilePackagesMenu?.closeMenu();
   }
 
   logout(): void {

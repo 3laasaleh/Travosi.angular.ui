@@ -29,6 +29,7 @@ export class PackagesMenu {
 
   @Input() layout: 'desktop' | 'mobile' = 'desktop';
   @Output() navigated = new EventEmitter<void>();
+  @Output() opened = new EventEmitter<void>();
 
   menuOpen = false;
   isLoading = false;
@@ -45,13 +46,17 @@ export class PackagesMenu {
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
-    if (this.menuOpen && !this.loaded && !this.isLoading) this.loadPackages();
+    if (this.menuOpen) {
+      this.opened.emit();
+      if (!this.loaded && !this.isLoading) this.loadPackages();
+    }
   }
 
   openMenu(): void {
     if (this.isMobile) return;
     this.cancelClose();
     this.menuOpen = true;
+    this.opened.emit();
     if (!this.loaded && !this.isLoading) this.loadPackages();
   }
 

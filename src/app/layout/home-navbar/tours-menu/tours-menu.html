@@ -1,7 +1,7 @@
 <div [class.w-full]="isMobile" [class.relative]="!isMobile" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
   <button
     type="button"
-    class="flex w-full items-center justify-between gap-1.5 border-b border-slate-200 px-3 py-2 font-medium text-slate-900 transition hover:bg-slate-50 hover:text-primary lg:w-auto lg:border-0 lg:px-4 lg:py-2.5 lg:text-sm lg:font-semibold lg:text-slate-600 lg:hover:bg-transparent"
+    class="flex w-full items-center justify-between gap-1.5 border-b border-slate-200 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-slate-50 hover:text-primary lg:w-auto lg:border-0 lg:px-4 lg:py-2.5 lg:text-sm lg:text-slate-600 lg:hover:bg-transparent"
     aria-haspopup="menu"
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)">
@@ -10,27 +10,57 @@
   </button>
 
   @if (menuOpen) {
-    <div
-      class="z-50 mt-2 w-full rounded-xl border border-slate-200 bg-white p-2 shadow-xl lg:absolute lg:start-0 lg:w-72"
-      (mouseenter)="cancelClose()"
-      (mouseleave)="scheduleClose()"
-      role="menu">
-      <div class="max-h-80 overflow-y-auto p-2">
+    @if (isMobile) {
+      <div class="border-b border-slate-200 bg-slate-50 px-2 py-2" role="menu">
         @if (isLoading) {
-          @for (row of [1,2,3,4]; track row) {
-            <div class="mx-3 my-2 h-4 animate-pulse rounded-full bg-slate-200"></div>
-          }
+          <div class="space-y-2 p-2" aria-busy="true">
+            @for (row of [1, 2, 3, 4]; track row) {
+              <div class="h-10 animate-pulse rounded-xl bg-slate-200"></div>
+            }
+          </div>
         } @else {
-          @for (tour of tours; track tour.id) {
-            <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary" role="menuitem">
-              <span class="truncate">{{ tourName(tour) }}</span>
-            </a>
-          } @empty {
-            <p class="p-4 text-center text-sm text-slate-500">{{ emptyLabelKey | translate }}</p>
-          }
+          <ul class="space-y-1">
+            @for (tour of tours; track tour.id) {
+              <li class="overflow-hidden rounded-xl bg-white">
+                <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()"
+                  class="block min-w-0 px-3 py-3 text-sm font-semibold text-slate-800 transition hover:text-primary"
+                  role="menuitem">
+                  <span class="block truncate">{{ tourName(tour) }}</span>
+                </a>
+              </li>
+            } @empty {
+              <li class="p-3 text-sm text-slate-500">{{ emptyLabelKey | translate }}</li>
+            }
+          </ul>
         }
+        <a [routerLink]="listRoute" (click)="onNavigate()"
+          class="mt-2 block rounded-xl px-3 py-3 text-center text-sm font-semibold text-primary transition hover:bg-white">{{ viewAllLabelKey | translate }}</a>
       </div>
-      <a [routerLink]="listRoute" (click)="onNavigate()" class="mt-1 block border-t border-slate-100 px-3 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50">{{ viewAllLabelKey | translate }}</a>
-    </div>
+    } @else {
+      <div
+        class="z-50 mt-2 w-full rounded-xl border border-slate-200 bg-white p-2 shadow-xl lg:absolute lg:start-0 lg:w-72"
+        (mouseenter)="cancelClose()"
+        (mouseleave)="scheduleClose()"
+        role="menu">
+        <div class="max-h-80 space-y-1 overflow-y-auto p-2">
+          @if (isLoading) {
+            @for (row of [1,2,3,4]; track row) {
+              <div class="mx-3 my-2 h-10 animate-pulse rounded-xl bg-slate-100"></div>
+            }
+          } @else {
+            @for (tour of tours; track tour.id) {
+              <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()"
+                class="block rounded-xl border border-transparent px-3 py-3 text-sm font-semibold text-slate-700 transition hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
+                role="menuitem">
+                <span class="block truncate">{{ tourName(tour) }}</span>
+              </a>
+            } @empty {
+              <p class="p-4 text-center text-sm text-slate-500">{{ emptyLabelKey | translate }}</p>
+            }
+          }
+        </div>
+        <a [routerLink]="listRoute" (click)="onNavigate()" class="mt-1 block border-t border-slate-100 px-3 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50">{{ viewAllLabelKey | translate }}</a>
+      </div>
+    }
   }
 </div>
