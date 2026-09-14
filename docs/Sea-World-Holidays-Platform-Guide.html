@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sea World Holidays - Platform Capabilities and Customer Value Guide</title>
+  <style>
+    :root {
+      --navy: #0f2740;
+      --blue: #16789e;
+      --aqua: #1ec2f2;
+      --green: #00a878;
+      --gold: #e4aa22;
+      --ink: #172433;
+      --muted: #607080;
+      --line: #dbe5ec;
+      --soft: #f3f8fb;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { font-size: 10.2pt; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e8eef2;
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.52;
+    }
+
+    @page { size: A4; margin: 13mm 14mm 15mm; }
+
+    @media print {
+      body { background: #fff; }
+      .sheet { margin: 0; box-shadow: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    .sheet {
+      width: 210mm;
+      margin: 16px auto;
+      background: var(--white);
+      box-shadow: 0 12px 40px rgba(15, 39, 64, .14);
+    }
+
+    .content { padding: 15mm 15mm 12mm; }
+
+    .cover {
+      min-height: 267mm;
+      padding: 22mm 18mm;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 85% 18%, rgba(30,194,242,.45), transparent 27%),
+        radial-gradient(circle at 8% 84%, rgba(0,168,120,.30), transparent 28%),
+        linear-gradient(145deg, #0a2036 0%, #123c5b 58%, #126a82 100%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      break-after: page;
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      width: 118mm;
+      height: 118mm;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 50%;
+      right: -44mm;
+      bottom: -35mm;
+      box-shadow: 0 0 0 16mm rgba(255,255,255,.035), 0 0 0 34mm rgba(255,255,255,.025);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand img {
+      width: 38mm;
+      max-height: 32mm;
+      object-fit: contain;
+      background: rgba(255,255,255,.96);
+      border-radius: 14px;
+      padding: 8px 12px;
+    }
+
+    .brand-name { font-size: 15pt; font-weight: 800; letter-spacing: .02em; }
+    .eyebrow { color: var(--aqua); font-weight: 800; letter-spacing: .18em; text-transform: uppercase; font-size: 8.5pt; }
+
+    .cover-main { margin: auto 0; max-width: 155mm; position: relative; z-index: 1; }
+    .cover h1 { margin: 5mm 0 4mm; color: #fff; font-size: 34pt; line-height: 1.08; letter-spacing: -.035em; }
+    .cover .subtitle { max-width: 135mm; color: rgba(255,255,255,.82); font-size: 15pt; line-height: 1.5; }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12mm;
+    }
+
+    .cover-chip {
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 13px;
+      padding: 11px;
+      background: rgba(255,255,255,.07);
+      font-weight: 650;
+    }
+
+    .cover-meta {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(255,255,255,.2);
+      padding-top: 5mm;
+      color: rgba(255,255,255,.72);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 9pt;
+    }
+
+    h1, h2, h3, h4 { color: var(--navy); line-height: 1.22; }
+    h1 { font-size: 25pt; margin: 0 0 6mm; }
+    h2 { font-size: 19pt; margin: 11mm 0 4mm; padding-bottom: 2mm; border-bottom: 2px solid var(--aqua); }
+    h3 { font-size: 14pt; margin: 7mm 0 2.5mm; }
+    h4 { font-size: 11pt; margin: 4mm 0 1.5mm; }
+    p { margin: 0 0 3mm; }
+    ul, ol { margin: 2mm 0 4mm 5mm; padding-left: 5mm; }
+    li { margin: 1.1mm 0; }
+
+    .lead { color: #334b60; font-size: 12.2pt; line-height: 1.65; }
+    .small { color: var(--muted); font-size: 8.8pt; }
+    .muted { color: var(--muted); }
+
+    .callout {
+      margin: 5mm 0;
+      padding: 4mm 5mm;
+      border-left: 4px solid var(--aqua);
+      border-radius: 0 10px 10px 0;
+      background: var(--soft);
+    }
+
+    .callout strong { color: var(--navy); }
+    .callout.warning { border-left-color: var(--gold); background: #fff9ea; }
+    .callout.success { border-left-color: var(--green); background: #edf9f5; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3.5mm;
+      margin: 4mm 0 6mm;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4mm;
+      background: #fff;
+      break-inside: avoid;
+    }
+
+    .card .number {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 800;
+      margin-bottom: 2.5mm;
+    }
+
+    .card h3, .card h4 { margin-top: 0; }
+
+    .journey {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2.5mm;
+      margin: 5mm 0 7mm;
+    }
+
+    .journey-step {
+      position: relative;
+      min-height: 29mm;
+      border-radius: 12px;
+      color: #fff;
+      background: linear-gradient(145deg, var(--navy), var(--blue));
+      padding: 3.5mm;
+      break-inside: avoid;
+    }
+
+    .journey-step b { display: block; color: var(--aqua); font-size: 8pt; text-transform: uppercase; letter-spacing: .09em; }
+    .journey-step span { display: block; margin-top: 1.5mm; font-weight: 750; }
+
+    table { width: 100%; border-collapse: collapse; margin: 3mm 0 6mm; font-size: 8.8pt; }
+    th { color: #fff; background: var(--navy); text-align: left; font-weight: 700; }
+    th, td { padding: 2.4mm 2.7mm; border: 1px solid var(--line); vertical-align: top; }
+    tbody tr:nth-child(even) { background: #f7fafc; }
+    td:first-child { font-weight: 650; color: #233d52; }
+
+    .route { font-family: Consolas, monospace; font-size: 8.2pt; color: var(--blue); white-space: nowrap; }
+    .pill { display: inline-block; border-radius: 999px; padding: 1mm 2.4mm; margin: .4mm; background: #e9f7fc; color: #116985; font-size: 8pt; font-weight: 700; }
+    .pill.green { background: #e6f7f1; color: #087957; }
+    .pill.gold { background: #fff3d5; color: #855d00; }
+
+    .toc {
+      columns: 2;
+      column-gap: 12mm;
+      padding: 0;
+      list-style: none;
+      counter-reset: toc;
+    }
+
+    .toc li { break-inside: avoid; border-bottom: 1px dotted #a9b8c5; padding: 2mm 0; }
+    .toc a { color: var(--navy); text-decoration: none; font-weight: 650; }
+
+    .page-break { break-before: page; }
+    .avoid-break { break-inside: avoid; }
+
+    .section-kicker {
+      display: inline-block;
+      margin-top: 2mm;
+      color: var(--blue);
+      font-size: 8.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+
+    .workflow {
+      display: flex;
+      align-items: stretch;
+      gap: 2mm;
+      margin: 4mm 0 6mm;
+    }
+
+    .workflow > div {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 3mm;
+      background: var(--soft);
+      text-align: center;
+      font-weight: 700;
+      break-inside: avoid;
+    }
+
+    .workflow .arrow { flex: 0 0 auto; border: 0; background: transparent; padding: 3mm 0; color: var(--blue); }
+
+    .footer-note {
+      margin-top: 10mm;
+      padding-top: 3mm;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 8pt;
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <section class="cover">
+      <div class="brand">
+        <img src="../src/assets/images/main-logo.png" alt="Sea World Holidays logo" />
+        <div>
+          <div class="brand-name">Sea World Holidays</div>
+          <div class="eyebrow">Digital Travel Platform</div>
+        </div>
+      </div>
+
+      <div class="cover-main">
+        <div class="eyebrow">Platform capabilities and customer value guide</div>
+        <h1>From travel discovery<br />to booking, service,<br />and operations</h1>
+        <p class="subtitle">A complete walkthrough of the customer experience, every public page and major action, account and review journeys, and the administration workspace that supports daily travel operations.</p>
+        <div class="cover-grid">
+          <div class="cover-chip">Destinations &amp; cities</div>
+          <div class="cover-chip">Tours &amp; packages</div>
+          <div class="cover-chip">Booking &amp; availability</div>
+          <div class="cover-chip">Customer accounts</div>
+          <div class="cover-chip">Reviews &amp; support</div>
+          <div class="cover-chip">Admin &amp; operations</div>
+        </div>
+      </div>
+
+      <div class="cover-meta">
+        <span>Prepared from the implemented SeaWorld.TravelAgency web application</span>
+        <span>14 September 2026</span>
+      </div>
+    </section>
+
+    <div class="content">
+      <span class="section-kicker">Document purpose</span>
+      <h1>What this platform delivers</h1>
+      <p class="lead">Sea World Holidays is a bilingual travel-commerce and operations platform. It gives customers one place to discover destinations, cities, tours and travel packages; check real availability; book as a registered customer or guest; track bookings; and share verified travel reviews. Behind the public experience, administrators and agents manage the content, inventory, customers, work assignments, bookings, quotations, invoices and service vouchers that keep the travel operation moving.</p>
+
+      <div class="callout success">
+        <strong>Core business value:</strong> the platform connects attractive destination content with a practical booking journey and an internal operations workspace. Customers receive clarity and convenience; the agency gains control, traceability, reusable data and a scalable foundation for future online payments.
+      </div>
+
+      <div class="cards">
+        <div class="card"><h3>Customer value</h3><p>Easy discovery, clear itineraries and inclusions, localized content, currency-aware pricing, availability checks, flexible sign-in or guest booking, booking history and reviews.</p></div>
+        <div class="card"><h3>Sales value</h3><p>Promoted tours and packages, discount campaigns, related-tour recommendations, direct contact channels, lead capture, quotations and polished PDF documents.</p></div>
+        <div class="card"><h3>Operations value</h3><p>Central management of travel products, customers, tasks, bookings, flights, hotels, quotations, invoices, vouchers and customer questions.</p></div>
+      </div>
+
+      <div class="callout warning">
+        <strong>Scope note:</strong> this guide distinguishes implemented transactional features from presentation-only pages. A live payment-provider checkout is not currently wired into the reviewed application. It can be added on demand as a controlled integration phase; see “Payment gateway readiness.”
+      </div>
+
+      <h2>Contents</h2>
+      <ol class="toc">
+        <li><a href="#journey">The customer journey, step by step</a></li>
+        <li><a href="#global">Global navigation and controls</a></li>
+        <li><a href="#catalogue">Public catalogue pages</a></li>
+        <li><a href="#booking">Tour and package booking flow</a></li>
+        <li><a href="#auth">Authentication and customer account</a></li>
+        <li><a href="#reviews">Bookings and verified reviews</a></li>
+        <li><a href="#content">Content, help and contact pages</a></li>
+        <li><a href="#admin">Administration and role-based access</a></li>
+        <li><a href="#admin-pages">Admin pages and actions</a></li>
+        <li><a href="#payments">Payment gateway readiness</a></li>
+        <li><a href="#platform">Platform-wide customer value</a></li>
+        <li><a href="#buttons">Complete action reference</a></li>
+      </ol>
+
+      <section id="journey" class="page-break">
+        <span class="section-kicker">Customer experience</span>
+        <h1>The customer journey, step by step</h1>
+        <div class="journey">
+          <div class="journey-step"><b>Step 1</b><span>Arrive and choose language</span></div>
+          <div class="journey-step"><b>Step 2</b><span>Search or browse inspiration</span></div>
+          <div class="journey-step"><b>Step 3</b><span>Compare tours and packages</span></div>
+          <div class="journey-step"><b>Step 4</b><span>Review full trip details</span></div>
+          <div class="journey-step"><b>Step 5</b><span>Select dates and travelers</span></div>
+          <div class="journey-step"><b>Step 6</b><span>Check live availability</span></div>
+          <div class="journey-step"><b>Step 7</b><span>Sign in or book as guest</span></div>
+          <div class="journey-step"><b>Step 8</b><span>Receive booking confirmation</span></div>
+          <div class="journey-step"><b>Step 9</b><span>Track booking status</span></div>
+          <div class="journey-step"><b>Step 10</b><span>Review the completed trip</span></div>
+        </div>
+
+        <h3>1. Arrive in the right language and currency</h3>
+        <p>Every public route is language-prefixed using <span class="route">/en/...</span> or <span class="route">/ar/...</span>. Selecting Arabic changes the content and the complete layout direction to RTL. The currency menu lets a visitor view supported prices in USD or EGP, using centrally managed exchange-rate logic.</p>
+
+        <h3>2. Discover travel options</h3>
+        <p>The visitor can use the global search box or browse destination, city, tour, Nile cruise and package menus. Home-page sections surface featured inventory and travel stories. Search results are grouped into destinations, tours and packages and lead directly to the relevant page.</p>
+
+        <h3>3. Narrow the choice</h3>
+        <p>Tour and package lists support date-based filtering, filter application and reset, page-size choice and pagination. Cards expose names, imagery, summaries, prices and active discounts. Destination and city pages provide geographic context and show relevant tours.</p>
+
+        <h3>4. Build confidence on the detail page</h3>
+        <p>Customers see a photo gallery, overview, duration, group/capacity information, price, itinerary timeline, highlights, included and excluded services, cancellation information where available, traveler reviews and related choices.</p>
+
+        <h3>5. Configure the booking</h3>
+        <p>The booking card collects the travel date or date range plus adult and child counts. It displays available dates, seat limits, price per adult/child, discounts and the calculated total before submission.</p>
+
+        <h3>6. Confirm availability before commitment</h3>
+        <p><strong>Check Availability</strong> validates dates, party size and inventory. The customer receives an available/unavailable state and an available-seat count where applicable. Any booking-field change resets the previous availability result so stale availability is not reused.</p>
+
+        <h3>7. Choose the identity path</h3>
+        <p>A registered customer selects <strong>Sign In</strong>. The platform remembers the exact tour or package URL and returns to it after successful login. A visitor can alternatively select <strong>Book as a Guest</strong> and provide first name, last name, email and mobile number.</p>
+
+        <h3>8. Create the booking</h3>
+        <p><strong>Book Now</strong> or <strong>Submit Guest Booking</strong> sends the validated product, dates and traveler counts. Loading, success and error feedback prevent duplicate submissions and make the result clear.</p>
+
+        <h3>9. Track service progress</h3>
+        <p>Signed-in customers open <strong>My Bookings</strong> to see booking reference, product, date, travelers, amount, status and a link back to the booked tour/package. Operations staff can assign an agent and progress the booking through confirmation, completion or cancellation.</p>
+
+        <h3>10. Complete the feedback loop</h3>
+        <p>After an eligible booking is completed, the customer can select a 1-5 rating, write a review and submit it. Approved product reviews appear on tour and package detail pages, strengthening trust for future customers.</p>
+      </section>
+
+      <section id="global" class="page-break">
+        <span class="section-kicker">Available everywhere</span>
+        <h1>Global navigation and controls</h1>
+        <table>
+          <thead><tr><th>Control</th><th>What it does</th><th>Customer value</th></tr></thead>
+          <tbody>
+            <tr><td>Sea World Holidays logo</td><td>Returns to the home page.</td><td>A predictable route back to the main discovery experience.</td></tr>
+            <tr><td>Search</td><td>Searches destinations, tours and packages after a short typing delay; results are grouped by type.</td><td>Fast access without navigating through several lists.</td></tr>
+            <tr><td>Clear Search</td><td>Clears the entered term and closes results.</td><td>Quickly starts a new search.</td></tr>
+            <tr><td>Destinations menu</td><td>Expands destinations, their cities and nested tours; includes View All Destinations.</td><td>Browse by place and progressively narrow the trip.</td></tr>
+            <tr><td>Nile Cruises / Tours menu</td><td>Surfaces tour choices and a route to the full relevant catalogue.</td><td>Direct access to high-value travel products.</td></tr>
+            <tr><td>Packages menu</td><td>Shows package shortcuts and View All Packages.</td><td>Find bundled holidays with less effort.</td></tr>
+            <tr><td>Currency menu</td><td>Changes displayed prices between supported currencies, including USD and EGP.</td><td>Removes mental conversion and improves price clarity.</td></tr>
+            <tr><td>Language menu</td><td>Switches between English and Arabic and retains a localized route where possible.</td><td>A true bilingual experience with Arabic RTL layout.</td></tr>
+            <tr><td>Account menu</td><td>Shows Sign In when logged out; shows identity, Configuration access when authorized, My Bookings/Profile and Sign Out when logged in.</td><td>One consistent account entry point.</td></tr>
+            <tr><td>Mobile menu</td><td>Opens the responsive navigation, catalogue, currency, language and account controls.</td><td>The same core journey remains usable on mobile.</td></tr>
+            <tr><td>Breadcrumbs</td><td>Shows the localized page hierarchy and clickable parent pages.</td><td>Orientation and quick backtracking on deep catalogue pages.</td></tr>
+            <tr><td>Footer links</td><td>Links to About, Blogs, Destinations, Packages and Contact.</td><td>Persistent access to company, inspiration and support content.</td></tr>
+            <tr><td>Email / Call / WhatsApp / social links</td><td>Launches the relevant direct-contact channel.</td><td>Customers can move from self-service to human support.</td></tr>
+            <tr><td>Newsletter Subscribe</td><td>Validates and submits an email address.</td><td>Supports retention and future campaign engagement.</td></tr>
+            <tr><td>Payment-method badges</td><td>Displays the accepted payment brands communicated by the business.</td><td>Sets payment expectations; live checkout integration is a separate phase.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="catalogue" class="page-break">
+        <span class="section-kicker">Public catalogue</span>
+        <h1>Every discovery and product page</h1>
+        <table>
+          <thead><tr><th>Page and route</th><th>What customers see</th><th>Buttons and actions</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Home<br><span class="route">/{lang}/home</span></td><td>Promotional hero slides, featured destinations, tours, packages, travel stories, agency statistics and trust content.</td><td>Hero call-to-action; slide navigation; destination/tour/package cards; Explore More; blog previous/next and Read More; retry controls if content fails.</td><td>Turns a first visit into guided inspiration and exposes the breadth of the agency.</td></tr>
+            <tr><td>Destinations<br><span class="route">/{lang}/destinations</span></td><td>Paginated destination cards with image, name and description.</td><td>Open destination; image previous/next where a card has a gallery; retry; page-size selector; pagination.</td><td>Lets customers begin with “where” before choosing a product.</td></tr>
+            <tr><td>Destination detail<br><span class="route">/{lang}/destinations/:routeName</span></td><td>Destination gallery, description, available cities and relevant tours.</td><td>Back to Destinations; open or navigate gallery images; tour carousel previous/next; select a city; open a tour.</td><td>Combines inspiration with direct conversion paths.</td></tr>
+            <tr><td>City detail<br><span class="route">/{lang}/cities/:routeName</span></td><td>City overview and top tours available in that city.</td><td>Book Now / open tour; tour cards; back navigation after an error.</td><td>Provides local context and quickly links the customer to bookable inventory.</td></tr>
+            <tr><td>Tours list<br><span class="route">/{lang}/tours</span></td><td>Search/filter panel and paginated tour cards.</td><td>Destination search; From/To date pickers; Apply Filters; Reset; retry; open tour; page-size selector; previous/next/page buttons.</td><td>Makes a large tour catalogue easier to compare.</td></tr>
+            <tr><td>Nile cruises<br><span class="route">/{lang}/nile-cruises</span></td><td>The tour catalogue experience restricted to Nile cruise inventory.</td><td>The same filter, reset, card and pagination actions as Tours.</td><td>Creates a focused landing and shopping experience for a strategic product category.</td></tr>
+            <tr><td>Tour detail<br><span class="route">/{lang}/tours/:routeName</span></td><td>Title, destination, discount, image gallery, overview, itinerary, highlights, inclusions/exclusions, booking card, related tours and reviews.</td><td>Open Photos; image selection/close; Check Availability; Sign In; Book as Guest; Book Now; related previous/next; open related tour; rating stars and Submit Review when eligible.</td><td>Answers purchase questions on one page and keeps booking in context.</td></tr>
+            <tr><td>Packages list<br><span class="route">/{lang}/packages</span></td><td>Filterable, paginated packages with images, summaries, discounts and prices.</td><td>Destination search; From/To dates; Apply Filters; Reset; gallery previous/next; open package / Book Now; retry; page size and pagination.</td><td>Helps customers compare bundled experiences and see promotional savings.</td></tr>
+            <tr><td>Package detail<br><span class="route">/{lang}/packages/:routeName</span></td><td>Gallery, duration, group size, price, overview, itinerary, highlights, inclusions/exclusions, tours inside the package, booking and reviews.</td><td>Open Photos; gallery selection/close; open included tour; Check Availability; Sign In; Book as Guest; Book Now; review controls.</td><td>Explains a multi-part holiday clearly and supports booking without leaving the page.</td></tr>
+            <tr><td>Blogs<br><span class="route">/{lang}/blogs</span></td><td>Published travel stories with image, date, title and summary.</td><td>Read More / open article.</td><td>Builds organic discovery, expertise and customer confidence.</td></tr>
+            <tr><td>Blog detail<br><span class="route">/{lang}/blogs/:routeName</span></td><td>Structured article content and an image gallery.</td><td>Open image viewer; previous/next image; select thumbnail; close viewer.</td><td>Creates an engaging research experience and supports SEO content.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="booking" class="page-break">
+        <span class="section-kicker">Conversion workflow</span>
+        <h1>Tour and package booking in detail</h1>
+        <div class="workflow">
+          <div>Choose dates</div><div class="arrow">&#8594;</div><div>Add adults &amp; children</div><div class="arrow">&#8594;</div><div>Check availability</div><div class="arrow">&#8594;</div><div>Identify customer</div><div class="arrow">&#8594;</div><div>Create booking</div>
+        </div>
+
+        <table>
+          <thead><tr><th>Booking-card element</th><th>Behavior</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Available date range</td><td>Shows the product’s bookable date window. One-day tours show one travel date; multi-day products show From and To.</td><td>Prevents avoidable date mistakes.</td></tr>
+            <tr><td>Adult / Children inputs</td><td>Accept whole, non-negative traveler counts with at least one adult.</td><td>Accurate capacity and pricing.</td></tr>
+            <tr><td>Seat availability</td><td>Shows seat limits and highlights when requested travelers exceed inventory.</td><td>Sets realistic expectations before submission.</td></tr>
+            <tr><td>Price summary</td><td>Shows price per adult, child pricing where configured, original price and percentage discount, traveler count and calculated total.</td><td>Transparent purchase decision.</td></tr>
+            <tr><td>Check Availability</td><td>Validates the form and calls public availability logic. The button shows a loading state and the result can be Available or Unavailable.</td><td>A deliberate verification step reduces failed booking attempts.</td></tr>
+            <tr><td>Sign In</td><td>Opens login with a safe return URL. Successful login returns to the same tour/package, including query parameters and fragments.</td><td>Removes the common “lost product after login” frustration.</td></tr>
+            <tr><td>Book as a Guest</td><td>Opens a modal for first name, last name, email and mobile.</td><td>Reduces account-creation friction for customers ready to book.</td></tr>
+            <tr><td>Close guest dialog</td><td>Closes by the X control or backdrop when a submission is not active.</td><td>Safe cancellation without accidental interruption during submission.</td></tr>
+            <tr><td>Submit Guest Booking</td><td>Validates contact data and creates a guest booking with the selected product, dates and party.</td><td>Captures a qualified sale and the information needed for follow-up.</td></tr>
+            <tr><td>Book Now</td><td>Creates the booking for an authenticated customer after availability is confirmed.</td><td>Connects the booking to the customer account and booking history.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout"><strong>After authentication:</strong> a customer who came from a tour or package returns to that exact page. Signing out on a public page leaves the customer on the same page; signing out from Configuration redirects to the localized home page.</div>
+      </section>
+
+      <section id="auth" class="page-break">
+        <span class="section-kicker">Identity and self-service</span>
+        <h1>Authentication and customer account pages</h1>
+        <table>
+          <thead><tr><th>Page</th><th>Fields and information</th><th>Buttons and actions</th></tr></thead>
+          <tbody>
+            <tr><td>Sign In<br><span class="route">/{lang}/login</span></td><td>Email and password with validation and submission feedback.</td><td>Show/Hide Password; Forgot Password; Sign In; Sign Up; logo/Home.</td></tr>
+            <tr><td>Sign Up<br><span class="route">/{lang}/signup</span></td><td>First/last name, mobile, email, date of birth, gender, passport number, password, confirmation and terms acceptance.</td><td>Show/Hide Password; Show/Hide Confirmation; accept Terms; Create Account; return to Sign In; logo/Home.</td></tr>
+            <tr><td>Activation<br><span class="route">/{lang}/account/activate</span></td><td>Account activation progress, success or failure state.</td><td>Return to Sign Up when activation cannot be completed; logo/Home.</td></tr>
+            <tr><td>Sign-up Success<br><span class="route">/{lang}/signup-success</span></td><td>Successful registration message and next step.</td><td>Continue to the context-appropriate destination, normally Sign In.</td></tr>
+            <tr><td>Forgot Password<br><span class="route">/{lang}/forgot-password</span></td><td>Email entry and recovery-request status.</td><td>Submit recovery request; Sign In; Back to Home; logo/Home.</td></tr>
+            <tr><td>Reset Password<br><span class="route">/{lang}/reset-password</span></td><td>New password and password confirmation with validation.</td><td>Show/Hide Password controls; Reset Password; Back to Home.</td></tr>
+            <tr><td>My Bookings<br><span class="route">/{lang}/user-booking</span></td><td>Paginated booking records, product, date, travelers, amount, status and eligible review form.</td><td>View product; choose rating; enter review; Submit Review; page size; Previous / Next.</td></tr>
+            <tr><td>Account Settings<br><span class="route">/{lang}/user-setting</span></td><td>Personal details and password-change forms.</td><td>Save Personal Details; show/hide old, new and confirmation passwords; Change Password.</td></tr>
+            <tr><td>Account side panel</td><td>Profile photo and account navigation.</td><td>Upload/Change image; Remove image; My Bookings; Settings; Sign Out.</td></tr>
+            <tr><td>Payment Methods<br><span class="route">/{lang}/user-payment</span></td><td>A payment-method presentation screen and add-card dialog.</td><td>Delete sample method; Add Payment Method; close dialog; Add Card. This page is presentation-only until a secure gateway/tokenization service is integrated.</td></tr>
+            <tr><td>User Invoice<br><span class="route">/{lang}/user-invoice</span></td><td>An invoice-layout presentation screen.</td><td>Terms link and contact links. The reviewed page contains demonstration invoice data rather than customer-bound live data.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="reviews">
+        <span class="section-kicker">Trust after travel</span>
+        <h1>Bookings and verified reviews</h1>
+        <div class="cards">
+          <div class="card"><div class="number">1</div><h3>Eligibility</h3><p>The system checks that the booking matches the product, is completed and is eligible for review.</p></div>
+          <div class="card"><div class="number">2</div><h3>Customer input</h3><p>The traveler selects 1-5 stars and writes a required comment up to the configured length.</p></div>
+          <div class="card"><div class="number">3</div><h3>Trust signal</h3><p>Saved reviews contribute to the product’s aggregate rating and visible traveler feedback.</p></div>
+        </div>
+        <p>Customers can review from My Bookings and, when eligible, directly on the product detail page. Submission controls prevent incomplete ratings or empty text, provide a saving state, and remove the form after a successful review so the same booking is not reviewed repeatedly.</p>
+      </section>
+
+      <section id="content" class="page-break">
+        <span class="section-kicker">Confidence and support</span>
+        <h1>Content, help and contact pages</h1>
+        <table>
+          <thead><tr><th>Page</th><th>Purpose</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>About Us<br><span class="route">/{lang}/aboutus</span></td><td>Introduces the agency, mission, vision, services, differentiators, commitment, activity statistics, team and testimonials.</td><td>Home breadcrumb and standard navigation/contact actions.</td></tr>
+            <tr><td>Contact<br><span class="route">/{lang}/contact</span></td><td>Captures a customer question with first/last name, phone, email and message; also presents contact details and map access.</td><td>Send Message; call; email; View on Google Map; close map.</td></tr>
+            <tr><td>Help Center<br><span class="route">/{lang}/helpcenter</span></td><td>Starting point for support topics.</td><td>Search; navigate to help topics and home.</td></tr>
+            <tr><td>FAQs<br><span class="route">/{lang}/helpcenter-faqs</span></td><td>Answers common customer questions, including payment-related topics.</td><td>Expand/collapse FAQ items; return to Help Center or Home.</td></tr>
+            <tr><td>Guides &amp; Support<br><span class="route">/{lang}/helpcenter-guides</span></td><td>Presents guidance resources.</td><td>Open guidance items; return to Help Center or Home.</td></tr>
+            <tr><td>Support Request<br><span class="route">/{lang}/helpcenter-support</span></td><td>Provides a dedicated support-request experience.</td><td>Submit support information through the embedded support component.</td></tr>
+            <tr><td>Terms<br><span class="route">/{lang}/terms</span></td><td>Displays terms of service.</td><td>Breadcrumb navigation and standard site links.</td></tr>
+            <tr><td>Privacy<br><span class="route">/{lang}/privacy</span></td><td>Displays the privacy policy.</td><td>Breadcrumb navigation and standard site links.</td></tr>
+            <tr><td>Not Found</td><td>Handles invalid or unavailable routes.</td><td>Guides the visitor back into the valid site experience.</td></tr>
+            <tr><td>Exit/contact overlay</td><td>Offers human help through phone and social channels when the exit prompt is active.</td><td>Call; WhatsApp; Instagram; Facebook; close/continue.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="admin" class="page-break">
+        <span class="section-kicker">Agency workspace</span>
+        <h1>Administration and role-based access</h1>
+        <p class="lead">Configuration is the operating center behind the customer website. It is protected by authentication and an Admin/Agent role check. The workspace uses localized navigation and responsive table/grid views, making the same records manageable from different screen sizes.</p>
+
+        <div class="cards">
+          <div class="card"><h3>Administrator</h3><p>Broad management across catalogue content, customers, assignments, bookings, supporting inventory, commercial documents and customer messages.</p></div>
+          <div class="card"><h3>Agent</h3><p>Operational access according to the API’s authorization, including assigned work and task notifications. Customer assignment is automatic for agent-created customers.</p></div>
+          <div class="card"><h3>Customer</h3><p>No Configuration access. Customers use public pages, their booking history, settings and eligible review tools.</p></div>
+        </div>
+
+        <h3>Administration header controls</h3>
+        <p><span class="pill">Language EN / AR</span><span class="pill">Notifications</span><span class="pill">Mark all as read</span><span class="pill">View all tasks</span><span class="pill">Account menu</span><span class="pill">My Bookings</span><span class="pill">Sign Out</span><span class="pill">Mobile menu</span><span class="pill green">View Website</span></p>
+        <p>Agents receive task notifications and can mark one or all notifications as read. Signing out from any Configuration page clears the session and redirects to the localized home page, ensuring protected operational screens are not left displayed.</p>
+      </section>
+
+      <section id="admin-pages" class="page-break">
+        <span class="section-kicker">Page-by-page operations</span>
+        <h1>Catalogue and content administration</h1>
+        <table>
+          <thead><tr><th>Area</th><th>What is managed</th><th>Major buttons and actions</th></tr></thead>
+          <tbody>
+            <tr><td>Destinations</td><td>English/Arabic names, route name, short/full descriptions, active state, multi-image gallery, cover image and localized alt text.</td><td>Show/Hide Add; switch Table/Grid; View Preview; gallery previous/next/thumbnail; activate/deactivate; Edit; Delete; Choose Images; set/reorder cover where offered; Remove Image; Save; Cancel; page size/pagination.</td></tr>
+            <tr><td>Cities</td><td>Destination relationship, bilingual name/description, route name, image and active state.</td><td>Show/Hide Add; Table/Grid; activate/deactivate; Edit; Delete; Choose Image; Remove Image; Save/Update; Cancel; page size/pagination.</td></tr>
+            <tr><td>Tours</td><td>Destination/city, bilingual titles and descriptions, route, dates, prices, one-day/Nile Cruise flags, duration, capacity, inclusions, exclusions, highlights, cancellation policies, images and hierarchical itinerary.</td><td>Show/Hide Add; Table/Grid; Preview; active toggle; Discount; Edit; Delete; multi-step Previous/Continue/Finish; Add/Remove list item; Choose/Remove images; Add Step; Add Child; Edit/Delete itinerary step; Save Step; Cancel; pagination.</td></tr>
+            <tr><td>Packages</td><td>Bilingual package details, destinations, dates, adult/child pricing, capacity, highlights, inclusions/exclusions, cancellation policies, images, itinerary and tours within the package.</td><td>Show/Hide Add; Table/Grid; Preview; enlarge gallery; active toggle; Discount; Edit; Delete; multi-step navigation; image management; Add/Edit/Delete itinerary steps; Save/Cancel; pagination.</td></tr>
+            <tr><td>Discount Manager</td><td>Percentage, start/end dates, current and historic promotion periods, queued customer notifications.</td><td>Create Discount; Start New Period; Cancel Restart; Refresh History; Notify Customers; Stop; Restart; Close.</td></tr>
+            <tr><td>Blogs</td><td>Bilingual title, summary and structured content sections, heading level, publish date, route name, images and localized alt text.</td><td>Show/Hide Add; Table/Grid; active/published toggle where available; Add/Delete Content Section; Choose/Remove Images; Edit; Delete; Save/Update; Cancel; pagination.</td></tr>
+          </tbody>
+        </table>
+
+        <h1 class="page-break">Customer, booking and service operations</h1>
+        <table>
+          <thead><tr><th>Area</th><th>What is managed</th><th>Major buttons and actions</th></tr></thead>
+          <tbody>
+            <tr><td>Customers</td><td>Lead traveler, individual/couple/family/company type, contact/passport details, agent assignment and companion travelers including spouse, adult, child, infant and babysitter.</td><td>Show/Hide Add; Table/Grid; activate/deactivate; Add Spouse/Adult/Child/Infant/Babysitter; Remove Traveler; Edit; Delete; Save/Update; Cancel; pagination.</td></tr>
+            <tr><td>Tasks</td><td>Task title, description, type, priority, status, due date and assigned agent.</td><td>Show/Hide Add (Admin); Table/Grid; Edit; Start Task; Finish Task; Close Task; Return Task; Save/Update; Cancel; pagination. Agent completion notes are shown where relevant.</td></tr>
+            <tr><td>Bookings</td><td>Booking ID, customer/contact, tour/package, assigned agent, date, travelers, amount, cancellation fee and status.</td><td>Filter by Status; Table/Grid; Assign Agent (Admin); Assign and Notify; Confirm Booking; Complete Booking; Cancel Booking; close/done assignment dialog; page size/pagination.</td></tr>
+            <tr><td>Airlines</td><td>Airline name, code, logo and active status.</td><td>Show/Hide Add; Table/Grid; active toggle; Edit; Delete; choose/remove logo; Save/Update; Cancel; pagination.</td></tr>
+            <tr><td>Hotels</td><td>Name, destination, star rating, address, phone, email, website, description and active status.</td><td>Show/Hide Add; Table/Grid; active toggle; Edit; Delete; Save/Update; Cancel; pagination.</td></tr>
+            <tr><td>Flights</td><td>Flight number, airline, departure/arrival airports and times, price, available seats, class and status.</td><td>Show/Hide Add; Table/Grid; airport-search option selection; active toggle; Edit; Delete; Save/Update; Cancel; pagination.</td></tr>
+            <tr><td>Customer Questions</td><td>Customer name, phone, email, question, submission date and read status.</td><td>Refresh; Table/Grid; filter All/Read/Unread; Mark as Read; Delete; page size/pagination.</td></tr>
+          </tbody>
+        </table>
+
+        <h1 class="page-break">Commercial document operations</h1>
+        <table>
+          <thead><tr><th>Area</th><th>What is managed</th><th>Major buttons and actions</th></tr></thead>
+          <tbody>
+            <tr><td>Quotations</td><td>Customer, travel dates, validity, currency, selected tours/packages/hotels/flights, travelers, rooms/nights, transfers, policies, tax, discount, notes and calculated totals.</td><td>Create/Hide Form; Table/Grid; select/remove travel item; Add/Remove Transfer; Add/Remove Policy; Edit; Duplicate; Change Status; Download PDF; Delete; Retry Options; Save/Update; Cancel; pagination.</td></tr>
+            <tr><td>Invoices</td><td>Customer, currency, invoice/due dates, catalogue services, line descriptions, quantities, unit prices, line discounts, transfers, notes, invoice discount, tax and server-calculated totals.</td><td>Create/Hide Form; Retry Options; select service; Remove Item; Add/Remove Transfer; Save/Update; Cancel; Edit; Download PDF; Delete.</td></tr>
+            <tr><td>Vouchers</td><td>Customer, service date/end date, voucher/service type, linked quotation service or transfer details.</td><td>Create/Hide Form; Retry Options; choose type/service; Save/Update; Cancel; Edit; Download PDF; Delete.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout success"><strong>Operational chain:</strong> the same controlled data can move from customer profile to quotation, from quotation to invoice/voucher, and from booking to agent assignment and completion. PDF export supports professional documents outside the system.</div>
+      </section>
+
+      <section id="payments" class="page-break">
+        <span class="section-kicker">Optional expansion</span>
+        <h1>Payment gateway readiness - available on demand</h1>
+        <p class="lead">The platform is structurally ready for an online payment phase because it already knows the customer, product, travel dates, booking total, currency, quotation, invoice and booking status. A gateway can therefore be introduced without redesigning the discovery and booking experience.</p>
+
+        <h3>What exists today</h3>
+        <p><span class="pill green">Booking amounts</span><span class="pill green">USD / EGP display</span><span class="pill green">Quotations</span><span class="pill green">Invoices</span><span class="pill green">Vouchers</span><span class="pill green">Payment brand presentation</span><span class="pill gold">Payment collection tasks</span></p>
+        <p>The public footer communicates accepted methods such as Mastercard, Visa, PayPal, InstaPay and Cash. The account area contains a payment-method UI. These elements do not, by themselves, constitute a secure live gateway.</p>
+
+        <h3>What an on-demand gateway phase would add</h3>
+        <ol>
+          <li><strong>Provider selection:</strong> choose the gateway based on Egypt/international coverage, supported currencies, fees, settlement, refunds, recurring/tokenized cards and 3-D Secure requirements.</li>
+          <li><strong>Secure checkout:</strong> create a server-side payment session from a validated booking or invoice and redirect/embed the provider’s PCI-compliant payment experience.</li>
+          <li><strong>Payment states:</strong> Pending, Authorized/Paid, Failed, Cancelled, Refunded and Partially Refunded, linked to booking and invoice records.</li>
+          <li><strong>Webhook verification:</strong> accept signed provider callbacks so payment status is reliable even if the customer closes the browser.</li>
+          <li><strong>Receipts and notifications:</strong> show confirmation, update My Bookings, produce receipts and notify the customer/assigned agent.</li>
+          <li><strong>Admin controls:</strong> filter payments, inspect transaction IDs, reconcile totals, initiate allowed refunds and export records.</li>
+          <li><strong>Failure recovery:</strong> retry payment without duplicating the booking and preserve inventory according to an agreed reservation window.</li>
+          <li><strong>Security and compliance:</strong> never store raw card numbers or CVV; rely on provider tokenization, least-privilege secrets, audit logging and environment-specific configuration.</li>
+        </ol>
+
+        <div class="workflow">
+          <div>Confirmed availability</div><div class="arrow">&#8594;</div><div>Booking created</div><div class="arrow">&#8594;</div><div>Secure provider checkout</div><div class="arrow">&#8594;</div><div>Verified callback</div><div class="arrow">&#8594;</div><div>Paid booking + receipt</div>
+        </div>
+        <div class="callout warning"><strong>Commercial statement:</strong> online gateway integration is available on demand and should be estimated after the provider, countries, currencies, refund policy and booking-reservation rules are selected.</div>
+      </section>
+
+      <section id="platform" class="page-break">
+        <span class="section-kicker">Why the platform matters</span>
+        <h1>Platform-wide customer and business value</h1>
+        <div class="cards">
+          <div class="card"><h3>Bilingual by design</h3><p>English and Arabic routes, translated interface text and RTL support make the same product accessible to two core audiences.</p></div>
+          <div class="card"><h3>Responsive experience</h3><p>Desktop and mobile navigation, flexible cards, grid/table admin views and mobile-friendly booking keep journeys usable across devices.</p></div>
+          <div class="card"><h3>Search and discovery</h3><p>Grouped search, destination hierarchy, filtered lists, related tours and editorial stories create several routes from interest to booking.</p></div>
+          <div class="card"><h3>Price clarity</h3><p>Centralized currency formatting, USD/EGP conversion, child pricing, discount display and totals provide consistent price communication.</p></div>
+          <div class="card"><h3>Trust and SEO</h3><p>Server-rendered metadata, canonical/hreflang support, structured data and visible breadcrumbs improve search visibility and clarity.</p></div>
+          <div class="card"><h3>Operational continuity</h3><p>Customer, booking, task and document records prevent the public booking experience from becoming an isolated lead form.</p></div>
+          <div class="card"><h3>Flexible conversion</h3><p>Customers can sign in and return to the product or continue as guests, reducing abandonment at the identity step.</p></div>
+          <div class="card"><h3>Human support</h3><p>Email, phone, WhatsApp, social links, contact questions and help content make assistance visible throughout the experience.</p></div>
+          <div class="card"><h3>Growth foundation</h3><p>Promotions, notifications, reviews, PDFs and payment readiness provide clear expansion paths without replacing the core platform.</p></div>
+        </div>
+
+        <h3>Representative end-to-end operating workflows</h3>
+        <table>
+          <thead><tr><th>Workflow</th><th>Connected steps</th><th>Outcome</th></tr></thead>
+          <tbody>
+            <tr><td>Catalogue to booking</td><td>Admin publishes destination/city/tour/package &#8594; customer discovers it &#8594; checks availability &#8594; books.</td><td>Content becomes measurable commercial inventory.</td></tr>
+            <tr><td>Booking to service</td><td>Booking received &#8594; Admin assigns agent &#8594; agent is notified &#8594; booking confirmed/completed/cancelled.</td><td>Clear ownership and status visibility.</td></tr>
+            <tr><td>Completion to advocacy</td><td>Booking completed &#8594; review becomes eligible &#8594; customer rates and comments &#8594; review appears on the product.</td><td>Verified customer experience supports future sales.</td></tr>
+            <tr><td>Tailored sale</td><td>Customer profile &#8594; travel items and transfer added to quotation &#8594; PDF sent &#8594; invoice and voucher generated.</td><td>Supports bespoke travel beyond fixed online packages.</td></tr>
+            <tr><td>Inquiry to follow-up</td><td>Customer submits question &#8594; admin filters unread requests &#8594; marks handled or removes obsolete records.</td><td>No inquiry needs to remain buried in a generic mailbox.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="buttons" class="page-break">
+        <span class="section-kicker">Appendix</span>
+        <h1>Complete action reference</h1>
+        <p class="small">Actions are shown only when relevant to the current state, role or available data. For example, booking buttons change after availability succeeds, review submission appears only for an eligible completed booking, and agent assignment is an administrator action.</p>
+        <table>
+          <thead><tr><th>Context</th><th>Buttons / controls</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Navigation</td><td>Logo, Destinations, Tours/Nile Cruises, Packages, Search result, Currency, English, Arabic, Account, Mobile Menu</td><td>Navigate, search, localize or open menus.</td></tr>
+            <tr><td>Lists and cards</td><td>Open Card, Book Now, Apply Filters, Reset, Retry/Show More, Previous, Next, Page Number, Page Size</td><td>Open products, refine results, recover loading and paginate.</td></tr>
+            <tr><td>Media</td><td>Photos, Previous Image, Next Image, Thumbnail, View Larger Image, Close</td><td>Inspect or dismiss galleries and previews.</td></tr>
+            <tr><td>Booking</td><td>Date Picker, Adult/Child Count, Check Availability, Sign In, Book as Guest, Close, Submit Guest Booking, Book Now</td><td>Validate availability and create a registered or guest booking.</td></tr>
+            <tr><td>Reviews</td><td>1-5 Stars, Review Text, Submit Review</td><td>Create feedback for an eligible completed booking.</td></tr>
+            <tr><td>Authentication</td><td>Show/Hide Password, Sign In, Sign Up, Forgot Password, Reset Password, Back Home, Activate/Continue</td><td>Create, access or recover an account.</td></tr>
+            <tr><td>Account</td><td>Upload/Change/Remove Photo, My Bookings, Settings, Save Details, Change Password, View Product, Sign Out</td><td>Maintain identity and review personal travel records.</td></tr>
+            <tr><td>Contact</td><td>Send Message, Call, Email, WhatsApp, Instagram, Facebook, View Map, Newsletter Subscribe</td><td>Start or continue human assistance and engagement.</td></tr>
+            <tr><td>Admin shared</td><td>Show/Hide Add Form, Table/Grid, Add, Save, Update, Cancel, Edit, Delete, Active Toggle, Refresh, Retry, Page Size, Pagination</td><td>Standard create/read/update/status/delete workflow.</td></tr>
+            <tr><td>Catalogue admin</td><td>Preview, Gallery Controls, Choose/Remove Image, Set Cover, Add/Remove Included/Excluded/Highlight/Policy, Previous/Continue/Finish, Add/Edit/Delete Step, Add Child</td><td>Build complete bilingual travel products and content.</td></tr>
+            <tr><td>Promotions</td><td>Discount, Create, Notify Customers, Stop, Restart, Cancel Restart, Refresh History</td><td>Schedule and operate promotion periods.</td></tr>
+            <tr><td>Customers</td><td>Add Spouse, Adult, Child, Infant, Babysitter; Remove Traveler; Assign Agent</td><td>Model the full traveling party and ownership.</td></tr>
+            <tr><td>Tasks</td><td>Start, Finish, Close, Return, Mark Notification Read, Mark All Read, View All Tasks</td><td>Progress and acknowledge operational work.</td></tr>
+            <tr><td>Bookings</td><td>Filter Status, Assign and Notify, Confirm, Complete, Cancel, Done</td><td>Move a booking through its service lifecycle.</td></tr>
+            <tr><td>Quotations</td><td>Select/Remove Travel Item, Add/Remove Transfer, Add/Remove Policy, Duplicate, Change Status, Download PDF</td><td>Compose, reuse, progress and distribute tailored offers.</td></tr>
+            <tr><td>Invoices</td><td>Select Service, Remove Line, Add/Remove Transfer, Edit, Download PDF, Delete</td><td>Create itemized billing documents with discounts, tax and totals.</td></tr>
+            <tr><td>Vouchers</td><td>Choose Voucher Type/Service, Edit, Download PDF, Delete</td><td>Create and distribute service confirmation documents.</td></tr>
+            <tr><td>Customer Questions</td><td>All/Read/Unread Filter, Mark as Read, Delete, Refresh</td><td>Process inbound inquiries.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout success">
+          <strong>In one sentence:</strong> Sea World Holidays gives customers a clear path from inspiration to service and gives the agency the operational tools to fulfill, document and grow every travel sale.
+        </div>
+
+        <p class="footer-note">Prepared from the Angular application routes, templates and implemented interaction logic available in the SeaWorld.TravelAgency repository on 14 September 2026. Actual API permissions, production data, third-party contracts and deployment configuration may further constrain or extend the behaviors described here.</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
