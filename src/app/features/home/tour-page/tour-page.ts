@@ -53,7 +53,6 @@ export class HomeTourPage implements OnInit {
   selectedImageIndex = 0;
   imageViewerOpen = false;
   averageRating = 0;
-  reviewCount = 0;
 
   get images(): any[] {
     const cover =
@@ -171,7 +170,13 @@ export class HomeTourPage implements OnInit {
 
   updateRatingSummary(summary: ProductRatingSummary): void {
     this.averageRating = summary.average;
-    this.reviewCount = summary.count;
+  }
+
+  ratingStarIcon(star: number): string {
+    const fill = this.averageRating - star + 1;
+    if (fill >= 0.75) return 'mdi-star';
+    if (fill >= 0.25) return 'mdi-star-half-full';
+    return 'mdi-star-outline';
   }
 
   private imageMatchesCover(image: any, cover: string): boolean {
@@ -196,7 +201,6 @@ export class HomeTourPage implements OnInit {
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
     this.averageRating = 0;
-    this.reviewCount = 0;
 
     this.tourRequest(routeName)
       .pipe(

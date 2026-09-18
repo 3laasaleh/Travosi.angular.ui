@@ -148,7 +148,7 @@ export class ProductReviews implements OnChanges {
       .map((review) => Number(review.rating))
       .filter((rating) => Number.isFinite(rating) && rating >= 1 && rating <= 5);
     const average = ratings.length
-      ? Math.round((ratings.reduce((total, rating) => total + rating, 0) / ratings.length) * 10) / 10
+      ? Math.round((ratings.reduce((total, rating) => total + rating, 0) / ratings.length) * 100) / 100
       : 0;
     this.ratingSummaryChange.emit({ average, count: ratings.length });
   }

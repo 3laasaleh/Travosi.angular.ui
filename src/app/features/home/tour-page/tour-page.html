@@ -30,6 +30,17 @@
   <div class="container">
     <header class="mb-7">
       <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
+      @if (averageRating > 0) {
+      <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-bold text-primary"
+        [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
+        <span class="flex text-2xl leading-none text-primary" aria-hidden="true">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+          <i class="mdi" [class]="'mdi ' + ratingStarIcon(star)"></i>
+          }
+        </span>
+        <span>{{ averageRating }}/5</span>
+      </div>
+      }
       @if (destinationName) {
       <p class="mt-3 flex items-center gap-2 font-medium text-slate-500">
         <i class="mdi mdi-map-marker-outline text-xl text-primary"></i>
@@ -52,12 +63,12 @@
               @if (averageRating > 0) {
               <div class="absolute end-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-sm font-bold text-slate-800 shadow-lg backdrop-blur-sm"
                 [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
-                <span class="flex text-amber-500" aria-hidden="true">
+                <span class="flex text-2xl leading-none text-primary" aria-hidden="true">
                   @for (star of [1, 2, 3, 4, 5]; track star) {
-                  <i class="mdi" [class.mdi-star]="star <= averageRating" [class.mdi-star-outline]="star > averageRating"></i>
+                  <i class="mdi" [class]="'mdi ' + ratingStarIcon(star)"></i>
                   }
                 </span>
-                <span>{{ averageRating }} <span class="text-slate-500">({{ reviewCount }})</span></span>
+                <span>{{ averageRating }}/5</span>
               </div>
               }
               <button type="button" class="group relative block h-full w-full overflow-hidden"
