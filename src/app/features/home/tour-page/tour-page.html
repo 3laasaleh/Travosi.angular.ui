@@ -49,6 +49,17 @@
                 class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg"><i
                   class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage:
                 tour.activeDiscount.percentage } }}</span> }
+              @if (averageRating > 0) {
+              <div class="absolute end-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-sm font-bold text-slate-800 shadow-lg backdrop-blur-sm"
+                [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
+                <span class="flex text-amber-500" aria-hidden="true">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <i class="mdi" [class.mdi-star]="star <= averageRating" [class.mdi-star-outline]="star > averageRating"></i>
+                  }
+                </span>
+                <span>{{ averageRating }} <span class="text-slate-500">({{ reviewCount }})</span></span>
+              </div>
+              }
               <button type="button" class="group relative block h-full w-full overflow-hidden"
                 (click)="openImageViewer(0)">
                 <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" (error)="onImageError($event)"
@@ -138,7 +149,8 @@
     }
 
     <div class="mt-8 grid grid-cols-1 items-end gap-8">
-    <app-product-reviews productType="tour" [productId]="tour?.id ?? tour?.tourId" />
+    <app-product-reviews productType="tour" [productId]="tour?.id ?? tour?.tourId"
+      (ratingSummaryChange)="updateRatingSummary($event)" />
     </div>
 
   </div>

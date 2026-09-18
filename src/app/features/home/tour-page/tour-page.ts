@@ -20,7 +20,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { TourBookingCard } from './tour-detail/tour-booking-card/tour-booking-card';
 import { TourDetail } from './tour-detail/tour-detail/tour-detail';
-import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
@@ -52,6 +52,8 @@ export class HomeTourPage implements OnInit {
   errorMessage = '';
   selectedImageIndex = 0;
   imageViewerOpen = false;
+  averageRating = 0;
+  reviewCount = 0;
 
   get images(): any[] {
     const cover =
@@ -167,6 +169,11 @@ export class HomeTourPage implements OnInit {
     this.utilityService.onImageError(event);
   }
 
+  updateRatingSummary(summary: ProductRatingSummary): void {
+    this.averageRating = summary.average;
+    this.reviewCount = summary.count;
+  }
+
   private imageMatchesCover(image: any, cover: string): boolean {
     return this.normalizeImagePath(this.imageUrl(image)) === this.normalizeImagePath(cover);
   }
@@ -188,6 +195,8 @@ export class HomeTourPage implements OnInit {
     this.relatedTours = [];
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
+    this.averageRating = 0;
+    this.reviewCount = 0;
 
     this.tourRequest(routeName)
       .pipe(

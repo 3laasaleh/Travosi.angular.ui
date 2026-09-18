@@ -18,7 +18,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline/itinerary-timeline';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
-import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
@@ -56,6 +56,8 @@ export class HomePackagePage implements OnInit {
   errorMessage = '';
   selectedImageIndex = 0;
   imageViewerOpen = false;
+  averageRating = 0;
+  reviewCount = 0;
 
   get title(): string {
     return this.travelPackage?.name ?? '';
@@ -206,6 +208,11 @@ export class HomePackagePage implements OnInit {
     this.utilityService.onImageError(event);
   }
 
+  updateRatingSummary(summary: ProductRatingSummary): void {
+    this.averageRating = summary.average;
+    this.reviewCount = summary.count;
+  }
+
   imageAlt(source: any, fallback = this.title): string {
     return this.utilityService.imageAlt(source, fallback);
   }
@@ -232,6 +239,8 @@ export class HomePackagePage implements OnInit {
     this.travelPackage = null;
     this.selectedImageIndex = 0;
     this.imageViewerOpen = false;
+    this.averageRating = 0;
+    this.reviewCount = 0;
     this.packageRequest(routeName)
       .pipe(
         finalize(() => {

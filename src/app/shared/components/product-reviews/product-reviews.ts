@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
@@ -17,6 +17,11 @@ interface ProductReview {
   createdAtUtc: string;
 }
 
+export interface ProductRatingSummary {
+  average: number;
+  count: number;
+}
+
 @Component({
   selector: 'app-product-reviews',
   standalone: true,
@@ -27,6 +32,7 @@ interface ProductReview {
 export class ProductReviews implements OnChanges {
   @Input({ required: true }) productType: 'tour' | 'package' = 'tour';
   @Input({ required: true }) productId: number | null | undefined;
+  @Output() readonly ratingSummaryChange = new EventEmitter<ProductRatingSummary>();
 
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -50,11 +56,14 @@ export class ProductReviews implements OnChanges {
     const productId = Number(this.productId);
     if (!Number.isFinite(productId) || productId <= 0) {
       this.reviews = [];
+      this.emitRatingSummary();
       return;
     }
 
     this.isLoading = true;
     this.loadFailed = false;
+    this.reviews = [];
+    this.emitRatingSummary();
     this.reviewBookingId = null;
     this.reviewError = '';
     this.apiService
@@ -72,6 +81,7 @@ export class ProductReviews implements OnChanges {
       .subscribe((response) => {
         const data = response?.data ?? response;
         this.reviews = Array.isArray(data) ? data : [];
+        this.emitRatingSummary();
         this.loadEligibleBooking(productId);
       });
   }
@@ -131,5 +141,15 @@ export class ProductReviews implements OnChanges {
     if (!value) return '';
     if (/^(https?:\/\/|data:|blob:)/i.test(value)) return value;
     return `${environment.imageUrl.replace(/\/+$/, '')}/${String(value).replace(/^\/+/, '').replace(/^images\//i, '')}`;
+  }
+
+  private emitRatingSummary(): void {
+    const ratings = this.reviews
+      .map((review) => Number(review.rating))
+      .filter((rating) => Number.isFinite(rating) && rating >= 1 && rating <= 5);
+    const average = ratings.length
+      ? Math.round((ratings.reduce((total, rating) => total + rating, 0) / ratings.length) * 10) / 10
+      : 0;
+    this.ratingSummaryChange.emit({ average, count: ratings.length });
   }
 }

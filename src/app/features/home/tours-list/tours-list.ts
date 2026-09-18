@@ -44,6 +44,7 @@ export class HomeToursList implements OnInit {
   readonly pageSizeOptions = [10, 20, 50];
   readonly heroImage = 'assets/images/bg/cta.jpg';
   readonly nileCruisesOnly = this.route.snapshot.data['nileCruisesOnly'] === true;
+  readonly cityId = this.parsePositiveId(this.route.snapshot.queryParamMap.get('cityId'));
 
   tours: any[] = [];
   private allTours: any[] = [];
@@ -117,6 +118,7 @@ export class HomeToursList implements OnInit {
     if (this.appliedSearchText) params.set('searchTerm', this.appliedSearchText);
     if (this.appliedDateFrom) params.set('dateFrom', this.appliedDateFrom);
     if (this.appliedDateTo) params.set('dateTo', this.appliedDateTo);
+    if (this.cityId) params.set('cityId', String(this.cityId));
     if (this.nileCruisesOnly) params.set('isNileCruise', 'true');
 
     this.apiService
@@ -183,6 +185,11 @@ export class HomeToursList implements OnInit {
       totalCount,
       totalPages: Math.max(1, Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize)))),
     };
+  }
+
+  private parsePositiveId(value: string | null): number | null {
+    const id = Number(value);
+    return Number.isInteger(id) && id > 0 ? id : null;
   }
 
 }

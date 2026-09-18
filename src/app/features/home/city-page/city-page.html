@@ -28,7 +28,9 @@
           <img [src]="tourImage(tour)" [alt]="tourImageAlt(tour)" loading="lazy" (error)="onTourImageError($event)"
             class="h-14 w-16 rounded-lg object-cover" />
           <div class="min-w-0">
-            <span class="line-clamp-2 text-sm font-semibold  hover:text-primary"> {{ tourTitle(tour) }} </span>
+            <span class="line-clamp-2 text-sm font-semibold  hover:text-primary"> {{ tourTitle(tour).length > 50
+              ? tourTitle(tour).slice(0, 50) + '...'
+              : tourTitle(tour)}} </span>
             <div class="grid gap-2 inline-flex">
               <span class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}
               </span>

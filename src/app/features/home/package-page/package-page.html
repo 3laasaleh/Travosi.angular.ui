@@ -34,6 +34,17 @@
                 <i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}
               </span>
             }
+            @if (averageRating > 0) {
+              <div class="absolute end-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-sm font-bold text-slate-800 shadow-lg backdrop-blur-sm"
+                [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
+                <span class="flex text-amber-500" aria-hidden="true">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <i class="mdi" [class.mdi-star]="star <= averageRating" [class.mdi-star-outline]="star > averageRating"></i>
+                  }
+                </span>
+                <span>{{ averageRating }} <span class="text-slate-500">({{ reviewCount }})</span></span>
+              </div>
+            }
             <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
               <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" (error)="onImageError($event)" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
             </button>
@@ -97,7 +108,8 @@
           }</div>
         </section> }
 
-        <app-product-reviews productType="package" [productId]="travelPackage?.id ?? travelPackage?.packageId" />
+        <app-product-reviews productType="package" [productId]="travelPackage?.id ?? travelPackage?.packageId"
+          (ratingSummaryChange)="updateRatingSummary($event)" />
       </div>
 
       <aside class="self-stretch space-y-5">
