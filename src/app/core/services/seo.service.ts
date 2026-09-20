@@ -25,10 +25,8 @@ export interface SeoPageOptions {
 }
 
 interface LocalizedSeoPage {
-  titleEn?: string | null;
-  titleAr?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string;
   imageAlt?: string;
   schemaType: SeoSchemaType;
@@ -83,11 +81,8 @@ export class SeoService {
       entity?.images?.[0] ?? entity?.Images?.[0];
 
     const page: LocalizedSeoPage = {
-      titleEn: entity?.titleEng ?? entity?.nameEng ?? entity?.title ?? entity?.name,
-      titleAr: entity?.titleAr ?? entity?.nameAr ?? entity?.title ?? entity?.name,
-      descriptionEn: entity?.descriptionEng ?? entity?.description ?? entity?.summary ?? entity?.fullDescription ?? headerDescription,
-      descriptionAr: entity?.descriptionAr ?? entity?.descriptionAR ?? entity?.description ?? entity?.summary ?? entity?.fullDescription ?? headerDescription,
-
+      title: entity?.title ?? entity?.name,
+      description: entity?.description ,
       imageUrl: this.absoluteUrl(options.imageUrl ?? this.imageUrl(image)),
       imageAlt: this.imageAlt(image),
       schemaType: options.schemaType ?? 'WebPage',
@@ -130,8 +125,9 @@ export class SeoService {
   }
 
   private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
-    const title = this.localized(page.titleEn, page.titleAr, '', language);
-    const description = this.localized(page.descriptionEn, page.descriptionAr, '', language);
+    const title = page.title ??'';
+    const description = page.description ??'';
+
     this.applyDocumentLanguage(language);
     // Detail pages know their entity name, so the last breadcrumb can show it instead of the slug.
     this.breadcrumbService.setCurrentTitle(title);
@@ -442,10 +438,7 @@ export class SeoService {
     return withLeadingSlash.length > 1 ? withLeadingSlash.replace(/\/+$/, '') : withLeadingSlash;
   }
 
-  private localized(english: unknown, arabic: unknown, fallback: unknown, language = this.languageFromUrl()): string {
-    const value = language === 'ar' ? arabic || english || fallback : english || arabic || fallback;
-    return typeof value === 'string' ? value : '';
-  }
+
 
   private cleanDescription(value: string): string {
     return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);

@@ -14,6 +14,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
+  FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -28,6 +29,9 @@ import { DatePicker } from '../../../../shared/components/date-picker/date-picke
 import { validDate } from '../../../../core/services/custom.validators';
 import { AirportSearchResult, AirportSearchService } from '../airport-search.service';
 import { FLIGHT_CLASS_OPTIONS, FlightClassEnum } from '../flight-class.enum';
+import { FLIGHT_TYPE_OPTIONS, FlightTypeEnum } from '../flight-type.enum';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { PaginationModel } from '../../../../core/models/pagination.model';
 
 export interface FlightDTO {
   id: number;
@@ -39,6 +43,19 @@ export interface FlightDTO {
   arrivalTime: string;
   price: number;
   flightClass: FlightClassEnum;
+  flightType: FlightTypeEnum;
+  adults: number;
+  children: number;
+  infants: number;
+  returnJourney?: FlightJourneyDTO;
+  segments?: FlightJourneyDTO[];
+}
+
+export interface FlightJourneyDTO {
+  departureAirport: string;
+  arrivalAirport: string;
+  departureTime: string;
+  arrivalTime: string;
 }
 
 type AirportField = 'departure' | 'arrival';
@@ -82,11 +99,14 @@ export class FlightsFromCard implements OnInit, OnChanges {
   departureAirportActiveIndex = -1;
   arrivalAirportActiveIndex = -1;
   readonly flightClassOptions = FLIGHT_CLASS_OPTIONS;
+  readonly flightTypeOptions = FLIGHT_TYPE_OPTIONS;
 
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.updateTypeSpecificValidators();
+  }
 
   ngOnInit(): void {
     this.loadAirlines();
@@ -102,13 +122,13 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   loadAirlines(): void {
-    this.apiService.get('Airlines/GetAll?page=1&pageSize=100').pipe(
+    this.apiService.get('Airlines?page=1&pageSize=100').pipe(
       catchError(() => of(null)),
       finalize(() => this.cdr.markForCheck()),
-    ).subscribe((response: any) => {
+    ).subscribe((response: IGenericResponse<PaginationModel<[]>>) => {
       if (response === null) return;
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.airlines ?? pageData;
+      const pageData = response?.data ;
+      const rows = pageData?.data ;
       this.airlines = Array.isArray(rows) ? rows : [];
     });
   }
@@ -140,7 +160,18 @@ export class FlightsFromCard implements OnInit, OnChanges {
       arrivalTime: form.arrivalTime,
       price: Number(form.price),
       flightClass: Number(form.flightClass),
+      flightType: Number(form.flightType),
+      adults: Number(form.adults),
+      children: Number(form.children),
+      infants: Number(form.infants),
     };
+    if (form.flightType === FlightTypeEnum.RoundTrip) {
+      payload.returnJourney = this.journeyPayload(form.returnJourney as FlightJourneyDTO);
+    }
+    if (form.flightType === FlightTypeEnum.MultiCity) {
+      payload.segments = (form.segments as FlightJourneyDTO[])
+        .map((segment) => this.journeyPayload(segment));
+    }
     if (this.selectedFlight?.id) payload.id = this.selectedFlight.id;
 
     this.isLoading = true;
@@ -174,6 +205,37 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
   cancelEdit(): void {
     this.resetForm(true);
+  }
+
+  onFlightTypeChange(value: FlightTypeEnum): void {
+    switch (value) {
+      case FlightTypeEnum.OneWay:
+      case FlightTypeEnum.RoundTrip:
+      case FlightTypeEnum.MultiCity:
+        this.flightForm.controls.flightType.setValue(value);
+        break;
+      default:
+        this.flightForm.controls.flightType.setValue(FlightTypeEnum.OneWay);
+    }
+    this.updateTypeSpecificValidators();
+    if (value === FlightTypeEnum.MultiCity && this.segments.length === 0) this.addSegment();
+    this.flightForm.controls.flightType.markAsDirty();
+    this.flightForm.updateValueAndValidity();
+  }
+
+  get segments(): FormArray<FormGroup> {
+    return this.flightForm.controls.segments as FormArray<FormGroup>;
+  }
+
+  addSegment(): void {
+    this.segments.push(this.createJourneyForm());
+    this.segments.updateValueAndValidity();
+  }
+
+  removeSegment(index: number): void {
+    if (this.segments.length <= 1) return;
+    this.segments.removeAt(index);
+    this.segments.updateValueAndValidity();
   }
 
   selectAirport(field: AirportField, airport: AirportSearchResult): void {
@@ -277,7 +339,18 @@ export class FlightsFromCard implements OnInit, OnChanges {
       arrivalTime: this.toLocalInput(flight.arrivalTime),
       price: flight.price ?? 0,
       flightClass: flight.flightClass ?? FlightClassEnum.Economy,
+      flightType: flight.flightType ?? FlightTypeEnum.OneWay,
+      adults: flight.adults ?? 1,
+      children: flight.children ?? 0,
+      infants: flight.infants ?? 0,
+      returnJourney: this.journeyValue(flight.returnJourney),
+      segments: [],
     }, { emitEvent: false });
+    this.segments.clear({ emitEvent: false });
+    if (flight.segments?.length) {
+      flight.segments.forEach((segment) => this.segments.push(this.createJourneyForm(segment)));
+    }
+    this.updateTypeSpecificValidators();
     this.clearAirportSearchState();
   }
 
@@ -299,7 +372,15 @@ export class FlightsFromCard implements OnInit, OnChanges {
       arrivalTime: '',
       price: 0,
       flightClass: FlightClassEnum.Economy,
+      flightType: FlightTypeEnum.OneWay,
+      adults: 1,
+      children: 0,
+      infants: 0,
+      returnJourney: this.journeyValue(),
+      segments: [],
     }, { emitEvent: false });
+    this.segments.clear({ emitEvent: false });
+    this.updateTypeSpecificValidators();
     this.clearAirportSearchState();
     if (emitCancel) this.editCancelled.emit();
   }
@@ -462,6 +543,69 @@ export class FlightsFromCard implements OnInit, OnChanges {
     return value ? `existing:${value.toLocaleLowerCase()}` : '';
   }
 
+  private journeyValue(value?: FlightJourneyDTO): FlightJourneyDTO {
+    return {
+      departureAirport: value?.departureAirport ?? '',
+      arrivalAirport: value?.arrivalAirport ?? '',
+      departureTime: this.toLocalInput(value?.departureTime),
+      arrivalTime: this.toLocalInput(value?.arrivalTime),
+    };
+  }
+
+  private journeyPayload(value: FlightJourneyDTO): FlightJourneyDTO {
+    return {
+      departureAirport: value.departureAirport.trim(),
+      arrivalAirport: value.arrivalAirport.trim(),
+      departureTime: value.departureTime,
+      arrivalTime: value.arrivalTime,
+    };
+  }
+
+  private createJourneyForm(value?: FlightJourneyDTO): FormGroup {
+    const journey = this.journeyValue(value);
+    return new FormGroup({
+      departureAirport: new FormControl(journey.departureAirport, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(250)],
+      }),
+      arrivalAirport: new FormControl(journey.arrivalAirport, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(250)],
+      }),
+      departureTime: new FormControl(journey.departureTime, {
+        nonNullable: true,
+        validators: [Validators.required, validDate(true)],
+      }),
+      arrivalTime: new FormControl(journey.arrivalTime, {
+        nonNullable: true,
+        validators: [Validators.required, validDate(true)],
+      }),
+    }, {
+      validators: [
+        FlightsFromCard.differentAirportsValidator,
+        FlightsFromCard.arrivalAfterDepartureValidator,
+      ],
+    });
+  }
+
+  private updateTypeSpecificValidators(): void {
+    const returnRequired = this.flightForm.controls.flightType.value === FlightTypeEnum.RoundTrip;
+    const returnJourney = this.flightForm.controls.returnJourney;
+    Object.values(returnJourney.controls).forEach((control) => {
+      control.setValidators(returnRequired ? [Validators.required] : []);
+      control.updateValueAndValidity({ emitEvent: false });
+    });
+    returnJourney.setValidators(returnRequired ? [
+      FlightsFromCard.differentAirportsValidator,
+      FlightsFromCard.arrivalAfterDepartureValidator,
+    ] : []);
+    returnJourney.updateValueAndValidity({ emitEvent: false });
+    this.segments.setValidators(this.flightForm.controls.flightType.value === FlightTypeEnum.MultiCity
+      ? [Validators.minLength(1)]
+      : []);
+    this.segments.updateValueAndValidity({ emitEvent: false });
+  }
+
   private static differentAirportsValidator(control: AbstractControl): ValidationErrors | null {
     const departure = String(control.get('departureAirport')?.value ?? '').trim().toLocaleLowerCase();
     const arrival = String(control.get('arrivalAirport')?.value ?? '').trim().toLocaleLowerCase();
@@ -496,6 +640,21 @@ export class FlightsFromCard implements OnInit, OnChanges {
       arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
       price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       flightClass: new FormControl(FlightClassEnum.Economy, { nonNullable: true, validators: [Validators.required] }),
+      flightType: new FormControl(FlightTypeEnum.OneWay, { nonNullable: true, validators: [Validators.required] }),
+      adults: new FormControl(1, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+      }),
+      children: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
+      }),
+      infants: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
+      }),
+      returnJourney: this.createJourneyForm(),
+      segments: new FormArray<FormGroup>([]),
     }, {
       validators: [
         FlightsFromCard.differentAirportsValidator,
