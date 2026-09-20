@@ -38,6 +38,14 @@ const localizedCatalogueRoutes: Routes = [
     path: 'packages/:routeName',
     loadComponent: () => import('./features/home/package-page/package-page').then((m) => m.HomePackagePage),
   },
+  {
+    path: 'hotels',
+    loadComponent: () => import('./features/home/hotels/hotel-catalog').then((m) => m.HotelCatalog),
+  },
+  {
+    path: 'hotels/:slug',
+    loadComponent: () => import('./features/home/hotels/hotel-detail').then((m) => m.HotelDetail),
+  },
   { path: 'home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
   {
     path: 'blogs/:routeName',
@@ -82,6 +90,26 @@ const localizedApplicationRoutes: Routes = [
         path: 'hotels',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configurations/hotels/hotels-page').then((m) => m.Hotels),
+      },
+      {
+        path: 'hotel-facilities',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/hotels/hotel-facilities-page').then((m) => m.HotelFacilitiesPage),
+      },
+      {
+        path: 'facility-categories',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/hotels/facility-categories-page').then((m) => m.FacilityCategoriesPage),
+      },
+      {
+        path: 'hotel-room-pricing',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/hotels/hotel-room-pricing-page').then((m) => m.HotelRoomPricingPage),
+      },
+      {
+        path: 'hotel-commercial-policies',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/hotels/hotel-commercial-policies-page').then((m) => m.HotelCommercialPoliciesPage),
       },
       {
         path: 'airlines',

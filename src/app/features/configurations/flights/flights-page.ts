@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FlightsFromCard } from './flights-from-card/flights-from-card';
 import { FlightsList } from './flights-list/flights-list';
+import { FlightsFromCard } from './flights-from-card/flights-from-card';
 
 @Component({
   selector: 'app-flights',

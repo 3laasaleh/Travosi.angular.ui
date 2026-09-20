@@ -10,7 +10,7 @@
     </header>
     <div class="grid grid-cols-1 gap-6">
       @if (showForm) {
-        <app-flights-from-card [selectedFlight]="selectedFlight" (flightSaved)="handleFlightSaved()" (editCancelled)="clearSelectedFlight()" />
+        <app-flights-from-card/>
       } @else {
         <app-configurations-flights-list [viewMode]="viewMode" [refreshToken]="refreshToken" (editRequested)="selectFlightForEdit($event)" />
       }

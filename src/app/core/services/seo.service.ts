@@ -25,8 +25,10 @@ export interface SeoPageOptions {
 }
 
 interface LocalizedSeoPage {
-  title?: string | null;
-  description?: string | null;
+  titleEn?: string | null;
+  titleAr?: string | null;
+  descriptionEn?: string | null;
+  descriptionAr?: string | null;
   imageUrl?: string;
   imageAlt?: string;
   schemaType: SeoSchemaType;
@@ -81,14 +83,12 @@ export class SeoService {
       entity?.images?.[0] ?? entity?.Images?.[0];
 
     const page: LocalizedSeoPage = {
-      title:
-        entity?.title ,
-        description: 
-        entity?.description??
-        entity?.summary??
-        entity?.fullDescription ?? headerDescription,
+      titleEn: entity?.titleEng ?? entity?.nameEng ?? entity?.title ?? entity?.name,
+      titleAr: entity?.titleAr ?? entity?.nameAr ?? entity?.title ?? entity?.name,
+      descriptionEn: entity?.descriptionEng ?? entity?.description ?? entity?.summary ?? entity?.fullDescription ?? headerDescription,
+      descriptionAr: entity?.descriptionAr ?? entity?.descriptionAR ?? entity?.description ?? entity?.summary ?? entity?.fullDescription ?? headerDescription,
 
-      imageUrl: this.absoluteUrl(options.imageUrl),
+      imageUrl: this.absoluteUrl(options.imageUrl ?? this.imageUrl(image)),
       imageAlt: this.imageAlt(image),
       schemaType: options.schemaType ?? 'WebPage',
       entity,
@@ -124,9 +124,14 @@ export class SeoService {
       : english || arabic || image?.imageName || image?.ImageName || fallback;
   }
 
+  private imageUrl(image: any): string | undefined {
+    if (typeof image === 'string') return image;
+    return image?.imageUrl ?? image?.ImageUrl ?? image?.url ?? image?.Url;
+  }
+
   private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
-    const title = this.localized(page.title, page.title, '', language);
-    const description = this.localized(page.description , page.description, '', language);
+    const title = this.localized(page.titleEn, page.titleAr, '', language);
+    const description = this.localized(page.descriptionEn, page.descriptionAr, '', language);
     this.applyDocumentLanguage(language);
     // Detail pages know their entity name, so the last breadcrumb can show it instead of the slug.
     this.breadcrumbService.setCurrentTitle(title);

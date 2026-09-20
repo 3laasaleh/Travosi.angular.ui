@@ -5,7 +5,7 @@
     aria-haspopup="menu"
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)">
-    {{ menuLabelKey | translate }}
+    <span class="flex items-center gap-2"><i class="mdi mdi-ferry text-lg" aria-hidden="true"></i>{{ menuLabelKey | translate }}</span>
     <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"></i>
   </button>
 

@@ -45,7 +45,6 @@
           <th class="px-4 py-3">{{ 'route' | translate }}</th>
           <th class="px-4 py-3">{{ 'departureTime' | translate }}</th>
           <th class="px-4 py-3">{{ 'price' | translate }}</th>
-          <th class="px-4 py-3">{{ 'availableSeats' | translate }}</th>
           <th class="px-4 py-3">{{ 'flightClass' | translate }}</th>
           <th class="px-4 py-3">{{ 'status' | translate }}</th>
           <th class="px-4 py-3">{{ 'actions' | translate }}</th>
@@ -58,7 +57,6 @@
           <td class="px-4 py-3">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</td>
           <td class="px-4 py-3">{{ item.departureTime | date: 'short' }}</td>
           <td class="px-4 py-3">{{ item.price }}</td>
-          <td class="px-4 py-3">{{ item.availableSeats }}</td>
           <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span></td>
           <td class="px-4 py-3"><button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false" class="relative inline-flex h-6 w-11 items-center rounded-full" [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false" (click)="toggleFlightStatus(item)"><span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span></button></td>
           <td class="px-4 py-3">
@@ -83,7 +81,7 @@
         <p class="mt-1 text-sm text-slate-500">{{ item.airlineName ?? item.airline?.name }}</p>
         <p class="mt-2 text-sm font-medium">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</p>
         <p class="mt-1 text-sm text-slate-500">{{ item.departureTime | date: 'short' }} - {{ item.arrivalTime | date: 'short' }}</p>
-        <p class="mt-2 text-sm"><span class="font-semibold">{{ item.price }}</span> · {{ item.availableSeats }} {{ 'availableSeats' | translate }}</p>
+        <p class="mt-2 text-sm"><span class="font-semibold">{{ item.price }}</span> </p>
         <div class="mt-4 flex gap-2">
           <button type="button" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" (click)="editRequested.emit(item)">{{ 'edit' | translate }}</button>
           <button type="button" class="rounded-full border px-3 py-1 text-xs font-semibold" [class.border-emerald-300]="item.isActive === false" [class.text-emerald-600]="item.isActive === false" [class.border-rose-300]="item.isActive !== false" [class.text-rose-600]="item.isActive !== false" (click)="toggleFlightStatus(item)">{{ (item.isActive === false ? 'activate' : 'deactivate') | translate }}</button>

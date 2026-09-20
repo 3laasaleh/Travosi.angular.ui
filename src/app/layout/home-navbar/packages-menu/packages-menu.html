@@ -6,7 +6,7 @@
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)"
   >
-    {{ 'packages' | translate }}
+    <span class="flex items-center gap-2"><i class="mdi mdi-bag-suitcase-outline text-lg" aria-hidden="true"></i>{{ 'packages' | translate }}</span>
     <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"></i>
   </button>
 

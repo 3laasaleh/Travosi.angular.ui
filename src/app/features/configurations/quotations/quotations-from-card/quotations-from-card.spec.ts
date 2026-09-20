@@ -28,7 +28,6 @@ describe('QuotationsFromCard', () => {
     departureTime: '2030-05-10T08:00:00',
     arrivalTime: '2030-05-10T12:00:00',
     price: 125,
-    availableSeats: 12,
     isActive: true,
   };
   const hotel = {

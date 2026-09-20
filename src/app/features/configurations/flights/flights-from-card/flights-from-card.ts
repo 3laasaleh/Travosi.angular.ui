@@ -38,7 +38,6 @@ export interface FlightDTO {
   departureTime: string;
   arrivalTime: string;
   price: number;
-  availableSeats: number;
   flightClass: FlightClassEnum;
 }
 
@@ -140,7 +139,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
       departureTime: form.departureTime,
       arrivalTime: form.arrivalTime,
       price: Number(form.price),
-      availableSeats: Number(form.availableSeats),
       flightClass: Number(form.flightClass),
     };
     if (this.selectedFlight?.id) payload.id = this.selectedFlight.id;
@@ -278,7 +276,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
       departureTime: this.toLocalInput(flight.departureTime),
       arrivalTime: this.toLocalInput(flight.arrivalTime),
       price: flight.price ?? 0,
-      availableSeats: flight.availableSeats ?? 0,
       flightClass: flight.flightClass ?? FlightClassEnum.Economy,
     }, { emitEvent: false });
     this.clearAirportSearchState();
@@ -301,7 +298,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
       departureTime: '',
       arrivalTime: '',
       price: 0,
-      availableSeats: 0,
       flightClass: FlightClassEnum.Economy,
     }, { emitEvent: false });
     this.clearAirportSearchState();
@@ -499,7 +495,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
       departureTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
       arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
       price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
-      availableSeats: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       flightClass: new FormControl(FlightClassEnum.Economy, { nonNullable: true, validators: [Validators.required] }),
     }, {
       validators: [
