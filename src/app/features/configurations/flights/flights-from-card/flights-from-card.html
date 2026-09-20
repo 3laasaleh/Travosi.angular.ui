@@ -59,6 +59,16 @@
         <p class="mt-1 text-xs text-red-600">{{ (flightForm.controls.price.hasError('required') ? 'priceRequired' : 'flightPriceMinimum') | translate }}</p>
       }
     </div>
+    <div class="md:col-span-1">
+      <label for="flight-baggage-allowance" class="mb-2 block text-sm font-medium">{{ 'baggageAllowance' | translate }}</label>
+      <div class="relative">
+        <input id="flight-baggage-allowance" formControlName="baggageAllowanceKg" type="number" min="0" max="99" appNumbersOnly class="w-full rounded-2xl border border-slate-300 py-2 pe-12 ps-3" />
+        <span class="pointer-events-none absolute inset-y-0 end-0 flex w-10 items-center justify-center border-s text-sm font-semibold text-slate-500">kg</span>
+      </div>
+      @if ((validationSubmitted || flightForm.controls.baggageAllowanceKg.touched) && flightForm.controls.baggageAllowanceKg.invalid) {
+        <p class="mt-1 text-xs text-red-600">{{ 'baggageAllowanceInvalid' | translate }}</p>
+      }
+    </div>
   </section>
 
   <div class="mt-6 space-y-5">

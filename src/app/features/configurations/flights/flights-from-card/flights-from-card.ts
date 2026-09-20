@@ -104,6 +104,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+(?:\.\d+)?$/)],
     }),
+    baggageAllowanceKg: new FormControl<number | null>(null, {
+      validators: [Validators.min(0), Validators.max(99)],
+    }),
     legs: new FormArray<FormGroup>([]),
   });
 
@@ -369,6 +372,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
       children: raw.children,
       infants: raw.infants,
       price: Number(raw.price),
+      baggageAllowanceKg: raw.baggageAllowanceKg,
       legs: raw.legs.map((leg: any) => ({
         originAirport: this.code(leg.originAirport),
         destinationAirport: this.code(leg.destinationAirport),
@@ -432,6 +436,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
       children: Number(flight.children ?? 0),
       infants: Number(flight.infants ?? 0),
       price: Number(flight.price ?? 0),
+      baggageAllowanceKg: flight.baggageAllowanceKg ?? null,
     });
     const legs =
       Array.isArray(flight.legs) && flight.legs.length ? flight.legs : [this.legacyLeg(flight)];
@@ -468,6 +473,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
       children: 0,
       infants: 0,
       price: 0,
+      baggageAllowanceKg: null,
     });
     this.addLeg();
     this.validationSubmitted = false;
