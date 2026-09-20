@@ -12,15 +12,18 @@ export const CONFIGURATION_MENU_ITEMS: readonly ConfigurationMenuItem[] = [
   { label: 'blogs', path: '/configurations/blogs', icon: 'mdi-post-outline' },
 
   { label: 'customers', path: '/configurations/customers', icon: 'mdi-account-group-outline' },
-  { label: 'tasks', path: '/configurations/tasks', icon: 'mdi-checkbox-marked-outline' },
   { label: 'bookings', path: '/configurations/bookings', icon: 'mdi-calendar-check-outline' },
-  { label: 'airlines', path: '/configurations/airlines', icon: 'mdi-airplane' },
   { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
-  { label: 'hotelFacilities', path: '/configurations/hotel-facilities', icon: 'mdi-wifi' },
-  { label: 'facilityCategories', path: '/configurations/facility-categories', icon: 'mdi-shape-outline' },
   { label: 'roomPricing', path: '/configurations/hotel-room-pricing', icon: 'mdi-calendar-currency-outline' },
   { label: 'hotelCommercialPolicies', path: '/configurations/hotel-commercial-policies', icon: 'mdi-food-outline' },
+  { label: 'hotelFacilities', path: '/configurations/hotel-facilities', icon: 'mdi-wifi' },
+  { label: 'facilityCategories', path: '/configurations/facility-categories', icon: 'mdi-shape-outline' },
+
   { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },
+  { label: 'airlines', path: '/configurations/airlines', icon: 'mdi-airplane' },
+
+
+  { label: 'tasks', path: '/configurations/tasks', icon: 'mdi-checkbox-marked-outline' },
   { label: 'quotations', path: '/configurations/quotations', icon: 'mdi-file-document-outline' },
   { label: 'invoices', path: '/configurations/invoices', icon: 'mdi-receipt-text-outline' },
   { label: 'vouchers', path: '/configurations/vouchers', icon: 'mdi-ticket-confirmation-outline' },

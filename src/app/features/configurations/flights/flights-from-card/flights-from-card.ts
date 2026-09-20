@@ -2,16 +2,17 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  DestroyRef,
+  ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges,
-  inject,
+  ViewChild,
+  signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -22,168 +23,372 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { validDate } from '../../../../core/services/custom.validators';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
-import { validDate } from '../../../../core/services/custom.validators';
-import { AirportSearchResult, AirportSearchService } from '../airport-search.service';
-import { FLIGHT_CLASS_OPTIONS, FlightClassEnum } from '../flight-class.enum';
-import { FLIGHT_TYPE_OPTIONS, FlightTypeEnum } from '../flight-type.enum';
-import { IGenericResponse } from '../../../../core/models/genericReponse.model';
-import { PaginationModel } from '../../../../core/models/pagination.model';
+import { AirportPicker } from '../airport-picker/airport-picker';
 
-export interface FlightDTO {
-  id: number;
-  flightNumber: string;
-  airlineId: number;
-  departureAirport: string;
-  arrivalAirport: string;
-  departureTime: string;
-  arrivalTime: string;
-  price: number;
-  flightClass: FlightClassEnum;
-  flightType: FlightTypeEnum;
-  adults: number;
-  children: number;
-  infants: number;
-  returnJourney?: FlightJourneyDTO;
-  segments?: FlightJourneyDTO[];
+type ConnectionType = 'DIRECT' | 'CONNECTING';
+type FlightType = 'ONE_WAY' | 'ROUND_TRIP' | 'MULTI_CITY';
+type PassengerType = 'adults' | 'children' | 'infants';
+interface FlightSegmentValue {
+  airlineId?: number;
+  airlineCode?: string;
+  flightNumber?: string;
+  ticketNumber?: string;
+  originAirport?: string;
+  destinationAirport?: string;
+  departureLocal?: string;
+  departureTimeZone?: string;
+  arrivalLocal?: string;
+  arrivalTimeZone?: string;
+  cabinClass?: string;
 }
-
-export interface FlightJourneyDTO {
-  departureAirport: string;
-  arrivalAirport: string;
-  departureTime: string;
-  arrivalTime: string;
+interface FlightLegValue {
+  originAirport?: string;
+  destinationAirport?: string;
+  segments?: FlightSegmentValue[];
 }
-
-type AirportField = 'departure' | 'arrival';
-
-const AIRPORT_RESULT_LIMIT = 20;
-const AIRPORT_MIN_QUERY_LENGTH = 2;
 
 @Component({
   selector: 'app-flights-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker],
+  imports: [ReactiveFormsModule, TranslatePipe, AirportPicker, NumbersOnlyDirective, DatePicker],
   templateUrl: './flights-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightsFromCard implements OnInit, OnChanges {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly airportSearchService = inject(AirportSearchService);
-  private readonly airportFocused: Record<AirportField, boolean> = {
-    departure: false,
-    arrival: false,
-  };
-  private allAirports: AirportSearchResult[] = [];
-  @Input() selectedFlight: FlightDTO | null = null;
+  @ViewChild('passengerPicker') private passengerPicker?: ElementRef<HTMLElement>;
+  @ViewChild('passengerTrigger') private passengerTrigger?: ElementRef<HTMLButtonElement>;
+  @Input() selectedFlight: any = null;
   @Output() flightSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
 
-  flightForm = this.createForm();
+  readonly connectionTypes: ConnectionType[] = ['DIRECT', 'CONNECTING'];
+  readonly flightTypeOptions: ReadonlyArray<{ value: FlightType; labelKey: string }> = [
+    { value: 'ONE_WAY', labelKey: 'oneWay' },
+    { value: 'ROUND_TRIP', labelKey: 'roundTrip' },
+    { value: 'MULTI_CITY', labelKey: 'multiCity' },
+  ];
+  readonly cabinClasses = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
+  readonly passengerTypes: ReadonlyArray<{ key: PassengerType; labelKey: string; min: number }> = [
+    { key: 'adults', labelKey: 'adults', min: 1 },
+    { key: 'children', labelKey: 'children', min: 0 },
+    { key: 'infants', labelKey: 'infants', min: 0 },
+  ];
+  readonly passengerMenuOpen = signal(false);
   airlines: any[] = [];
   isLoading = false;
-  errorMessage = '';
   validationSubmitted = false;
+  errorMessage = '';
   successMessage = '';
-  departureAirports: AirportSearchResult[] = [];
-  arrivalAirports: AirportSearchResult[] = [];
-  departureAirportLoading = false;
-  arrivalAirportLoading = false;
-  departureAirportSearchFailed = false;
-  arrivalAirportSearchFailed = false;
-  departureAirportOpen = false;
-  arrivalAirportOpen = false;
-  departureAirportActiveIndex = -1;
-  arrivalAirportActiveIndex = -1;
-  readonly flightClassOptions = FLIGHT_CLASS_OPTIONS;
-  readonly flightTypeOptions = FLIGHT_TYPE_OPTIONS;
+
+  readonly flightForm = new FormGroup({
+    id: new FormControl(0, { nonNullable: true }),
+    flightType: new FormControl<FlightType>('ONE_WAY', { nonNullable: true }),
+    adults: new FormControl(1, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+    }),
+    children: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0)],
+    }),
+    infants: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0)],
+    }),
+    price: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+(?:\.\d+)?$/)],
+    }),
+    legs: new FormArray<FormGroup>([]),
+  });
 
   constructor(
-    private apiService: ApiService,
-    private cdr: ChangeDetectorRef,
+    private readonly api: ApiService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
-    this.updateTypeSpecificValidators();
+    this.resetForm(false);
+  }
+  get legs(): FormArray<FormGroup> {
+    return this.flightForm.controls.legs;
+  }
+
+  get today(): string {
+    return FlightsFromCard.localDate(new Date());
+  }
+
+  togglePassengerMenu(): void {
+    this.flightForm.controls.adults.markAsTouched();
+    this.passengerMenuOpen.update((open) => !open);
+  }
+
+  passengerCount(type: PassengerType): number {
+    return this.flightForm.controls[type].value;
+  }
+
+  changePassengerCount(type: PassengerType, change: -1 | 1): void {
+    const control = this.flightForm.controls[type];
+    const minimum = type === 'adults' ? 1 : 0;
+    control.setValue(Math.max(minimum, control.value + change));
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.passengerMenuOpen() && !this.passengerPicker?.nativeElement.contains(event.target as Node)) {
+      this.passengerMenuOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (!this.passengerMenuOpen()) return;
+    this.passengerMenuOpen.set(false);
+    this.passengerTrigger?.nativeElement.focus();
   }
 
   ngOnInit(): void {
-    this.loadAirlines();
-    this.loadAirports();
-    this.configureAirportSearch('departure');
-    this.configureAirportSearch('arrival');
+    this.api
+      .get('Airlines/GetAll?page=1&pageSize=100')
+      .pipe(catchError(() => of(null)))
+      .subscribe((response: any) => {
+        const data = response?.data ?? response;
+        this.airlines = data?.data ?? data?.items ?? (Array.isArray(data) ? data : []);
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['selectedFlight']) return;
-    if (this.selectedFlight) this.populateForm(this.selectedFlight);
-    else this.resetForm(false);
+    if (this.selectedFlight) {
+      if (Array.isArray(this.selectedFlight.legs)) this.populateForm(this.selectedFlight);
+      else this.loadFlightForEdit(Number(this.selectedFlight.id));
+    } else this.resetForm(false);
   }
 
-  loadAirlines(): void {
-    this.apiService.get('Airlines?page=1&pageSize=100').pipe(
-      catchError(() => of(null)),
-      finalize(() => this.cdr.markForCheck()),
-    ).subscribe((response: IGenericResponse<PaginationModel<[]>>) => {
-      if (response === null) return;
-      const pageData = response?.data ;
-      const rows = pageData?.data ;
-      this.airlines = Array.isArray(rows) ? rows : [];
-    });
+  onTripTypeChange(type: FlightType): void {
+    this.flightForm.controls.flightType.setValue(type);
+    if (type === 'ONE_WAY') while (this.legs.length > 1) this.legs.removeAt(this.legs.length - 1);
+    else if (type === 'ROUND_TRIP') {
+      while (this.legs.length > 2) this.legs.removeAt(this.legs.length - 1);
+      while (this.legs.length < 2) this.addLeg();
+      this.copyReturnRoute();
+    } else if (this.legs.length < 2) this.addLeg();
+    this.flightForm.updateValueAndValidity();
   }
 
-  loadAirports(): void {
-    this.airportSearchService.loadAll().pipe(
-      catchError(() => of([] as AirportSearchResult[])),
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.cdr.markForCheck()),
-    ).subscribe((airports) => {
-      this.allAirports = airports;
+  addLeg(value: FlightLegValue = {}): void {
+    const rows = value.segments?.length ? value.segments : [{}];
+    const leg = new FormGroup(
+      {
+        originAirport: new FormControl(this.code(value.originAirport), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
+        }),
+        destinationAirport: new FormControl(this.code(value.destinationAirport), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
+        }),
+        connectionType: new FormControl<ConnectionType>(rows.length > 1 ? 'CONNECTING' : 'DIRECT', {
+          nonNullable: true,
+        }),
+        segments: new FormArray<FormGroup>([]),
+      },
+      { validators: [FlightsFromCard.legConnectionValidator] },
+    );
+    this.legs.push(leg);
+    rows.forEach((segment) => this.addSegment(this.legs.length - 1, segment));
+    this.synchronizeLeg(this.legs.length - 1);
+  }
+
+  removeLeg(index: number): void {
+    if (this.legs.length > 1) this.legs.removeAt(index);
+  }
+  moveLeg(index: number, offset: number): void {
+    const target = index + offset;
+    if (target < 0 || target >= this.legs.length) return;
+    const leg = this.legs.at(index);
+    this.legs.removeAt(index);
+    this.legs.insert(target, leg);
+  }
+  segments(legIndex: number): FormArray<FormGroup> {
+    return this.legs.at(legIndex).controls['segments'] as FormArray<FormGroup>;
+  }
+
+  setConnectionType(legIndex: number, type: ConnectionType): void {
+    const leg = this.legs.at(legIndex);
+    const rows = this.segments(legIndex);
+    if (type === 'DIRECT' && rows.length > 1) {
+      const confirmed =
+        typeof window === 'undefined' ||
+        window.confirm('Changing to a direct flight removes all stop details. Continue?');
+      if (!confirmed) return;
+      const first = rows.at(0).getRawValue();
+      const last = rows.at(rows.length - 1).getRawValue();
+      while (rows.length > 1) rows.removeAt(rows.length - 1);
+      rows
+        .at(0)
+        .patchValue({
+          ...first,
+          destinationAirport: leg.controls['destinationAirport'].value,
+          arrivalLocal: last.arrivalLocal,
+          arrivalTimeZone: last.arrivalTimeZone,
+        });
+    }
+    leg.controls['connectionType'].setValue(type);
+    if (type === 'CONNECTING' && rows.length === 1) this.addStop(legIndex);
+    this.synchronizeLeg(legIndex);
+  }
+
+  addStop(legIndex: number): void {
+    const rows = this.segments(legIndex);
+    const finalSegment = rows.at(rows.length - 1);
+    const current = finalSegment.getRawValue() as FlightSegmentValue;
+    finalSegment.patchValue({
+      destinationAirport: '',
+      arrivalLocal: '',
+      arrivalTimeZone: current.departureTimeZone || 'UTC',
     });
+    rows.push(
+      this.createSegment({
+        ...current,
+        originAirport: '',
+        destinationAirport: current.destinationAirport,
+        departureLocal: '',
+        departureTimeZone: current.arrivalTimeZone || 'UTC',
+      }),
+    );
+    this.legs.at(legIndex).controls['connectionType'].setValue('CONNECTING');
+    this.synchronizeLeg(legIndex);
+  }
+
+  removeStop(legIndex: number, stopIndex: number): void {
+    const rows = this.segments(legIndex);
+    const previous = rows.at(stopIndex);
+    const next = rows.at(stopIndex + 1);
+    if (!previous || !next) return;
+    const nextValue = next.getRawValue();
+    previous.patchValue({
+      destinationAirport: nextValue.destinationAirport,
+      arrivalLocal: nextValue.arrivalLocal,
+      arrivalTimeZone: nextValue.arrivalTimeZone,
+    });
+    rows.removeAt(stopIndex + 1);
+    if (rows.length === 1) this.legs.at(legIndex).controls['connectionType'].setValue('DIRECT');
+    this.synchronizeLeg(legIndex);
+  }
+
+  onLegAirportChanged(legIndex: number, isOrigin: boolean): void {
+    const leg = this.legs.at(legIndex);
+    const controlName = isOrigin ? 'originAirport' : 'destinationAirport';
+    leg.controls[controlName].setValue(this.code(leg.controls[controlName].value), {
+      emitEvent: false,
+    });
+    this.synchronizeLeg(legIndex);
+    if (
+      this.flightForm.controls.flightType.value === 'ROUND_TRIP' &&
+      legIndex === 0 &&
+      this.legs.length > 1
+    )
+      this.copyReturnRoute();
+    if (
+      this.flightForm.controls.flightType.value === 'MULTI_CITY' &&
+      !isOrigin &&
+      this.legs.at(legIndex + 1)
+    ) {
+      this.legs
+        .at(legIndex + 1)
+        .controls['originAirport'].setValue(leg.controls['destinationAirport'].value);
+      this.synchronizeLeg(legIndex + 1);
+    }
+  }
+
+  onStopAirportChanged(legIndex: number, segmentIndex: number): void {
+    const rows = this.segments(legIndex);
+    const row = rows.at(segmentIndex);
+    const stopCode = this.code(row.controls['destinationAirport'].value);
+    row.controls['destinationAirport'].setValue(stopCode, { emitEvent: false });
+    rows.at(segmentIndex + 1).controls['originAirport'].setValue(stopCode);
+    this.synchronizeLeg(legIndex);
+  }
+
+  addSegment(legIndex: number, value: FlightSegmentValue = {}): void {
+    this.segments(legIndex).push(this.createSegment(value));
+  }
+  airlineChanged(legIndex: number, segmentIndex: number): void {
+    const row = this.segments(legIndex).at(segmentIndex);
+    const airline = this.airlines.find(
+      (item) => Number(item.id) === Number(row.controls['airlineId'].value),
+    );
+    row.controls['airlineCode'].setValue(
+      String(airline?.code ?? airline?.iataCode ?? '').trim().toUpperCase(),
+    );
+    row.controls['airlineCode'].markAsTouched();
+  }
+
+  stopCount(legIndex: number): number {
+    return Math.max(0, this.segments(legIndex).length - 1);
+  }
+  layoverDuration(legIndex: number, stopIndex: number): string {
+    const current = this.segments(legIndex).at(stopIndex);
+    const next = this.segments(legIndex).at(stopIndex + 1);
+    const arrival = this.localTimeInZoneToUtc(
+      current?.controls['arrivalLocal'].value,
+      current?.controls['arrivalTimeZone'].value,
+    );
+    const departure = this.localTimeInZoneToUtc(
+      next?.controls['departureLocal'].value,
+      next?.controls['departureTimeZone'].value,
+    );
+    const milliseconds = departure - arrival;
+    if (!Number.isFinite(milliseconds) || milliseconds < 0) return '—';
+    const minutes = Math.round(milliseconds / 60000);
+    return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
   }
 
   saveFlight(): void {
+    for (let index = 0; index < this.legs.length; index++) {
+      this.synchronizeLeg(index);
+      for (const segment of this.segments(index).controls) {
+        segment.controls['departureLocal'].updateValueAndValidity();
+        segment.controls['arrivalLocal'].updateValueAndValidity();
+      }
+    }
     this.validationSubmitted = true;
-    if (this.isLoading) return;
-    if (this.flightForm.invalid) {
-      this.flightForm.markAllAsTouched();
-      return;
-    }
-    const form = this.flightForm.getRawValue();
+    this.flightForm.markAllAsTouched();
+    if (this.isLoading || this.flightForm.invalid) return;
+    const raw = this.flightForm.getRawValue();
     const payload: any = {
-      flightNumber: form.flightNumber.trim(),
-      airlineId: Number(form.airlineId),
-      departureAirport: form.departureAirport.trim(),
-      arrivalAirport: form.arrivalAirport.trim(),
-      departureTime: form.departureTime,
-      arrivalTime: form.arrivalTime,
-      price: Number(form.price),
-      flightClass: Number(form.flightClass),
-      flightType: Number(form.flightType),
-      adults: Number(form.adults),
-      children: Number(form.children),
-      infants: Number(form.infants),
+      flightType: raw.flightType,
+      adults: raw.adults,
+      children: raw.children,
+      infants: raw.infants,
+      price: Number(raw.price),
+      legs: raw.legs.map((leg: any) => ({
+        originAirport: this.code(leg.originAirport),
+        destinationAirport: this.code(leg.destinationAirport),
+        segments: leg.segments.map((segment: any) => ({
+          ...segment,
+          airlineCode: String(segment.airlineCode).trim().toUpperCase(),
+          originAirport: this.code(segment.originAirport),
+          destinationAirport: this.code(segment.destinationAirport),
+          cabinClass: String(segment.cabinClass).toUpperCase(),
+        })),
+      })),
     };
-    if (form.flightType === FlightTypeEnum.RoundTrip) {
-      payload.returnJourney = this.journeyPayload(form.returnJourney as FlightJourneyDTO);
-    }
-    if (form.flightType === FlightTypeEnum.MultiCity) {
-      payload.segments = (form.segments as FlightJourneyDTO[])
-        .map((segment) => this.journeyPayload(segment));
-    }
-    if (this.selectedFlight?.id) payload.id = this.selectedFlight.id;
-
+    if (raw.id) payload.id = raw.id;
     this.isLoading = true;
     this.errorMessage = '';
-    this.successMessage = '';
-    const request$ = this.selectedFlight
-      ? this.apiService.put('Flights', payload)
-      : this.apiService.post('Flights', payload);
-    request$
+    const request = raw.id ? this.api.put('Flights', payload) : this.api.post('Flights', payload);
+    request
       .pipe(
-        catchError(() => {
-          this.errorMessage = 'flightSaveError';
+        catchError((error) => {
+          this.errorMessage = error?.error?.message ?? 'flightSaveError';
           return of(null);
         }),
         finalize(() => {
@@ -191,475 +396,251 @@ export class FlightsFromCard implements OnInit, OnChanges {
           this.cdr.markForCheck();
         }),
       )
-      .subscribe((res: any) => {
-        if (res === null) return;
-        if (!res.isSuccess) {
-          this.errorMessage = res.message;
+      .subscribe((response: any) => {
+        if (!response || response.isSuccess === false) {
+          if (response?.message) this.errorMessage = response.message;
           return;
         }
-        this.successMessage = res.message;
-        this.resetForm(false);
+        this.successMessage = response.message ?? 'flightSaved';
         this.flightSaved.emit();
+        this.resetForm(false);
       });
   }
 
   cancelEdit(): void {
     this.resetForm(true);
   }
-
-  onFlightTypeChange(value: FlightTypeEnum): void {
-    switch (value) {
-      case FlightTypeEnum.OneWay:
-      case FlightTypeEnum.RoundTrip:
-      case FlightTypeEnum.MultiCity:
-        this.flightForm.controls.flightType.setValue(value);
-        break;
-      default:
-        this.flightForm.controls.flightType.setValue(FlightTypeEnum.OneWay);
-    }
-    this.updateTypeSpecificValidators();
-    if (value === FlightTypeEnum.MultiCity && this.segments.length === 0) this.addSegment();
-    this.flightForm.controls.flightType.markAsDirty();
-    this.flightForm.updateValueAndValidity();
+  private loadFlightForEdit(id: number): void {
+    if (!id) return;
+    this.api
+      .get(`Flights/${id}`)
+      .pipe(catchError(() => of(null)))
+      .subscribe((response: any) => {
+        const flight = response?.data ?? response;
+        if (flight) this.populateForm(flight);
+        else this.errorMessage = 'flightLoadError';
+        this.cdr.markForCheck();
+      });
   }
-
-  get segments(): FormArray<FormGroup> {
-    return this.flightForm.controls.segments as FormArray<FormGroup>;
-  }
-
-  addSegment(): void {
-    this.segments.push(this.createJourneyForm());
-    this.segments.updateValueAndValidity();
-  }
-
-  removeSegment(index: number): void {
-    if (this.segments.length <= 1) return;
-    this.segments.removeAt(index);
-    this.segments.updateValueAndValidity();
-  }
-
-  selectAirport(field: AirportField, airport: AirportSearchResult): void {
-    const control = this.airportControl(field);
-    const codeControl = this.airportCodeControl(field);
-    control.setValue(airport.value, { emitEvent: false });
-    control.markAsDirty();
-    codeControl.setValue(airport.code, { emitEvent: false });
-    codeControl.markAsDirty();
-    this.flightForm.updateValueAndValidity();
-    this.setAirportResults(field, []);
-    this.setAirportActiveIndex(field, -1);
-    this.closeAirportResults(field);
-  }
-
-  airportLocation(airport: AirportSearchResult): string {
-    return [airport.city, airport.country].filter((part) => !!part).join(', ');
-  }
-
-  openAirportResults(field: AirportField): void {
-    this.airportFocused[field] = true;
-    const shouldOpen = this.airportQuery(field).length >= AIRPORT_MIN_QUERY_LENGTH
-      && (this.airportResults(field).length > 0
-        || this.airportLoading(field)
-        || this.airportSearchFailed(field));
-    if (field === 'departure') this.departureAirportOpen = shouldOpen;
-    else this.arrivalAirportOpen = shouldOpen;
-  }
-
-  closeAirportResultsLater(field: AirportField): void {
-    this.airportFocused[field] = false;
-    setTimeout(() => {
-      this.closeAirportResults(field);
-    }, 160);
-  }
-
-  onAirportKeydown(field: AirportField, event: KeyboardEvent): void {
-    const results = this.airportResults(field);
-    const activeIndex = this.airportActiveIndex(field);
-
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      this.closeAirportResults(field);
-      return;
-    }
-
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault();
-      if (!results.length) return;
-      this.openAirportResults(field);
-      const offset = event.key === 'ArrowDown' ? 1 : -1;
-      const nextIndex = activeIndex < 0
-        ? (offset > 0 ? 0 : results.length - 1)
-        : (activeIndex + offset + results.length) % results.length;
-      this.setAirportActiveIndex(field, nextIndex);
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if (event.key === 'Enter' && activeIndex >= 0 && results[activeIndex]) {
-      event.preventDefault();
-      this.selectAirport(field, results[activeIndex]);
-    }
-  }
-
-  setAirportActiveIndex(field: AirportField, index: number): void {
-    if (field === 'departure') this.departureAirportActiveIndex = index;
-    else this.arrivalAirportActiveIndex = index;
-  }
-
-  airportOptionId(field: AirportField, index: number): string {
-    return `${field}-airport-option-${index}`;
-  }
-
-  airportActiveDescendant(field: AirportField): string | null {
-    const index = this.airportActiveIndex(field);
-    return index >= 0 && this.airportResults(field)[index]
-      ? this.airportOptionId(field, index)
-      : null;
-  }
-
-  airportSelectionInvalid(field: AirportField): boolean {
-    const airportControl = this.airportControl(field);
-    return airportControl.touched
-      && !!airportControl.value.trim()
-      && this.airportCodeControl(field).hasError('required');
-  }
-
-  private populateForm(flight: FlightDTO): void {
+  private populateForm(flight: any): void {
+    this.passengerMenuOpen.set(false);
+    this.legs.clear();
+    this.flightForm.patchValue({
+      id: Number(flight.id ?? 0),
+      flightType: flight.flightType ?? 'ONE_WAY',
+      adults: Number(flight.adults ?? 1),
+      children: Number(flight.children ?? 0),
+      infants: Number(flight.infants ?? 0),
+      price: Number(flight.price ?? 0),
+    });
+    const legs =
+      Array.isArray(flight.legs) && flight.legs.length ? flight.legs : [this.legacyLeg(flight)];
+    legs.forEach((leg: FlightLegValue) => this.addLeg(leg));
     this.validationSubmitted = false;
-    const departureAirport = flight.departureAirport?.trim() ?? '';
-    const arrivalAirport = flight.arrivalAirport?.trim() ?? '';
-    this.flightForm.setValue({
-      flightNumber: flight.flightNumber ?? '',
-      airlineId: flight.airlineId ?? null,
-      departureAirport,
-      departureAirportCode: this.existingAirportCode(departureAirport),
-      arrivalAirport,
-      arrivalAirportCode: this.existingAirportCode(arrivalAirport),
-      departureTime: this.toLocalInput(flight.departureTime),
-      arrivalTime: this.toLocalInput(flight.arrivalTime),
-      price: flight.price ?? 0,
-      flightClass: flight.flightClass ?? FlightClassEnum.Economy,
-      flightType: flight.flightType ?? FlightTypeEnum.OneWay,
-      adults: flight.adults ?? 1,
-      children: flight.children ?? 0,
-      infants: flight.infants ?? 0,
-      returnJourney: this.journeyValue(flight.returnJourney),
-      segments: [],
-    }, { emitEvent: false });
-    this.segments.clear({ emitEvent: false });
-    if (flight.segments?.length) {
-      flight.segments.forEach((segment) => this.segments.push(this.createJourneyForm(segment)));
-    }
-    this.updateTypeSpecificValidators();
-    this.clearAirportSearchState();
   }
-
-  private toLocalInput(value?: string): string {
-    if (!value) return '';
-    return value.length > 16 ? value.substring(0, 16) : value;
+  private legacyLeg(flight: any): FlightLegValue {
+    return {
+      originAirport: flight.departureAirport,
+      destinationAirport: flight.arrivalAirport,
+      segments: [
+        {
+          airlineId: flight.airlineId,
+          airlineCode: flight.airlineCode ?? '',
+          flightNumber: flight.flightNumber,
+          originAirport: flight.departureAirport,
+          destinationAirport: flight.arrivalAirport,
+          departureLocal: flight.departureTime,
+          arrivalLocal: flight.arrivalTime,
+          departureTimeZone: 'UTC',
+          arrivalTimeZone: 'UTC',
+          cabinClass: flight.flightClassName ?? 'ECONOMY',
+        },
+      ],
+    };
   }
-
   private resetForm(emitCancel: boolean): void {
-    this.validationSubmitted = false;
+    this.passengerMenuOpen.set(false);
+    this.legs.clear();
     this.flightForm.reset({
-      flightNumber: '',
-      airlineId: null,
-      departureAirport: '',
-      departureAirportCode: '',
-      arrivalAirport: '',
-      arrivalAirportCode: '',
-      departureTime: '',
-      arrivalTime: '',
-      price: 0,
-      flightClass: FlightClassEnum.Economy,
-      flightType: FlightTypeEnum.OneWay,
+      id: 0,
+      flightType: 'ONE_WAY',
       adults: 1,
       children: 0,
       infants: 0,
-      returnJourney: this.journeyValue(),
-      segments: [],
-    }, { emitEvent: false });
-    this.segments.clear({ emitEvent: false });
-    this.updateTypeSpecificValidators();
-    this.clearAirportSearchState();
+      price: 0,
+    });
+    this.addLeg();
+    this.validationSubmitted = false;
+    this.errorMessage = '';
     if (emitCancel) this.editCancelled.emit();
   }
-
-  private configureAirportSearch(field: AirportField): void {
-    const control = this.airportControl(field);
-
-    control.valueChanges.pipe(
-      map((value) => value.trim()),
-      distinctUntilChanged(),
-      tap((query) => {
-        this.airportCodeControl(field).setValue('', { emitEvent: false });
-        this.setAirportResults(field, []);
-        this.setAirportActiveIndex(field, -1);
-        this.setAirportState(field, {
-          loading: query.length >= AIRPORT_MIN_QUERY_LENGTH && this.allAirports.length === 0,
-          failed: false,
-          open: this.airportFocused[field] && query.length >= AIRPORT_MIN_QUERY_LENGTH,
-        });
-        this.flightForm.updateValueAndValidity({ emitEvent: false });
-        this.cdr.markForCheck();
-      }),
-      debounceTime(200),
-      switchMap((query) => {
-        if (query.length < AIRPORT_MIN_QUERY_LENGTH) {
-          return of({ results: [] as AirportSearchResult[], failed: false });
-        }
-        if (this.allAirports.length) {
-          return of({ results: this.filterAirports(query), failed: false });
-        }
-        return this.airportSearchService.search({ query, limit: AIRPORT_RESULT_LIMIT }).pipe(
-          map((results) => ({ results, failed: false })),
-          catchError(() => of({ results: [] as AirportSearchResult[], failed: true })),
-        );
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ results, failed }) => {
-      this.setAirportResults(field, results);
-      this.setAirportActiveIndex(field, -1);
-      this.setAirportState(field, {
-        loading: false,
-        failed,
-        open: this.airportFocused[field] && this.airportQuery(field).length >= AIRPORT_MIN_QUERY_LENGTH,
+  private createSegment(value: FlightSegmentValue = {}): FormGroup {
+    return new FormGroup(
+      {
+        airlineId: new FormControl(Number(value.airlineId ?? 0), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.min(1)],
+        }),
+        airlineCode: new FormControl(String(value.airlineCode ?? '').trim().toUpperCase(), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/^[A-Za-z0-9]{2,3}$/)],
+        }),
+        flightNumber: new FormControl(String(value.flightNumber ?? ''), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(20)],
+        }),
+        ticketNumber: new FormControl(String(value.ticketNumber ?? ''), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/\S/)],
+        }),
+        originAirport: new FormControl(this.code(value.originAirport), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
+        }),
+        destinationAirport: new FormControl(this.code(value.destinationAirport), {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
+        }),
+        departureLocal: new FormControl(this.datetime(value.departureLocal), {
+          nonNullable: true,
+          validators: [Validators.required, validDate(true), FlightsFromCard.notBeforeTodayValidator],
+        }),
+        departureTimeZone: new FormControl(String(value.departureTimeZone ?? 'UTC'), {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        arrivalLocal: new FormControl(this.datetime(value.arrivalLocal), {
+          nonNullable: true,
+          validators: [Validators.required, validDate(true), FlightsFromCard.notBeforeTodayValidator],
+        }),
+        arrivalTimeZone: new FormControl(String(value.arrivalTimeZone ?? 'UTC'), {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        cabinClass: new FormControl(
+          String(value.cabinClass ?? 'ECONOMY').replace('PREMIUMECONOMY', 'PREMIUM_ECONOMY'),
+          { nonNullable: true, validators: [Validators.required] },
+        ),
+      },
+      { validators: [FlightsFromCard.segmentValidator] },
+    );
+  }
+  private synchronizeLeg(legIndex: number): void {
+    const leg = this.legs.at(legIndex);
+    const rows = this.segments(legIndex);
+    if (!leg || !rows.length) return;
+    rows
+      .at(0)
+      .controls['originAirport'].setValue(this.code(leg.controls['originAirport'].value), {
+        emitEvent: false,
       });
-      this.cdr.markForCheck();
+    rows
+      .at(rows.length - 1)
+      .controls['destinationAirport'].setValue(
+        this.code(leg.controls['destinationAirport'].value),
+        { emitEvent: false },
+      );
+    for (let index = 0; index < rows.length - 1; index++) {
+      const destination = this.code(rows.at(index).controls['destinationAirport'].value);
+      rows.at(index).controls['destinationAirport'].setValue(destination, { emitEvent: false });
+      rows.at(index + 1).controls['originAirport'].setValue(destination, { emitEvent: false });
+    }
+    rows.updateValueAndValidity();
+    leg.updateValueAndValidity();
+  }
+  private copyReturnRoute(): void {
+    if (this.legs.length < 2) return;
+    const outbound = this.legs.at(0);
+    const inbound = this.legs.at(1);
+    inbound.patchValue({
+      originAirport: outbound.controls['destinationAirport'].value,
+      destinationAirport: outbound.controls['originAirport'].value,
     });
+    this.synchronizeLeg(1);
+  }
+  private code(value: unknown): string {
+    return String(value ?? '')
+      .trim()
+      .toUpperCase();
+  }
+  private datetime(value: unknown): string {
+    return value ? String(value).slice(0, 16) : '';
   }
 
-  private filterAirports(query: string): AirportSearchResult[] {
-    const tokens = query.toLowerCase().split(/[\s,\-/()]+/).filter((token) => !!token);
-    if (!tokens.length) return [];
-    const term = tokens.join(' ');
-
-    return this.allAirports
-      .map((airport) => ({ airport, score: this.scoreAirport(airport, tokens, term) }))
-      .filter((match) => match.score < Number.MAX_SAFE_INTEGER)
-      .sort((left, right) => left.score - right.score
-        || left.airport.name.localeCompare(right.airport.name))
-      .slice(0, AIRPORT_RESULT_LIMIT)
-      .map((match) => match.airport);
+  private static localDate(date: Date): string {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }
 
-  private scoreAirport(airport: AirportSearchResult, tokens: string[], term: string): number {
-    const code = airport.code.toLowerCase();
-    if (code === term) return 0;
-    if (code.startsWith(term)) return 1;
-    if (airport.city.toLowerCase().startsWith(term)) return 2;
-    if (airport.name.toLowerCase().startsWith(term)) return 3;
-
-    const haystack = `${code} ${airport.icaoCode} ${airport.name} ${airport.city} ${airport.country}`.toLowerCase();
-    return tokens.every((token) => haystack.includes(token)) ? 4 : Number.MAX_SAFE_INTEGER;
+  private static notBeforeTodayValidator(control: AbstractControl): ValidationErrors | null {
+    const value = String(control.value ?? '');
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
+    return value.slice(0, 10) < FlightsFromCard.localDate(new Date()) ? { pastDate: true } : null;
   }
-
-  private setAirportResults(field: AirportField, results: AirportSearchResult[]): void {
-    if (field === 'departure') this.departureAirports = results;
-    else this.arrivalAirports = results;
-  }
-
-  private setAirportState(
-    field: AirportField,
-    state: { loading: boolean; failed: boolean; open: boolean },
-  ): void {
-    if (field === 'departure') {
-      this.departureAirportLoading = state.loading;
-      this.departureAirportSearchFailed = state.failed;
-      this.departureAirportOpen = state.open;
-    } else {
-      this.arrivalAirportLoading = state.loading;
-      this.arrivalAirportSearchFailed = state.failed;
-      this.arrivalAirportOpen = state.open;
+  private localTimeInZoneToUtc(value: unknown, timeZone: unknown): number {
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(value ?? ''));
+    if (!match || !timeZone) return Number.NaN;
+    const desired = Date.UTC(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3]),
+      Number(match[4]),
+      Number(match[5]),
+    );
+    let instant = desired;
+    try {
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: String(timeZone),
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      });
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const parts = Object.fromEntries(
+          formatter
+            .formatToParts(new Date(instant))
+            .filter((part) => part.type !== 'literal')
+            .map((part) => [part.type, part.value]),
+        );
+        const displayed = Date.UTC(
+          Number(parts['year']),
+          Number(parts['month']) - 1,
+          Number(parts['day']),
+          Number(parts['hour']),
+          Number(parts['minute']),
+        );
+        instant += desired - displayed;
+      }
+      return instant;
+    } catch {
+      return Number.NaN;
     }
   }
-
-  private closeAirportResults(field: AirportField): void {
-    if (field === 'departure') {
-      this.departureAirportOpen = false;
-      this.departureAirportActiveIndex = -1;
-    } else {
-      this.arrivalAirportOpen = false;
-      this.arrivalAirportActiveIndex = -1;
+  private static segmentValidator(control: AbstractControl): ValidationErrors | null {
+    const origin = String(control.get('originAirport')?.value ?? '').trim();
+    const destination = String(control.get('destinationAirport')?.value ?? '').trim();
+    const departure = Date.parse(String(control.get('departureLocal')?.value ?? ''));
+    const arrival = Date.parse(String(control.get('arrivalLocal')?.value ?? ''));
+    if (origin && destination && origin === destination) return { sameAirport: true };
+    if (Number.isFinite(departure) && Number.isFinite(arrival) && arrival <= departure)
+      return { invalidSegmentTime: true };
+    return null;
+  }
+  private static legConnectionValidator(control: AbstractControl): ValidationErrors | null {
+    const rows = control.get('segments') as FormArray<FormGroup> | null;
+    if (!rows?.length) return { noSegments: true };
+    for (let index = 0; index < rows.length - 1; index++) {
+      const current = rows.at(index).getRawValue();
+      const next = rows.at(index + 1).getRawValue();
+      if (String(current.destinationAirport).trim() !== String(next.originAirport).trim())
+        return { disconnectedSegments: true };
+      const arrival = Date.parse(current.arrivalLocal);
+      const departure = Date.parse(next.departureLocal);
+      if (Number.isFinite(arrival) && Number.isFinite(departure) && departure <= arrival)
+        return { invalidLayover: true };
     }
-    this.cdr.markForCheck();
-  }
-
-  private clearAirportSearchState(): void {
-    this.departureAirports = [];
-    this.arrivalAirports = [];
-    this.departureAirportLoading = false;
-    this.arrivalAirportLoading = false;
-    this.departureAirportSearchFailed = false;
-    this.arrivalAirportSearchFailed = false;
-    this.departureAirportOpen = false;
-    this.arrivalAirportOpen = false;
-    this.departureAirportActiveIndex = -1;
-    this.arrivalAirportActiveIndex = -1;
-    this.airportFocused.departure = false;
-    this.airportFocused.arrival = false;
-    this.cdr.markForCheck();
-  }
-
-  private airportControl(field: AirportField) {
-    return field === 'departure'
-      ? this.flightForm.controls.departureAirport
-      : this.flightForm.controls.arrivalAirport;
-  }
-
-  private airportCodeControl(field: AirportField) {
-    return field === 'departure'
-      ? this.flightForm.controls.departureAirportCode
-      : this.flightForm.controls.arrivalAirportCode;
-  }
-
-  private airportQuery(field: AirportField): string {
-    return this.airportControl(field).value.trim();
-  }
-
-  private airportResults(field: AirportField): AirportSearchResult[] {
-    return field === 'departure' ? this.departureAirports : this.arrivalAirports;
-  }
-
-  private airportActiveIndex(field: AirportField): number {
-    return field === 'departure'
-      ? this.departureAirportActiveIndex
-      : this.arrivalAirportActiveIndex;
-  }
-
-  private airportLoading(field: AirportField): boolean {
-    return field === 'departure' ? this.departureAirportLoading : this.arrivalAirportLoading;
-  }
-
-  private airportSearchFailed(field: AirportField): boolean {
-    return field === 'departure'
-      ? this.departureAirportSearchFailed
-      : this.arrivalAirportSearchFailed;
-  }
-
-  private existingAirportCode(value: string): string {
-    const code = /^([A-Za-z]{3})\s*-\s*/.exec(value)?.[1];
-    if (code) return code.toUpperCase();
-    return value ? `existing:${value.toLocaleLowerCase()}` : '';
-  }
-
-  private journeyValue(value?: FlightJourneyDTO): FlightJourneyDTO {
-    return {
-      departureAirport: value?.departureAirport ?? '',
-      arrivalAirport: value?.arrivalAirport ?? '',
-      departureTime: this.toLocalInput(value?.departureTime),
-      arrivalTime: this.toLocalInput(value?.arrivalTime),
-    };
-  }
-
-  private journeyPayload(value: FlightJourneyDTO): FlightJourneyDTO {
-    return {
-      departureAirport: value.departureAirport.trim(),
-      arrivalAirport: value.arrivalAirport.trim(),
-      departureTime: value.departureTime,
-      arrivalTime: value.arrivalTime,
-    };
-  }
-
-  private createJourneyForm(value?: FlightJourneyDTO): FormGroup {
-    const journey = this.journeyValue(value);
-    return new FormGroup({
-      departureAirport: new FormControl(journey.departureAirport, {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(250)],
-      }),
-      arrivalAirport: new FormControl(journey.arrivalAirport, {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(250)],
-      }),
-      departureTime: new FormControl(journey.departureTime, {
-        nonNullable: true,
-        validators: [Validators.required, validDate(true)],
-      }),
-      arrivalTime: new FormControl(journey.arrivalTime, {
-        nonNullable: true,
-        validators: [Validators.required, validDate(true)],
-      }),
-    }, {
-      validators: [
-        FlightsFromCard.differentAirportsValidator,
-        FlightsFromCard.arrivalAfterDepartureValidator,
-      ],
-    });
-  }
-
-  private updateTypeSpecificValidators(): void {
-    const returnRequired = this.flightForm.controls.flightType.value === FlightTypeEnum.RoundTrip;
-    const returnJourney = this.flightForm.controls.returnJourney;
-    Object.values(returnJourney.controls).forEach((control) => {
-      control.setValidators(returnRequired ? [Validators.required] : []);
-      control.updateValueAndValidity({ emitEvent: false });
-    });
-    returnJourney.setValidators(returnRequired ? [
-      FlightsFromCard.differentAirportsValidator,
-      FlightsFromCard.arrivalAfterDepartureValidator,
-    ] : []);
-    returnJourney.updateValueAndValidity({ emitEvent: false });
-    this.segments.setValidators(this.flightForm.controls.flightType.value === FlightTypeEnum.MultiCity
-      ? [Validators.minLength(1)]
-      : []);
-    this.segments.updateValueAndValidity({ emitEvent: false });
-  }
-
-  private static differentAirportsValidator(control: AbstractControl): ValidationErrors | null {
-    const departure = String(control.get('departureAirport')?.value ?? '').trim().toLocaleLowerCase();
-    const arrival = String(control.get('arrivalAirport')?.value ?? '').trim().toLocaleLowerCase();
-    return departure && arrival && departure === arrival ? { sameAirport: true } : null;
-  }
-
-  private static arrivalAfterDepartureValidator(control: AbstractControl): ValidationErrors | null {
-    const departure = Date.parse(String(control.get('departureTime')?.value ?? ''));
-    const arrival = Date.parse(String(control.get('arrivalTime')?.value ?? ''));
-    if (!Number.isFinite(departure) || !Number.isFinite(arrival)) return null;
-    return arrival > departure ? null : { arrivalNotAfterDeparture: true };
-  }
-
-  private createForm() {
-    return new FormGroup({
-      flightNumber: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(20)],
-      }),
-      airlineId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-      departureAirport: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(250)],
-      }),
-      departureAirportCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      arrivalAirport: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(250)],
-      }),
-      arrivalAirportCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      departureTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
-      arrivalTime: new FormControl('', { nonNullable: true, validators: [Validators.required, validDate(true)] }),
-      price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
-      flightClass: new FormControl(FlightClassEnum.Economy, { nonNullable: true, validators: [Validators.required] }),
-      flightType: new FormControl(FlightTypeEnum.OneWay, { nonNullable: true, validators: [Validators.required] }),
-      adults: new FormControl(1, {
-        nonNullable: true,
-        validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
-      }),
-      children: new FormControl(0, {
-        nonNullable: true,
-        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
-      }),
-      infants: new FormControl(0, {
-        nonNullable: true,
-        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
-      }),
-      returnJourney: this.createJourneyForm(),
-      segments: new FormArray<FormGroup>([]),
-    }, {
-      validators: [
-        FlightsFromCard.differentAirportsValidator,
-        FlightsFromCard.arrivalAfterDepartureValidator,
-      ],
-    });
+    return null;
   }
 }

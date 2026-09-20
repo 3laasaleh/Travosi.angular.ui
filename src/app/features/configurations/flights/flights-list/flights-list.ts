@@ -1,3 +1,4 @@
+import { currencyPipe } from './../../../../shared/pipes/currency.pipe';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -16,6 +17,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { FLIGHT_CLASS_OPTIONS } from '../flight-class.enum';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import Swal from 'sweetalert2';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 interface PaginationInfoDTO {
   page: number;
@@ -48,7 +50,10 @@ export class FlightsList implements OnInit, OnChanges {
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-  ) {}
+    public currencyService:CurrencyService
+  ) {
+    
+  }
 
   ngOnInit(): void {
     this.loadFlights();

@@ -1,0 +1,32 @@
+<div class="relative">
+  <label [for]="inputId" class="mb-2 block font-medium" [class.text-xs]="compact" [class.text-sm]="!compact">
+    {{ labelKey | translate }} <span class="text-red-600">*</span>
+  </label>
+  <div class="relative">
+    <i class="mdi pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-xl text-primary" [class.mdi-airplane-takeoff]="labelKey === 'departureAirport'" [class.mdi-airplane-landing]="labelKey === 'arrivalAirport'" [class.mdi-map-marker-outline]="labelKey === 'stopAirport'"></i>
+    <input [id]="inputId" type="search" autocomplete="off" maxlength="250" role="combobox" aria-autocomplete="list"
+      [value]="displayValue" [disabled]="disabled" [attr.aria-expanded]="open" [attr.aria-controls]="resultsId"
+      [attr.aria-activedescendant]="activeDescendant" [attr.aria-invalid]="showValidation"
+      [placeholder]="'searchAirportPlaceholder' | translate"
+      class="w-full rounded-2xl border border-slate-300 py-2 pe-10 ps-11 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+      (input)="onInput($any($event.target).value)" (focus)="onFocus()" (blur)="onBlur()" (keydown)="onKeydown($event)" />
+    @if (loading) { <i class="mdi mdi-loading mdi-spin absolute end-3 top-1/2 -translate-y-1/2 text-xl text-primary"></i> }
+  </div>
+  @if (open) {
+    <div [id]="resultsId" role="listbox" class="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+      @for (airport of results; track airport.code; let index = $index) {
+        <button [id]="inputId + '-option-' + index" type="button" role="option" [attr.aria-selected]="activeIndex === index"
+          class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition hover:bg-primary/5"
+          [class.bg-primary/5]="activeIndex === index"
+          (mouseenter)="activeIndex = index" (mousedown)="$event.preventDefault()" (click)="select(airport)">
+          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-xs font-semibold text-primary" translate="no">{{ airport.code }}</span>
+          <span class="min-w-0"><strong class="block truncate text-sm text-slate-800">{{ airport.name }}</strong><span class="mt-0.5 block truncate text-xs text-slate-500">{{ location(airport) }}</span></span>
+        </button>
+      } @empty {
+        @if (!loading) { <p class="px-3 py-4 text-center text-sm text-slate-500">{{ (searchFailed ? 'airportSearchUnavailable' : 'noAirportsFound') | translate }}</p> }
+      }
+      <p class="border-t border-slate-100 px-3 pt-2 text-end text-xs font-normal text-[#5e5e5e]"><span translate="no">OurAirports</span></p>
+    </div>
+  }
+  @if (showValidation) { <p class="mt-1 text-xs text-red-600">{{ (displayValue.trim() ? 'airportSelectionRequired' : requiredErrorKey) | translate }}</p> }
+</div>
