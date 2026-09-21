@@ -26,10 +26,7 @@ describe('QuotationsList status workflow', () => {
 
     await component.changeQuotationStatus(quotation);
 
-    expect(api.patch).toHaveBeenCalledWith('Quotations/ChangeStatus', {
-      id: 17,
-      status: QuotationStatusEnum.Sent,
-    });
+    expect(api.patch).toHaveBeenCalledWith('Quotations/17/Send', {});
     expect(quotation.status).toBe(QuotationStatusEnum.Sent);
     expect(Swal.fire).toHaveBeenNthCalledWith(1, expect.objectContaining({
       input: 'select',
@@ -76,5 +73,28 @@ describe('QuotationsList status workflow', () => {
     expect(api.getFile).toHaveBeenCalledWith('Quotations/19/Pdf');
     expect(api.patch).not.toHaveBeenCalled();
     expect(quotation.status).toBe(QuotationStatusEnum.Draft);
+  });
+
+  it('shows edit controls for a draft status returned as text and loads the full quotation before editing', () => {
+    const fullQuotation = {
+      id: 22,
+      status: 'Draft',
+      items: [{ id: 220, itemType: 'Flight', flightId: 41, baggageAllowance: '23 kg checked baggage' }],
+    };
+    const api = {
+      get: vi.fn().mockReturnValue(of({ isSuccess: true, data: fullQuotation })),
+    };
+    const component = new QuotationsList(
+      api as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    const emit = vi.spyOn(component.editRequested, 'emit');
+
+    expect(component.canEdit({ id: 22, status: 'Draft' })).toBe(true);
+    component.editQuotation({ id: 22, status: 'Draft' });
+
+    expect(api.get).toHaveBeenCalledWith('Quotations/22');
+    expect(emit).toHaveBeenCalledWith(fullQuotation);
   });
 });

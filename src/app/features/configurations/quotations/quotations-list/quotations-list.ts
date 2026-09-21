@@ -132,26 +132,55 @@ export class QuotationsList implements OnInit, OnChanges {
   }
 
   canEdit(quotation: any): boolean {
-    return Number(quotation?.status) === QuotationStatusEnum.Draft;
+    return this.quotationStatus(quotation) === QuotationStatusEnum.Draft;
   }
 
   canChangeStatus(quotation: any): boolean {
-    return (this.allowedTransitions[Number(quotation?.status) as QuotationStatusEnum]?.length ?? 0) > 0;
+    const status = this.quotationStatus(quotation);
+    return status !== null && (this.allowedTransitions[status]?.length ?? 0) > 0;
   }
 
   canDelete(quotation: any): boolean {
-    const status = Number(quotation?.status);
+    const status = this.quotationStatus(quotation);
     return status === QuotationStatusEnum.Draft || status === QuotationStatusEnum.Cancelled;
   }
 
   statusKey(quotation: any): string {
-    const status = Number(quotation?.status);
-    return QuotationStatusEnum[status]?.toLowerCase() || String(quotation?.statusName ?? 'draft').toLowerCase();
+    const status = this.quotationStatus(quotation);
+    return status === null
+      ? String(quotation?.statusName ?? quotation?.status ?? 'draft').toLowerCase()
+      : QuotationStatusEnum[status].toLowerCase();
+  }
+
+  editQuotation(quotation: any): void {
+    const id = Number(quotation?.id);
+    if (!id) return;
+
+    // Always edit the detail endpoint. The list response can be paged or reduced
+    // by an API gateway, while this response contains every quotation line.
+    this.apiService.get(`Quotations/${id}`).pipe(
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'quotationLoadError'));
+        return of(null);
+      }),
+    ).subscribe((response: any) => {
+      if (response === null || response?.isSuccess === false) {
+        if (response?.isSuccess === false) this.showToast('error', this.apiMessage(response, 'quotationLoadError'));
+        return;
+      }
+      const quotationDetails = response?.data ?? response;
+      if (!quotationDetails?.id) {
+        this.showToast('error', 'quotationLoadError');
+        return;
+      }
+      this.editRequested.emit(quotationDetails);
+    });
   }
 
   async changeQuotationStatus(quotation: any): Promise<void> {
     const id = Number(quotation?.id);
-    const currentStatus = Number(quotation?.status) as QuotationStatusEnum;
+    const currentStatus = this.quotationStatus(quotation);
+    if (currentStatus === null) return;
     const allowed = this.allowedTransitions[currentStatus] ?? [];
     if (!id || !allowed.length || this.statusUpdatingId !== null) return;
 
@@ -310,6 +339,24 @@ export class QuotationsList implements OnInit, OnChanges {
       ? payload.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
       : [];
     return errors.length ? errors.join(' ') : payload?.message || fallback;
+  }
+
+  private quotationStatus(quotation: any): QuotationStatusEnum | null {
+    const raw = quotation?.status ?? quotation?.statusName;
+    const numeric = Number(raw);
+    if (Number.isInteger(numeric) && QuotationStatusEnum[numeric] !== undefined) {
+      return numeric as QuotationStatusEnum;
+    }
+
+    const names: Record<string, QuotationStatusEnum> = {
+      draft: QuotationStatusEnum.Draft,
+      sent: QuotationStatusEnum.Sent,
+      accepted: QuotationStatusEnum.Accepted,
+      rejected: QuotationStatusEnum.Rejected,
+      expired: QuotationStatusEnum.Expired,
+      cancelled: QuotationStatusEnum.Cancelled,
+    };
+    return names[String(raw ?? '').trim().toLowerCase()] ?? null;
   }
 
   private showToast(icon: 'success' | 'error', message: string): void {

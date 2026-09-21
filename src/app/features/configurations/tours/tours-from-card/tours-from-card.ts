@@ -29,7 +29,6 @@ import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.d
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
 import { orderItineraryItems } from '../../../../shared/utils/itinerary-order.util';
-import { validDate } from '../../../../core/services/custom.validators';
 
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
@@ -43,6 +42,7 @@ import {
   arabicTextValidator,
   startsWithArabic,
 } from '../../../../core/validators/arabic-text.validator';
+import { validDate } from '../../../../core/services/custom.validators';
 
 interface TourImageUpload {
   id?: number;

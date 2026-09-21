@@ -15,6 +15,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 interface HotelImageUpload { id?: number; file?: File; url: string; altEng: string; altAr: string; existing: boolean; }
 
@@ -23,15 +24,16 @@ export interface HotelDTO {
   name: string;
   nameEng?: string;
   nameAr?: string;
+  routeName?: string;
   slug?: string;
   starRating: number;
   address?: string;
-  description?: string;
+  descriptionEng?: string;
+  descriptionAr?: string;
   phoneNumber?: string;
   email?: string;
   website?: string;
   isActive: boolean;
-  isPublished?: boolean;
   destinationId: number;
 }
 
@@ -94,16 +96,16 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: form.nameEng.trim(),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
-      slug: form.slug.trim() || null,
+      slug: form.routeName.trim() || null,
       starRating: Number(form.starRating),
       destinationId: Number(form.destinationId),
       address: form.address.trim(),
-      description: form.description.trim(),
+      descriptionEng: form.descriptionEng.trim(),
+      descriptionAr: form.descriptionAr.trim(),
       phoneNumber: form.phoneNumber.trim(),
       email: form.email.trim(),
       website: form.website.trim(),
       isActive: form.isActive,
-      isPublished: form.isPublished,
     };
     if (this.selectedHotel?.id) payload.id = this.selectedHotel.id;
 
@@ -174,16 +176,16 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: hotel.name ?? '',
       nameEng: hotel.nameEng ?? hotel.name ?? '',
       nameAr: hotel.nameAr ?? hotel.name ?? '',
-      slug: hotel.slug ?? '',
+      routeName: hotel.routeName ?? hotel.slug ?? '',
       starRating: hotel.starRating ?? 1,
       destinationId: hotel.destinationId ?? null,
       address: hotel.address ?? '',
-      description: hotel.description ?? '',
+      descriptionEng: hotel.descriptionEng ?? '',
+      descriptionAr: hotel.descriptionAr ?? '',
       phoneNumber: hotel.phoneNumber ?? '',
       email: hotel.email ?? '',
       website: hotel.website ?? '',
       isActive: hotel.isActive !== false,
-      isPublished: hotel.isPublished === true,
     });
     this.revokeNewImageUrls();
     this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
@@ -196,16 +198,16 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: '',
       nameEng: '',
       nameAr: '',
-      slug: '',
+      routeName: '',
       starRating: 1,
       destinationId: null,
       address: '',
-      description: '',
+      descriptionEng: '',
+      descriptionAr: '',
       phoneNumber: '',
       email: '',
       website: '',
       isActive: true,
-      isPublished: false,
     });
     if (emitCancel) this.editCancelled.emit();
   }
@@ -230,19 +232,19 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
-      slug: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(220), Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)] }),
+      routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
       starRating: new FormControl(1, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1), Validators.max(5)],
       }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       address: new FormControl('', { nonNullable: true }),
-      description: new FormControl('', { nonNullable: true }),
+      descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       phoneNumber: new FormControl('', { nonNullable: true }),
       email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
       website: new FormControl('', { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
-      isPublished: new FormControl(false, { nonNullable: true }),
     });
   }
 }

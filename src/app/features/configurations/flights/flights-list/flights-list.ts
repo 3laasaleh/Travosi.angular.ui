@@ -1,4 +1,4 @@
-import { currencyPipe } from './../../../../shared/pipes/currency.pipe';
+import { environment } from '../../../../../environments/environment';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -14,10 +14,10 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
-import { FLIGHT_CLASS_OPTIONS } from '../flight-class.enum';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import Swal from 'sweetalert2';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { FLIGHT_CLASS_OPTIONS } from '../flight.enum';
 
 interface PaginationInfoDTO {
   page: number;
@@ -125,24 +125,50 @@ export class FlightsList implements OnInit, OnChanges {
   }
 
   async toggleFlightStatus(flight: any): Promise<void> {
-    if (this.statusUpdatingId !== null) return;
+    if (this.statusUpdatingId !== null || this.deletingId !== null) return;
+    const isActive = flight.isActive !== false;
     const result = await Swal.fire({
       title: this.translate.instant('confirmStatusChange'),
-      text: this.translate.instant(flight.isActive === false ? 'confirmActivateFlight' : 'confirmDeactivateFlight'),
+      text: this.translate.instant(isActive ? 'confirmDeactivateFlight' : 'confirmActivateFlight'),
       icon: 'warning', showCancelButton: true,
       confirmButtonText: this.translate.instant('confirm'), cancelButtonText: this.translate.instant('cancel'),
-      confirmButtonColor: flight.isActive === false ? '#059669' : '#e11d48', reverseButtons: true,
+      confirmButtonColor: isActive ? '#e11d48' : '#059669', reverseButtons: true,
     });
     if (!result.isConfirmed) return;
     this.statusUpdatingId = Number(flight.id);
     this.apiService.patch(`Flights/${flight.id}/ChangeStatus`, {}).pipe(
-      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('statusUpdateError') }); return of(null); }),
+      catchError(() => {
+        Swal.fire({ icon: 'error', title: this.translate.instant('flightStatusUpdateError') });
+        return of({ statusToggleFailed: true });
+      }),
       finalize(() => { this.statusUpdatingId = null; this.cdr.markForCheck(); }),
     ).subscribe((response: any) => {
-      if (response?.isSuccess === false || response === null) return;
-      flight.isActive = flight.isActive === false;
+      if (response?.statusToggleFailed || response?.isSuccess === false) {
+        if (response?.isSuccess === false) {
+          Swal.fire({ icon: 'error', title: response.message || this.translate.instant('flightStatusUpdateError') });
+        }
+        return;
+      }
+      flight.isActive = !isActive;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        iconColor: '#00d492',
+        title: this.translate.instant('flightStatusUpdated'),
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
       this.cdr.markForCheck();
     });
+  }
+
+  airlineLogoUrl(flight: any): string {
+    const url = String(flight?.airlineLogoUrl ?? flight?.airline?.logoUrl ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
   async deleteFlight(flight: any): Promise<void> {

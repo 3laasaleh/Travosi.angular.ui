@@ -187,6 +187,58 @@ describe('QuotationsFromCard', () => {
     expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({ toast: true, icon: 'success' }));
   });
 
+  it('keeps saved flight details and price when an existing quotation is updated', () => {
+    component.flights = [flight];
+    component.selectedQuotation = {
+      id: 74,
+      quotationNo: 'QT-2030-74',
+      customerId: 7,
+      currencyId: 2,
+      travelStartDate: '2030-05-10',
+      travelEndDate: '2030-05-20',
+      adults: 1,
+      children: 0,
+      infants: 0,
+      subTotal: 150,
+      discount: 0,
+      taxRate: 0,
+      tax: 0,
+      totalAmount: 150,
+      totalCost: 90,
+      status: QuotationStatusEnum.Draft,
+      validUntil: '2030-05-01',
+      items: [{
+        id: 140,
+        itemType: 4,
+        flightId: flight.id,
+        description: 'Saved Cairo to Dubai ticket',
+        costPrice: 90,
+        sellingPrice: 150,
+        baggageAllowance: '30 kg checked baggage',
+        departureTerminal: 'Terminal 2',
+        arrivalTerminal: 'Terminal 1',
+        fareConditions: 'Changes permitted before departure',
+      }],
+    };
+    component.ngOnChanges({ selectedQuotation: new SimpleChange(null, component.selectedQuotation, true) });
+    fillRequiredFields(component);
+
+    component.saveQuotation();
+
+    const [, payload] = apiService.put.mock.calls[0];
+    expect(payload.items).toContainEqual(expect.objectContaining({
+      itemType: 4,
+      flightId: flight.id,
+      description: 'Saved Cairo to Dubai ticket',
+      costPrice: 90,
+      sellingPrice: 150,
+      baggageAllowance: '30 kg checked baggage',
+      departureTerminal: 'Terminal 2',
+      arrivalTerminal: 'Terminal 1',
+      fareConditions: 'Changes permitted before departure',
+    }));
+  });
+
   it('blocks the HTTP request and marks each invalid date before saving', () => {
     component.flights = [flight];
     component.toggleFlight(flight, true);
@@ -210,6 +262,7 @@ describe('QuotationsFromCard', () => {
 
   it('enables saving only after all fields and one travel item are valid', () => {
     expect(component.canSave).toBe(false);
+    component.validationSubmitted = true;
     expect(component.travelServicesInvalid).toBe(true);
 
     component.flights = [flight];

@@ -184,6 +184,18 @@ describe('FlightsFromCard', () => {
     expect(fixture.nativeElement.textContent).not.toContain('airlineCodeInvalid');
   });
 
+  it('allows arrival on the departure date and rejects an earlier arrival date', () => {
+    const fixture = TestBed.createComponent(FlightsFromCard);
+    fixture.detectChanges();
+    const segment = fixture.componentInstance.segments(0).at(0);
+
+    segment.patchValue({ departureDate: '2099-01-02', arrivalDate: '2099-01-02' });
+    expect(segment.hasError('arrivalBeforeDeparture')).toBe(false);
+
+    segment.controls['arrivalDate'].setValue('2099-01-01');
+    expect(segment.hasError('arrivalBeforeDeparture')).toBe(true);
+  });
+
   it('shows required-field messages on touch and enables Save only when the flight is valid', () => {
     const fixture = TestBed.createComponent(FlightsFromCard);
     fixture.detectChanges();

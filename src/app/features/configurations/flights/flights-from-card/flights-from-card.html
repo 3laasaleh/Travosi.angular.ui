@@ -1,159 +1,283 @@
 <form [formGroup]="flightForm" (ngSubmit)="saveFlight()" class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
   <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><p class="text-sm font-semibold uppercase tracking-[.2em] text-primary">{{ 'flightItinerary' | translate }}</p><h2 class="mt-1 text-2xl font-semibold">{{ flightForm.controls.id.value ? ('editFlight' | translate) : ('addFlight' | translate) }}</h2></div>
-    @if (selectedFlight) { <button type="button" (click)="cancelEdit()" class="text-sm font-medium text-slate-500">{{ 'cancel' | translate }}</button> }
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[.2em] text-primary">{{ 'flightItinerary' | translate }}</p>
+      <h2 class="mt-1 text-2xl font-semibold">{{ flightForm.controls.id.value ? ('editFlight' | translate) :
+        ('addFlight' | translate) }}</h2>
+    </div>
+    @if (selectedFlight) { <button type="button" (click)="cancelEdit()" class="text-sm font-medium text-slate-500">{{
+      'cancel' | translate }}</button> }
   </div>
-  @if (errorMessage) { <p class="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{{ errorMessage | translate }}</p> }
-  @if (successMessage) { <p class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{{ successMessage | translate }}</p> }
-  @if (validationSubmitted && flightForm.invalid) { <p class="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
+  @if (errorMessage) { <p class="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{{
+    errorMessage | translate }}</p> }
+  @if (successMessage) { <p
+    class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{{ successMessage |
+    translate }}</p> }
+  @if (validationSubmitted && flightForm.invalid) { <p
+    class="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{{ 'pleaseCorrectFormErrors' |
+    translate }}</p> }
 
 
 
   <section class="mt-5 grid gap-3 md:grid-cols-3">
-      <div class="md:col-span-1">
-    <label class="text-sm font-medium">{{ 'tripType' | translate }}</label>
-    <div class="inline-flex flex-wrap rounded-xl border border-slate-300 bg-white p-1" role="group">
-      @for (option of flightTypeOptions; track option.value) {
-        <button type="button" (click)="onTripTypeChange(option.value)" [attr.aria-pressed]="flightForm.controls.flightType.value === option.value" class="rounded-lg px-4 py-2 text-sm font-medium transition" [class.bg-primary]="flightForm.controls.flightType.value === option.value" [class.text-white]="flightForm.controls.flightType.value === option.value" [class.text-slate-600]="flightForm.controls.flightType.value !== option.value">{{ option.labelKey | translate }}</button>
-      }
+    <div class="md:col-span-1">
+      <label class="text-sm font-medium">{{ 'tripType' | translate }}</label>
+      <div class="inline-flex flex-wrap rounded-xl border border-slate-300 bg-white p-1" role="group">
+        @for (option of flightTypeOptions; track option.value) {
+        <button type="button" (click)="onTripTypeChange(option.value)"
+          [attr.aria-pressed]="flightForm.controls.flightType.value === option.value"
+          class="rounded-lg px-4 py-2 text-sm font-medium transition"
+          [class.bg-primary]="flightForm.controls.flightType.value === option.value"
+          [class.text-white]="flightForm.controls.flightType.value === option.value"
+          [class.text-slate-600]="flightForm.controls.flightType.value !== option.value">{{ option.labelKey | translate
+          }}</button>
+        }
+      </div>
     </div>
-  </div>
     <div #passengerPicker class="relative md:col-span-1">
-      <span id="flight-passengers-label" class="mb-2 block text-sm font-medium capitalize">{{ 'passengers' | translate }} <span class="text-red-600">*</span></span>
-      <button #passengerTrigger type="button" class="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-start text-sm" aria-labelledby="flight-passengers-label flight-passengers-summary" [attr.aria-expanded]="passengerMenuOpen()" aria-controls="flight-passengers-menu" (click)="togglePassengerMenu()">
+      <span id="flight-passengers-label" class="mb-2 block text-sm font-medium capitalize">{{ 'passengers' | translate
+        }} <span class="text-red-600">*</span></span>
+      <button #passengerTrigger type="button"
+        class="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-start text-sm"
+        aria-labelledby="flight-passengers-label flight-passengers-summary" [attr.aria-expanded]="passengerMenuOpen()"
+        aria-controls="flight-passengers-menu" (click)="togglePassengerMenu()">
         <span id="flight-passengers-summary" class="min-w-0 truncate">
           @for (passenger of passengerTypes; track passenger.key) {
-            <span>{{ passengerCount(passenger.key) }} {{ passenger.labelKey | translate }}@if (!$last) { <span class="px-1 text-slate-400">·</span> }</span>
+          <span>{{ passengerCount(passenger.key) }} {{ passenger.labelKey | translate }}@if (!$last) { <span
+              class="px-1 text-slate-400">·</span> }</span>
           }
         </span>
         <i class="mdi mdi-chevron-down shrink-0 text-lg text-slate-500" aria-hidden="true"></i>
       </button>
       @if ((validationSubmitted || flightForm.controls.adults.touched) && flightForm.controls.adults.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'adultsInvalid' | translate }}</p>
+      <p class="mt-1 text-xs text-red-600">{{ 'adultsInvalid' | translate }}</p>
       }
       @if (passengerMenuOpen()) {
-        <div id="flight-passengers-menu" class="absolute inset-x-0 z-30 mt-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl" role="group" [attr.aria-label]="'passengers' | translate">
-          @for (passenger of passengerTypes; track passenger.key) {
-            <div class="flex items-center justify-between gap-3 py-2">
-              <span class="text-sm font-medium">{{ passenger.labelKey | translate }}</span>
-              <div class="flex items-center gap-3">
-                <button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-slate-300 text-lg text-primary disabled:cursor-not-allowed disabled:opacity-40" [disabled]="passengerCount(passenger.key) <= passenger.min" [attr.aria-label]="(passenger.labelKey | translate) + ': ' + ('decreaseByOne' | translate)" (click)="changePassengerCount(passenger.key, -1)">−</button>
-                <output class="min-w-5 text-center text-sm font-semibold" [attr.aria-label]="passenger.labelKey | translate">{{ passengerCount(passenger.key) }}</output>
-                <button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-slate-300 text-lg text-primary" [attr.aria-label]="(passenger.labelKey | translate) + ': ' + ('increaseByOne' | translate)" (click)="changePassengerCount(passenger.key, 1)">+</button>
-              </div>
-            </div>
-          }
-          <div class="mt-2 border-t border-slate-100 pt-3 text-end">
-            <button type="button" class="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-white" (click)="passengerMenuOpen.set(false)">{{ 'done' | translate }}</button>
+      <div id="flight-passengers-menu"
+        class="absolute inset-x-0 z-30 mt-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl" role="group"
+        [attr.aria-label]="'passengers' | translate">
+        @for (passenger of passengerTypes; track passenger.key) {
+        <div class="flex items-center justify-between gap-3 py-2">
+          <span class="text-sm font-medium">{{ passenger.labelKey | translate }}</span>
+          <div class="flex items-center gap-3">
+            <button type="button"
+              class="grid h-9 w-9 place-items-center rounded-full border border-slate-300 text-lg text-primary disabled:cursor-not-allowed disabled:opacity-40"
+              [disabled]="passengerCount(passenger.key) <= passenger.min"
+              [attr.aria-label]="(passenger.labelKey | translate) + ': ' + ('decreaseByOne' | translate)"
+              (click)="changePassengerCount(passenger.key, -1)">−</button>
+            <output class="min-w-5 text-center text-sm font-semibold"
+              [attr.aria-label]="passenger.labelKey | translate">{{ passengerCount(passenger.key) }}</output>
+            <button type="button"
+              class="grid h-9 w-9 place-items-center rounded-full border border-slate-300 text-lg text-primary"
+              [attr.aria-label]="(passenger.labelKey | translate) + ': ' + ('increaseByOne' | translate)"
+              (click)="changePassengerCount(passenger.key, 1)">+</button>
           </div>
         </div>
+        }
+        <div class="mt-2 border-t border-slate-100 pt-3 text-end">
+          <button type="button" class="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-white"
+            (click)="passengerMenuOpen.set(false)">{{ 'done' | translate }}</button>
+        </div>
+      </div>
       }
     </div>
     <div class="md:col-span-1">
-      <label for="flight-price" class="required-field-label mb-2 block text-sm font-medium">{{ 'price' | translate }}</label>
+      <label for="flight-price" class="required-field-label mb-2 block text-sm font-medium">{{ 'price' | translate
+        }}</label>
       <div class="relative">
-        <span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span>
-        <input id="flight-price" formControlName="price" type="text" appNumbersOnly class="w-full rounded-2xl border py-2 pe-3 ps-12" [attr.aria-invalid]="flightForm.controls.price.touched && flightForm.controls.price.invalid" />
+        <span
+          class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span>
+        <input id="flight-price" formControlName="price" type="text" appNumbersOnly
+          class="w-full rounded-2xl border py-2 pe-3 ps-12"
+          [attr.aria-invalid]="flightForm.controls.price.touched && flightForm.controls.price.invalid" />
       </div>
       @if ((validationSubmitted || flightForm.controls.price.touched) && flightForm.controls.price.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ (flightForm.controls.price.hasError('required') ? 'priceRequired' : 'flightPriceMinimum') | translate }}</p>
+      <p class="mt-1 text-xs text-red-600">{{ (flightForm.controls.price.hasError('required') ? 'priceRequired' :
+        'flightPriceMinimum') | translate }}</p>
       }
     </div>
     <div class="md:col-span-1">
-      <label for="flight-baggage-allowance" class="mb-2 block text-sm font-medium">{{ 'baggageAllowance' | translate }}</label>
+      <label for="flight-baggage-allowance" class="mb-2 block text-sm font-medium">{{ 'baggageAllowance' | translate
+        }}</label>
       <div class="relative">
-        <input id="flight-baggage-allowance" formControlName="baggageAllowanceKg" type="number" min="0" max="99" appNumbersOnly class="w-full rounded-2xl border border-slate-300 py-2 pe-12 ps-3" />
-        <span class="pointer-events-none absolute inset-y-0 end-0 flex w-10 items-center justify-center border-s text-sm font-semibold text-slate-500">kg</span>
+        <input id="flight-baggage-allowance" formControlName="baggageAllowanceKg" type="number" min="0" max="99"
+          appNumbersOnly class="w-full rounded-2xl border border-slate-300 py-2 pe-12 ps-3" />
+        <span
+          class="pointer-events-none absolute inset-y-0 end-0 flex w-10 items-center justify-center border-s text-sm font-semibold text-slate-500">kg</span>
       </div>
-      @if ((validationSubmitted || flightForm.controls.baggageAllowanceKg.touched) && flightForm.controls.baggageAllowanceKg.invalid) {
-        <p class="mt-1 text-xs text-red-600">{{ 'baggageAllowanceInvalid' | translate }}</p>
+      @if ((validationSubmitted || flightForm.controls.baggageAllowanceKg.touched) &&
+      flightForm.controls.baggageAllowanceKg.invalid) {
+      <p class="mt-1 text-xs text-red-600">{{ 'baggageAllowanceInvalid' | translate }}</p>
       }
     </div>
   </section>
 
   <div class="mt-6 space-y-5">
     @for (leg of legs.controls; track leg; let legIndex = $index) {
-      <section [formGroup]="leg" class="rounded-2xl border border-primary/20 bg-white p-4 shadow-sm">
-        <header class="flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-semibold">{{ flightForm.controls.flightType.value === 'ROUND_TRIP' ? (legIndex === 0 ? ('outboundFlight' | translate) : ('returnFlight' | translate)) : ('journey' | translate) + ' ' + (legIndex + 1) }}</h3><p class="mt-1 text-xs text-slate-500">{{ leg.controls['connectionType'].value === 'DIRECT' ? ('nonstop' | translate) : (stopCount(legIndex) + ' ' + ('stops' | translate)) }}</p></div>
-          @if (flightForm.controls.flightType.value === 'MULTI_CITY') { <div class="flex gap-3 text-sm"><button type="button" (click)="moveLeg(legIndex, -1)" [disabled]="legIndex === 0" class="text-primary disabled:opacity-30">↑</button><button type="button" (click)="moveLeg(legIndex, 1)" [disabled]="legIndex === legs.length - 1" class="text-primary disabled:opacity-30">↓</button><button type="button" (click)="removeLeg(legIndex)" class="text-rose-600">{{ 'remove' | translate }}</button></div> }
-        </header>
-        <div class="mt-4 grid gap-3 md:grid-cols-2">
-          <app-airport-picker formControlName="originAirport" [inputId]="'leg-origin-' + legIndex" labelKey="departureAirport" requiredErrorKey="departureAirportRequired" [showValidation]="(validationSubmitted || leg.controls['originAirport'].touched) && leg.controls['originAirport'].invalid" (airportSelected)="onLegAirportChanged(legIndex, true)" />
-          <app-airport-picker formControlName="destinationAirport" [inputId]="'leg-destination-' + legIndex" labelKey="arrivalAirport" requiredErrorKey="arrivalAirportRequired" [showValidation]="(validationSubmitted || leg.controls['destinationAirport'].touched) && leg.controls['destinationAirport'].invalid" (airportSelected)="onLegAirportChanged(legIndex, false)" />
+    <section [formGroup]="leg" class="rounded-2xl border border-primary/20 bg-white p-4 shadow-sm">
+      <header class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="font-semibold">{{ flightForm.controls.flightType.value === RoundTrip ? (legIndex === 0 ?
+            ('outboundFlight' | translate) : ('returnFlight' | translate)) : ('journey' | translate) + ' ' + (legIndex +
+            1) }}</h3>
+          <p class="mt-1 text-xs text-slate-500">{{ leg.controls['connectionType'].value === 'DIRECT' ? ('nonstop' |
+            translate) : (stopCount(legIndex) + ' ' + ('stops' | translate)) }}</p>
         </div>
-        <fieldset class="mt-4"><legend class="text-sm font-medium">{{ 'flightStopsQuestion' | translate }}</legend><div class="mt-2 inline-flex rounded-xl border border-slate-300 bg-slate-50 p-1">@for (type of connectionTypes; track type) { <button type="button" (click)="setConnectionType(legIndex, type)" class="rounded-lg px-4 py-2 text-sm font-medium" [class.bg-primary]="leg.controls['connectionType'].value === type" [class.text-white]="leg.controls['connectionType'].value === type">{{ (type === 'DIRECT' ? 'directFlight' : 'connectingFlight') | translate }}</button> }</div></fieldset>
+        @if (flightForm.controls.flightType.value === MultiCity) { <div class="flex gap-3 text-sm"><button type="button"
+            (click)="moveLeg(legIndex, -1)" [disabled]="legIndex === 0"
+            class="text-primary disabled:opacity-30">↑</button><button type="button" (click)="moveLeg(legIndex, 1)"
+            [disabled]="legIndex === legs.length - 1" class="text-primary disabled:opacity-30">↓</button><button
+            type="button" (click)="removeLeg(legIndex)" class="text-rose-600">{{ 'remove' | translate }}</button></div>
+        }
+      </header>
+      <div class="mt-4 grid gap-3 md:grid-cols-2">
+        <app-airport-picker formControlName="originAirport" [inputId]="'leg-origin-' + legIndex"
+          labelKey="departureAirport" requiredErrorKey="departureAirportRequired"
+          [showValidation]="(validationSubmitted || leg.controls['originAirport'].touched) && leg.controls['originAirport'].invalid"
+          (airportSelected)="onLegAirportChanged(legIndex, true)" />
+        <app-airport-picker formControlName="destinationAirport" [inputId]="'leg-destination-' + legIndex"
+          labelKey="arrivalAirport" requiredErrorKey="arrivalAirportRequired"
+          [showValidation]="(validationSubmitted || leg.controls['destinationAirport'].touched) && leg.controls['destinationAirport'].invalid"
+          (airportSelected)="onLegAirportChanged(legIndex, false)" />
+      </div>
+      <fieldset class="mt-4">
+        <legend class="text-sm font-medium">{{ 'flightStopsQuestion' | translate }}</legend>
+        <div class="mt-2 inline-flex rounded-xl border border-slate-300 bg-slate-50 p-1">
 
-        <div class="mt-5 space-y-3">
-          @for (segment of segments(legIndex).controls; track segment; let segmentIndex = $index) {
-            <article [formGroup]="segment" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="mb-3 flex items-center justify-between"><p class="text-sm font-semibold">{{ 'segment' | translate }} {{ segmentIndex + 1 }}</p><span class="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{{ segmentIndex + 1 }} / {{ segments(legIndex).length }}</span></div>
-              <div class="grid gap-2 md:grid-cols-4">
-                <div class="md:col-span-2">
-                  <label [for]="'flight-airline-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{ 'airline' | translate }} 
-                    <span class="text-red-600">*</span>
-                  </label>
-                  <select [id]="'flight-airline-' + legIndex + '-' + segmentIndex" formControlName="airlineId" (change)="airlineChanged(legIndex, segmentIndex)" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm" [attr.aria-invalid]="segment.controls['airlineId'].touched && segment.controls['airlineId'].invalid"><option [ngValue]="0">{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }</select>
-                  @if ((validationSubmitted || segment.controls['airlineId'].touched) && segment.controls['airlineId'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p>
-                  } @else if ((validationSubmitted || segment.controls['airlineCode'].touched) && segment.controls['airlineCode'].invalid && segment.controls['airlineId'].valid) {
-                    <p class="mt-1 text-xs text-red-600">{{ (segment.controls['airlineCode'].hasError('required') ? 'airlineCodeRequired' : 'airlineCodeInvalid') | translate }}</p>
-                  }
-                </div>
-                <div>
-                  <label [for]="'flight-number-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{ 'flightNumber' | translate }} <span class="text-red-600">*</span></label>
-                  <input [id]="'flight-number-' + legIndex + '-' + segmentIndex" formControlName="flightNumber" maxlength="20" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-1" [attr.aria-invalid]="segment.controls['flightNumber'].touched && segment.controls['flightNumber'].invalid" />
-                  @if ((validationSubmitted || segment.controls['flightNumber'].touched) && segment.controls['flightNumber'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ (segment.controls['flightNumber'].hasError('maxlength') ? 'flightNumberMaxLength' : 'flightNumberRequired') | translate }}</p>
-                  }
-                </div>
-                <div>
-                  <label [for]="'flight-ticket-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{ 'ticketNumber' | translate }} <span class="text-red-600">*</span></label>
-                  <input [id]="'flight-ticket-' + legIndex + '-' + segmentIndex" formControlName="ticketNumber" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-1" [attr.aria-invalid]="segment.controls['ticketNumber'].touched && segment.controls['ticketNumber'].invalid" />
-                  @if ((validationSubmitted || segment.controls['ticketNumber'].touched) && segment.controls['ticketNumber'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ 'ticketNumberRequired' | translate }}</p>
-                  }
-                </div>
-              
-                <div class="md:col-span-2">
-                  <label [for]="'flight-departure-' + legIndex + '-' + segmentIndex" class="mb-2 block text-xs font-medium">{{ 'departureTime' | translate }}</label>
-                  <app-date-picker formControlName="departureLocal" [id]="'flight-departure-' + legIndex + '-' + segmentIndex" [min]="today" [includeTime]="true" [ariaLabel]="'departureTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
-                  @if (segment.controls['departureLocal'].touched && segment.controls['departureLocal'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ (segment.controls['departureLocal'].hasError('required') ? 'departureTimeRequired' : segment.controls['departureLocal'].hasError('pastDate') ? 'flightDatePast' : 'invalidDate') | translate }}</p>
-                  }
-                </div>
-                <div class="md:col-span-2">
-                  <label [for]="'flight-arrival-' + legIndex + '-' + segmentIndex" class="mb-2 block text-xs font-medium">{{ 'arrivalTime' | translate }}</label>
-                  <app-date-picker formControlName="arrivalLocal" [id]="'flight-arrival-' + legIndex + '-' + segmentIndex" [min]="today" [includeTime]="true" [ariaLabel]="'arrivalTime' | translate" inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
-                  @if (segment.controls['arrivalLocal'].touched && segment.controls['arrivalLocal'].invalid) {
-                    <p class="mt-1 text-xs text-red-600">{{ (segment.controls['arrivalLocal'].hasError('required') ? 'arrivalTimeRequired' : segment.controls['arrivalLocal'].hasError('pastDate') ? 'flightDatePast' : 'invalidDate') | translate }}</p>
-                  }
-                </div>
-              </div>
-                <label class="text-xs font-medium">{{ 'classType' | translate }}
-                  <select formControlName="cabinClass" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2">
-                    @for (cabin of cabinClasses; track cabin) 
-                    { <option [value]="cabin">{{ cabin }}</option> }
-                  </select></label>
-            </article>
-            @if (segmentIndex < segments(legIndex).length - 1) {
-              <aside [formGroup]="segment" class="rounded-xl border border-sky-200 bg-sky-50 p-3">
-                <div class="flex items-center justify-between gap-3">
-                  <span class="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">{{ 'stop' | translate }} {{ segmentIndex + 1 }}</span>
-                  <button type="button" (click)="removeStop(legIndex, segmentIndex)" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600">{{ 'removeStop' | translate }}</button>
-                </div>
-                <div class="mt-3 grid items-end gap-3 md:grid-cols-2">
-                  <app-airport-picker formControlName="destinationAirport" [inputId]="'stop-airport-' + legIndex + '-' + segmentIndex" labelKey="stopAirport" requiredErrorKey="stopAirportRequired" [compact]="true" [showValidation]="(validationSubmitted || segment.controls['destinationAirport'].touched) && segment.controls['destinationAirport'].invalid" (airportSelected)="onStopAirportChanged(legIndex, segmentIndex)" />
-                  <p class="pb-2 text-xs text-slate-600">{{ 'layover' | translate }}: {{ layoverDuration(legIndex, segmentIndex) }}</p>
-                </div>
-              </aside>
-            }
-          }
+          <button type="button" (click)="setConnectionType( legIndex,DIRECT)" class="rounded-lg px-4 py-2 text-sm font-medium"
+            [class.bg-primary]="leg.controls['connectionType'].value === DIRECT"
+            [class.text-white]="leg.controls['connectionType'].value === DIRECT">{{ 'directFlight' | translate
+            }}</button>
+
+          <button type="button" (click)="setConnectionType(legIndex,STOPPED)" class="rounded-lg px-4 py-2 text-sm font-medium"
+            [class.bg-primary]="leg.controls['connectionType'].value === STOPPED"
+            [class.text-white]="leg.controls['connectionType'].value === STOPPED">{{
+            'stoppedFlight' | translate }}</button>
         </div>
-        @if (leg.controls['connectionType'].value === 'CONNECTING') { <button type="button" (click)="addStop(legIndex)" class="mt-4 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary">+ {{ 'addStop' | translate }}</button> }
-        @if (leg.invalid && validationSubmitted) { <p class="mt-3 text-sm text-rose-600">{{ 'flightConnectionInvalid' | translate }}</p> }
-      </section>
+      </fieldset>
+
+      <div class="mt-5 space-y-3">
+        @for (segment of segments(legIndex).controls; track segment; let segmentIndex = $index) {
+        <article [formGroup]="segment" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div class="mb-3 flex items-center justify-between">
+            <p class="text-sm font-semibold">{{ 'segment' | translate }} {{ segmentIndex + 1 }}</p><span
+              class="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{{ segmentIndex + 1 }} /
+              {{ segments(legIndex).length }}</span>
+          </div>
+          <div class="grid gap-2 md:grid-cols-4">
+            <div class="md:col-span-2">
+              <label [for]="'flight-airline-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{ 'airline'
+                | translate }}
+                <span class="text-red-600">*</span>
+              </label>
+              <select [id]="'flight-airline-' + legIndex + '-' + segmentIndex" formControlName="airlineId"
+                (change)="airlineChanged(legIndex, segmentIndex)"
+                class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                [attr.aria-invalid]="segment.controls['airlineId'].touched && segment.controls['airlineId'].invalid">
+                <option [ngValue]="0">{{ 'selectAirline' | translate }}</option>@for (airline of airlines; track
+                airline.id) { <option [ngValue]="airline.id">{{ airline.name }}</option> }
+              </select>
+              @if ((validationSubmitted || segment.controls['airlineId'].touched) &&
+              segment.controls['airlineId'].invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ 'airlineRequired' | translate }}</p>
+              } @else if ((validationSubmitted || segment.controls['airlineCode'].touched) &&
+              segment.controls['airlineCode'].invalid && segment.controls['airlineId'].valid) {
+              <p class="mt-1 text-xs text-red-600">{{ (segment.controls['airlineCode'].hasError('required') ?
+                'airlineCodeRequired' : 'airlineCodeInvalid') | translate }}</p>
+              }
+            </div>
+            <div>
+              <label [for]="'flight-number-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{
+                'flightNumber' | translate }} <span class="text-red-600">*</span></label>
+              <input [id]="'flight-number-' + legIndex + '-' + segmentIndex" formControlName="flightNumber"
+                maxlength="20" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-1"
+                [attr.aria-invalid]="segment.controls['flightNumber'].touched && segment.controls['flightNumber'].invalid" />
+              @if ((validationSubmitted || segment.controls['flightNumber'].touched) &&
+              segment.controls['flightNumber'].invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ (segment.controls['flightNumber'].hasError('maxlength') ?
+                'flightNumberMaxLength' : 'flightNumberRequired') | translate }}</p>
+              }
+            </div>
+            <div>
+              <label [for]="'flight-ticket-' + legIndex + '-' + segmentIndex" class="text-xs font-medium">{{
+                'ticketNumber' | translate }} <span class="text-red-600">*</span></label>
+              <input [id]="'flight-ticket-' + legIndex + '-' + segmentIndex" formControlName="ticketNumber"
+                class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-1"
+                [attr.aria-invalid]="segment.controls['ticketNumber'].touched && segment.controls['ticketNumber'].invalid" />
+              @if ((validationSubmitted || segment.controls['ticketNumber'].touched) &&
+              segment.controls['ticketNumber'].invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ 'ticketNumberRequired' | translate }}</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label [for]="'flight-departure-' + legIndex + '-' + segmentIndex"
+                class="mb-2 block text-xs font-medium">{{ 'departureDate' | translate }}</label>
+              <app-date-picker formControlName="departureDate"
+                [id]="'flight-departure-' + legIndex + '-' + segmentIndex" [min]="today" [includeTime]="false"
+                [ariaLabel]="'departureTime' | translate"
+                inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+              @if (segment.controls['departureDate'].touched && segment.controls['departureDate'].invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ (segment.controls['departureDate'].hasError('required') ?
+                'departureDateRequired' : segment.controls['departureDate'].hasError('pastDate') ? 'flightDatePast' :
+                'invalidDate') | translate }}</p>
+              }
+            </div>
+            <div class="md:col-span-2">
+              <label [for]="'flight-arrival-' + legIndex + '-' + segmentIndex" class="mb-2 block text-xs font-medium">{{
+                'arrivalDate' | translate }}</label>
+              <app-date-picker formControlName="arrivalDate" [id]="'flight-arrival-' + legIndex + '-' + segmentIndex"
+                [min]="today" [includeTime]="false" [ariaLabel]="'arrivalTime' | translate"
+                inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />
+              @if (segment.controls['arrivalDate'].touched && segment.controls['arrivalDate'].invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ (segment.controls['arrivalDate'].hasError('required') ?
+                'arrivalTimeRequired' : segment.controls['arrivalDate'].hasError('pastDate') ? 'flightDatePast' :
+                'invalidDate') | translate }}</p>
+              }
+            </div>
+          </div>
+          <label class="text-xs font-medium">{{ 'classType' | translate }}
+            <select formControlName="cabinClass" class="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2">
+              @for (cabin of cabinClasses; track cabin)
+              { <option [value]="cabin">{{ cabin }}</option> }
+            </select></label>
+        </article>
+        @if (segmentIndex < segments(legIndex).length - 1) { <aside [formGroup]="segment"
+          class="rounded-xl border border-sky-200 bg-sky-50 p-3">
+          <div class="flex items-center justify-between gap-3">
+            <span class="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">{{ 'stop' | translate
+              }} {{ segmentIndex + 1 }}</span>
+            <button type="button" (click)="removeStop(legIndex, segmentIndex)"
+              class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600">{{ 'removeStop'
+              | translate }}</button>
+          </div>
+          <div class="mt-3 grid items-end gap-3 md:grid-cols-2">
+            <app-airport-picker formControlName="destinationAirport"
+              [inputId]="'stop-airport-' + legIndex + '-' + segmentIndex" labelKey="stopAirport"
+              requiredErrorKey="stopAirportRequired" [compact]="true"
+              [showValidation]="(validationSubmitted || segment.controls['destinationAirport'].touched) && segment.controls['destinationAirport'].invalid"
+              (airportSelected)="onStopAirportChanged(legIndex, segmentIndex)" />
+            <p class="pb-2 text-xs text-slate-600">{{ 'layover' | translate }}: {{ layoverDuration(legIndex,
+              segmentIndex) }}</p>
+          </div>
+          </aside>
+          }
+          }
+      </div>
+      @if (leg.controls['connectionType'].value === STOPPED) {
+      <button type="button" (click)="addStop(legIndex)"
+        class="mt-4 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary">+ {{ 'addStop' |
+        translate }}</button> }
+      @if (leg.invalid && validationSubmitted) { <p class="mt-3 text-sm text-rose-600">{{ 'flightConnectionInvalid' |
+        translate }}</p> }
+    </section>
     }
   </div>
-  @if (flightForm.controls.flightType.value === 'MULTI_CITY') { <button type="button" (click)="addLeg()" class="mt-4 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary">+ {{ 'addJourney' | translate }}</button> }
-  <button type="submit" [disabled]="isLoading || flightForm.invalid" class="mt-6 rounded-full bg-primary px-6 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{{ isLoading ? ('saving' | translate) : ('saveFlight' | translate) }}</button>
+  @if (flightForm.controls.flightType.value === MultiCity)
+  { <button type="button" (click)="addLeg()"
+    class="mt-4 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary">+ {{ 'addJourney' |
+    translate }}</button> }
+  <button type="submit" [disabled]="isLoading || flightForm.invalid"
+    class="mt-6 rounded-full bg-primary px-6 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
+    {{isLoading ? ('saving' | translate) : ('saveFlight' | translate) }}</button>
 </form>

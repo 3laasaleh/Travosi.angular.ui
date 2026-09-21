@@ -80,22 +80,22 @@ export class ApiService {
 
   }
   // add
-  post(url: string, data: any): Observable<any>;
-  post(url: string, data: any, token?: string): Observable<any>;
+  post<T = any>(url: string, data: unknown): Observable<T>;
+  post<T = any>(url: string, data: unknown, token?: string): Observable<T>;
 ////overloading
-  post(url: string, data: any, token?: string): Observable<any> {
+  post<T = any>(url: string, data: unknown, token?: string): Observable<T> {
     if (!token)
       token = this.getToken();
 
-    return this.http.post<any>(this.apiBaseUrl + url, data,
+    return this.http.post<T>(this.apiBaseUrl + url, data,
       { headers: new HttpHeaders({ Authorization: "Bearer " + token }) });
 
   }
   // add
-  put(url: string, data: any): Observable<any> {
+  put<T = any>(url: string, data: unknown): Observable<T> {
 
 
-    return this.http.put<any>(this.apiBaseUrl + url, data,
+    return this.http.put<T>(this.apiBaseUrl + url, data,
       { headers: new HttpHeaders({ Authorization: "Bearer " + this.getToken() }) });
 
   }
