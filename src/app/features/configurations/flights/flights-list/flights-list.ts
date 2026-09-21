@@ -80,6 +80,10 @@ export class FlightsList implements OnInit, OnChanges {
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.errorMessage = response?.message || 'flightServiceUnavailable';
+        return;
+      }
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.flights ?? pageData;
       this.flights = Array.isArray(rows) ? rows : [];
@@ -160,6 +164,7 @@ export class FlightsList implements OnInit, OnChanges {
         timer: 2200,
         timerProgressBar: true,
       });
+      this.loadFlights();
       this.cdr.markForCheck();
     });
   }
@@ -172,13 +177,24 @@ export class FlightsList implements OnInit, OnChanges {
   }
 
   async deleteFlight(flight: any): Promise<void> {
-    if (this.deletingId !== null) return;
-    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', reverseButtons: true });
+    if (flight?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
+    const id = Number(flight?.id);
+    if (!Number.isInteger(id) || id <= 0) return;
+    const result = await Swal.fire({ title: this.translate.instant('confirmDeleteRecord'), text: this.translate.instant('recordDeleteWarning'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('delete'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#e11d48', focusCancel: true, reverseButtons: true });
     if (!result.isConfirmed) return;
-    this.deletingId = Number(flight.id);
-    this.apiService.deleteRequest(`Flights/${flight.id}`).pipe(
-      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of(null); }),
+    this.deletingId = id;
+    this.apiService.deleteRequest(`Flights/${id}`).pipe(
+      catchError(() => { Swal.fire({ icon: 'error', title: this.translate.instant('recordDeleteError') }); return of({ deleteFailed: true }); }),
       finalize(() => { this.deletingId = null; this.cdr.markForCheck(); }),
-    ).subscribe((response: any) => { if (response?.isSuccess === false || response === null) return; this.loadFlights(); });
+    ).subscribe((response: any) => {
+      if (response?.deleteFailed) return;
+      if (response?.isSuccess === false) {
+        Swal.fire({ icon: 'error', title: response?.message || this.translate.instant('recordDeleteError') });
+        return;
+      }
+      if (this.flights.length === 1 && this.paginationInfo.page > 1) this.paginationInfo.page--;
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('flightDeleted'), showConfirmButton: false, timer: 2200 });
+      this.loadFlights();
+    });
   }
 }

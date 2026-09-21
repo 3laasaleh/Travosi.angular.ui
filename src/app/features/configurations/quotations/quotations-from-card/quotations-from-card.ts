@@ -422,7 +422,28 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         arrivalTime: this.toApiTime(transfer.arrivalTime),
       });
     });
-    return items;
+    return items.map((item) => {
+      const quantity = Math.max(1, Number(item.quantity) || 1);
+      const sellingPrice = Number(item.sellingPrice);
+      const pricePerItem = Number.isFinite(sellingPrice) ? sellingPrice : 0;
+      const transfer = item.itemType === 5 ? {
+        from: item.from,
+        to: item.to,
+        transferDate: item.transferDate,
+        fromTime: item.fromTime,
+        arrivalTime: item.arrivalTime,
+        price: pricePerItem,
+        isQuoteIncludePrice: true,
+      } : undefined;
+
+      return {
+        ...item,
+        quantity,
+        pricePerItem,
+        totalPrice: pricePerItem * quantity,
+        ...(transfer ? { quotationTransfer: transfer } : {}),
+      };
+    });
   }
 
   private savedCatalogItem(itemType: number, reference: 'packageId' | 'tourId' | 'hotelId' | 'flightId', id: number, audience?: 'adults' | 'children'): any | undefined {

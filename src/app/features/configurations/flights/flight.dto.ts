@@ -8,7 +8,9 @@ export interface CreateFlightSegmentDto {
   originAirport: string;
   destinationAirport: string;
   departureDate: string;
+  departureTime: string;
   arrivalDate: string;
+  arrivalTime: string;
   cabinClass: string;
 }
 

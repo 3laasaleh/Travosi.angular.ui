@@ -173,6 +173,8 @@ describe('QuotationsFromCard', () => {
       flightId: flight.id,
       quantity: 4,
       sellingPrice: 125,
+      pricePerItem: 125,
+      totalPrice: 500,
     });
     expect(payload.items.find((item: any) => item.itemType === 5)).toMatchObject({
       itemType: 5,
@@ -183,6 +185,13 @@ describe('QuotationsFromCard', () => {
       transferDate: '2030-05-10',
       fromTime: '09:30:00',
       arrivalTime: '10:45:00',
+      quotationTransfer: {
+        from: 'Cairo Airport',
+        to: 'Downtown Hotel',
+        transferDate: '2030-05-10',
+        fromTime: '09:30:00',
+        arrivalTime: '10:45:00',
+      },
     });
     expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({ toast: true, icon: 'success' }));
   });

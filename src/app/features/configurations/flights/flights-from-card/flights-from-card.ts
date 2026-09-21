@@ -116,7 +116,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
       validators: [Validators.min(1), Validators.max(99)],
     }),
     legs: new FormArray<FormGroup>([]),
-  });
+  }, { validators: [FlightsFromCard.roundTripReturnDateValidator] });
 
   constructor(
     private readonly api: ApiService,
@@ -360,7 +360,8 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const next = this.segments(legIndex).at(stopIndex + 1);
 
     const milliseconds =
-      current?.controls['departureDate'].value - current?.controls['arrivalDate'].value;
+      Date.parse(String(next?.controls['departureDate'].value ?? '')) -
+      Date.parse(String(current?.controls['arrivalDate'].value ?? ''));
     if (!Number.isFinite(milliseconds) || milliseconds < 0) return '—';
     const minutes = Math.round(milliseconds / 60000);
     return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
@@ -375,6 +376,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
         segment.controls['arrivalDate'].updateValueAndValidity();
       }
     }
+    this.flightForm.updateValueAndValidity();
     this.flightForm.markAllAsTouched();
     if (this.isLoading || this.flightForm.invalid) return;
     const raw = this.flightForm.getRawValue();
@@ -395,8 +397,10 @@ export class FlightsFromCard implements OnInit, OnChanges {
           ticketNumber: String(segment.ticketNumber ?? '').trim() || null,
           originAirport: this.code(segment.originAirport),
           destinationAirport: this.code(segment.destinationAirport),
-          departureDate: String(segment.departureDate),
-          arrivalDate: String(segment.arrivalDate),
+          departureDate: this.datePart(segment.departureDate),
+          departureTime: this.timePart(segment.departureDate),
+          arrivalDate: this.datePart(segment.arrivalDate),
+          arrivalTime: this.timePart(segment.arrivalDate),
           cabinClass: String(segment.cabinClass).toUpperCase(),
         })),
       })),
@@ -533,12 +537,12 @@ export class FlightsFromCard implements OnInit, OnChanges {
         }),
         departureDate: new FormControl(this.datetime(value.departureDate), {
           nonNullable: true,
-          validators: [Validators.required, FlightsFromCard.notBeforeTodayValidator],
+          validators: [Validators.required, FlightsFromCard.dateTimeRequiredValidator, FlightsFromCard.notBeforeTodayValidator],
         }),
 
         arrivalDate: new FormControl(this.datetime(value.arrivalDate), {
           nonNullable: true,
-          validators: [Validators.required, FlightsFromCard.notBeforeTodayValidator],
+          validators: [Validators.required, FlightsFromCard.dateTimeRequiredValidator, FlightsFromCard.notBeforeTodayValidator],
         }),
 
         cabinClass: new FormControl(
@@ -588,6 +592,13 @@ export class FlightsFromCard implements OnInit, OnChanges {
   private datetime(value: unknown): string {
     return value ? String(value).slice(0, 16) : '';
   }
+  private datePart(value: unknown): string {
+    return String(value ?? '').slice(0, 10);
+  }
+  private timePart(value: unknown): string {
+    const match = String(value ?? '').match(/[T\s](\d{2}:\d{2})/);
+    return match ? `${match[1]}:00` : '';
+  }
 
   private toFlightType(value: unknown): FlightTypeEnum {
     if (value === FlightTypeEnum.OneWay || value === FlightTypeEnum.RoundTrip || value === FlightTypeEnum.MultiCity) {
@@ -625,13 +636,32 @@ export class FlightsFromCard implements OnInit, OnChanges {
     return result;
   }
 
+  private static dateTimeRequiredValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null; // Let Validators.required handle an empty value.
+    return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(String(control.value))
+      ? null
+      : { timeRequired: true };
+  }
+
   private static segmentDateRangeValidator(control: AbstractControl): ValidationErrors | null {
     const departure = Date.parse(String(control.get('departureDate')?.value ?? ''));
     const arrival = Date.parse(String(control.get('arrivalDate')?.value ?? ''));
 
     if (!Number.isFinite(departure) || !Number.isFinite(arrival)) return null;
 
-    return arrival < departure ? { arrivalBeforeDeparture: true } : null;
+    return arrival <= departure ? { arrivalNotAfterDeparture: true } : null;
+  }
+
+  private static roundTripReturnDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (control.get('flightType')?.value !== FlightTypeEnum.RoundTrip) return null;
+    const legs = control.get('legs') as FormArray<FormGroup> | null;
+    if (!legs || legs.length < 2) return null;
+
+    const outboundDate = String(legs.at(0).get('segments.0.departureDate')?.value ?? '').slice(0, 10);
+    const returnDate = String(legs.at(1).get('segments.0.departureDate')?.value ?? '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(outboundDate) || !/^\d{4}-\d{2}-\d{2}$/.test(returnDate)) return null;
+
+    return returnDate <= outboundDate ? { returnDateNotAfterDeparture: true } : null;
   }
 
   private static legConnectionValidator(control: AbstractControl): ValidationErrors | null {
