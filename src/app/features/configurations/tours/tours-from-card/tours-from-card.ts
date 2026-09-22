@@ -975,6 +975,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       isFreeCancelation: tour.isFreeCancelation === true,
       isNileCruise: tour.isNileCruise === true,
       isOneDayTour: tour.isOneDayTour === true,
+      showInRealtedTourSection: tour.showInRealtedTourSection === true,
+      showInRecomendedTourSection: tour.showInRecomendedTourSection === true,
       isActive: tour.isActive !== false,
     });
     this.syncOneDayTourState();
@@ -1026,6 +1028,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       isFreeCancelation: false,
       isNileCruise: false,
       isOneDayTour: false,
+      showInRealtedTourSection: false,
+      showInRecomendedTourSection: false,
       isActive: true,
     });
     this.syncOneDayTourState();
@@ -1120,6 +1124,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         isFreeCancelation: new FormControl(false),
         isNileCruise: new FormControl(false, { nonNullable: true }),
         isOneDayTour: new FormControl(false, { nonNullable: true }),
+        showInRealtedTourSection: new FormControl(false, { nonNullable: true }),
+        showInRecomendedTourSection: new FormControl(false, { nonNullable: true }),
         isActive: new FormControl(true, { nonNullable: true }),
         highlights: new FormArray<FormGroup>([]),
         includes: new FormArray<FormGroup>([]),
@@ -1291,6 +1297,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       IsFreeCancelation: form.isFreeCancelation,
       IsNileCruise: form.isNileCruise,
       IsOneDayTour: form.isOneDayTour,
+      ShowInRealtedTourSection: form.showInRealtedTourSection,
+      ShowInRecomendedTourSection: form.showInRecomendedTourSection,
       Highlights: this.toLocalizedListPayload(form.highlights),
       Includes: this.toLocalizedListPayload(form.includes),
       Excludes: this.toLocalizedListPayload(form.excludes),

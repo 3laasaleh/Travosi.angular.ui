@@ -2,168 +2,133 @@
 <app-breadcrumbs />
 <main class="min-h-screen bg-slate-50 px-4 py-10">
   @if (loading) {
-    <p class="text-center text-slate-500">{{ 'loading' | translate }}</p>
+  <p class="text-center text-slate-500">{{ 'loading' | translate }}</p>
   } @else if (hotel) {
-    <section class="mx-auto max-w-7xl">
-      <div class="rounded-3xl bg-slate-900 p-8 text-white">
-        <p class="text-amber-300">{{ hotel.starRating }} ★</p>
-        <h1 class="mt-2 text-4xl font-semibold">{{ hotelName() }}</h1>
-        <p class="mt-2 text-slate-300">{{ hotelAddress() }}</p>
-        <p class="mt-4 max-w-3xl">{{ hotelDescription() }}</p>
-      </div>
-      <form
-        class="mt-6 grid gap-3 rounded-3xl border border-slate-200 bg-white p-5 md:grid-cols-5"
-        (ngSubmit)="searchAvailability()"
-      >
-        <label class="text-sm font-medium"
-          >{{ 'checkIn' | translate
-          }}<input
-            required
-            [(ngModel)]="checkInDate"
-            name="checkInDate"
-            type="date"
-            class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-        /></label>
-        <label class="text-sm font-medium"
-          >{{ 'checkOut' | translate
-          }}<input
-            required
-            [(ngModel)]="checkOutDate"
-            name="checkOutDate"
-            type="date"
-            class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-        /></label>
-        <label class="text-sm font-medium"
-          >{{ 'adults' | translate
-          }}<input
-            [(ngModel)]="adults"
-            name="adults"
-            type="number"
-            min="1"
-            class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-        /></label>
-        <label class="text-sm font-medium"
-          >{{ 'rooms' | translate
-          }}<input
-            [(ngModel)]="roomCount"
-            name="roomCount"
-            type="number"
-            min="1"
-            class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-        /></label>
-        <label class="text-sm font-medium"
-          >{{ 'children' | translate
-          }}<input
-            [(ngModel)]="children"
-            name="children"
-            type="number"
-            min="0"
-            max="17"
-            (ngModelChange)="onChildrenChange()"
-            class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-        /></label>
-        @for (age of childrenAges; track $index) {
-          <label class="text-sm font-medium"
-            >{{ 'childAge' | translate }} {{ $index + 1
-            }}<input
-              [(ngModel)]="childrenAges[$index]"
-              [name]="'childAge' + $index"
-              type="number"
-              min="0"
-              max="17"
-              class="mt-1 block w-full rounded-xl border border-slate-300 p-2"
-          /></label>
-        }
-        <button
-          class="mt-6 rounded-full bg-primary px-4 py-2 font-semibold text-white disabled:opacity-60"
-          [disabled]="searching"
-        >
-          {{ searching ? ('loading' | translate) : ('checkAvailability' | translate) }}
-        </button>
-      </form>
-      <div class="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div class="space-y-4">
-          <h2 class="text-2xl font-semibold">{{ 'roomTypes' | translate }}</h2>
-          @for (room of hotel.rooms; track room.id) {
-            <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white md:flex">
-              @if (image(room); as url) {
-                <img class="h-52 w-full object-cover md:w-64" [src]="url" [alt]="roomName(room)" />
-              }
-              <div class="flex-1 p-5">
-                <h3 class="text-xl font-semibold">{{ roomName(room) }}</h3>
-                <p class="mt-1 text-sm text-slate-500">
-                  {{ room.bedConfiguration }} · {{ room.roomSize }} {{ room.sizeUnit }}
-                </p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  @for (amenity of room.amenities; track amenity.id) {
-                    <span class="rounded-full bg-slate-100 px-2 py-1 text-xs"
-                      ><i class="mdi text-primary" [class]="'mdi-' + amenity.iconKey"></i>
-                      {{ amenityName(amenity) }}</span
-                    >
-                  }
-                </div>
-                @if (roomAvailability(room.id); as availability) {
-                  @for (plan of availability.ratePlans; track plan.ratePlanId) {
-                    <div class="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
-                      <div class="flex justify-between gap-3">
-                        <span class="font-medium">{{ ratePlanName(room, plan.ratePlanId) }}</span
-                        ><span class="font-semibold"
-                          >{{ plan.grandTotal }} {{ plan.currencyCode }} · {{ plan.numberOfNights }}
-                          {{ 'nights' | translate }}</span
-                        >
-                      </div>
-                      @if (ratePlan(room, plan.ratePlanId); as definition) { @if (mealPlanName(definition)) { <p class="mt-2 text-sm text-slate-600"><i class="mdi mdi-silverware-fork-knife text-primary"></i> {{ mealPlanName(definition) }}</p> } @if (definition.benefits?.length) { <div class="mt-2 flex flex-wrap gap-2">@for (benefit of definition.benefits; track benefit.id) { <span class="rounded-full bg-white px-2 py-1 text-xs"><i class="mdi text-primary" [class]="'mdi-' + benefit.iconKey"></i> {{ amenityName(benefit) }}</span> }</div> } }
-                      <details class="mt-2 text-sm text-slate-600">
-                        <summary class="cursor-pointer font-medium text-primary">
-                          {{ 'viewPriceBreakdown' | translate }}
-                        </summary>
-                        @for (period of plan.periodBreakdown; track period.startDate) {
-                          <p class="mt-1">
-                            {{ period.startDate }} – {{ period.endDate }}: {{ period.nights }} ×
-                            {{ period.pricePerNight }} = {{ period.subtotal }}
-                            {{ plan.currencyCode }}
-                          </p>
-                        }
-                        <p class="mt-2 font-medium">
-                          {{ 'accommodationTotal' | translate }}: {{ plan.accommodationTotal }} ·
-                          {{ 'taxes' | translate }}: {{ plan.taxes }} ·
-                          {{ 'serviceFee' | translate }}: {{ plan.serviceFees }}
-                        </p>
-                      </details>
-                    </div>
-                  }
-                } @else {
-                  <p class="mt-4 text-sm text-slate-500">
-                    {{ 'chooseDatesForHotelPrice' | translate }}
-                  </p>
-                }
-              </div>
-            </article>
+  <section class="mx-auto max-w-7xl">
+    <div class="rounded-3xl bg-slate-900 p-8 text-white">
+      <p class="text-amber-300">{{ hotel.starRating }} ★</p>
+      <h1 class="mt-2 text-4xl font-semibold">{{ hotelName() }}</h1>
+      <p class="mt-2 text-slate-300">{{ hotelAddress() }}</p>
+      <p class="mt-4 max-w-3xl">{{ hotelDescription() }}</p>
+    </div>
+    <form class="mt-6 grid gap-3 rounded-3xl border border-slate-200 bg-white p-5 md:grid-cols-5"
+      (ngSubmit)="searchAvailability()">
+      <label class="text-sm font-medium">{{ 'checkIn' | translate
+        }}<input required [(ngModel)]="checkInDate" name="checkInDate" type="date"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      <label class="text-sm font-medium">{{ 'checkOut' | translate
+        }}<input required [(ngModel)]="checkOutDate" name="checkOutDate" type="date"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      <label class="text-sm font-medium">{{ 'adults' | translate
+        }}<input [(ngModel)]="adults" name="adults" type="number" min="1"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      <label class="text-sm font-medium">{{ 'rooms' | translate
+        }}<input [(ngModel)]="roomCount" name="roomCount" type="number" min="1"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      <label class="text-sm font-medium">{{ 'children' | translate
+        }}<input [(ngModel)]="children" name="children" type="number" min="0" max="17"
+          (ngModelChange)="onChildrenChange()"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      @for (age of childrenAges; track $index) {
+      <label class="text-sm font-medium">{{ 'childAge' | translate }} {{ $index + 1
+        }}<input [(ngModel)]="childrenAges[$index]" [name]="'childAge' + $index" type="number" min="0" max="17"
+          class="mt-1 block w-full rounded-xl border border-slate-300 p-2" /></label>
+      }
+      <button class="mt-6 rounded-full bg-primary px-4 py-2 font-semibold text-white disabled:opacity-60"
+        [disabled]="searching">
+        {{ searching ? ('loading' | translate) : ('checkAvailability' | translate) }}
+      </button>
+    </form>
+    <div class="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div class="space-y-4">
+        <h2 class="text-2xl font-semibold">{{ 'roomTypes' | translate }}</h2>
+        @for (room of hotel.rooms; track room.id) {
+        <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white md:flex">
+          @if (image(room); as url) {
+          <img class="h-52 w-full object-cover md:w-64" [src]="url" [alt]="roomName(room)" />
           }
-        </div>
-        <aside class="h-fit rounded-3xl border border-slate-200 bg-white p-5">
-          <h2 class="font-semibold">{{ 'hotelFacilities' | translate }}</h2>
-          <div class="mt-3 space-y-2">
-            @for (amenity of hotel.amenities; track amenity.id) {
-              <p class="text-sm">
-                <i class="mdi text-primary" [class]="'mdi-' + amenity.iconKey"></i>
-                {{ amenityName(amenity) }}
-              </p>
-            }
-          </div>
-          @if (childPolicies.length) {
-            <h2 class="mt-6 font-semibold">{{ 'childrenPolicies' | translate }}</h2>
-            <div class="mt-3 space-y-2">
-              @for (policy of childPolicies; track policy.id) {
-                <p class="text-sm text-slate-600">{{ childPolicyText(policy) }}</p>
+          <div class="flex-1 p-5">
+            <h3 class="text-xl font-semibold">{{ roomName(room) }}</h3>
+            <p class="mt-1 text-sm text-slate-500">
+              {{ room.bedConfiguration }} · {{ room.roomSize }} {{ room.sizeUnit }}
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              @for (amenity of room.amenities; track amenity.id) {
+              <span class="rounded-full bg-slate-100 px-2 py-1 text-xs"><i class="mdi text-primary"
+                  [class]="'mdi-' + amenity.iconKey"></i>
+                {{ amenityName(amenity) }}</span>
               }
             </div>
-          }
-        </aside>
+            @if (roomAvailability(room.id); as availability) {
+            @for (plan of availability.ratePlans; track plan.ratePlanId) {
+            <div class="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+              <div class="flex justify-between gap-3">
+                <span class="font-medium">{{ ratePlanName(room, plan.ratePlanId) }}</span><span class="font-semibold">{{
+                  plan.grandTotal }} {{ plan.currencyCode }} · {{ plan.numberOfNights }}
+                  {{ 'nights' | translate }}</span>
+              </div>
+              @if (ratePlan(room, plan.ratePlanId); as definition)
+              { @if (mealPlanName(definition))
+              { <p class="mt-2 text-sm text-slate-600">
+                <i class="mdi mdi-silverware-fork-knife text-primary"></i>
+                {{ mealPlanName(definition) }}
+              </p> }
+              @if (definition.benefits?.length)
+              { <div class="mt-2 flex flex-wrap gap-2">
+                @for (benefit of definition.benefits; track benefit.id)
+                { <span class="rounded-full bg-white px-2 py-1 text-xs"><i class="mdi text-primary"
+                    [class]="'mdi-' + benefit.iconKey"></i> {{ amenityName(benefit) }}</span> }</div> } }
+              <details class="mt-2 text-sm text-slate-600">
+                <summary class="cursor-pointer font-medium text-primary">
+                  {{ 'viewPriceBreakdown' | translate }}
+                </summary>
+                @for (period of plan.periodBreakdown; track period.startDate) {
+                <p class="mt-1">
+                  {{ period.startDate }} – {{ period.endDate }}: {{ period.nights }} ×
+                  {{ period.pricePerNight }} = {{ period.subtotal }}
+                  {{ plan.currencyCode }}
+                </p>
+                }
+                <p class="mt-2 font-medium">
+                  {{ 'accommodationTotal' | translate }}: {{ plan.accommodationTotal }} ·
+                  {{ 'taxes' | translate }}: {{ plan.taxes }} ·
+                  {{ 'serviceFee' | translate }}: {{ plan.serviceFees }}
+                </p>
+              </details>
+            </div>
+            }
+            } @else {
+            <p class="mt-4 text-sm text-slate-500">
+              {{ 'chooseDatesForHotelPrice' | translate }}
+            </p>
+            }
+          </div>
+        </article>
+        }
       </div>
-    </section>
+      <aside class="h-fit rounded-3xl border border-slate-200 bg-white p-5">
+        <h2 class="font-semibold">{{ 'hotelFacilities' | translate }}</h2>
+        <div class="mt-3 space-y-2">
+          @for (amenity of hotel.amenities; track amenity.id) {
+          <p class="text-sm">
+            <i class="mdi text-primary" [class]="'mdi-' + amenity.iconKey"></i>
+            {{ amenityName(amenity) }}
+          </p>
+          }
+        </div>
+        @if (childPolicies.length) {
+        <h2 class="mt-6 font-semibold">{{ 'childrenPolicies' | translate }}</h2>
+        <div class="mt-3 space-y-2">
+          @for (policy of childPolicies; track policy.id) {
+          <p class="text-sm text-slate-600">{{ childPolicyText(policy) }}</p>
+          }
+        </div>
+        }
+      </aside>
+    </div>
+  </section>
   } @else {
-    <p class="text-center text-slate-500">{{ 'noHotelsFound' | translate }}</p>
+  <p class="text-center text-slate-500">{{ 'noHotelsFound' | translate }}</p>
   }
 </main>
 <app-footer-one />

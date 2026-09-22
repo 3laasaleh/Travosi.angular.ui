@@ -28,7 +28,7 @@ export class HotelFacilitiesPage implements OnInit {
     id: new FormControl(0, { nonNullable: true }),
     nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
     nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
-    iconKey: new FormControl('circle-check', { nonNullable: true, validators: [Validators.required] }),
+    iconKey: new FormControl('check-circle', { nonNullable: true, validators: [Validators.required] }),
     facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
     displayOrder: new FormControl(0, { nonNullable: true }),
@@ -55,7 +55,7 @@ export class HotelFacilitiesPage implements OnInit {
   }
   applyFilter(): void { const value = this.filter.trim().toLowerCase(); this.filtered = !value ? this.facilities : this.facilities.filter(x => `${x.nameEng} ${x.nameAr} ${x.iconKey}`.toLowerCase().includes(value)); }
   edit(item: Amenity): void { this.selected = item; this.form.reset({ ...item, facilityCategoryId: item.facilityCategoryId ?? 0 }); }
-  newFacility(): void { this.selected = null; this.form.reset({ id: 0, nameEng: '', nameAr: '', iconKey: this.icons[0] ?? 'circle-check', facilityCategoryId: this.categories[0]?.id ?? 0, kind: 2, displayOrder: this.facilities.length, isActive: true }); }
+  newFacility(): void { this.selected = null; this.form.reset({ id: 0, nameEng: '', nameAr: '', iconKey: this.icons[0] ?? 'check-circle', facilityCategoryId: this.categories[0]?.id ?? 0, kind: 2, displayOrder: this.facilities.length, isActive: true }); }
   save(): void {
     if (this.saving || this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving = true; this.error = '';

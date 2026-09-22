@@ -1,0 +1,44 @@
+<section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div><h3 class="font-semibold">{{ 'roomTypes' | translate }}</h3><p class="mt-1 text-sm text-slate-500">{{ 'manageHotelRoomsHint' | translate }}</p></div>
+    <button type="button" class="rounded-full border border-primary px-3 py-1.5 text-sm font-semibold text-primary" (click)="reset()"><i class="mdi mdi-plus"></i> {{ 'addRoom' | translate }}</button>
+  </div>
+
+  @if (error) { <p class="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ error | translate }}</p> }
+  @if (loading) { <p class="py-6 text-center text-sm text-slate-500">{{ 'loading' | translate }}</p> }
+
+  <div class="mt-4 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(420px,1.1fr)]">
+    <div class="space-y-3">
+      @for (room of rooms; track room.id) {
+        <article class="rounded-xl border border-slate-200 p-4">
+          <div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-semibold">{{ room.nameEng || room.name }}</h4><p class="mt-1 text-xs text-slate-500">{{ room.roomTypeName }} · {{ room.mealPlanName }} · {{ room.maxAdults }} {{ 'adults' | translate }}</p><p class="mt-1 text-sm text-primary">{{ room.sellingPrice }} {{ 'pricePerNight' | translate }}</p></div><div class="flex gap-2"><button type="button" class="rounded-full border border-primary px-3 py-1 text-xs text-primary" (click)="edit(room)"><i class="mdi mdi-pencil-outline"></i> {{ 'edit' | translate }}</button><button type="button" class="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-700" (click)="openPricing(room)"><i class="mdi mdi-calendar-currency-outline"></i> {{ 'roomPricing' | translate }}</button></div></div>
+          @if (room.amenities?.length) { <p class="mt-3 text-xs text-slate-500">{{ room.amenities.length }} {{ 'roomFacilities' | translate }}</p> }
+        </article>
+      } @empty { @if (!loading) { <p class="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">{{ 'noRoomsFound' | translate }}</p> } }
+    </div>
+
+    <form class="rounded-2xl border border-primary/20 bg-primary/5 p-4" [formGroup]="roomForm" (ngSubmit)="save()">
+      <div class="flex items-center justify-between"><h4 class="font-semibold">{{ (editingRoom ? 'editRoom' : 'addRoom') | translate }}</h4>@if (editingRoom) { <button type="button" class="text-sm text-slate-600" (click)="reset()">{{ 'cancel' | translate }}</button> }</div>
+      <div class="mt-4 grid gap-3 md:grid-cols-2">
+        <label class="text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" /></label>
+        <label class="text-sm">{{ 'roomType' | translate }}<select formControlName="roomType" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of roomTypes; track type.value) { <option [value]="type.value">{{ type.label }}</option> }</select></label>
+        <label class="text-sm">{{ 'mealPlans' | translate }}<select formControlName="mealPlan" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (plan of mealPlans; track plan.value) { <option [value]="plan.value">{{ plan.label }}</option> }</select></label>
+        <label class="text-sm">{{ 'adults' | translate }}<input formControlName="maxAdults" type="number" min="1" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm">{{ 'children' | translate }}<input formControlName="maxChildren" type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm">{{ 'infants' | translate }}<input formControlName="maxInfants" type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm">{{ 'totalInventory' | translate }}<input formControlName="totalInventory" type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm">{{ 'costPrice' | translate }}<input formControlName="costPrice" type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+        <label class="text-sm">{{ 'sellingPrice' | translate }}<input formControlName="sellingPrice" type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+      </div>
+      <label class="mt-3 block text-sm">{{ 'englishDescription' | translate }}<textarea formControlName="descriptionEng" rows="2" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2"></textarea></label>
+      <label class="mt-3 block text-sm" dir="rtl">{{ 'arabicDescription' | translate }}<textarea formControlName="descriptionAr" rows="2" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right"></textarea></label>
+      <label class="mt-3 flex items-center gap-2 text-sm"><input formControlName="isPublished" type="checkbox" />{{ 'published' | translate }}</label>
+
+      <section class="mt-5 rounded-xl border border-slate-200 bg-white p-3"><div class="mb-3"><h5 class="font-semibold">{{ 'roomFacilities' | translate }}</h5><p class="text-xs text-slate-500">{{ 'facilityPickerHint' | translate }}</p></div>
+        <div class="space-y-3">@for (group of facilityGroups; track group.id) { <fieldset class="rounded-lg border border-slate-200"><label class="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2 text-sm font-semibold"><input type="checkbox" [checked]="allSelected(group)" (change)="toggleGroup(group, $any($event.target).checked)" />{{ group.name }}</label><div class="grid gap-2 p-3 sm:grid-cols-2">@for (facility of group.facilities; track facility.id) { <label class="flex items-center gap-2 text-sm"><input type="checkbox" [checked]="selectedFacilityIds.has(facility.id)" (change)="toggleFacility(facility.id, $any($event.target).checked)" /><i class="mdi text-primary" [class]="'mdi-' + facility.iconKey"></i>{{ facility.nameEng }}</label> }</div></fieldset> } @empty { <p class="text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</p> }</div>
+      </section>
+      <button type="submit" [disabled]="saving" class="mt-5 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:opacity-60">@if (saving) { <i class="mdi mdi-loading mdi-spin"></i> {{ 'saving' | translate }} } @else { {{ 'save' | translate }} }</button>
+    </form>
+  </div>
+</section>

@@ -62,7 +62,7 @@
           </td>
           <td class="px-4 py-3 font-semibold">{{ item.flightNumber }}</td>
           <td class="px-4 py-3">{{ item.airlineName ?? item.airline?.name }}</td>
-          <td class="px-4 py-3">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</td>
+          <td class="px-4 py-3">{{ airportLabel(item.departureAirport, item.departureAirportName) }} <i class="mdi mdi-arrow-right"></i> {{ airportLabel(item.arrivalAirport, item.arrivalAirportName) }}</td>
           <td class="px-4 py-3">{{ item.arrivalDate | date: 'mediumDate' }}</td>
           <td class="px-4 py-3">{{ item.price }} {{currencyService.currentCurrency().symbol}}</td>
           <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span></td>
@@ -101,7 +101,7 @@
           <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span>
         </div>
         <p class="mt-1 text-sm text-slate-500">{{ item.airlineName ?? item.airline?.name }}</p>
-        <p class="mt-2 text-sm font-medium">{{ item.departureAirport }} <i class="mdi mdi-arrow-right"></i> {{ item.arrivalAirport }}</p>
+        <p class="mt-2 text-sm font-medium">{{ airportLabel(item.departureAirport, item.departureAirportName) }} <i class="mdi mdi-arrow-right"></i> {{ airportLabel(item.arrivalAirport, item.arrivalAirportName) }}</p>
         <p class="mt-2 text-sm"><span class="font-semibold">{{ item.price }}</span> </p>
         <div class="mt-4 flex gap-2">
           @if (item.isActive === false) {

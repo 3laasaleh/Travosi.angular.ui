@@ -28,6 +28,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { AirportPicker } from '../airport-picker/airport-picker';
+import type { AirportSearchResult } from '../airport-search.service';
 import {
   CreateFlightDto,
   FlightApiResponseDto,
@@ -42,14 +43,18 @@ interface FlightSegmentValue {
   flightNumber?: string;
   ticketNumber?: string;
   originAirport?: string;
+  originAirportName?: string | null;
   destinationAirport?: string;
+  destinationAirportName?: string | null;
   departureDate?: string;
   arrivalDate?: string;
   cabinClass?: string;
 }
 interface FlightLegValue {
   originAirport?: string;
+  originAirportName?: string | null;
   destinationAirport?: string;
+  destinationAirportName?: string | null;
   segments?: FlightSegmentValue[];
 }
 
@@ -95,7 +100,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
   readonly flightForm = new FormGroup({
     id: new FormControl(0, { nonNullable: true }),
-    flightType: new FormControl<FlightTypeEnum>(FlightTypeEnum.RoundTrip, { nonNullable: true }),
+    flightType: new FormControl<FlightTypeEnum>(FlightTypeEnum.OneWay, { nonNullable: true }),
     adults: new FormControl(1, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
@@ -192,6 +197,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   onTripTypeChange(type: FlightTypeEnum): void {
+    debugger
     this.flightForm.controls.flightType.setValue(type);
     if (type === FlightTypeEnum.OneWay)
       while (this.legs.length > 1) this.legs.removeAt(this.legs.length - 1);
@@ -211,10 +217,12 @@ export class FlightsFromCard implements OnInit, OnChanges {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
         }),
+        originAirportName: new FormControl(this.airportName(value.originAirportName), { nonNullable: true }),
         destinationAirport: new FormControl(this.code(value.destinationAirport), {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
         }),
+        destinationAirportName: new FormControl(this.airportName(value.destinationAirportName), { nonNullable: true }),
         connectionType: new FormControl<FlighConnectionTypeEnum>(
           rows.length > 1 ? FlighConnectionTypeEnum.STOPPED : FlighConnectionTypeEnum.DIRECT,
           {
@@ -245,6 +253,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   setConnectionType(legindex: number, type: FlighConnectionTypeEnum): void {
+    debugger
     const leg = this.legs.at(legindex);
     const rows = this.segments(legindex);
     if (type === FlighConnectionTypeEnum.DIRECT && rows.length > 1) {
@@ -258,6 +267,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
       rows.at(0).patchValue({
         ...first,
         destinationAirport: leg.controls['destinationAirport'].value,
+        destinationAirportName: leg.controls['destinationAirportName'].value,
         arrivalLocal: last.arrivalLocal,
         arrivalTimeZone: last.arrivalTimeZone,
       });
@@ -273,13 +283,16 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const current = finalSegment.getRawValue() as FlightSegmentValue;
     finalSegment.patchValue({
       destinationAirport: '',
+      destinationAirportName: '',
       arrivalDate: '',
     });
     rows.push(
       this.createSegment({
         ...current,
         originAirport: '',
+        originAirportName: '',
         destinationAirport: current.destinationAirport,
+        destinationAirportName: current.destinationAirportName,
         departureDate: '',
       }),
     );
@@ -295,6 +308,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const nextValue = next.getRawValue();
     previous.patchValue({
       destinationAirport: nextValue.destinationAirport,
+      destinationAirportName: nextValue.destinationAirportName,
       arrivalDate: nextValue.arrivalDate,
     });
     rows.removeAt(stopIndex + 1);
@@ -302,12 +316,15 @@ export class FlightsFromCard implements OnInit, OnChanges {
     this.synchronizeLeg(legIndex);
   }
 
-  onLegAirportChanged(legIndex: number, isOrigin: boolean): void {
+  onLegAirportSelected(legIndex: number, isOrigin: boolean, airport: AirportSearchResult): void {
+    debugger
     const leg = this.legs.at(legIndex);
     const controlName = isOrigin ? 'originAirport' : 'destinationAirport';
-    leg.controls[controlName].setValue(this.code(leg.controls[controlName].value), {
+    const nameControlName = isOrigin ? 'originAirportName' : 'destinationAirportName';
+    leg.controls[controlName].setValue(this.code(airport.code), {
       emitEvent: false,
     });
+    leg.controls[nameControlName].setValue(this.airportName(airport.name), { emitEvent: false });
     this.synchronizeLeg(legIndex);
     if (
       this.flightForm.controls.flightType.value === FlightTypeEnum.RoundTrip &&
@@ -323,16 +340,19 @@ export class FlightsFromCard implements OnInit, OnChanges {
       this.legs
         .at(legIndex + 1)
         .controls['originAirport'].setValue(leg.controls['destinationAirport'].value);
+      this.legs.at(legIndex + 1).controls['originAirportName'].setValue(leg.controls['destinationAirportName'].value);
       this.synchronizeLeg(legIndex + 1);
     }
   }
 
-  onStopAirportChanged(legIndex: number, segmentIndex: number): void {
+  onStopAirportSelected(legIndex: number, segmentIndex: number, airport: AirportSearchResult): void {
     const rows = this.segments(legIndex);
     const row = rows.at(segmentIndex);
-    const stopCode = this.code(row.controls['destinationAirport'].value);
+    const stopCode = this.code(airport.code);
     row.controls['destinationAirport'].setValue(stopCode, { emitEvent: false });
+    row.controls['destinationAirportName'].setValue(this.airportName(airport.name), { emitEvent: false });
     rows.at(segmentIndex + 1).controls['originAirport'].setValue(stopCode);
+    rows.at(segmentIndex + 1).controls['originAirportName'].setValue(this.airportName(airport.name));
     this.synchronizeLeg(legIndex);
   }
 
@@ -389,14 +409,18 @@ export class FlightsFromCard implements OnInit, OnChanges {
       baggageAllowanceKg: raw.baggageAllowanceKg ?? null,
       legs: raw.legs.map((leg: any) => ({
         originAirport: this.code(leg.originAirport),
+        originAirportName: this.optionalAirportName(leg.originAirportName),
         destinationAirport: this.code(leg.destinationAirport),
+        destinationAirportName: this.optionalAirportName(leg.destinationAirportName),
         segments: leg.segments.map((segment: any) => ({
           airlineId: Number(segment.airlineId),
           airlineCode: String(segment.airlineCode).trim().toUpperCase(),
           flightNumber: String(segment.flightNumber).trim(),
           ticketNumber: String(segment.ticketNumber ?? '').trim() || null,
           originAirport: this.code(segment.originAirport),
+          originAirportName: this.optionalAirportName(segment.originAirportName),
           destinationAirport: this.code(segment.destinationAirport),
+          destinationAirportName: this.optionalAirportName(segment.destinationAirportName),
           departureDate: this.datePart(segment.departureDate),
           departureTime: this.timePart(segment.departureDate),
           arrivalDate: this.datePart(segment.arrivalDate),
@@ -455,7 +479,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
     this.legs.clear();
     this.flightForm.patchValue({
       id: Number(flight.id ?? 0),
-      flightType: this.toFlightType(flight.flightType),
+      flightType: flight.flightType,
       adults: Number(flight.adults ?? 1),
       children: Number(flight.children ?? 0),
       infants: Number(flight.infants ?? 0),
@@ -470,14 +494,18 @@ export class FlightsFromCard implements OnInit, OnChanges {
   private legacyLeg(flight: any): FlightLegValue {
     return {
       originAirport: flight.departureAirport,
+      originAirportName: flight.departureAirportName,
       destinationAirport: flight.arrivalAirport,
+      destinationAirportName: flight.arrivalAirportName,
       segments: [
         {
           airlineId: flight.airlineId,
           airlineCode: flight.airlineCode ?? '',
           flightNumber: flight.flightNumber,
           originAirport: flight.departureAirport,
+          originAirportName: flight.departureAirportName,
           destinationAirport: flight.arrivalAirport,
+          destinationAirportName: flight.arrivalAirportName,
           departureDate: flight.departureDate,
           arrivalDate: flight.arrivalDate,
           cabinClass: flight.flightClassName ?? 'ECONOMY',
@@ -490,14 +518,13 @@ export class FlightsFromCard implements OnInit, OnChanges {
     this.legs.clear();
     this.flightForm.reset({
       id: 0,
-      flightType: FlightTypeEnum.RoundTrip,
+      flightType: FlightTypeEnum.OneWay,
       adults: 1,
       children: 0,
       infants: 0,
       price: 0,
       baggageAllowanceKg: 10,
     });
-    this.addLeg();
     this.addLeg();
     this.validationSubmitted = false;
     this.errorMessage = '';
@@ -531,10 +558,12 @@ export class FlightsFromCard implements OnInit, OnChanges {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
         }),
+        originAirportName: new FormControl(this.airportName(value.originAirportName), { nonNullable: true }),
         destinationAirport: new FormControl(this.code(value.destinationAirport), {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Z]{3}$/)],
         }),
+        destinationAirportName: new FormControl(this.airportName(value.destinationAirportName), { nonNullable: true }),
         departureDate: new FormControl(this.datetime(value.departureDate), {
           nonNullable: true,
           validators: [Validators.required, FlightsFromCard.dateTimeRequiredValidator, FlightsFromCard.notBeforeTodayValidator],
@@ -560,16 +589,21 @@ export class FlightsFromCard implements OnInit, OnChanges {
     rows.at(0).controls['originAirport'].setValue(this.code(leg.controls['originAirport'].value), {
       emitEvent: false,
     });
+    rows.at(0).controls['originAirportName'].setValue(leg.controls['originAirportName'].value, { emitEvent: false });
     rows
       .at(rows.length - 1)
       .controls['destinationAirport'].setValue(
         this.code(leg.controls['destinationAirport'].value),
         { emitEvent: false },
       );
+    rows.at(rows.length - 1).controls['destinationAirportName'].setValue(leg.controls['destinationAirportName'].value, { emitEvent: false });
     for (let index = 0; index < rows.length - 1; index++) {
       const destination = this.code(rows.at(index).controls['destinationAirport'].value);
       rows.at(index).controls['destinationAirport'].setValue(destination, { emitEvent: false });
       rows.at(index + 1).controls['originAirport'].setValue(destination, { emitEvent: false });
+      const destinationName = rows.at(index).controls['destinationAirportName'].value;
+      rows.at(index).controls['destinationAirportName'].setValue(destinationName, { emitEvent: false });
+      rows.at(index + 1).controls['originAirportName'].setValue(destinationName, { emitEvent: false });
     }
     rows.updateValueAndValidity();
     leg.updateValueAndValidity();
@@ -580,7 +614,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const inbound = this.legs.at(1);
     inbound.patchValue({
       originAirport: outbound.controls['destinationAirport'].value,
+      originAirportName: outbound.controls['destinationAirportName'].value,
       destinationAirport: outbound.controls['originAirport'].value,
+      destinationAirportName: outbound.controls['originAirportName'].value,
     });
     this.synchronizeLeg(1);
   }
@@ -589,6 +625,8 @@ export class FlightsFromCard implements OnInit, OnChanges {
       .trim()
       .toUpperCase();
   }
+  private airportName(value: unknown): string { return String(value ?? '').trim().slice(0, 250); }
+  private optionalAirportName(value: unknown): string | null { const name = this.airportName(value); return name || null; }
   private datetime(value: unknown): string {
     return value ? String(value).slice(0, 16) : '';
   }
@@ -599,24 +637,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const match = String(value ?? '').match(/[T\s](\d{2}:\d{2})/);
     return match ? `${match[1]}:00` : '';
   }
-
-  private toFlightType(value: unknown): FlightTypeEnum {
-    if (value === FlightTypeEnum.OneWay || value === FlightTypeEnum.RoundTrip || value === FlightTypeEnum.MultiCity) {
-      return value;
-    }
-
-    switch (String(value ?? '').trim().toUpperCase()) {
-      case 'ONE_WAY':
-      case 'ONEWAY':
-        return FlightTypeEnum.OneWay;
-      case 'MULTI_CITY':
-      case 'MULTICITY':
-        return FlightTypeEnum.MultiCity;
-      default:
-        return FlightTypeEnum.RoundTrip;
-    }
-  }
-
   private static notBeforeTodayValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) {
       return null; // Let Validators.required handle empty values
@@ -635,14 +655,12 @@ export class FlightsFromCard implements OnInit, OnChanges {
     const result = selectedDate < today ? { pastDate: true } : null;
     return result;
   }
-
   private static dateTimeRequiredValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null; // Let Validators.required handle an empty value.
     return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(String(control.value))
       ? null
       : { timeRequired: true };
   }
-
   private static segmentDateRangeValidator(control: AbstractControl): ValidationErrors | null {
     const departure = Date.parse(String(control.get('departureDate')?.value ?? ''));
     const arrival = Date.parse(String(control.get('arrivalDate')?.value ?? ''));
@@ -651,7 +669,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
     return arrival <= departure ? { arrivalNotAfterDeparture: true } : null;
   }
-
   private static roundTripReturnDateValidator(control: AbstractControl): ValidationErrors | null {
     if (control.get('flightType')?.value !== FlightTypeEnum.RoundTrip) return null;
     const legs = control.get('legs') as FormArray<FormGroup> | null;
@@ -663,7 +680,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
 
     return returnDate <= outboundDate ? { returnDateNotAfterDeparture: true } : null;
   }
-
   private static legConnectionValidator(control: AbstractControl): ValidationErrors | null {
     const rows = control.get('segments') as FormArray<FormGroup> | null;
     if (!rows?.length) return { noSegments: true };

@@ -238,10 +238,12 @@
             <h3 class="font-semibold">{{ 'pricingPeriods' | translate }}</h3>
             <button
               type="button"
-              class="rounded-full border border-primary px-3 py-1 text-sm text-primary"
+              class="inline-grid size-9 place-items-center rounded-full border border-primary text-lg text-primary"
               (click)="addPeriod()"
+              [attr.aria-label]="'addPricingPeriod' | translate"
+              [attr.title]="'addPricingPeriod' | translate"
             >
-              {{ 'addPricingPeriod' | translate }}
+              <i class="mdi mdi-plus"></i>
             </button>
           </div>
           <p class="mt-1 text-xs text-slate-600">{{ 'pricingExclusiveEndHint' | translate }}</p>
@@ -255,6 +257,7 @@
                 /><input
                   formControlName="endDate"
                   type="date"
+                  [min]="period.controls['startDate'].value"
                   class="rounded-xl border border-slate-300 p-2"
                 /><input
                   formControlName="nightlyRate"
@@ -266,8 +269,8 @@
                   ><input formControlName="isActive" type="checkbox" />{{
                     'active' | translate
                   }}</label
-                ><button type="button" class="text-rose-600" (click)="removePeriod($index)">
-                  {{ 'remove' | translate }}
+                ><button type="button" class="grid size-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50" (click)="removePeriod($index)" [attr.aria-label]="'remove' | translate" [attr.title]="'remove' | translate">
+                  <i class="mdi mdi-minus"></i>
                 </button>
               </div>
             }

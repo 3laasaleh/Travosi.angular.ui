@@ -1,1 +1,74 @@
-<section class="min-h-screen bg-slate-50 px-4 py-6 text-slate-800"><div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_380px]"><div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"><p class="text-sm font-semibold uppercase tracking-[.25em] text-primary">{{ 'hotelManagement' | translate }}</p><h1 class="mb-5 mt-1 text-2xl font-semibold">{{ 'facilityCategories' | translate }}</h1><div class="grid gap-4 md:grid-cols-2">@for (category of categories; track category.id) { <article class="rounded-2xl border border-slate-200 p-4"><div class="flex justify-between gap-3"><div><i class="mdi text-2xl text-primary" [class]="'mdi-' + category.iconKey"></i><h2 class="mt-2 font-semibold">{{ category.nameEng }}</h2><p dir="rtl" class="text-sm text-slate-500">{{ category.nameAr }}</p></div><button type="button" class="h-fit rounded-full border border-primary px-3 py-1 text-sm text-primary" (click)="edit(category)">{{ 'edit' | translate }}</button></div><div class="mt-4 space-y-1 border-t pt-3">@for (facility of category.facilities; track facility.id) { <p class="text-sm"><i class="mdi text-primary" [class]="'mdi-' + facility.iconKey"></i> {{ facility.nameEng }}</p> } @empty { <p class="text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</p> }</div></article> }</div></div><aside class="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-4 flex justify-between"><h2 class="font-semibold">{{ (selected ? 'editFacilityCategory' : 'addFacilityCategory') | translate }}</h2><button type="button" class="text-primary" (click)="reset()">{{ 'new' | translate }}</button></div><form [formGroup]="form" (ngSubmit)="save()" class="space-y-3"><label class="block text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border px-3 py-2" /></label><label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border px-3 py-2 text-right" /></label><label class="block text-sm">{{ 'selectIcon' | translate }}<select formControlName="iconKey" class="mt-1 w-full rounded-xl border px-3 py-2">@for (icon of icons; track icon) { <option [value]="icon">{{ icon }}</option> }</select></label><i class="mdi text-2xl text-primary" [class]="'mdi-' + form.controls.iconKey.value"></i><label class="block text-sm">{{ 'displayOrder' | translate }}<input formControlName="displayOrder" type="number" class="mt-1 w-full rounded-xl border px-3 py-2" /></label><label class="flex gap-2 text-sm"><input type="checkbox" formControlName="isActive" />{{ 'active' | translate }}</label><button class="w-full rounded-full bg-primary px-4 py-2 font-semibold text-white" [disabled]="saving">{{ 'save' | translate }}</button></form></aside></div></section>
+<section class="min-h-screen bg-slate-50 px-4 py-6 text-slate-800">
+  <div class="mx-auto grid max-w-7xl gap-6 xl:grid-cols-[minmax(0,1fr)_390px]">
+    <main class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+      <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[.25em] text-primary">{{ 'hotelManagement' | translate }}</p>
+          <h1 class="mt-1 text-2xl font-semibold">{{ 'hotelFacilities' | translate }}</h1>
+          <p class="mt-1 text-sm text-slate-500">{{ 'facilityCatalogHint' | translate }}</p>
+        </div>
+        <button type="button" class="rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5" (click)="newCategory()"><i class="mdi mdi-plus"></i> {{ 'addFacilityCategory' | translate }}</button>
+      </div>
+
+      @if (loading) {
+        <p class="py-12 text-center text-slate-500">{{ 'loading' | translate }}</p>
+      } @else {
+        <div class="space-y-4">
+          @for (category of categories; track category.id) {
+            <section class="overflow-hidden rounded-2xl border border-slate-200">
+              <header class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 px-4 py-3">
+                <div class="flex min-w-0 items-center gap-3">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><i class="mdi text-xl" [class]="'mdi-' + category.iconKey"></i></span>
+                  <div class="min-w-0"><h2 class="font-semibold">{{ category.nameEng }} <span class="font-normal text-slate-400">—</span> <span dir="rtl" class="font-normal text-slate-600">{{ category.nameAr }}</span></h2>@if (!category.isActive) { <span class="text-xs text-slate-500">{{ 'inactive' | translate }}</span> }</div>
+                </div>
+                <div class="flex items-center gap-2"><button type="button" class="rounded-full border border-slate-300 px-3 py-1.5 text-sm hover:border-primary hover:text-primary" (click)="editCategory(category)">{{ 'edit' | translate }}</button><button type="button" class="rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-white" (click)="newFacility(category)"><i class="mdi mdi-plus"></i> {{ 'addFacility' | translate }}</button></div>
+              </header>
+              <ul class="divide-y divide-slate-100">
+                @for (facility of category.facilities; track facility.id) {
+                  <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                    <div class="flex min-w-0 items-center gap-3"><i class="mdi text-xl text-primary" [class]="'mdi-' + facility.iconKey"></i><p class="min-w-0 text-sm font-medium">{{ facility.nameEng }} <span class="font-normal text-slate-400">—</span> <span dir="rtl" class="font-normal text-slate-600">{{ facility.nameAr }}</span></p>@if (!facility.isActive) { <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{{ 'inactive' | translate }}</span> }</div>
+                    <button type="button" class="rounded-full border border-primary px-3 py-1 text-sm text-primary" (click)="editFacility(category, facility)">{{ 'edit' | translate }}</button>
+                  </li>
+                } @empty {
+                  <li class="px-4 py-5 text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</li>
+                }
+              </ul>
+            </section>
+          } @empty {
+            <div class="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">{{ 'noFacilitiesFound' | translate }}</div>
+          }
+        </div>
+      }
+    </main>
+
+    <aside class="space-y-6 self-start xl:sticky xl:top-6">
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between gap-3"><h2 class="font-semibold">{{ (categoryForm.controls.id.value ? 'editFacilityCategory' : 'addFacilityCategory') | translate }}</h2><button type="button" class="text-sm text-primary" (click)="newCategory()">{{ 'new' | translate }}</button></div>
+        <form class="space-y-4" [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+          <label class="block text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border px-3 py-2" /></label>
+          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border px-3 py-2 text-right" /></label>
+          <div><p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }}</p><div class="grid grid-cols-6 gap-2">@for (icon of icons; track icon) { <button type="button" [title]="icon" (click)="categoryForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border" [class.border-primary]="categoryForm.controls.iconKey.value === icon" [class.bg-primary-50]="categoryForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon"></i></button> }</div><p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="'mdi-' + categoryForm.controls.iconKey.value"></i>{{ categoryForm.controls.iconKey.value }}</p></div>
+          <label class="block text-sm">{{ 'displayOrder' | translate }}<input formControlName="displayOrder" type="number" min="0" class="mt-1 w-full rounded-xl border px-3 py-2" /></label>
+          <label class="flex items-center gap-2 text-sm"><input formControlName="isActive" type="checkbox" />{{ 'active' | translate }}</label>
+          <button type="submit" [disabled]="savingCategory" class="w-full rounded-full bg-primary px-4 py-2 font-semibold text-white disabled:opacity-60">{{ savingCategory ? ('saving' | translate) : ('save' | translate) }}</button>
+        </form>
+      </section>
+
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between gap-3"><div><h2 class="font-semibold">{{ (facilityForm.controls.id.value ? 'editFacility' : 'addFacility') | translate }}</h2>@if (selectedCategory) { <p class="mt-1 text-xs text-slate-500">{{ selectedCategory.nameEng }} — <span dir="rtl">{{ selectedCategory.nameAr }}</span></p> }</div>@if (selectedCategory) { <button type="button" class="text-sm text-primary" (click)="newFacility()">{{ 'new' | translate }}</button> }</div>
+        @if (!selectedCategory) {
+          <p class="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">{{ 'selectCategoryFirst' | translate }}</p>
+        } @else {
+          <form class="space-y-4" [formGroup]="facilityForm" (ngSubmit)="saveFacility()">
+            <label class="block text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border px-3 py-2" /></label>
+            <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border px-3 py-2 text-right" /></label>
+            <div><p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }}</p><div class="grid grid-cols-6 gap-2">@for (icon of icons; track icon) { <button type="button" [title]="icon" (click)="facilityForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border" [class.border-primary]="facilityForm.controls.iconKey.value === icon" [class.bg-primary-50]="facilityForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon"></i></button> }</div><p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="'mdi-' + facilityForm.controls.iconKey.value"></i>{{ facilityForm.controls.iconKey.value }}</p></div>
+            <div class="grid grid-cols-2 gap-3"><label class="text-sm">{{ 'facilityType' | translate }}<select formControlName="kind" class="mt-1 w-full rounded-xl border px-2 py-2">@for (kind of kinds; track kind) { <option [ngValue]="kind">{{ kindName(kind) }}</option> }</select></label><label class="text-sm">{{ 'displayOrder' | translate }}<input formControlName="displayOrder" type="number" min="0" class="mt-1 w-full rounded-xl border px-3 py-2" /></label></div>
+            <label class="flex items-center gap-2 text-sm"><input formControlName="isActive" type="checkbox" />{{ 'active' | translate }}</label>
+            <button type="submit" [disabled]="savingFacility" class="w-full rounded-full bg-primary px-4 py-2 font-semibold text-white disabled:opacity-60">{{ savingFacility ? ('saving' | translate) : ('save' | translate) }}</button>
+          </form>
+        }
+      </section>
+    </aside>
+  </div>
+</section>

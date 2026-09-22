@@ -42,7 +42,7 @@
           <th class="px-4 py-3">{{ 'quotationNo' | translate }}</th>
           <th class="px-4 py-3">{{ 'customer' | translate }}</th>
           <th class="px-4 py-3">{{ 'travelDates' | translate }}</th>
-          <th class="px-4 py-3">{{ 'totalAmount' | translate }}</th>
+          <th class="px-4 py-3">{{ 'totalPrice' | translate }} </th>
           <th class="px-4 py-3">{{ 'status' | translate }}</th>
           <th class="px-4 py-3">{{ 'actions' | translate }}</th>
         </tr>
@@ -52,7 +52,7 @@
           <td class="px-4 py-3 font-semibold">{{ item.quotationNo }}</td>
           <td class="px-4 py-3">{{ item.customerName ?? item.customer?.firstName + ' ' + item.customer?.lastName }}</td>
           <td class="px-4 py-3">{{ item.travelStartDate }} — {{ item.travelEndDate }}</td>
-          <td class="px-4 py-3">{{ item.totalAmount }}</td>
+          <td class="px-4 py-3">{{ item.totalPrice }}</td>
           <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ statusKey(item) | translate }}</span></td>
           <td class="px-4 py-3">
             <div class="flex gap-2">

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
@@ -31,12 +32,15 @@ export class HotelRoomPricingPage implements OnInit {
   error = '';
   roomImages: RoomImageUpload[] = [];
   imageMessage = '';
+  private pendingRoomId: number | null = null;
   readonly maxImages = 5;
   readonly form = this.createForm();
 
-  constructor(private readonly api: ApiService, private readonly cdr: ChangeDetectorRef) {}
+  constructor(private readonly api: ApiService, private readonly cdr: ChangeDetectorRef, private readonly route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    const requestedHotelId = this.number(this.route.snapshot.queryParamMap.get('hotelId'));
+    this.pendingRoomId = this.number(this.route.snapshot.queryParamMap.get('roomId'));
     forkJoin({ hotels: this.api.get('Hotels?page=1&pageSize=500').pipe(catchError(() => of(null))), currencies: this.api.get('Currencies').pipe(catchError(() => of(null))), mealPlans: this.api.get('MealPlans/Active').pipe(catchError(() => of(null))), benefits: this.api.get('HotelAmenities?kind=3&isActive=true').pipe(catchError(() => of(null))) })
       .pipe(finalize(() => this.cdr.markForCheck()))
       .subscribe(result => {
@@ -45,6 +49,7 @@ export class HotelRoomPricingPage implements OnInit {
         this.mealPlans = this.rows(result.mealPlans);
         this.benefits = this.rows(result.benefits);
         if (!this.currencies.length) this.currencies = [{ name: 'USD', sign: '$' }];
+        if (requestedHotelId) this.onHotelChange(requestedHotelId);
       });
   }
 
@@ -59,7 +64,14 @@ export class HotelRoomPricingPage implements OnInit {
     if (!this.selectedHotelId) return;
     this.loading = true;
     this.api.get(`HotelRooms/ByHotel/${this.selectedHotelId}`).pipe(catchError(() => of(null)), finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
-      .subscribe(response => this.rooms = this.rows(response));
+      .subscribe(response => {
+        this.rooms = this.rows(response);
+        if (this.pendingRoomId && this.rooms.some(room => Number(room.id) === this.pendingRoomId)) {
+          const roomId = this.pendingRoomId;
+          this.pendingRoomId = null;
+          this.onRoomChange(roomId);
+        }
+      });
   }
 
   onRoomChange(value: unknown): void {

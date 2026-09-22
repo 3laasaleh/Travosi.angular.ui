@@ -18,7 +18,7 @@ export class AirportPicker implements ControlValueAccessor, OnDestroy {
   @Input() requiredErrorKey = '';
   @Input() showValidation = false;
   @Input() compact = false;
-  @Output() airportSelected = new EventEmitter<void>();
+  @Output() airportSelected = new EventEmitter<AirportSearchResult>();
 
   displayValue = '';
   results: AirportSearchResult[] = [];
@@ -135,7 +135,7 @@ export class AirportPicker implements ControlValueAccessor, OnDestroy {
     this.activeIndex = -1;
     this.onChange(airport.code);
     this.onTouched();
-    this.airportSelected.emit();
+    this.airportSelected.emit(airport);
     this.cdr.markForCheck();
   }
 

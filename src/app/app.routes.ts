@@ -93,8 +93,7 @@ const localizedApplicationRoutes: Routes = [
       },
       {
         path: 'hotel-facilities',
-        canActivate: [adminGuard],
-        loadComponent: () => import('./features/configurations/hotels/hotel-facilities-page').then((m) => m.HotelFacilitiesPage),
+        redirectTo: 'facility-categories',
       },
       {
         path: 'facility-categories',

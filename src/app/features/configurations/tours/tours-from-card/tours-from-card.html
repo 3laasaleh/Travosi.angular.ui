@@ -278,6 +278,16 @@
               'isOneDayTour' | translate
               }}</label>
           </div>
+          <div class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3">
+            <input id="showInRelatedTours" formControlName="showInRealtedTourSection" type="checkbox"
+              class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+            <label for="showInRelatedTours" class="text-sm font-medium">{{ 'showInRelatedTours' | translate }}</label>
+          </div>
+          <div class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3">
+            <input id="showInRecommendedTours" formControlName="showInRecomendedTourSection" type="checkbox"
+              class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+            <label for="showInRecommendedTours" class="text-sm font-medium">{{ 'showInRecommendedTours' | translate }}</label>
+          </div>
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label>
             <input formControlName="durationDays" type="text" appNumbersOnly

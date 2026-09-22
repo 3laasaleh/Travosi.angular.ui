@@ -176,6 +176,12 @@ export class FlightsList implements OnInit, OnChanges {
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 
+  airportLabel(code: unknown, name: unknown): string {
+    const airportCode = String(code ?? '').trim().toUpperCase();
+    const airportName = String(name ?? '').trim();
+    return airportName ? `${airportName} (${airportCode})` : airportCode;
+  }
+
   async deleteFlight(flight: any): Promise<void> {
     if (flight?.isActive !== false || this.deletingId !== null || this.statusUpdatingId !== null) return;
     const id = Number(flight?.id);

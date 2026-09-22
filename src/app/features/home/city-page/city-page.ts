@@ -142,7 +142,7 @@ export class CityPage implements OnInit {
         )
         .pipe(catchError(() => of(null))),
       recommended: this.api
-        .getUnauthntecated(`Tours?page=1&pageSize=5&destinationId=${destinationId}`)
+        .getUnauthntecated(`Tours/RecommendedTours?page=1&pageSize=5&destinationId=${destinationId}`)
         .pipe(catchError(() => of(null))),
     })
       .pipe(

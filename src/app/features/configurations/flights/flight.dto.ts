@@ -6,7 +6,9 @@ export interface CreateFlightSegmentDto {
   flightNumber: string;
   ticketNumber: string | null;
   originAirport: string;
+  originAirportName: string | null;
   destinationAirport: string;
+  destinationAirportName: string | null;
   departureDate: string;
   departureTime: string;
   arrivalDate: string;
@@ -16,7 +18,9 @@ export interface CreateFlightSegmentDto {
 
 export interface CreateFlightLegDto {
   originAirport: string;
+  originAirportName: string | null;
   destinationAirport: string;
+  destinationAirportName: string | null;
   segments: CreateFlightSegmentDto[];
 }
 

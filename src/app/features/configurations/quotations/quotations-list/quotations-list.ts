@@ -142,7 +142,9 @@ export class QuotationsList implements OnInit, OnChanges {
 
   canDelete(quotation: any): boolean {
     const status = this.quotationStatus(quotation);
-    return status === QuotationStatusEnum.Draft || status === QuotationStatusEnum.Cancelled;
+    return status === QuotationStatusEnum.Draft
+      || status === QuotationStatusEnum.Cancelled
+      || status === QuotationStatusEnum.Expired;
   }
 
   statusKey(quotation: any): string {
@@ -150,6 +152,18 @@ export class QuotationsList implements OnInit, OnChanges {
     return status === null
       ? String(quotation?.statusName ?? quotation?.status ?? 'draft').toLowerCase()
       : QuotationStatusEnum[status].toLowerCase();
+  }
+
+  quotationTotal(quotation: any): string {
+    const rawAmount = quotation?.totalPrice ?? quotation?.totalAmount ?? 0;
+    const amount = Number(rawAmount);
+    const formattedAmount = new Intl.NumberFormat(this.translate.currentLang() || 'en', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(Number.isFinite(amount) ? amount : 0);
+    const currency = String(quotation?.currencySign ?? quotation?.currencyCode ?? '').trim();
+
+    return currency ? `${formattedAmount} ${currency}` : formattedAmount;
   }
 
   editQuotation(quotation: any): void {

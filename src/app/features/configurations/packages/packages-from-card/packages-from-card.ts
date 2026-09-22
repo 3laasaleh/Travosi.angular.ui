@@ -613,6 +613,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       pricePerChild: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
+      showInRealtedTourSection: new FormControl(false, { nonNullable: true }),
+      showInRecomendedTourSection: new FormControl(false, { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
       dateFrom: new FormControl(this.tomorrow, {
         nonNullable: true,
@@ -706,6 +708,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       Includes: this.toLocalizedListPayload(value.includes),
       Excludes: this.toLocalizedListPayload(value.excludes),
       IsFreeCancelation: value.isFreeCancelation,
+      ShowInRealtedTourSection: value.showInRealtedTourSection,
+      ShowInRecomendedTourSection: value.showInRecomendedTourSection,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
       Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId, DisplayOrder: index })),
       Images: [], Itinerary: [], IsActive: false,
@@ -753,6 +757,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
       maxCapacity: Number(item?.maxCapacity) || 1,
       isFreeCancelation: item?.isFreeCancelation === true,
+      showInRealtedTourSection: item?.showInRealtedTourSection === true,
+      showInRecomendedTourSection: item?.showInRecomendedTourSection === true,
       isActive: item?.isActive !== false,
       dateFrom: this.toDateInput(item?.dateFrom ?? item?.DateFrom ?? item?.dateFromUtc ?? item?.DateFromUtc),
       dateTo: this.toDateInput(item?.dateTo ?? item?.DateTo ?? item?.dateToUtc ?? item?.DateToUtc),
@@ -779,7 +785,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.validationSubmitted = false;
     this.initialItinerarySnapshot = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
-      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false, isActive: true,
+      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false,
+      showInRealtedTourSection: false, showInRecomendedTourSection: false, isActive: true,
       dateFrom: this.tomorrow, dateTo: this.dayAfterTomorrow, destinationIds: [], images: [] });
     this.itineraryArray.clear();
     this.setCancellationPolicies([]);

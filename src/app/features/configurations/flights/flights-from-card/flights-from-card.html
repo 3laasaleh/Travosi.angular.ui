@@ -134,11 +134,11 @@
         <app-airport-picker formControlName="originAirport" [inputId]="'leg-origin-' + legIndex"
           labelKey="departureAirport" requiredErrorKey="departureAirportRequired"
           [showValidation]="(validationSubmitted || leg.controls['originAirport'].touched) && leg.controls['originAirport'].invalid"
-          (airportSelected)="onLegAirportChanged(legIndex, true)" />
+          (airportSelected)="onLegAirportSelected(legIndex, true, $event)" />
         <app-airport-picker formControlName="destinationAirport" [inputId]="'leg-destination-' + legIndex"
           labelKey="arrivalAirport" requiredErrorKey="arrivalAirportRequired"
           [showValidation]="(validationSubmitted || leg.controls['destinationAirport'].touched) && leg.controls['destinationAirport'].invalid"
-          (airportSelected)="onLegAirportChanged(legIndex, false)" />
+          (airportSelected)="onLegAirportSelected(legIndex, false, $event)" />
       </div>
       <fieldset class="mt-4">
         <legend class="text-sm font-medium">{{ 'flightStopsQuestion' | translate }}</legend>
@@ -259,7 +259,7 @@
               [inputId]="'stop-airport-' + legIndex + '-' + segmentIndex" labelKey="stopAirport"
               requiredErrorKey="stopAirportRequired" [compact]="true"
               [showValidation]="(validationSubmitted || segment.controls['destinationAirport'].touched) && segment.controls['destinationAirport'].invalid"
-              (airportSelected)="onStopAirportChanged(legIndex, segmentIndex)" />
+              (airportSelected)="onStopAirportSelected(legIndex, segmentIndex, $event)" />
             <p class="pb-2 text-xs text-slate-600">{{ 'layover' | translate }}: {{ layoverDuration(legIndex,
               segmentIndex) }}</p>
           </div>
