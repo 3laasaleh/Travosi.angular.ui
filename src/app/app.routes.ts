@@ -92,6 +92,11 @@ const localizedApplicationRoutes: Routes = [
         loadComponent: () => import('./features/configurations/hotels/hotels-page').then((m) => m.Hotels),
       },
       {
+        path: 'hotel-rooms',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/configurations/hotels/hotel-rooms-page').then((m) => m.HotelRoomsPage),
+      },
+      {
         path: 'hotel-facilities',
         redirectTo: 'facility-categories',
       },
@@ -99,11 +104,6 @@ const localizedApplicationRoutes: Routes = [
         path: 'facility-categories',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configurations/hotels/facility-categories-page').then((m) => m.FacilityCategoriesPage),
-      },
-      {
-        path: 'hotel-room-pricing',
-        canActivate: [adminGuard],
-        loadComponent: () => import('./features/configurations/hotels/hotel-room-pricing-page').then((m) => m.HotelRoomPricingPage),
       },
       {
         path: 'hotel-commercial-policies',
