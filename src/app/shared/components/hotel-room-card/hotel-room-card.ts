@@ -60,9 +60,11 @@ export class HotelRoomCard {
   }
 
   bathroomItems(room: any): string[] {
-    return typeof room?.bathroom === 'string'
-      ? room.bathroom.split(';').map((item: string) => item.trim()).filter(Boolean)
-      : [];
+    return this.semicolonItems(room?.bathroom);
+  }
+
+  childrenPolicyItems(room: any): string[] {
+    return this.semicolonItems(room?.childrenPolicies);
   }
 
   bathroomLabel(item: string): string {
@@ -78,5 +80,11 @@ export class HotelRoomCard {
   private localized(english: unknown, arabic: unknown, fallback = ''): string {
     const value = this.isArabic ? arabic || english || fallback : english || arabic || fallback;
     return typeof value === 'string' ? value : fallback;
+  }
+
+  private semicolonItems(value: unknown): string[] {
+    return typeof value === 'string'
+      ? value.split(';').map((item) => item.trim()).filter(Boolean)
+      : [];
   }
 }

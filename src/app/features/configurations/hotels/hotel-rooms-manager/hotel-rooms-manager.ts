@@ -48,7 +48,6 @@ export class HotelRoomsManager implements OnChanges {
   rooms: any[] = [];
   facilities: any[] = [];
   mealPlans: any[] = [];
-  currencies: any[] = [];
   loading = false;
   saving = false;
   error = '';
@@ -414,10 +413,11 @@ get todayAfterMonth(): string {
       return;
     }
     const value = this.roomForm.getRawValue();
+    const { policies, ...roomValue } = value;
     const payload = {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
-      ...value,
+      ...roomValue,
       bathroom: this.bathroomOptions
         .filter((option) => this.selectedBathroomItems.has(option.value))
         .map((option) => option.value)
@@ -426,7 +426,7 @@ get todayAfterMonth(): string {
         .filter((option) => this.selectedViewItems.has(option.value))
         .map((option) => option.value)
         .join(';'),
-      childrenPolicies: value.policies
+      childrenPolicies: policies
         .map((policy: { value: string }) => policy.value.trim())
         .filter(Boolean)
         .join(';'),
@@ -503,10 +503,6 @@ get todayAfterMonth(): string {
       });
   }
 
-  currencyName(currency: any): string {
-    return String(currency?.name ?? currency?.code ?? currency?.currencyCode ?? '').toUpperCase();
-  }
-
   private uploadNewRoomImages(roomId: number): void {
     const images = this.roomImages.filter((image) => image.file);
     if (!images.length) {
@@ -555,7 +551,6 @@ get todayAfterMonth(): string {
         .get('HotelAmenities?kind=2&isActive=true')
         .pipe(catchError(() => of(null))),
       mealPlans: this.api.get('MealPlans').pipe(catchError(() => of(null))),
-      currencies: this.api.get('Currencies').pipe(catchError(() => of(null))),
     })
       .pipe(
         finalize(() => {
@@ -567,7 +562,6 @@ get todayAfterMonth(): string {
         this.rooms = this.rows(result.rooms);
         this.facilities = this.rows(result.facilities);
         this.mealPlans = this.rows(result.mealPlans);
-        this.currencies = this.rows(result.currencies);
         if (!this.editingRoom) this.reset();
       });
   }

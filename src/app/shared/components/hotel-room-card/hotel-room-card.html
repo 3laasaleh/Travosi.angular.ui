@@ -42,6 +42,19 @@
       }
     }
 
+    @if (childrenPolicyItems(room); as policies) {
+      @if (policies.length) {
+        <div class="mt-3 rounded-xl bg-amber-50 p-3">
+          <p class="text-sm font-semibold text-slate-700"><i class="mdi mdi-human-male-child me-1 text-primary" aria-hidden="true"></i>{{ 'childrenPolicies' | translate }}</p>
+          <div class="mt-2 space-y-1">
+            @for (policy of policies; track policy) {
+              <p class="text-xs text-slate-600"><i class="mdi mdi-check text-primary" aria-hidden="true"></i> {{ policy }}</p>
+            }
+          </div>
+        </div>
+      }
+    }
+
     @if (room.amenities?.length) {
       <div class="mt-3 flex flex-wrap gap-2">
         @for (amenity of room.amenities; track amenity.id) {
