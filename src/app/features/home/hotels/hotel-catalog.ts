@@ -71,7 +71,7 @@ export class HotelCatalog implements OnInit {
       { schemaType: 'Place' },
     );
     this.api
-      .getUnauthntecated('Hotels/Public?page=1&pageSize=100')
+      .getUnauthntecated('Hotels/Public/Default?page=1&pageSize=20')
       .pipe(
         catchError(() => of(null)),
         finalize(() => {
@@ -80,8 +80,8 @@ export class HotelCatalog implements OnInit {
         }),
       )
       .subscribe((response: any) => {
-        const page = response?.data ?? response;
-        this.hotels = Array.isArray(page?.data) ? page.data : [];
+        const payload = response?.data ?? response;
+        this.hotels = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
       });
   }
   @HostListener('document:click', ['$event'])

@@ -1,3 +1,5 @@
+import { ImageDTO } from "../../../../shared/models/image-dto";
+
 export interface PackageDTO {
   id: number;
 
@@ -93,18 +95,10 @@ export interface PackageDestinationDTO {
   destinationNameEng?: string | null;
   destinationNameAr?: string | null;
 
-  displayOrder: number;
+  
 }
 
-export interface ImageDTO {
-  id: number;
 
-  imageName?: string | null;
-  imageUrl?: string | null;
-
-  altEng?: string | null;
-  altAr?: string | null;
-}
 
 export interface PackageItineraryDTO {
   id: number;

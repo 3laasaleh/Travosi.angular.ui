@@ -35,6 +35,7 @@ export interface HotelDTO {
   email?: string;
   website?: string;
   isActive: boolean;
+  showAsDefault: boolean;
   destinationId: number;
 }
 
@@ -110,6 +111,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       email: form.email.trim(),
       website: form.website.trim(),
       isActive: form.isActive,
+      showAsDefault: form.showAsDefault,
     };
     if (this.selectedHotel?.id) payload.id = this.selectedHotel.id;
 
@@ -190,6 +192,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       email: hotel.email ?? '',
       website: hotel.website ?? '',
       isActive: hotel.isActive !== false,
+      showAsDefault: hotel.showAsDefault === true,
     });
     this.revokeNewImageUrls();
     this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
@@ -213,6 +216,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       email: '',
       website: '',
       isActive: true,
+      showAsDefault: false,
     });
     if (emitCancel) this.editCancelled.emit();
   }
@@ -272,6 +276,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
       website: new FormControl('', { nonNullable: true }),
       isActive: new FormControl(true, { nonNullable: true }),
+      showAsDefault: new FormControl(false, { nonNullable: true }),
     });
   }
 }

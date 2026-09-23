@@ -711,7 +711,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       ShowInRealtedTourSection: value.showInRealtedTourSection,
       ShowInRecomendedTourSection: value.showInRecomendedTourSection,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
-      Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId, DisplayOrder: index })),
+      Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId })),
       Images: [], Itinerary: [], IsActive: false,
     };
     if (id) payload.Id = id;

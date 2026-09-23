@@ -7,7 +7,7 @@
       <div>
         <h3 class="text-xl font-semibold">{{ roomName(room) }}</h3>
         <p class="mt-1 text-sm text-slate-500">
-          {{ room.bedType || (room.roomTypeName | translate) }}
+          {{ bedTypeName(room) }}
           @if (room.bedSize) { · {{ room.bedSize }} }
           @if (room.roomSize) { · {{ room.roomSize }} m² }
         </p>

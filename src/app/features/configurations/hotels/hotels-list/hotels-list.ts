@@ -12,6 +12,7 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { environment } from '../../../../../environments/environment';
 import Swal from 'sweetalert2';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 
@@ -159,6 +160,18 @@ export class HotelsList implements OnInit, OnChanges {
 
   stars(count: number): number[] {
     return Array.from({ length: Number(count) || 0 });
+  }
+
+  imageUrl(hotel: any): string | null {
+    const image = hotel?.images?.[0];
+    const url = image?.imageUrl ?? image?.url ?? image;
+    if (!url) return null;
+    if (/^(https?:\/\/|blob:|data:)/i.test(url)) return url;
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${String(url).replace(/^\/?(?:images\/)?/i, '')}`;
+  }
+
+  roomCount(hotel: any): number {
+    return Array.isArray(hotel?.rooms) ? hotel.rooms.length : Number(hotel?.roomCount) || 0;
   }
 
   async deleteHotel(hotel: any): Promise<void> {

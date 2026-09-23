@@ -38,6 +38,10 @@ export class HotelRoomCard {
     return this.localized(room?.nameEng ?? room?.name, room?.nameAr);
   }
 
+  bedTypeName(room: any): string {
+    return this.localized(room?.bedTypeEng ?? room?.bedType, room?.bedTypeAr, room?.roomTypeName ?? '');
+  }
+
   amenityName(amenity: any): string {
     return this.localized(amenity?.nameEng ?? amenity?.name, amenity?.nameAr);
   }

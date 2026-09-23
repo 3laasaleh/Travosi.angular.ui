@@ -11,7 +11,7 @@ interface Facility {
   iconKey: string;
   facilityCategoryId: number;
   kind: number;
-  displayOrder: number;
+  
   isActive: boolean;
 }
 
@@ -20,7 +20,7 @@ interface FacilityCategory {
   nameEng: string;
   nameAr: string;
   iconKey: string;
-  displayOrder: number;
+  
   isActive: boolean;
   facilities: Facility[];
 }
@@ -48,7 +48,6 @@ export class FacilityCategoriesPage implements OnInit {
     nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
     nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
     iconKey: new FormControl('check-circle', { nonNullable: true, validators: [Validators.required] }),
-    displayOrder: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
     isActive: new FormControl(true, { nonNullable: true }),
   });
 
@@ -59,7 +58,6 @@ export class FacilityCategoriesPage implements OnInit {
     iconKey: new FormControl('check-circle', { nonNullable: true, validators: [Validators.required] }),
     facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
-    displayOrder: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
     isActive: new FormControl(true, { nonNullable: true }),
   });
 
@@ -81,7 +79,7 @@ export class FacilityCategoriesPage implements OnInit {
         this.categories = (Array.isArray(data) ? data : []).map((category: any) => ({
           ...category,
           facilities: Array.isArray(category?.facilities)
-            ? [...category.facilities].sort((a: Facility, b: Facility) => a.displayOrder - b.displayOrder || a.nameEng.localeCompare(b.nameEng))
+            ? [...category.facilities].sort((a: Facility, b: Facility) =>  a.nameEng.localeCompare(b.nameEng))
             : [],
         }));
         this.restoreSelectedCategory();
@@ -99,7 +97,7 @@ export class FacilityCategoriesPage implements OnInit {
     this.selectedCategory = category;
     this.categoryForm.reset({
       id: category.id, nameEng: category.nameEng, nameAr: category.nameAr,
-      iconKey: category.iconKey, displayOrder: category.displayOrder, isActive: category.isActive,
+      iconKey: category.iconKey, isActive: category.isActive,
     });
     this.resetFacilityForm(category);
     this.error = '';
@@ -190,20 +188,22 @@ export class FacilityCategoriesPage implements OnInit {
     this.selectedCategory = null;
     this.categoryForm.reset({
       id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
-      displayOrder: this.categories.length, isActive: true,
+      isActive: true,
     });
     this.facilityForm.reset({
       id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon, facilityCategoryId: 0,
-      kind: 1, displayOrder: 0, isActive: true,
+      kind: 1,
+      isActive: true,
     });
   }
 
   private resetFacilityForm(category: FacilityCategory): void {
     this.selectedCategory = category;
     this.facilityForm.reset({
-      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
+      id: 0, nameEng: '', nameAr: '', 
+      iconKey: this.defaultIcon,
       facilityCategoryId: category.id, kind: 1,
-      displayOrder: category.facilities?.length ?? 0, isActive: true,
+       isActive: true,
     });
   }
 
