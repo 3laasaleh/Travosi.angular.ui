@@ -46,7 +46,7 @@ export class HotelFacilitiesPage implements OnInit {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.min(1)] }),
+    facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
     isActive: new FormControl(true, { nonNullable: true }),
   });

@@ -76,11 +76,11 @@
       <form class="space-y-4 p-5" [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
         @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">{{ error | translate }}</p> }
         <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></label>
-          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" /></label>
+          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (categoryForm.controls.nameEng.touched && categoryForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
+          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (categoryForm.controls.nameAr.touched && categoryForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
         </div>
         <div>
-          <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }}</p>
+          <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
           <div class="grid max-h-52 grid-cols-6 gap-2 overflow-y-auto rounded-xl border border-slate-200 p-2 sm:grid-cols-8">
             @for (icon of icons; track icon) {
               <button type="button" [title]="icon" (click)="categoryForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="categoryForm.controls.iconKey.value === icon" [class.bg-primary-50]="categoryForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon" aria-hidden="true"></i></button>
@@ -115,11 +115,11 @@
       <form class="space-y-4 p-5" [formGroup]="facilityForm" (ngSubmit)="saveFacility()">
         @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">{{ error | translate }}</p> }
         <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></label>
-          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }}<input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" /></label>
+          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (facilityForm.controls.nameEng.touched && facilityForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
+          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (facilityForm.controls.nameAr.touched && facilityForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
         </div>
         <div>
-          <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }}</p>
+          <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
           <div class="grid max-h-52 grid-cols-6 gap-2 overflow-y-auto rounded-xl border border-slate-200 p-2 sm:grid-cols-8">
             @for (icon of icons; track icon) {
               <button type="button" [title]="icon" (click)="facilityForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="facilityForm.controls.iconKey.value === icon" [class.bg-primary-50]="facilityForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon" aria-hidden="true"></i></button>

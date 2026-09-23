@@ -33,10 +33,10 @@
       @if (roomForm; as form) {
       <form class="configuration-form" [formGroup]="form" (ngSubmit)="save()">
         <div class="mt-4 grid gap-3 md:grid-cols-2">
-          <label class="text-sm">{{ 'nameEnglish' | translate }}<input formControlName="nameEng"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
-          <label class="text-sm">{{ 'nameArabic' | translate }}<input formControlName="nameAr"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" /></label>
+            <label class="text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng"
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.nameEng.touched && roomForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
+            <label class="text-sm">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr"
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" />@if (roomForm.controls.nameAr.touched && roomForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
           <label class="text-sm">{{ 'roomType' | translate }}<select formControlName="roomType"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of roomTypes; track
               type.value) { <option [value]="type.value">{{ type.label }}</option> }</select></label>
@@ -178,14 +178,14 @@
             @for (period of rates.controls; track $index) {
             <div class="rounded-xl border border-slate-200 p-3" [formGroupName]="$index">
               <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1.2fr_.8fr_auto] xl:items-end">
-                <label class="text-sm">{{ 'startDate' | translate }}
+                <label class="text-sm">{{ 'startDate' | translate }} <span class="text-red-600">*</span>
                   <app-date-picker formControlName="startDate" [id]="'room-rate-from-' + $index" [min]="today"
                     [placeholder]="'startDate' | translate" [ariaLabel]="'startDate' | translate" />
                   @if (period.controls['startDate'].touched && period.controls['startDate'].hasError('required')) {
                     <span class="mt-1 block text-xs text-red-600">{{ 'startDateRequired' | translate }}</span>
                   }
                 </label>
-                <label class="text-sm">{{ 'endDate' | translate }}
+                <label class="text-sm">{{ 'endDate' | translate }} <span class="text-red-600">*</span>
                   <app-date-picker formControlName="endDate" [id]="'room-rate-to-' + $index"
                     [min]="minimumEndDate(period.controls['startDate'].value)" [placeholder]="'endDate' | translate"
                     [ariaLabel]="'endDate' | translate" />
@@ -195,7 +195,7 @@
                     <span class="mt-1 block text-xs text-red-600">{{ 'pricingPeriodsInvalid' | translate }}</span>
                   }
                 </label>
-                <label class="text-sm">{{ 'price' | translate }}
+                <label class="text-sm">{{ 'price' | translate }} <span class="text-red-600">*</span>
                   <div class="relative mt-1">
                   <span
                     class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span>
@@ -228,7 +228,7 @@
             @for (policy of policies.controls; track $index) {
               <div class="rounded-xl border border-slate-200 p-3" [formGroupName]="$index">
                 <div class="grid gap-3 md:grid-cols-2">
-                  <label class="text-sm">{{ 'englishDescription' | translate }}
+                  <label class="text-sm">{{ 'englishDescription' | translate }} <span class="text-red-600">*</span>
                     <textarea formControlName="descriptionEng" rows="3" maxlength="1000"
                       [placeholder]="'englishDescription' | translate"
                       class="mt-1 w-full rounded-xl border border-slate-300 p-2"></textarea>
@@ -236,7 +236,7 @@
                       <span class="mt-1 block text-xs text-red-600">{{ 'descriptionRequired' | translate }}</span>
                     }
                   </label>
-                  <label class="text-sm">{{ 'arabicDescription' | translate }}
+                  <label class="text-sm">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span>
                     <textarea formControlName="descriptionAr" rows="3" maxlength="1000"
                       [placeholder]="'arabicDescription' | translate"
                       class="mt-1 w-full rounded-xl border border-slate-300 p-2 text-right"></textarea>

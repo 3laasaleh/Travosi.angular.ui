@@ -317,7 +317,7 @@ get todayAfterMonth(): string {
           validators: [Validators.required],
         }),
 
-        price: new FormControl(Number(value.price ?? 0), {
+        price: new FormControl(Number(value.price ?? value.nightlyRate ?? 0), {
           nonNullable: true,
           validators: [Validators.required, Validators.min(0.01)],
         }),
@@ -445,8 +445,6 @@ get todayAfterMonth(): string {
         Number(value.maxAdults) + Number(value.maxChildren) + Number(value.maxInfants),
       rates: value.rates.map((rate: any) => ({
         ...rate,
-        nightlyRate: Number(rate.price),
-        title: `${value.nameEng} rate`,
         isActive: rate.isActive !== false,
       })),
       policies: value.policies.map((policy: any, index: number) => ({
@@ -561,7 +559,9 @@ get todayAfterMonth(): string {
   private validatePeriods(): boolean {
     let valid = this.rates.length > 0;
     const periods = this.rates.controls
-      .map((group, index) => ({ group, index, startDate: String(group.controls['startDate'].value ?? ''), endDate: String(group.controls['endDate'].value ?? ''), price: Number(group.controls['price'].value) }))
+      .map((group, index) => ({ group, index, startDate: String(group.controls['startDate'].value ?? ''),
+         endDate: String(group.controls['endDate'].value ?? ''),
+          price: Number(group.controls['price'].value) }))
       .sort((left, right) => left.startDate.localeCompare(right.startDate));
     periods.forEach((period, index) => {
       const endDate = period.group.controls['endDate'];
@@ -573,7 +573,8 @@ get todayAfterMonth(): string {
       if (!period.endDate || period.endDate <= period.startDate) { endDate.setErrors({ ...(endDate.errors ?? {}), dateOrder: true }); valid = false; }
       if (!Number.isFinite(period.price) || period.price <= 0) valid = false;
       const previous = periods[index - 1];
-      if (previous && previous.endDate > period.startDate) { endDate.setErrors({ ...(endDate.errors ?? {}), overlap: true }); valid = false; }
+      if (previous && previous.endDate > period.startDate) 
+        { endDate.setErrors({ ...(endDate.errors ?? {}), overlap: true }); valid = false; }
     });
     return valid;
   }

@@ -65,7 +65,7 @@
                 <h3 class="text-xl font-semibold text-slate-900">{{ hotelName(hotel) }}</h3>
                 <p class="mt-2 flex items-start gap-2 text-sm text-slate-500"><i class="mdi mdi-map-marker-outline text-lg text-primary" aria-hidden="true"></i><span>{{ hotelAddress(hotel) || ('destination' | translate) }}</span></p>
                 @if (stayPrice(hotel); as price) { <p class="mt-4 text-sm text-slate-500">{{ 'from' | translate }} <strong class="text-lg text-slate-900">{{ price.grandTotal }} {{ price.currencyCode }}</strong> <span>{{ 'perNight' | translate }}</span></p> }
-                <a [routerLink]="['/hotels', hotel.routeName || hotel.slug || hotel.id]" class="mt-5 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-center font-semibold text-white transition hover:brightness-95">
+                <a [routerLink]="['/hotels', hotel.slug || hotel.routeName]" class="mt-5 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-center font-semibold text-white transition hover:brightness-95">
                   {{ stayPrice(hotel) ? ('viewAvailableRooms' | translate) : ('view' | translate) }} <i class="mdi mdi-arrow-{{ isArabic ? 'left' : 'right' }}" aria-hidden="true"></i>
                 </a>
               </div>
