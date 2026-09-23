@@ -12,13 +12,12 @@ export const FLIGHT_TYPE_OPTIONS = [
 
 
 export enum FlightClassEnum {
-  Economy = 0,
-  Business,
-  First,
+    Economy, PremiumEconomy, Business, First
 }
 
 export const FLIGHT_CLASS_OPTIONS = [
   { value: FlightClassEnum.Economy, labelKey: 'flightClassEconomy' },
+  { value: FlightClassEnum.PremiumEconomy, labelKey: 'flightClassPremiumEconomy' },
   { value: FlightClassEnum.Business, labelKey: 'flightClassBusiness' },
   { value: FlightClassEnum.First, labelKey: 'flightClassFirst' },
 ];

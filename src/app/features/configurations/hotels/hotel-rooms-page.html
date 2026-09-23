@@ -1,15 +1,59 @@
 <section class="min-h-screen bg-slate-50 px-4 py-6 text-slate-800">
   <div class="mx-auto max-w-7xl space-y-6">
-    <header><p class="text-sm font-semibold uppercase tracking-[.3em] text-primary">{{ 'hotelManagement' | translate }}</p><h1 class="mt-2 text-3xl font-semibold">{{ 'roomTypes' | translate }}</h1><p class="mt-2 text-sm text-slate-500">{{ 'manageHotelRoomsHint' | translate }}</p></header>
-    @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ error | translate }}</p> }
+    <header>
+      <p class="text-sm font-semibold uppercase tracking-[.3em] text-primary">{{ 'hotelManagement' | translate }}</p>
+      <h1 class="mt-2 text-3xl font-semibold">{{ 'roomTypes' | translate }}</h1>
+      <p class="mt-2 text-sm text-slate-500">{{ 'manageHotelRoomsHint' | translate }}</p>
+    </header>
+    @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ error |
+      translate }}</p> }
     <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-      <label class="relative block text-sm font-semibold">{{ 'selectHotel' | translate }}
-        <input [(ngModel)]="hotelQuery" autocomplete="off" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" [placeholder]="'searchHotelsDestination' | translate" />
-        @if (suggestions.length && !selectedHotelId) { <div class="absolute z-20 mt-1 max-h-72 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">@for (hotel of suggestions; track hotel.id) { <button type="button" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-start hover:bg-primary/5" (click)="selectHotel(hotel)"><span><span class="block font-semibold">{{ hotelName(hotel) }}</span><span class="block text-xs font-normal text-slate-500">{{ hotelMeta(hotel) }}</span></span><i class="mdi mdi-chevron-right text-primary"></i></button> }</div> }
-      </label>
-      @if (selectedHotelId) { <div class="mt-3 flex items-center justify-between rounded-xl bg-primary/5 px-3 py-2 text-sm"><span>{{ hotelQuery }}</span><button type="button" class="text-slate-500 hover:text-rose-600" [attr.title]="'clear' | translate" (click)="clearHotel()"><i class="mdi mdi-close"></i></button></div> }
+      <label class="block text-sm font-semibold">{{ 'selectHotel' | translate }}</label>
+      <div class="relative mt-1">
+        <button type="button"
+          class="flex w-full items-center gap-3 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-start transition hover:border-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+          aria-haspopup="listbox" [attr.aria-expanded]="hotelMenuOpen" (click)="toggleHotelMenu()">
+          <i class="mdi mdi-magnify text-xl text-primary" aria-hidden="true"></i>
+          <span class="min-w-0 flex-1 truncate" [class.text-slate-400]="!selectedHotel">
+            {{ selectedHotel ? hotelName(selectedHotel) : ('selectHotel' | translate) }}
+          </span>
+          <i class="mdi text-lg text-slate-400" [class.mdi-chevron-up]="hotelMenuOpen" [class.mdi-chevron-down]="!hotelMenuOpen" aria-hidden="true"></i>
+        </button>
+
+        @if (hotelMenuOpen) {
+          <div class="absolute z-30 mt-1 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+            <div class="relative border-b border-slate-100 p-2">
+              <i class="mdi mdi-magnify pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
+              <input [(ngModel)]="hotelSearch" autocomplete="off"
+                class="w-full rounded-lg border border-slate-200 py-2 pe-3 ps-10 font-normal outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+                [placeholder]="'searchHotelsDestination' | translate" />
+            </div>
+            <div class="max-h-72 overflow-y-auto p-1" role="listbox">
+              @for (hotel of suggestions; track hotel.id) {
+                <button type="button" role="option" [attr.aria-selected]="selectedHotelId === hotel.id"
+                  class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-start transition hover:bg-primary/5"
+                  [class.bg-primary/5]="selectedHotelId === hotel.id" (click)="selectHotel(hotel)">
+                  <span class="min-w-0"><span class="block truncate font-semibold">{{ hotelName(hotel) }}</span><span
+                    class="block truncate text-xs font-normal text-slate-500">{{ hotelMeta(hotel) }}</span></span>
+                  @if (selectedHotelId === hotel.id) { <i class="mdi mdi-check text-xl text-primary" aria-hidden="true"></i> }
+                </button>
+              } @empty {
+                <p class="px-3 py-5 text-center text-sm font-normal text-slate-500">{{ 'noHotelsFound' | translate }}</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      @if (selectedHotelId) { <div
+        class="mt-3 flex items-center justify-between rounded-xl bg-primary/5 px-3 py-2 text-sm"><span>{{ hotelName(selectedHotel)
+          }}</span><button type="button" class="text-slate-500 hover:text-rose-600" [attr.title]="'clear' | translate"
+          (click)="clearHotel()"><i class="mdi mdi-close"></i></button></div> }
     </section>
     @if (loading) { <p class="text-center text-sm text-slate-500">{{ 'loading' | translate }}</p> }
-    @if (selectedHotelId) { <app-hotel-rooms-manager [hotelId]="selectedHotelId" /> } @else if (!loading) { <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500"><i class="mdi mdi-bed-outline text-4xl text-primary"></i><p class="mt-3">{{ 'selectHotel' | translate }}</p></div> }
+    @if (selectedHotelId) { <app-hotel-rooms-manager [hotelId]="selectedHotelId" /> } @else if (!loading) { <div
+      class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500"><i
+        class="mdi mdi-bed-outline text-4xl text-primary"></i>
+      <p class="mt-3">{{ 'selectHotel' | translate }}</p>
+    </div> }
   </div>
 </section>

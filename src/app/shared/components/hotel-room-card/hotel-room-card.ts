@@ -10,6 +10,16 @@ import { environment } from '../../../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelRoomCard {
+  private readonly bathroomKeys: Record<string, string> = {
+    'Free toiletries': 'freeToiletries',
+    Bidet: 'bidet',
+    Toilet: 'toilet',
+    'Bath or shower': 'bathOrShower',
+    Towels: 'towels',
+    Slippers: 'slippers',
+    Hairdryer: 'hairdryer',
+    'Toilet paper': 'toiletPaper',
+  };
   @Input() room: any;
   @Input() availability: any | null = null;
   @Input() isArabic = false;
@@ -43,6 +53,22 @@ export class HotelRoomCard {
 
   mealPlanName(plan: any): string {
     return this.localized(plan?.mealPlanDetails?.nameEng, plan?.mealPlanDetails?.nameAr, '');
+  }
+
+  bathroomItems(room: any): string[] {
+    return typeof room?.bathroom === 'string'
+      ? room.bathroom.split(';').map((item: string) => item.trim()).filter(Boolean)
+      : [];
+  }
+
+  bathroomLabel(item: string): string {
+    return this.bathroomKeys[item] ?? item;
+  }
+
+  viewLabel(view: unknown): string {
+    const keys: Record<string, string> = { 'Pool view': 'poolView', 'Beach view': 'beachView', 'Garden view': 'gardenView' };
+    const value = typeof view === 'string' ? view : '';
+    return keys[value] ?? value;
   }
 
   private localized(english: unknown, arabic: unknown, fallback = ''): string {

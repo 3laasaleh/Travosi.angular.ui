@@ -253,7 +253,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   setConnectionType(legindex: number, type: FlighConnectionTypeEnum): void {
-    debugger
     const leg = this.legs.at(legindex);
     const rows = this.segments(legindex);
     if (type === FlighConnectionTypeEnum.DIRECT && rows.length > 1) {
@@ -268,8 +267,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
         ...first,
         destinationAirport: leg.controls['destinationAirport'].value,
         destinationAirportName: leg.controls['destinationAirportName'].value,
-        arrivalLocal: last.arrivalLocal,
-        arrivalTimeZone: last.arrivalTimeZone,
+        arrivalDate: last.arrivalDate,
       });
     }
     leg.controls['connectionType'].setValue(type);
@@ -296,7 +294,7 @@ export class FlightsFromCard implements OnInit, OnChanges {
         departureDate: '',
       }),
     );
-    this.legs.at(legIndex).controls['connectionType'].setValue('STOPPED');
+    this.legs.at(legIndex).controls['connectionType'].setValue(this.STOPPED);
     this.synchronizeLeg(legIndex);
   }
 
@@ -385,6 +383,11 @@ export class FlightsFromCard implements OnInit, OnChanges {
     if (!Number.isFinite(milliseconds) || milliseconds < 0) return '—';
     const minutes = Math.round(milliseconds / 60000);
     return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+  }
+
+  stopTimingInvalid(legIndex: number, stopIndex: number): boolean {
+    const error = this.legs.at(legIndex)?.getError('invalidLayover');
+    return error === true || (Array.isArray(error?.stopIndexes) && error.stopIndexes.includes(stopIndex));
   }
 
   saveFlight(): void {
@@ -683,16 +686,25 @@ export class FlightsFromCard implements OnInit, OnChanges {
   private static legConnectionValidator(control: AbstractControl): ValidationErrors | null {
     const rows = control.get('segments') as FormArray<FormGroup> | null;
     if (!rows?.length) return { noSegments: true };
+    const disconnectedStopIndexes: number[] = [];
+    const invalidLayoverStopIndexes: number[] = [];
+
     for (let index = 0; index < rows.length - 1; index++) {
       const current = rows.at(index).getRawValue();
       const next = rows.at(index + 1).getRawValue();
       if (String(current.destinationAirport).trim() !== String(next.originAirport).trim())
-        return { disconnectedSegments: true };
+        disconnectedStopIndexes.push(index);
       const arrival = Date.parse(current.arrivalDate);
       const departure = Date.parse(next.departureDate);
       if (Number.isFinite(arrival) && Number.isFinite(departure) && departure <= arrival)
-        return { invalidLayover: true };
+        invalidLayoverStopIndexes.push(index);
     }
-    return null;
+
+    const errors: ValidationErrors = {};
+    if (disconnectedStopIndexes.length)
+      errors['disconnectedSegments'] = { stopIndexes: disconnectedStopIndexes };
+    if (invalidLayoverStopIndexes.length)
+      errors['invalidLayover'] = { stopIndexes: invalidLayoverStopIndexes };
+    return Object.keys(errors).length ? errors : null;
   }
 }

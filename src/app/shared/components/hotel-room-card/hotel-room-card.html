@@ -7,12 +7,20 @@
       <div>
         <h3 class="text-xl font-semibold">{{ roomName(room) }}</h3>
         <p class="mt-1 text-sm text-slate-500">
-          {{ room.bedConfiguration || (room.roomTypeName | translate) }}
-          @if (room.roomSize) { · {{ room.roomSize }} {{ room.sizeUnit || '' }} }
+          {{ room.bedType || (room.roomTypeName | translate) }}
+          @if (room.bedSize) { · {{ room.bedSize }} }
+          @if (room.roomSize) { · {{ room.roomSize }} m² }
         </p>
         <p class="mt-1 text-xs text-slate-500">
           {{ room.maxAdults }} {{ 'adults' | translate }} · {{ room.maxChildren }} {{ 'children' | translate }} · {{ room.maxInfants }} {{ 'infants' | translate }}
         </p>
+        @if (room.view || room.hasBalcony || room.avilableRoomsCount != null) {
+          <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600">
+            @if (room.view) { <span><i class="mdi mdi-eye-outline text-primary" aria-hidden="true"></i> {{ viewLabel(room.view) | translate }}</span> }
+            @if (room.hasBalcony) { <span><i class="mdi mdi-balcony text-primary" aria-hidden="true"></i> {{ 'hasBalcony' | translate }}</span> }
+            @if (room.avilableRoomsCount != null) { <span><i class="mdi mdi-door-open text-primary" aria-hidden="true"></i> {{ room.avilableRoomsCount }} {{ 'roomsAvailable' | translate }}</span> }
+          </p>
+        }
       </div>
       @if (editable) {
         <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition hover:bg-primary hover:text-white" [attr.title]="'edit' | translate" (click)="editRequested.emit(room)">
@@ -20,6 +28,19 @@
         </button>
       }
     </div>
+
+    @if (bathroomItems(room); as bathroom) {
+      @if (bathroom.length) {
+        <div class="mt-4 rounded-xl bg-slate-50 p-3">
+          <p class="text-sm font-semibold text-slate-700"><i class="mdi mdi-shower-head me-1 text-primary" aria-hidden="true"></i>{{ 'privateBathroom' | translate }}</p>
+          <div class="mt-2 grid gap-x-4 gap-y-1 sm:grid-cols-2">
+            @for (item of bathroom; track item) {
+              <span class="text-xs text-slate-600"><i class="mdi mdi-check text-primary" aria-hidden="true"></i> {{ bathroomLabel(item) | translate }}</span>
+            }
+          </div>
+        </div>
+      }
+    }
 
     @if (room.amenities?.length) {
       <div class="mt-3 flex flex-wrap gap-2">

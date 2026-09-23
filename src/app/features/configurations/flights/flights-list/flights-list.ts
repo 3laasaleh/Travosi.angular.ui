@@ -18,6 +18,9 @@ import { PaginationOne } from '../../../../shared/components/listing/tour-grid/p
 import Swal from 'sweetalert2';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { FLIGHT_CLASS_OPTIONS } from '../flight.enum';
+import { IGenericResponse } from '../../../../core/models/genericReponse.model';
+import { PaginationModel } from '../../../../core/models/pagination.model';
+import { FlightDto } from '../flight.dto';
 
 interface PaginationInfoDTO {
   page: number;
@@ -78,15 +81,14 @@ export class FlightsList implements OnInit, OnChanges {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-    ).subscribe((response: any) => {
+    ).subscribe((response: IGenericResponse<PaginationModel<FlightDto[]>>) => {
       if (response === null) return;
       if (response?.isSuccess === false) {
         this.errorMessage = response?.message || 'flightServiceUnavailable';
         return;
       }
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.flights ?? pageData;
-      this.flights = Array.isArray(rows) ? rows : [];
+      const pageData = response?.data ;
+      this.flights = pageData.data?? [];
       this.paginationInfo = {
         page: Number(pageData?.page ?? this.paginationInfo.page),
         pageSize: Number(pageData?.pageSize ?? this.paginationInfo.pageSize),
@@ -125,6 +127,7 @@ export class FlightsList implements OnInit, OnChanges {
   }
 
   flightClassKey(value: number): string {
+   
     return FLIGHT_CLASS_OPTIONS.find((option) => option.value === Number(value))?.labelKey ?? '';
   }
 

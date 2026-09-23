@@ -161,12 +161,12 @@ describe('FlightsFromCard', () => {
     fixture.detectChanges();
 
     const segment = fixture.componentInstance.segments(0).at(0);
-    expect(segment.controls['departureLocal'].value).toBe(`${today}T09:30`);
-    expect(segment.controls['departureLocal'].hasError('pastDate')).toBe(false);
-    segment.controls['departureLocal'].setValue('2000-01-01T09:30');
-    segment.controls['arrivalLocal'].setValue('2000-01-01T10:30');
-    expect(segment.controls['departureLocal'].hasError('pastDate')).toBe(true);
-    expect(segment.controls['arrivalLocal'].hasError('pastDate')).toBe(true);
+    expect(segment.controls['departureDate'].value).toBe(`${today}T09:30`);
+    expect(segment.controls['departureDate'].hasError('pastDate')).toBe(false);
+    segment.controls['departureDate'].setValue('2000-01-01T09:30');
+    segment.controls['arrivalDate'].setValue('2000-01-01T10:30');
+    expect(segment.controls['departureDate'].hasError('pastDate')).toBe(true);
+    expect(segment.controls['arrivalDate'].hasError('pastDate')).toBe(true);
     expect(fixture.nativeElement.querySelector('#flight-arrival-0-0')).toBeTruthy();
   });
 
@@ -184,16 +184,49 @@ describe('FlightsFromCard', () => {
     expect(fixture.nativeElement.textContent).not.toContain('airlineCodeInvalid');
   });
 
-  it('allows arrival on the departure date and rejects an earlier arrival date', () => {
+  it('allows a later arrival on the departure date and rejects an earlier arrival', () => {
     const fixture = TestBed.createComponent(FlightsFromCard);
     fixture.detectChanges();
     const segment = fixture.componentInstance.segments(0).at(0);
 
-    segment.patchValue({ departureDate: '2099-01-02', arrivalDate: '2099-01-02' });
-    expect(segment.hasError('arrivalBeforeDeparture')).toBe(false);
+    segment.patchValue({ departureDate: '2099-01-02T09:00', arrivalDate: '2099-01-02T10:00' });
+    expect(segment.hasError('arrivalNotAfterDeparture')).toBe(false);
 
-    segment.controls['arrivalDate'].setValue('2099-01-01');
-    expect(segment.hasError('arrivalBeforeDeparture')).toBe(true);
+    segment.controls['arrivalDate'].setValue('2099-01-02T08:59');
+    expect(segment.hasError('arrivalNotAfterDeparture')).toBe(true);
+  });
+
+  it('reports every stop whose next departure overlaps the previous arrival', () => {
+    const fixture = TestBed.createComponent(FlightsFromCard);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.setConnectionType(0, component.STOPPED);
+    component.addStop(0);
+    const rows = component.segments(0);
+    rows.at(0).patchValue({
+      originAirport: 'CAI', destinationAirport: 'DXB',
+      departureDate: '2099-01-02T08:00', arrivalDate: '2099-01-02T10:00',
+    });
+    rows.at(1).patchValue({
+      originAirport: 'DXB', destinationAirport: 'IST',
+      departureDate: '2099-01-02T09:30', arrivalDate: '2099-01-02T13:00',
+    });
+    rows.at(2).patchValue({
+      originAirport: 'IST', destinationAirport: 'LHR',
+      departureDate: '2099-01-02T12:30', arrivalDate: '2099-01-02T15:00',
+    });
+    component.legs.at(0).updateValueAndValidity();
+
+    expect(component.legs.at(0).getError('invalidLayover')?.stopIndexes).toEqual([0, 1]);
+    component.validationSubmitted = true;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('[role="alert"]').length).toBe(2);
+
+    rows.at(1).controls['departureDate'].setValue('2099-01-02T10:30');
+    rows.at(2).controls['departureDate'].setValue('2099-01-02T13:30');
+    component.legs.at(0).updateValueAndValidity();
+    expect(component.legs.at(0).hasError('invalidLayover')).toBe(false);
   });
 
   it('shows required-field messages on touch and enables Save only when the flight is valid', () => {
@@ -230,8 +263,8 @@ describe('FlightsFromCard', () => {
       ticketNumber: 'PNR123',
       originAirport: 'CAI',
       destinationAirport: 'DXB',
-      departureLocal: `${fixture.componentInstance.today}T09:00`,
-      arrivalLocal: `${fixture.componentInstance.today}T10:00`,
+      departureDate: `${fixture.componentInstance.today}T09:00`,
+      arrivalDate: `${fixture.componentInstance.today}T10:00`,
     });
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();

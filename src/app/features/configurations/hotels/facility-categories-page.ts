@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
@@ -40,6 +40,7 @@ export class FacilityCategoriesPage implements OnInit {
   savingCategory = false;
   savingFacility = false;
   error = '';
+  editor: 'category' | 'facility' | null = null;
   readonly kinds = [1, 2, 3];
 
   readonly categoryForm = new FormGroup({
@@ -86,10 +87,10 @@ export class FacilityCategoriesPage implements OnInit {
         this.restoreSelectedCategory();
         if (this.selectedCategory) {
           if (this.facilityForm.controls.facilityCategoryId.value !== this.selectedCategory.id) {
-            this.newFacility(this.selectedCategory);
+            this.resetFacilityForm(this.selectedCategory);
           }
         } else if (!this.categoryForm.dirty) {
-          this.newCategory();
+          this.resetCategoryForm();
         }
       });
   }
@@ -100,34 +101,39 @@ export class FacilityCategoriesPage implements OnInit {
       id: category.id, nameEng: category.nameEng, nameAr: category.nameAr,
       iconKey: category.iconKey, displayOrder: category.displayOrder, isActive: category.isActive,
     });
-    this.newFacility(category);
+    this.resetFacilityForm(category);
+    this.error = '';
+    this.editor = 'category';
   }
 
   newCategory(): void {
-    this.selectedCategory = null;
-    this.categoryForm.reset({
-      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
-      displayOrder: this.categories.length, isActive: true,
-    });
-    this.facilityForm.reset({
-      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon, facilityCategoryId: 0,
-      kind: 1, displayOrder: 0, isActive: true,
-    });
+    this.resetCategoryForm();
+    this.error = '';
+    this.editor = 'category';
   }
 
   newFacility(category = this.selectedCategory): void {
-    this.selectedCategory = category;
-    this.facilityForm.reset({
-      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
-      facilityCategoryId: category?.id ?? 0, kind: 1,
-      displayOrder: category?.facilities?.length ?? 0, isActive: true,
-    });
+    if (!category) return;
+    this.resetFacilityForm(category);
+    this.error = '';
+    this.editor = 'facility';
   }
 
   editFacility(category: FacilityCategory, facility: Facility): void {
     this.selectedCategory = category;
     this.facilityForm.reset({ ...facility, facilityCategoryId: category.id });
+    this.error = '';
+    this.editor = 'facility';
   }
+
+  closeEditor(): void {
+    if (this.savingCategory || this.savingFacility) return;
+    this.editor = null;
+    this.error = '';
+  }
+
+  @HostListener('document:keydown.escape')
+  closeEditorOnEscape(): void { this.closeEditor(); }
 
   saveCategory(): void {
     if (this.savingCategory || this.categoryForm.invalid) {
@@ -147,6 +153,7 @@ export class FacilityCategoriesPage implements OnInit {
       if (response?.isSuccess === false || !response) return;
       const savedId = Number(response?.data?.id ?? value.id);
       this.selectedCategory = savedId ? ({ id: savedId } as FacilityCategory) : null;
+      this.editor = null;
       this.load();
     });
   }
@@ -168,7 +175,7 @@ export class FacilityCategoriesPage implements OnInit {
     ).subscribe((response: any) => {
       if (response?.isSuccess === false || !response) return;
       this.selectedCategory = ({ id: value.facilityCategoryId } as FacilityCategory);
-      this.newFacility(this.selectedCategory);
+      this.editor = null;
       this.load();
     });
   }
@@ -178,6 +185,27 @@ export class FacilityCategoriesPage implements OnInit {
   }
 
   private get defaultIcon(): string { return this.icons[0] ?? 'check-circle'; }
+
+  private resetCategoryForm(): void {
+    this.selectedCategory = null;
+    this.categoryForm.reset({
+      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
+      displayOrder: this.categories.length, isActive: true,
+    });
+    this.facilityForm.reset({
+      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon, facilityCategoryId: 0,
+      kind: 1, displayOrder: 0, isActive: true,
+    });
+  }
+
+  private resetFacilityForm(category: FacilityCategory): void {
+    this.selectedCategory = category;
+    this.facilityForm.reset({
+      id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon,
+      facilityCategoryId: category.id, kind: 1,
+      displayOrder: category.facilities?.length ?? 0, isActive: true,
+    });
+  }
 
   private restoreSelectedCategory(): void {
     if (!this.selectedCategory) return;
