@@ -81,6 +81,12 @@
           </details>
         </div>
       }
+    } @else if (room.roomPeriodPrices?.length) {
+      <div class="mt-3 flex flex-wrap gap-2">
+        @for (period of room.roomPeriodPrices; track period.id) {
+          <span class="rounded-full bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">{{ period.startDate }} – {{ period.endDate }}: {{ period.price }} / {{ 'night' | translate }}</span>
+        }
+      </div>
     } @else if (room.ratePlans?.length) {
       <div class="mt-3 flex flex-wrap gap-2">
         @for (plan of room.ratePlans; track plan.id) {

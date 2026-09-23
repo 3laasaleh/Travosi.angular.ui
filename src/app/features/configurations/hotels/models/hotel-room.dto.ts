@@ -48,6 +48,7 @@ export interface RoomPeriodPriceDto {
   id: number;
   startDate: string; // DateOnly -> YYYY-MM-DD
   endDate: string;   // DateOnly -> YYYY-MM-DD
+  price: number;
   hotelRoomId: number;
   hotelRoom: HotelRoomDto;
   isActive: boolean;

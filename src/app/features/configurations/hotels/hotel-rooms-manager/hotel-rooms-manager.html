@@ -1,7 +1,7 @@
 <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h3 class="font-semibold">{{ 'roomTypes' | translate }}</h3>
+      <h3 class="font-semibold">{{ 'hotelRooms' | translate }}</h3>
       <p class="mt-1 text-sm text-slate-500">{{ 'manageHotelRoomsHint' | translate }}</p>
     </div>
     <button type="button" class="rounded-full border border-primary px-3 py-1.5 text-sm font-semibold text-primary"
@@ -38,7 +38,7 @@
             <label class="text-sm">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" />@if (roomForm.controls.nameAr.touched && roomForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
           <label class="text-sm">{{ 'roomType' | translate }}<select formControlName="roomType"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of roomTypes; track
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of hotelRooms; track
               type.value) { <option [value]="type.value">{{ type.label }}</option> }</select></label>
             <label class="text-sm">{{ 'mealPlans' | translate }}<select formControlName="mealPlan"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (plan of mealPlans;
@@ -168,53 +168,106 @@
           <div class="flex items-center justify-between gap-3">
             <div>
               <h5 class="font-semibold">{{ 'pricingPeriods' | translate }}</h5>
-              <p class="mt-1 text-xs text-slate-500">{{ 'pricingExclusiveEndHint' | translate }}</p>
+              <p class="mt-1 text-xs text-slate-500">{{ 'roomPeriodPricingHint' | translate }}</p>
             </div>
             <button type="button"
               class="grid size-9 shrink-0 place-items-center rounded-full border border-primary text-lg text-primary"
               (click)="addPeriod()" [attr.title]="'addPricingPeriod' | translate"><i class="mdi mdi-plus"></i></button>
           </div>
-          <div formArrayName="rates" class="mt-3 space-y-3">
-            @for (period of rates.controls; track $index) {
-            <div class="rounded-xl border border-slate-200 p-3" [formGroupName]="$index">
-              <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1.2fr_.8fr_auto] xl:items-end">
-                <label class="text-sm">{{ 'startDate' | translate }} <span class="text-red-600">*</span>
-                  <app-date-picker formControlName="startDate" [id]="'room-rate-from-' + $index" [min]="today"
-                    [placeholder]="'startDate' | translate" [ariaLabel]="'startDate' | translate" />
-                  @if (period.controls['startDate'].touched && period.controls['startDate'].hasError('required')) {
-                    <span class="mt-1 block text-xs text-red-600">{{ 'startDateRequired' | translate }}</span>
-                  }
-                </label>
-                <label class="text-sm">{{ 'endDate' | translate }} <span class="text-red-600">*</span>
-                  <app-date-picker formControlName="endDate" [id]="'room-rate-to-' + $index"
-                    [min]="minimumEndDate(period.controls['startDate'].value)" [placeholder]="'endDate' | translate"
-                    [ariaLabel]="'endDate' | translate" />
-                  @if (period.controls['endDate'].touched && period.controls['endDate'].hasError('required')) {
-                    <span class="mt-1 block text-xs text-red-600">{{ 'endDateRequired' | translate }}</span>
-                  } @else if (period.controls['endDate'].hasError('dateOrder') || period.controls['endDate'].hasError('overlap')) {
-                    <span class="mt-1 block text-xs text-red-600">{{ 'pricingPeriodsInvalid' | translate }}</span>
-                  }
-                </label>
-                <label class="text-sm">{{ 'price' | translate }} <span class="text-red-600">*</span>
-                  <div class="relative mt-1">
-                  <span
-                    class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span>
-                  <input [id]="'period-price-' + $index" formControlName="price" type="text" appNumbersOnly
-                    class="w-full rounded-2xl border py-2 pe-3 ps-12"
-                    [attr.aria-invalid]="period.controls['price'].touched && period.controls['price'].invalid" />
-                  </div>
-                  @if (period.controls['price'].touched && (period.controls['price'].hasError('required') || period.controls['price'].hasError('min'))) {
-                    <span class="mt-1 block text-xs text-red-600">{{ 'priceRequired' | translate }}</span>
-                  }
-                </label>
+          <div formArrayName="roomPeriodPrices" class="mt-3 space-y-3">
+        @for (period of rates.controls; track $index) {
 
-                <button type="button" [disabled]="rates.length === 1"
-                  class="grid size-10 place-items-center rounded-full text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-30"
-                  (click)="removePeriod($index)" [attr.title]="'remove' | translate"><i
-                    class="mdi mdi-delete"></i></button>
-              </div>
-            </div>
-            }
+  <div
+    class="grid gap-3 rounded-xl border border-slate-200 p-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_.8fr_auto_auto] xl:items-start"
+    [formGroupName]="$index">
+
+    <!-- Start Date -->
+    <label class="text-sm">
+      {{ 'startDate' | translate }}
+      <span class="text-red-600">*</span>
+
+      <app-date-picker
+        formControlName="startDate"
+        [id]="'room-rate-from-' + $index"
+        [min]="getMinimumStartDate($index)"
+        [placeholder]="'startDate' | translate"
+        [ariaLabel]="'startDate' | translate"
+        (change)="validatePeriod($index)"
+      />
+
+      @if (
+        period.controls['startDate'].touched &&
+        period.controls['startDate'].hasError('required')
+      ) {
+        <span class="mt-1 block text-xs text-red-600">
+          {{ 'startDateRequired' | translate }}
+        </span>
+      }
+
+      @if (
+        period.controls['startDate'].touched &&
+        period.controls['startDate'].hasError('previousPeriod')
+      ) {
+        <span class="mt-1 block text-xs text-red-600">
+          {{ 'roomPeriodStartAfterPrevious' | translate }}
+        </span>
+      }
+
+    </label>
+
+
+    <!-- End Date -->
+    <label class="text-sm">
+      {{ 'endDate' | translate }}
+      <span class="text-red-600">*</span>
+
+      <app-date-picker
+        formControlName="endDate"
+        [id]="'room-rate-to-' + $index"
+        [min]="minimumEndDate(period.controls['startDate'].value)"
+        [placeholder]="'endDate' | translate"
+        [ariaLabel]="'endDate' | translate"
+        (change)="validatePeriod($index)"
+      />
+
+      @if (
+        period.controls['endDate'].touched &&
+        period.controls['endDate'].hasError('required')
+      ) {
+        <span class="mt-1 block text-xs text-red-600">
+          {{ 'endDateRequired' | translate }}
+        </span>
+      }
+
+      @if (
+        period.controls['endDate'].touched &&
+        period.controls['endDate'].hasError('dateOrder')
+      ) {
+        <span class="mt-1 block text-xs text-red-600">
+          {{ 'roomPeriodEndAfterStart' | translate }}
+        </span>
+      }
+
+    </label>
+
+    <label class="text-sm">
+      {{ 'price' | translate }}
+      <span class="text-red-600">*</span>
+      <input formControlName="price" type="number" min="0.01" step="0.01" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+      @if (period.controls['price'].touched && period.controls['price'].invalid) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'priceRequired' | translate }}</span>
+      }
+    </label>
+
+    <label class="flex items-center gap-2 pt-7 text-sm">
+      <input formControlName="isActive" type="checkbox" />
+      {{ 'active' | translate }}
+    </label>
+
+    <button type="button" [disabled]="rates.length === 1" class="mt-6 grid size-10 place-items-center rounded-full text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-30" (click)="removePeriod($index)" [attr.title]="'remove' | translate"><i class="mdi mdi-minus"></i></button>
+
+  </div>
+}
           </div>
         </section>
 

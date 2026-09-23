@@ -8,6 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
@@ -68,7 +69,7 @@ export class HotelRoomsManager implements OnChanges {
   readonly maxImages = 5;
   private readonly language = inject(LanguageService);
 
-  readonly roomTypes = [
+  readonly hotelRooms = [
     { value: 1, label: 'Single' },
     { value: 2, label: 'Double' },
     { value: 3, label: 'Twin' },
@@ -136,7 +137,7 @@ export class HotelRoomsManager implements OnChanges {
     maxChildren: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
     maxInfants: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
     isPublished: new FormControl(false, { nonNullable: true }),
-    rates: new FormArray<FormGroup>([]),
+    roomPeriodPrices: new FormArray<FormGroup>([]),
     policies: new FormArray<FormGroup>([]),
   });
 
@@ -144,11 +145,10 @@ export class HotelRoomsManager implements OnChanges {
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
   ) {
-    this.rates.valueChanges.subscribe(() => this.validatePeriods());
   }
 
   get rates(): FormArray<FormGroup> {
-    return this.roomForm.controls.rates;
+    return this.roomForm.controls.roomPeriodPrices;
   }
   get policies(): FormArray<FormGroup> {
     return this.roomForm.controls.policies;
@@ -239,8 +239,9 @@ get todayAfterMonth(): string {
 
 
     this.rates.clear();
-    const ratePlans = (room as any).ratePlans ?? [];
-    ratePlans.flatMap((plan: any) => plan.rates ?? []).forEach((rate: any) => this.addPeriod(rate));
+    ((room as any).roomPeriodPrices ?? [])
+      .sort((left: any, right: any) => String(left.startDate).localeCompare(String(right.startDate)))
+      .forEach((period: any) => this.addPeriod(period));
     if (!this.rates.length) this.addPeriod();
     this.policies.clear();
     this.hotelPolicies
@@ -309,7 +310,7 @@ get todayAfterMonth(): string {
       new FormGroup({
         id: new FormControl(Number(value.id ?? 0)),
         startDate: new FormControl(
-          value.startDate ?? (this.rates.length ? previousEndDate : this.today),
+          value.startDate ?? (this.rates.length && previousEndDate ? this.addDays(previousEndDate, 1) : this.today),
           { nonNullable: true, validators: [Validators.required] },
         ),
         endDate: new FormControl(value.endDate ?? '', {
@@ -324,9 +325,13 @@ get todayAfterMonth(): string {
         isActive: new FormControl(value.isActive !== false, { nonNullable: true }),
       }),
     );
+    this.validateAllPeriods();
   }
   removePeriod(index: number): void {
-    if (this.rates.length > 1) this.rates.removeAt(index);
+    if (this.rates.length > 1) {
+      this.rates.removeAt(index);
+      this.validateAllPeriods();
+    }
   }
 
   addPolicy(value: any = {}): void {
@@ -410,17 +415,13 @@ get todayAfterMonth(): string {
 
   save(): void {
     if (!this.hotelId || this.saving) return;
+    this.validateAllPeriods();
     if (this.roomForm.invalid) {
       this.roomForm.markAllAsTouched();
       this.error = 'pleaseCorrectFormErrors';
       return;
     }
     const value = this.roomForm.getRawValue();
-    if (!this.validatePeriods() || this.roomForm.invalid) {
-      this.roomForm.markAllAsTouched();
-      this.error = 'pleaseCorrectFormErrors';
-      return;
-    }
     const payload = {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
@@ -443,9 +444,12 @@ get todayAfterMonth(): string {
       maxInfants: Number(value.maxInfants),
       maxTotalOccupancy:
         Number(value.maxAdults) + Number(value.maxChildren) + Number(value.maxInfants),
-      rates: value.rates.map((rate: any) => ({
-        ...rate,
-        isActive: rate.isActive !== false,
+      roomPeriodPrices: value.roomPeriodPrices.map((period: any) => ({
+        id: Number(period.id ?? 0),
+        startDate: period.startDate,
+        endDate: period.endDate,
+        price: Number(period.price),
+        isActive: period.isActive !== false,
       })),
       policies: value.policies.map((policy: any, index: number) => ({
         ...policy,
@@ -556,28 +560,7 @@ get todayAfterMonth(): string {
       });
   }
 
-  private validatePeriods(): boolean {
-    let valid = this.rates.length > 0;
-    const periods = this.rates.controls
-      .map((group, index) => ({ group, index, startDate: String(group.controls['startDate'].value ?? ''),
-         endDate: String(group.controls['endDate'].value ?? ''),
-          price: Number(group.controls['price'].value) }))
-      .sort((left, right) => left.startDate.localeCompare(right.startDate));
-    periods.forEach((period, index) => {
-      const endDate = period.group.controls['endDate'];
-      const existingErrors = { ...(endDate.errors ?? {}) };
-      delete existingErrors['dateOrder'];
-      delete existingErrors['overlap'];
-      endDate.setErrors(Object.keys(existingErrors).length ? existingErrors : null);
-      if (!period.startDate) valid = false;
-      if (!period.endDate || period.endDate <= period.startDate) { endDate.setErrors({ ...(endDate.errors ?? {}), dateOrder: true }); valid = false; }
-      if (!Number.isFinite(period.price) || period.price <= 0) valid = false;
-      const previous = periods[index - 1];
-      if (previous && previous.endDate > period.startDate) 
-        { endDate.setErrors({ ...(endDate.errors ?? {}), overlap: true }); valid = false; }
-    });
-    return valid;
-  }
+
 
   private load(): void {
     this.loading = true;
@@ -634,5 +617,73 @@ get todayAfterMonth(): string {
     this.roomImages
       .filter((image) => image.file)
       .forEach((image) => URL.revokeObjectURL(image.url));
+  }
+private addError(
+  control: AbstractControl,
+  errorName: string
+): void {
+  control.setErrors({
+    ...control.errors,
+    [errorName]: true
+  });
+}
+
+private removeError(
+  control: AbstractControl,
+  errorName: string
+): void {
+  if (!control.errors) {
+    return;
+  }
+
+  const errors = { ...control.errors };
+
+  delete errors[errorName];
+
+  control.setErrors(
+    Object.keys(errors).length > 0 ? errors : null
+  );
+}
+addDays(date: string, days: number): string {
+  const result = new Date(date);
+
+  result.setDate(result.getDate() + days);
+
+  return `${result.getFullYear()}-${String(result.getMonth() + 1).padStart(2, '0')}-${String(result.getDate()).padStart(2, '0')}`;
+}
+getMinimumStartDate(index: number): string {
+
+  if (index === 0) {
+    return this.today;
+  }
+
+  const previousPeriod =
+    this.rates.at(index - 1) as FormGroup;
+
+  const previousEndDate =
+    previousPeriod.get('endDate')?.value;
+
+  return previousEndDate
+    ? this.addDays(previousEndDate, 1)
+    : this.today;
+}
+  validatePeriod(_index: number): void { this.validateAllPeriods(); }
+
+  private validateAllPeriods(): void {
+    this.rates.controls.forEach((period) => {
+      this.removeError(period.controls['startDate'], 'previousPeriod');
+      this.removeError(period.controls['endDate'], 'dateOrder');
+    });
+
+    this.rates.controls.forEach((period, index) => {
+      const startDate = String(period.controls['startDate'].value ?? '');
+      const endDate = String(period.controls['endDate'].value ?? '');
+      if (startDate && endDate && endDate <= startDate) this.addError(period.controls['endDate'], 'dateOrder');
+
+      if (index > 0 && startDate) {
+        const previousEndDate = String(this.rates.at(index - 1).controls['endDate'].value ?? '');
+        if (previousEndDate && startDate <= previousEndDate) this.addError(period.controls['startDate'], 'previousPeriod');
+      }
+    });
   }
 }

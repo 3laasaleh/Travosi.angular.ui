@@ -41,7 +41,7 @@
     </form>
     <div class="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
       <div class="space-y-4">
-        <h2 class="text-2xl font-semibold">{{ 'roomTypes' | translate }}</h2>
+        <h2 class="text-2xl font-semibold">{{ 'hotelRooms' | translate }}</h2>
         @for (room of hotel.rooms; track room.id) {
         <app-hotel-room-card [room]="room" [availability]="roomAvailability(room.id)" [isArabic]="isArabic" />
         }
