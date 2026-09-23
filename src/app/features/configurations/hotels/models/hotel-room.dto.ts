@@ -26,6 +26,7 @@ export interface HotelRoomDto {
 
   bathroom: string | null;
   view: string | null;
+  childrenPolicies: string | null;
 
   avilableRoomsCount: number;
   hasBalcony: boolean;

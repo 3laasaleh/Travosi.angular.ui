@@ -280,24 +280,14 @@
           <div formArrayName="policies" class="mt-3 space-y-3">
             @for (policy of policies.controls; track $index) {
               <div class="rounded-xl border border-slate-200 p-3" [formGroupName]="$index">
-                <div class="grid gap-3 md:grid-cols-2">
-                  <label class="text-sm">{{ 'englishDescription' | translate }} <span class="text-red-600">*</span>
-                    <textarea formControlName="descriptionEng" rows="3" maxlength="1000"
-                      [placeholder]="'englishDescription' | translate"
-                      class="mt-1 w-full rounded-xl border border-slate-300 p-2"></textarea>
-                    @if (policy.controls['descriptionEng'].touched && policy.controls['descriptionEng'].hasError('required')) {
-                      <span class="mt-1 block text-xs text-red-600">{{ 'descriptionRequired' | translate }}</span>
-                    }
-                  </label>
-                  <label class="text-sm">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span>
-                    <textarea formControlName="descriptionAr" rows="3" maxlength="1000"
-                      [placeholder]="'arabicDescription' | translate"
-                      class="mt-1 w-full rounded-xl border border-slate-300 p-2 text-right"></textarea>
-                    @if (policy.controls['descriptionAr'].touched && policy.controls['descriptionAr'].hasError('required')) {
-                      <span class="mt-1 block text-xs text-red-600">{{ 'descriptionRequired' | translate }}</span>
-                    }
-                  </label>
-                </div>
+                <label class="text-sm">{{ 'childPolicy' | translate }} <span class="text-red-600">*</span>
+                  <textarea formControlName="value" rows="2" maxlength="1000"
+                    [placeholder]="'childPolicyPlaceholder' | translate"
+                    class="mt-1 w-full rounded-xl border border-slate-300 p-2"></textarea>
+                  @if (policy.controls['value'].touched && policy.controls['value'].hasError('required')) {
+                    <span class="mt-1 block text-xs text-red-600">{{ 'childPolicyRequired' | translate }}</span>
+                  }
+                </label>
                 <div class="mt-2 flex justify-end"><button type="button" class="text-sm text-rose-600"
                     (click)="removePolicy($index)">{{ 'remove' | translate }}</button></div>
               </div>

@@ -49,7 +49,6 @@ export class HotelRoomsManager implements OnChanges {
   facilities: any[] = [];
   mealPlans: any[] = [];
   currencies: any[] = [];
-  hotelPolicies: any[] = [];
   loading = false;
   saving = false;
   error = '';
@@ -244,9 +243,7 @@ get todayAfterMonth(): string {
       .forEach((period: any) => this.addPeriod(period));
     if (!this.rates.length) this.addPeriod();
     this.policies.clear();
-    this.hotelPolicies
-      .filter((policy) => Number(policy.hotelRoomId) === Number(room.id))
-      .forEach((policy) => this.addPolicy(policy));
+    this.parseStringValues(room.childrenPolicies).forEach((policy) => this.addPolicy(policy));
     this.cdr.markForCheck();
   }
 
@@ -334,18 +331,13 @@ get todayAfterMonth(): string {
     }
   }
 
-  addPolicy(value: any = {}): void {
+  addPolicy(value: string = ''): void {
     this.policies.push(
       new FormGroup({
-        descriptionEng: new FormControl(value.descriptionEng ?? '', {
+        value: new FormControl(value, {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(1000)],
         }),
-        descriptionAr: new FormControl(value.descriptionAr ?? '', {
-          nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(1000)],
-        }),
-        isActive: new FormControl(value.isActive !== false, { nonNullable: true }),
       }),
     );
   }
@@ -434,6 +426,10 @@ get todayAfterMonth(): string {
         .filter((option) => this.selectedViewItems.has(option.value))
         .map((option) => option.value)
         .join(';'),
+      childrenPolicies: value.policies
+        .map((policy: { value: string }) => policy.value.trim())
+        .filter(Boolean)
+        .join(';'),
       roomType: Number(value.roomType),
       mealPlan: Number(value.mealPlan),
       roomSize: value.roomSize === null ? null : Number(value.roomSize),
@@ -450,17 +446,6 @@ get todayAfterMonth(): string {
         endDate: period.endDate,
         price: Number(period.price),
         isActive: period.isActive !== false,
-      })),
-      policies: value.policies.map((policy: any, index: number) => ({
-        ...policy,
-        hotelId: this.hotelId,
-        hotelRoomId: this.editingRoom?.id ?? null,
-        minAge: 0,
-        maxAge: 17,
-        chargeType: 1,
-        amount: 0,
-        currencyCode: this.currencyName(this.currencies[0]) || 'USD',
-        bedType: 4,
       })),
       ...(this.editingRoom ? { id: Number(this.editingRoom.id) } : {}),
     };
@@ -571,9 +556,6 @@ get todayAfterMonth(): string {
         .pipe(catchError(() => of(null))),
       mealPlans: this.api.get('MealPlans').pipe(catchError(() => of(null))),
       currencies: this.api.get('Currencies').pipe(catchError(() => of(null))),
-      policies: this.api
-        .get(`HotelChildPolicies/Hotels/${this.hotelId}`)
-        .pipe(catchError(() => of(null))),
     })
       .pipe(
         finalize(() => {
@@ -586,7 +568,6 @@ get todayAfterMonth(): string {
         this.facilities = this.rows(result.facilities);
         this.mealPlans = this.rows(result.mealPlans);
         this.currencies = this.rows(result.currencies);
-        this.hotelPolicies = this.rows(result.policies);
         if (!this.editingRoom) this.reset();
       });
   }
