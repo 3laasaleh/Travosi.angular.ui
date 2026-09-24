@@ -28,6 +28,8 @@ export interface HotelDTO {
   nameAr?: string;
   routeName?: string;
   starRating: number;
+  distanceFromDowntownKm?: number | null;
+  hasFreeAirportTaxi?: boolean;
   address?: string;
   descriptionEng?: string;
   descriptionAr?: string;
@@ -104,6 +106,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
       nameAr: form.nameAr.trim(),
       routeName: form.routeName.trim() || null,
       starRating: Number(form.starRating),
+      distanceFromDowntownKm: form.distanceFromDowntownKm === null ? null : Number(form.distanceFromDowntownKm),
+      hasFreeAirportTaxi: form.hasFreeAirportTaxi === true,
       destinationId: Number(form.destinationId),
       address: form.address.trim(),
       descriptionEng: form.descriptionEng.trim(),
@@ -185,6 +189,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
       nameAr: hotel.nameAr ?? hotel.name ?? '',
       routeName: hotel.routeName ??'',
       starRating: hotel.starRating ?? 1,
+      distanceFromDowntownKm: hotel.distanceFromDowntownKm ?? null,
+      hasFreeAirportTaxi: hotel.hasFreeAirportTaxi === true,
       destinationId: hotel.destinationId ?? null,
       address: hotel.address ?? '',
       descriptionEng: hotel.descriptionEng ?? '',
@@ -209,6 +215,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
       nameAr: '',
       routeName: '',
       starRating: 1,
+      distanceFromDowntownKm: null,
+      hasFreeAirportTaxi: false,
       destinationId: null,
       address: '',
       descriptionEng: '',
@@ -269,6 +277,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
         nonNullable: true,
         validators: [Validators.required, Validators.min(1), Validators.max(5)],
       }),
+      distanceFromDowntownKm: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
+      hasFreeAirportTaxi: new FormControl(false, { nonNullable: true }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       address: new FormControl('', { nonNullable: true }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),

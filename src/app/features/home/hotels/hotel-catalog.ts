@@ -235,6 +235,26 @@ export class HotelCatalog implements OnInit {
       prices.sort((left, right) => Number(left.grandTotal) - Number(right.grandTotal))[0] ?? null
     );
   }
+  get numberOfNights(): number {
+    if (!this.checkInDate || !this.checkOutDate) return 0;
+    const start = new Date(`${this.checkInDate}T00:00:00`);
+    const end = new Date(`${this.checkOutDate}T00:00:00`);
+    const nights = Math.round((end.getTime() - start.getTime()) / 86_400_000);
+    return nights > 0 ? nights : 0;
+  }
+  get numberOfDays(): number {
+    return this.numberOfNights ? this.numberOfNights + 1 : 0;
+  }
+  hasFreeAirportTaxi(hotel: any): boolean {
+    return hotel?.hasFreeAirportTaxi === true || (hotel?.amenities ?? []).some((amenity: any) => {
+      const value = [amenity?.nameEng, amenity?.nameAr, amenity?.name, amenity?.descriptionEng, amenity?.descriptionAr]
+        .filter(Boolean).join(' ').toLocaleLowerCase();
+      return value.includes('airport') && (value.includes('taxi') || value.includes('shuttle') || value.includes('transfer'));
+    });
+  }
+  featuredLabel(hotel: any): string {
+    return hotel?.badgeEng || hotel?.badgeAr || 'featured';
+  }
   private unfilteredResults(): any[] {
     if (this.selectedDestinationId !== null) {
       return this.hotels.filter(
