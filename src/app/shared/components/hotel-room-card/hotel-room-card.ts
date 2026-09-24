@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
+import { mdiIconClass } from '../../utils/mdi-icon.util';
 
 @Component({
   selector: 'app-hotel-room-card',
@@ -10,16 +11,7 @@ import { environment } from '../../../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelRoomCard {
-  private readonly bathroomKeys: Record<string, string> = {
-    'Free toiletries': 'freeToiletries',
-    Bidet: 'bidet',
-    Toilet: 'toilet',
-    'Bath or shower': 'bathOrShower',
-    Towels: 'towels',
-    Slippers: 'slippers',
-    Hairdryer: 'hairdryer',
-    'Toilet paper': 'toiletPaper',
-  };
+  readonly iconClass = mdiIconClass;
   @Input() room: any;
   @Input() availability: any | null = null;
   @Input() isArabic = false;
@@ -36,6 +28,10 @@ export class HotelRoomCard {
 
   roomName(room: any): string {
     return this.localized(room?.nameEng ?? room?.name, room?.nameAr);
+  }
+
+  roomDescription(room: any): string {
+    return this.localized(room?.descriptionEng ?? room?.description, room?.descriptionAr);
   }
 
   bedTypeName(room: any): string {
@@ -59,22 +55,8 @@ export class HotelRoomCard {
     return this.localized(plan?.mealPlanDetails?.nameEng, plan?.mealPlanDetails?.nameAr, '');
   }
 
-  bathroomItems(room: any): string[] {
-    return this.semicolonItems(room?.bathroom);
-  }
-
   childrenPolicyItems(room: any): string[] {
     return this.semicolonItems(room?.childrenPolicies);
-  }
-
-  bathroomLabel(item: string): string {
-    return this.bathroomKeys[item] ?? item;
-  }
-
-  viewLabel(view: unknown): string {
-    const keys: Record<string, string> = { 'Pool view': 'poolView', 'Beach view': 'beachView', 'Garden view': 'gardenView' };
-    const value = typeof view === 'string' ? view : '';
-    return keys[value] ?? value;
   }
 
   private localized(english: unknown, arabic: unknown, fallback = ''): string {

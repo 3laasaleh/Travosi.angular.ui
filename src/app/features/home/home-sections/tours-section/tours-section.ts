@@ -29,6 +29,8 @@ export interface TourHomeDTO {
   startDate?: string | null;
   endDate?: string | null;
   pricePerPerson?: number;
+  pricePerChild?: number;
+  pricePerInfant?: number;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
 }

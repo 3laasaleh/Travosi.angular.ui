@@ -25,15 +25,12 @@ import { HotelRoomCard } from '../../../../shared/components/hotel-room-card/hot
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { HotelRoomDto } from '../models/hotel-room.dto';
 import { LanguageService } from '../../../../core/services/language.service';
+import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
 
 interface FacilityGroup {
   id: number;
   name: string;
   facilities: any[];
-}
-interface BathroomOption {
-  value: string;
-  label: string;
 }
 
 @Component({
@@ -44,6 +41,7 @@ interface BathroomOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelRoomsManager implements OnChanges {
+  readonly iconClass = mdiIconClass;
   @Input() hotelId: number | null = null;
   rooms: any[] = [];
   facilities: any[] = [];
@@ -53,8 +51,6 @@ export class HotelRoomsManager implements OnChanges {
   error = '';
   editingRoom: any | null = null;
   selectedFacilityIds = new Set<number>();
-  selectedBathroomItems = new Set<string>();
-  selectedViewItems = new Set<string>();
   roomImages: Array<{
     id?: number;
     file?: File;
@@ -76,21 +72,6 @@ export class HotelRoomsManager implements OnChanges {
     { value: 6, label: 'Suite' },
     { value: 7, label: 'Junior suite' },
     { value: 8, label: 'Deluxe' },
-  ];
-  readonly bathroomOptions: BathroomOption[] = [
-    { value: 'Free toiletries', label: 'freeToiletries' },
-    { value: 'Bidet', label: 'bidet' },
-    { value: 'Toilet', label: 'toilet' },
-    { value: 'Bath or shower', label: 'bathOrShower' },
-    { value: 'Towels', label: 'towels' },
-    { value: 'Slippers', label: 'slippers' },
-    { value: 'Hairdryer', label: 'hairdryer' },
-    { value: 'Toilet paper', label: 'toiletPaper' },
-  ];
-  readonly viewOptions = [
-    { value: 'Pool view', label: 'poolView' },
-    { value: 'Beach view', label: 'beachView' },
-    { value: 'Garden view', label: 'gardenView' },
   ];
   readonly childPricingTypes = [
     { value: 1, label: 'free' },
@@ -123,13 +104,11 @@ export class HotelRoomsManager implements OnChanges {
     bedTypeEng: new FormControl('', { nonNullable: true }),
     bedTypeAr: new FormControl('', { nonNullable: true }),
     bedSize: new FormControl('', { nonNullable: true }),
-    view: new FormControl('', { nonNullable: true }),
     avilableRoomsCount: new FormControl(1, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
     hasBalcony: new FormControl(false, { nonNullable: true }),
-    numberOfBathrooms: new FormControl(1, { nonNullable: true, validators: [Validators.min(0)] }),
     smokingAllowed: new FormControl(false, { nonNullable: true }),
     maxAdults: new FormControl(1, { nonNullable: true, validators: [Validators.min(1)] }),
     maxChildren: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
@@ -212,8 +191,6 @@ get todayAfterMonth(): string {
     this.selectedFacilityIds = new Set(
       (room.amenities ?? []).map((facility: any) => Number(facility.id)).filter(Boolean),
     );
-    this.selectedBathroomItems = new Set(this.parseStringValues(room.bathroom));
-    this.selectedViewItems = new Set(this.parseStringValues(room.view));
     this.roomForm.reset({
       nameEng: room.nameEng  ?? '',
       nameAr: room.nameAr ?? '',
@@ -225,10 +202,8 @@ get todayAfterMonth(): string {
       bedTypeEng: room.bedTypeEng ?? room.bedType ?? '',
       bedTypeAr: room.bedTypeAr ?? '',
       bedSize: room.bedSize ?? '',
-      view: room.view ?? '',
       avilableRoomsCount: Number(room.avilableRoomsCount ?? 1),
       hasBalcony: room.hasBalcony === true,
-      numberOfBathrooms: Number(room.numberOfBathrooms ?? 1),
       smokingAllowed: room.smokingAllowed === true,
       maxAdults: Number(room.maxAdults ?? 1),
       maxChildren: Number(room.maxChildren ?? 0),
@@ -253,7 +228,6 @@ get todayAfterMonth(): string {
     this.editingRoom = null;
     this.error = '';
     this.selectedFacilityIds = new Set();
-    this.selectedBathroomItems = new Set();
     this.roomForm.reset({
       nameEng: '',
       nameAr: '',
@@ -265,10 +239,8 @@ get todayAfterMonth(): string {
       bedTypeEng: '',
       bedTypeAr: '',
       bedSize: '',
-      view: '',
       avilableRoomsCount: 1,
       hasBalcony: false,
-      numberOfBathrooms: 1,
       smokingAllowed: false,
       maxAdults: 1,
       maxChildren: 0,
@@ -282,12 +254,6 @@ get todayAfterMonth(): string {
 
   toggleFacility(id: number, checked: boolean): void {
     checked ? this.selectedFacilityIds.add(id) : this.selectedFacilityIds.delete(id);
-  }
-  toggleBathroom(value: string, checked: boolean): void {
-    checked ? this.selectedBathroomItems.add(value) : this.selectedBathroomItems.delete(value);
-  }
-    toggleView(value: string, checked: boolean): void {
-    checked ? this.selectedViewItems.add(value) : this.selectedViewItems.delete(value);
   }
   allSelected(group: FacilityGroup): boolean {
     return (
@@ -418,23 +384,14 @@ get todayAfterMonth(): string {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
       ...roomValue,
-      bathroom: this.bathroomOptions
-        .filter((option) => this.selectedBathroomItems.has(option.value))
-        .map((option) => option.value)
-        .join(';'),
-      view: this.viewOptions
-        .filter((option) => this.selectedViewItems.has(option.value))
-        .map((option) => option.value)
-        .join(';'),
       childrenPolicies: policies
-        .map((policy: { value: string }) => policy.value.trim())
+        .map((policy) => String(policy['value'] ?? '').trim())
         .filter(Boolean)
         .join(';'),
       roomType: Number(value.roomType),
       mealPlan: Number(value.mealPlan),
       roomSize: value.roomSize === null ? null : Number(value.roomSize),
       avilableRoomsCount: Number(value.avilableRoomsCount),
-      numberOfBathrooms: Number(value.numberOfBathrooms),
       maxAdults: Number(value.maxAdults),
       maxChildren: Number(value.maxChildren),
       maxInfants: Number(value.maxInfants),

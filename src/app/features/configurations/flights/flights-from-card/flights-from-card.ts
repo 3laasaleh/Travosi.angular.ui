@@ -113,9 +113,17 @@ export class FlightsFromCard implements OnInit, OnChanges {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
-    price: new FormControl(0, {
+    pricePerPerson: new FormControl(0, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+(?:\.\d+)?$/)],
+    }),
+    pricePerChild: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0), Validators.pattern(/^\d+(?:\.\d+)?$/)],
+    }),
+    pricePerInfant: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.min(0), Validators.pattern(/^\d+(?:\.\d+)?$/)],
     }),
     baggageAllowanceKg: new FormControl<number>(10, {
       validators: [Validators.min(1), Validators.max(99)],
@@ -408,7 +416,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       adults: raw.adults,
       children: raw.children,
       infants: raw.infants,
-      price: Number(raw.price),
+      pricePerPerson: Number(raw.pricePerPerson),
+      pricePerChild: Number(raw.pricePerChild),
+      pricePerInfant: Number(raw.pricePerInfant ?? 0),
       baggageAllowanceKg: raw.baggageAllowanceKg ?? null,
       legs: raw.legs.map((leg: any) => ({
         originAirport: this.code(leg.originAirport),
@@ -486,7 +496,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       adults: Number(flight.adults ?? 1),
       children: Number(flight.children ?? 0),
       infants: Number(flight.infants ?? 0),
-      price: Number(flight.price ?? 0),
+      pricePerPerson: Number(flight.pricePerPerson ?? flight.price ?? 0),
+      pricePerChild: Number(flight.pricePerChild ?? 0),
+      pricePerInfant: Number(flight.pricePerInfant ?? 0),
       baggageAllowanceKg: flight.baggageAllowanceKg ?? null,
     });
     const legs =
@@ -525,7 +537,9 @@ export class FlightsFromCard implements OnInit, OnChanges {
       adults: 1,
       children: 0,
       infants: 0,
-      price: 0,
+      pricePerPerson: 0,
+      pricePerChild: 0,
+      pricePerInfant: 0,
       baggageAllowanceKg: 10,
     });
     this.addLeg();

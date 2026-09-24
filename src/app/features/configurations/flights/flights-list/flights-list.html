@@ -48,7 +48,7 @@
           <th class="px-4 py-3">{{ 'airline' | translate }}</th>
           <th class="px-4 py-3">{{ 'route' | translate }}</th>
           <th class="px-4 py-3">{{ 'arrivalDate' | translate }}</th>
-          <th class="px-4 py-3">{{ 'price' | translate }}</th>
+          <th class="px-4 py-3">{{ 'passengerPrices' | translate }}</th>
           <th class="px-4 py-3">{{ 'flightClass' | translate }}</th>
           <th class="px-4 py-3">{{ 'status' | translate }}</th>
           <th class="px-4 py-3">{{ 'actions' | translate }}</th>
@@ -65,7 +65,11 @@
           <td class="px-4 py-3">{{ item.departureAirport}} <i class="mdi mdi-arrow-right"></i>
              {{ item.arrivalAirport  }}</td>
           <td class="px-4 py-3">{{ item.arrivalDate | date: 'mediumDate' }}</td>
-          <td class="px-4 py-3">{{ item.price }} {{currencyService.currentCurrency().symbol}}</td>
+          <td class="px-4 py-3 text-xs">
+            <div>{{ 'adults' | translate }}: {{ item.pricePerPerson }} {{currencyService.currentCurrency().symbol}}</div>
+            <div>{{ 'children' | translate }}: {{ item.pricePerChild }} {{currencyService.currentCurrency().symbol}}</div>
+            <div>{{ 'infants' | translate }}: {{ item.pricePerInfant }} {{currencyService.currentCurrency().symbol}}</div>
+          </td>
           <td class="px-4 py-3">
             <span class="rounded-full bg-primary-400 px-2 py-0.5 text-xs text-slate-50 font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span></td>
           <td class="px-4 py-3">
@@ -105,7 +109,8 @@
         <p class="mt-1 text-sm text-slate-500">{{ item.airlineName ?? item.airline?.name }}</p>
         <p class="mt-2 text-sm font-medium">{{ item.departureAirport }} 
         <i class="mdi mdi-arrow-right"></i> {{item.arrivalAirport}}</p>
-        <p class="mt-2 text-sm"><span class="font-semibold">{{ item.price }}</span> </p>
+        <p class="mt-2 text-sm"><span class="font-semibold">{{ 'adults' | translate }}:</span> {{ item.pricePerPerson }} {{currencyService.currentCurrency().symbol}}</p>
+        <p class="text-sm"><span class="font-semibold">{{ 'children' | translate }}:</span> {{ item.pricePerChild }} {{currencyService.currentCurrency().symbol}} · <span class="font-semibold">{{ 'infants' | translate }}:</span> {{ item.pricePerInfant }} {{currencyService.currentCurrency().symbol}}</p>
         <div class="mt-4 flex gap-2">
           @if (item.isActive === false) {
             <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50" (click)="editRequested.emit(item)">{{ 'edit' | translate }}</button>

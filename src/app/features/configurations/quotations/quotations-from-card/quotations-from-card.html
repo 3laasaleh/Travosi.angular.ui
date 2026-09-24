@@ -138,6 +138,7 @@
                       <span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(pkg) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(pkg) | number:'1.2-2' }}</span>
                     </span>
                   </span>
+                  <span class="text-xs text-slate-500">{{ 'infantPrice' | translate }}: {{ infantPrice(pkg) | number:'1.2-2' }}</span>
                   <strong>{{ catalogTotal(pkg) | number:'1.2-2' }}</strong>
                 </label>
               } @empty {
@@ -185,6 +186,7 @@
                       <span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ packagePrice(tour) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ childPrice(tour) | number:'1.2-2' }}</span>
                     </span>
                   </span>
+                  <span class="text-xs text-slate-500">{{ 'infantPrice' | translate }}: {{ infantPrice(tour) | number:'1.2-2' }}</span>
                   <strong>{{ catalogTotal(tour) | number:'1.2-2' }}</strong>
                 </label>
               } @empty {
@@ -212,9 +214,10 @@
                     <span class="min-w-0">
                       <span class="block font-medium">{{ flightName(flight) }}</span>
                       <span class="block text-xs text-slate-500">{{ flight.departureTime | date:'medium' }} — {{ flight.arrivalTime | date:'medium' }}</span>
-                      <span class="block text-xs text-slate-500">{{ 'flightPricePerTraveler' | translate }}: {{ flightPrice(flight) | number:'1.2-2' }}</span>
+                      <span class="block text-xs text-slate-500">{{ 'passengerPrices' | translate }}</span>
                     </span>
                   </span>
+                  <span class="text-xs text-slate-500">{{ 'adultPrice' | translate }}: {{ flightAdultPrice(flight) | number:'1.2-2' }} · {{ 'childPrice' | translate }}: {{ flightChildPrice(flight) | number:'1.2-2' }} · {{ 'infantPrice' | translate }}: {{ flightInfantPrice(flight) | number:'1.2-2' }}</span>
                   <strong>{{ flightTotal(flight) | number:'1.2-2' }}</strong>
                 </label>
               } @empty {

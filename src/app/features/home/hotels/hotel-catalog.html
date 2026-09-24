@@ -1,40 +1,74 @@
 <app-home-navbar />
 <app-breadcrumbs />
 
-<main class="min-h-screen bg-slate-50 py-10">
-  <section class="mx-auto max-w-6xl px-4">
-    <header class="mb-8 text-center">
-      <p class="text-sm font-semibold uppercase tracking-[.3em] text-primary">{{ 'stayWithUs' | translate }}</p>
-      <h1 class="mt-2 text-4xl font-semibold text-slate-900">{{ 'hotels' | translate }}</h1>
-    </header>
+<main class="min-h-screen bg-slate-50 ">
 
-    <form class="relative mb-8 grid gap-3 rounded-3xl border border-white/20 bg-cover bg-center p-4 shadow-xl md:grid-cols-[1.5fr_1fr_1fr_.7fr_auto] md:p-6" style="background-image: linear-gradient(105deg, rgba(2, 40, 62, .88), rgba(5, 83, 99, .62)), url('/assets/images/bg/3.jpg');" (ngSubmit)="applySearch()">
+<div class=" bg-slate-500 ">
+    <section class="mx-auto max-w-6xl px-4">
+        <header class="mb-8 text-center">
+      <h1 class="mt-2 text-4xl font-semibold text-slate-50">{{ 'hotels' | translate }}</h1>
+    </header>
+        <form class="relative mb-8 grid gap-3 rounded-3xl border border-white/20   bg-slate-400 bg-center p-4 shadow-xl md:grid-cols-[1.5fr_1fr_1fr_1fr_.7fr_auto] md:p-6"
+     (ngSubmit)="applySearch()">
       <label #destinationControl class="relative text-sm font-semibold text-white drop-shadow-sm">
         {{ 'destination' | translate }}
         <span class="relative mt-1 block">
           <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2 text-lg text-primary" aria-hidden="true"></i>
-          <input [(ngModel)]="destinationQuery" name="destinationQuery" autocomplete="off" role="combobox" aria-autocomplete="list" [attr.aria-expanded]="destinationMenuOpen" class="w-full rounded-xl border border-white/50 bg-white/95 py-2 pe-10 ps-10 text-slate-900 shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'searchHotelsDestination' | translate" (focus)="openDestinationMenu()" (input)="openDestinationMenu()" />
+          <input [(ngModel)]="destinationQuery" name="destinationQuery" autocomplete="off" role="combobox" aria-autocomplete="list" [attr.aria-expanded]="destinationMenuOpen" class="w-full rounded-xl border border-white/50 bg-white/95 py-2 pe-10 ps-10 text-slate-900 shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" [placeholder]="'searchHotelsDestination' | translate" (focus)="openDestinationMenu()" (input)="onDestinationQueryChange()" />
           <button type="button" class="absolute end-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-primary" [attr.aria-label]="'selectHotel' | translate" (click)="toggleDestinationMenu()"><i class="mdi" [class.mdi-chevron-up]="destinationMenuOpen" [class.mdi-chevron-down]="!destinationMenuOpen" aria-hidden="true"></i></button>
         </span>
         @if (destinationMenuOpen) {
           <div class="absolute z-20 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 text-slate-800 shadow-xl" role="listbox">
-            @for (hotel of suggestions; track hotel.id) {
-              <button type="button" role="option" (click)="selectHotel(hotel)" class="flex w-full items-center gap-3 rounded-lg p-2 text-start transition hover:bg-primary/5">
-                <img [src]="image(hotel) || 'assets/images/main-logo.png'" class="size-10 rounded-lg object-cover" [alt]="hotelName(hotel)" />
-                <span class="min-w-0"><span class="block truncate font-semibold">{{ hotelName(hotel) }}</span><span class="block truncate text-xs text-slate-500">{{ hotelAddress(hotel) }}</span></span>
-              </button>
+            @for (suggestion of suggestions; track suggestion.kind + '-' + suggestion.item.id) {
+              @if (suggestion.kind === 'destination') {
+                <button type="button" role="option" (click)="selectDestination(suggestion.item)" class="flex w-full items-center gap-3 rounded-lg p-2 text-start transition hover:bg-primary/5">
+                  <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i></span>
+                  <span class="min-w-0"><span class="block truncate font-semibold">{{ destinationName(suggestion.item) }}</span><span class="block truncate text-xs text-slate-500">{{ 'destination' | translate }}</span></span>
+                </button>
+              } @else {
+                <button type="button" role="option" (click)="selectHotel(suggestion.item)" class="flex w-full items-center gap-3 rounded-lg p-2 text-start transition hover:bg-primary/5">
+                  <img [src]="image(suggestion.item) || 'assets/images/main-logo.png'" class="size-10 rounded-lg object-cover" [alt]="hotelName(suggestion.item)" />
+                  <span class="min-w-0"><span class="block truncate font-semibold">{{ hotelName(suggestion.item) }}</span><span class="block truncate text-xs text-slate-500">{{ hotelAddress(suggestion.item) }}</span></span>
+                </button>
+              }
             } @empty {
               <p class="px-3 py-5 text-center text-sm font-normal text-slate-500">{{ 'noHotelsFound' | translate }}</p>
             }
           </div>
         }
       </label>
-      <label class="text-sm font-semibold text-white drop-shadow-sm">{{ 'checkIn' | translate }}<input [(ngModel)]="checkInDate" name="checkIn" type="date" class="mt-1 w-full rounded-xl border border-white/50 bg-white/95 px-3 py-2 text-slate-900 shadow-sm" /></label>
-      <label class="text-sm font-semibold text-white drop-shadow-sm">{{ 'checkOut' | translate }}<input [(ngModel)]="checkOutDate" name="checkOut" type="date" class="mt-1 w-full rounded-xl border border-white/50 bg-white/95 px-3 py-2 text-slate-900 shadow-sm" /></label>
+      <label class="text-sm font-semibold text-white drop-shadow-sm">{{ 'checkIn' | translate }}<app-date-picker [(ngModel)]="checkInDate" name="checkIn" [min]="today" [autoSelectToday]="true" [placeholder]="'checkIn' | translate" [ariaLabel]="'checkIn' | translate" inputClass="mt-1 border-white/50 bg-white/95 text-slate-900" (ngModelChange)="onCheckInDateChange($event)" /></label>
+      <label class="text-sm font-semibold text-white drop-shadow-sm">{{ 'checkOut' | translate }}<app-date-picker [(ngModel)]="checkOutDate" name="checkOut" [min]="checkInDate || today" [autoSelectToday]="false" [placeholder]="'checkOut' | translate" [ariaLabel]="'checkOut' | translate" inputClass="mt-1 border-white/50 bg-white/95 text-slate-900" /></label>
+      <div #guestControl class="relative text-sm font-semibold text-white drop-shadow-sm">
+        {{ 'guests' | translate }}
+        <button type="button" class="mt-1 flex w-full items-center justify-between rounded-xl border border-white/50 bg-white/95 px-3 py-2 text-start font-normal text-slate-900 shadow-sm" [attr.aria-expanded]="guestMenuOpen" (click)="toggleGuestMenu()">
+          <span>{{ adults }} {{ 'adults' | translate }}, {{ children }} {{ 'children' | translate }}, {{ infants }} {{ 'infants' | translate }}</span>
+          <i class="mdi" [class.mdi-chevron-up]="guestMenuOpen" [class.mdi-chevron-down]="!guestMenuOpen" aria-hidden="true"></i>
+        </button>
+        @if (guestMenuOpen) {
+          <div class="absolute z-30 mt-1 w-72 rounded-xl border border-slate-200 bg-white p-3 text-slate-800 shadow-xl">
+            @for (guestType of guestTypes; track guestType.key) {
+              <div class="flex items-center justify-between gap-3 py-2">
+                <span>{{ guestType.label | translate }}</span>
+                <div class="flex items-center gap-3">
+                  <button type="button" class="grid size-7 place-items-center rounded-full border border-slate-300 text-primary disabled:cursor-not-allowed disabled:opacity-40" [disabled]="this[guestType.key] <= guestType.minimum" [attr.aria-label]="'decreaseByOne' | translate" (click)="updateGuestCount(guestType.key, -1)"><i class="mdi mdi-minus"></i></button>
+                  <span class="w-4 text-center font-semibold">{{ this[guestType.key] }}</span>
+                  <button type="button" class="grid size-7 place-items-center rounded-full border border-slate-300 text-primary" [attr.aria-label]="'increaseByOne' | translate" (click)="updateGuestCount(guestType.key, 1)"><i class="mdi mdi-plus"></i></button>
+                </div>
+              </div>
+            }
+            <button type="button" class="mt-2 w-full rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white" (click)="guestMenuOpen = false">{{ 'done' | translate }}</button>
+          </div>
+        }
+      </div>
       <label class="text-sm font-semibold text-white drop-shadow-sm">{{ 'rooms' | translate }}<input [(ngModel)]="roomCount" name="rooms" type="number" min="1" class="mt-1 w-full rounded-xl border border-white/50 bg-white/95 px-3 py-2 text-slate-900 shadow-sm" /></label>
       <button [disabled]="searching" class="mt-6 rounded-full bg-primary px-5 py-2 font-semibold text-white shadow-lg ring-1 ring-white/30 transition hover:brightness-110 disabled:opacity-60">{{ searching ? ('loading' | translate) : ('search' | translate) }}</button>
     </form>
+  </section>
+</div>
 
+
+  <section class="mx-auto max-w-6xl px-4">
     @if (loading) {
       <p class="text-center text-slate-500">{{ 'loading' | translate }}</p>
     } @else {
@@ -47,10 +81,10 @@
                 <div><h2 class="text-2xl font-semibold">{{ hotelName(hotel) }}</h2><p class="mt-1 text-sm text-slate-500"><i class="mdi mdi-map-marker-outline text-primary"></i> {{ hotelAddress(hotel) }}</p></div>
                 <span class="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-600">{{ hotel.starRating }} ★</span>
               </div>
-              <div class="mt-4 flex flex-wrap gap-2">@for (amenity of hotel.amenities?.slice(0, 5); track amenity.id) { <span class="rounded-full bg-slate-100 px-2 py-1 text-xs"><i class="mdi text-primary" [class]="'mdi-' + amenity.iconKey"></i> {{ isArabic ? amenity.nameAr : amenity.nameEng }}</span> }</div>
+              <div class="mt-4 flex flex-wrap gap-2">@for (amenity of hotel.amenities?.slice(0, 5); track amenity.id) { <span class="rounded-full bg-slate-100 px-2 py-1 text-xs"><i class="mdi text-primary" [class]="iconClass(amenity.iconKey)"></i> {{ isArabic ? amenity.nameAr : amenity.nameEng }}</span> }</div>
               <div class="mt-auto flex items-center justify-between gap-4 pt-5">
                 @if (stayPrice(hotel); as price) { <span class="text-sm font-semibold text-primary">{{ price.grandTotal }} {{ price.currencyCode }}</span> } @else { <span class="text-sm text-slate-500">{{ checkInDate && checkOutDate ? ('viewAvailableRooms' | translate) : ('chooseDatesForHotelPrice' | translate) }}</span> }
-                <a class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white" [routerLink]="['/hotels', hotel.slug]" [queryParams]="{ checkIn: checkInDate, checkOut: checkOutDate, rooms: roomCount }">{{ 'viewDetails' | translate }}</a>
+                <a class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white" [routerLink]="['/hotels', hotel.routeName]" [queryParams]="{ checkIn: checkInDate, checkOut: checkOutDate, adults: adults, children: children, infants: infants, rooms: roomCount }">{{ 'viewDetails' | translate }}</a>
               </div>
             </div>
           </article>

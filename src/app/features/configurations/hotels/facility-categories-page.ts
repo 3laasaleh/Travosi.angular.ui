@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
 
 interface Facility {
   id: number;
@@ -33,6 +34,7 @@ interface FacilityCategory {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FacilityCategoriesPage implements OnInit {
+  readonly iconClass = mdiIconClass;
   categories: FacilityCategory[] = [];
   icons: string[] = [];
   selectedCategory: FacilityCategory | null = null;
@@ -47,7 +49,7 @@ export class FacilityCategoriesPage implements OnInit {
     id: new FormControl(0, { nonNullable: true }),
     nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
     nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
-    iconKey: new FormControl('check-circle', { nonNullable: true, validators: [Validators.required] }),
+    iconKey: new FormControl('mdi-check-circle', { nonNullable: true, validators: [Validators.required] }),
     isActive: new FormControl(true, { nonNullable: true }),
   });
 
@@ -55,7 +57,7 @@ export class FacilityCategoriesPage implements OnInit {
     id: new FormControl(0, { nonNullable: true }),
     nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
     nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
-    iconKey: new FormControl('check-circle', { nonNullable: true, validators: [Validators.required] }),
+    iconKey: new FormControl('mdi-check-circle', { nonNullable: true, validators: [Validators.required] }),
     facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
     isActive: new FormControl(true, { nonNullable: true }),
@@ -74,7 +76,12 @@ export class FacilityCategoriesPage implements OnInit {
     })
       .pipe(finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
       .subscribe(({ icons, categories }: any) => {
-        this.icons = Array.isArray(icons) ? icons : [];
+        const iconRows: unknown[] = Array.isArray(icons)
+          ? icons
+          : Array.isArray(icons?.data)
+            ? icons.data
+            : [];
+        this.icons = [...new Set<string>(iconRows.map((icon) => mdiIconClass(icon)))];
         const data = categories?.data ?? categories;
         this.categories = (Array.isArray(data) ? data : []).map((category: any) => ({
           ...category,
@@ -97,7 +104,7 @@ export class FacilityCategoriesPage implements OnInit {
     this.selectedCategory = category;
     this.categoryForm.reset({
       id: category.id, nameEng: category.nameEng, nameAr: category.nameAr,
-      iconKey: category.iconKey, isActive: category.isActive,
+      iconKey: mdiIconClass(category.iconKey), isActive: category.isActive,
     });
     this.resetFacilityForm(category);
     this.error = '';
@@ -119,7 +126,11 @@ export class FacilityCategoriesPage implements OnInit {
 
   editFacility(category: FacilityCategory, facility: Facility): void {
     this.selectedCategory = category;
-    this.facilityForm.reset({ ...facility, facilityCategoryId: category.id });
+    this.facilityForm.reset({
+      ...facility,
+      iconKey: mdiIconClass(facility.iconKey),
+      facilityCategoryId: category.id,
+    });
     this.error = '';
     this.editor = 'facility';
   }
@@ -140,7 +151,8 @@ export class FacilityCategoriesPage implements OnInit {
     }
     this.savingCategory = true;
     this.error = '';
-    const value = this.categoryForm.getRawValue();
+    const rawValue = this.categoryForm.getRawValue();
+    const value = { ...rawValue, iconKey: mdiIconClass(rawValue.iconKey) };
     const request = value.id
       ? this.api.put(`FacilityCategories/${value.id}`, value)
       : this.api.post('FacilityCategories', value);
@@ -163,7 +175,8 @@ export class FacilityCategoriesPage implements OnInit {
     }
     this.savingFacility = true;
     this.error = '';
-    const value = this.facilityForm.getRawValue();
+    const rawValue = this.facilityForm.getRawValue();
+    const value = { ...rawValue, iconKey: mdiIconClass(rawValue.iconKey) };
     const request = value.id
       ? this.api.put(`HotelAmenities/${value.id}`, value)
       : this.api.post('HotelAmenities', value);
@@ -182,7 +195,7 @@ export class FacilityCategoriesPage implements OnInit {
     return ['Hotel facility', 'Room facility', 'Privilege'][value - 1] ?? 'Hotel facility';
   }
 
-  private get defaultIcon(): string { return this.icons[0] ?? 'check-circle'; }
+  private get defaultIcon(): string { return this.icons[0] ?? 'mdi-check-circle'; }
 
   private resetCategoryForm(): void {
     this.selectedCategory = null;

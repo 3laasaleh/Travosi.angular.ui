@@ -83,6 +83,10 @@ export class TourBookingCard implements OnInit {
         nonNullable: true,
         validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
       }),
+      infants: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.min(0), Validators.pattern(/^\d+$/)],
+      }),
       specialRequests: new FormControl('', {
         nonNullable: true,
         validators: [Validators.maxLength(1000)],
@@ -124,6 +128,10 @@ export class TourBookingCard implements OnInit {
     return this.rawPrice(this.product?.discountedPricePerChild ?? this.product?.pricePerChild);
   }
 
+  get pricePerInfant(): number {
+    return this.rawPrice(this.product?.discountedPricePerInfant ?? this.product?.pricePerInfant);
+  }
+
   get hasDiscount(): boolean {
     return this.product?.activeDiscount?.isCurrentlyActive === true;
   }
@@ -144,6 +152,14 @@ export class TourBookingCard implements OnInit {
     return formatHomePrice(this.currencyService, this.product?.pricePerChild, this.product);
   }
 
+  get formattedPricePerInfant(): string {
+    return formatHomePrice(this.currencyService, this.pricePerInfant, this.product);
+  }
+
+  get formattedOriginalPricePerInfant(): string {
+    return formatHomePrice(this.currencyService, this.product?.pricePerInfant, this.product);
+  }
+
   get seatsAvailable(): number {
     const available = Number(this.product?.seatsAvailable);
     if (Number.isFinite(available) && available >= 0) return available;
@@ -162,13 +178,16 @@ export class TourBookingCard implements OnInit {
   }
 
   get guests(): number {
-    return this.bookingForm.controls.adults.value + this.bookingForm.controls.children.value;
+    return this.bookingForm.controls.adults.value
+      + this.bookingForm.controls.children.value
+      + this.bookingForm.controls.infants.value;
   }
 
   get totalAmount(): number {
     return (
       this.bookingForm.controls.adults.value * this.pricePerPerson +
-      this.bookingForm.controls.children.value * this.pricePerChild
+      this.bookingForm.controls.children.value * this.pricePerChild +
+      this.bookingForm.controls.infants.value * this.pricePerInfant
     );
   }
 
@@ -407,6 +426,7 @@ export class TourBookingCard implements OnInit {
           dateTo: '',
           adults: 1,
           children: 0,
+          infants: 0,
           specialRequests: '',
         });
         this.setDefaultDates();
@@ -433,6 +453,7 @@ export class TourBookingCard implements OnInit {
       TravelDate: this.toApiDate(form.dateFrom),
       Adults: form.adults,
       Children: form.children,
+      Infants: form.infants,
       Notes: form.specialRequests.trim() || null,
     };
   }

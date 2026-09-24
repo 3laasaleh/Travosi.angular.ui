@@ -20,7 +20,7 @@
             <header class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 px-4 py-3">
               <div class="flex min-w-0 items-center gap-3">
                 <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <i class="mdi text-xl" [class]="'mdi-' + category.iconKey" aria-hidden="true"></i>
+                  <i class="mdi text-xl" [class]="iconClass(category.iconKey)" aria-hidden="true"></i>
                 </span>
                 <div class="min-w-0">
                   <h2 class="font-semibold">{{ category.nameEng }} <span class="font-normal text-slate-400">—</span> <span dir="rtl" class="font-normal text-slate-600">{{ category.nameAr }}</span></h2>
@@ -40,7 +40,7 @@
               @for (facility of category.facilities; track facility.id) {
                 <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                   <div class="flex min-w-0 items-center gap-3">
-                    <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/5 text-primary"><i class="mdi text-xl" [class]="'mdi-' + facility.iconKey" aria-hidden="true"></i></span>
+                    <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/5 text-primary"><i class="mdi text-xl" [class]="iconClass(facility.iconKey)" aria-hidden="true"></i></span>
                     <p class="min-w-0 text-sm font-medium">{{ facility.nameEng }} <span class="font-normal text-slate-400">—</span> <span dir="rtl" class="font-normal text-slate-600">{{ facility.nameAr }}</span></p>
                     @if (!facility.isActive) { <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{{ 'inactive' | translate }}</span> }
                   </div>
@@ -83,10 +83,10 @@
           <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
           <div class="grid max-h-52 grid-cols-6 gap-2 overflow-y-auto rounded-xl border border-slate-200 p-2 sm:grid-cols-8">
             @for (icon of icons; track icon) {
-              <button type="button" [title]="icon" (click)="categoryForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="categoryForm.controls.iconKey.value === icon" [class.bg-primary-50]="categoryForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon" aria-hidden="true"></i></button>
+              <button type="button" [title]="icon" (click)="categoryForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="categoryForm.controls.iconKey.value === icon" [class.bg-primary-50]="categoryForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="iconClass(icon)" aria-hidden="true"></i></button>
             }
           </div>
-          <p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="'mdi-' + categoryForm.controls.iconKey.value" aria-hidden="true"></i>{{ categoryForm.controls.iconKey.value }}</p>
+          <p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="iconClass(categoryForm.controls.iconKey.value)" aria-hidden="true"></i>{{ categoryForm.controls.iconKey.value }}</p>
         </div>
         <div class="grid items-end gap-4 sm:grid-cols-2">
           <label class="flex items-center gap-2 pb-2 text-sm"><input formControlName="isActive" type="checkbox" />{{ 'active' | translate }}</label>
@@ -122,10 +122,10 @@
           <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
           <div class="grid max-h-52 grid-cols-6 gap-2 overflow-y-auto rounded-xl border border-slate-200 p-2 sm:grid-cols-8">
             @for (icon of icons; track icon) {
-              <button type="button" [title]="icon" (click)="facilityForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="facilityForm.controls.iconKey.value === icon" [class.bg-primary-50]="facilityForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="'mdi-' + icon" aria-hidden="true"></i></button>
+              <button type="button" [title]="icon" (click)="facilityForm.controls.iconKey.setValue(icon)" class="grid h-10 place-items-center rounded-lg border transition hover:border-primary hover:text-primary" [class.border-primary]="facilityForm.controls.iconKey.value === icon" [class.bg-primary-50]="facilityForm.controls.iconKey.value === icon"><i class="mdi text-lg" [class]="iconClass(icon)" aria-hidden="true"></i></button>
             }
           </div>
-          <p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="'mdi-' + facilityForm.controls.iconKey.value" aria-hidden="true"></i>{{ facilityForm.controls.iconKey.value }}</p>
+          <p class="mt-2 flex items-center gap-2 text-xs text-slate-500"><i class="mdi text-lg text-primary" [class]="iconClass(facilityForm.controls.iconKey.value)" aria-hidden="true"></i>{{ facilityForm.controls.iconKey.value }}</p>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <label class="text-sm">{{ 'facilityType' | translate }}<select formControlName="kind" class="mt-1 w-full rounded-xl border border-slate-300 px-2 py-2">@for (kind of kinds; track kind) { <option [ngValue]="kind">{{ kindName(kind) }}</option> }</select></label>

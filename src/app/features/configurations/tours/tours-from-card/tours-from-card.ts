@@ -213,6 +213,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.tourForm.controls.cityId,
       this.tourForm.controls.pricePerPerson,
       this.tourForm.controls.pricePerChild,
+      this.tourForm.controls.pricePerInfant,
       this.tourForm.controls.currencyId,
       this.tourForm.controls.maxSeats,
       this.tourForm.controls.durationDays,
@@ -966,6 +967,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescriptionAr: tour.fullDescriptionAr ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? 0),
       pricePerChild: Number(tour.pricePerChild ?? 0),
+      pricePerInfant: Number(tour.pricePerInfant ?? 0),
       currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
       durationDays: Number(tour.durationDays ?? 0),
       durationHours: Number(tour.durationhours ?? 0),
@@ -1018,6 +1020,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       fullDescriptionAr: '',
       pricePerPerson: 0,
       pricePerChild: 0,
+      pricePerInfant: 0,
       currencyId: this.defaultCurrencyId,
       durationDays: 1,
       durationHours: 0,
@@ -1098,6 +1101,10 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         pricePerChild: new FormControl(0, {
           nonNullable: true,
           validators: [Validators.required, Validators.min(0)],
+        }),
+        pricePerInfant: new FormControl(0, {
+          nonNullable: true,
+          validators: [Validators.min(0)],
         }),
         currencyId: new FormControl(this.defaultCurrencyId, {
           nonNullable: true,
@@ -1288,6 +1295,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       FullDescriptionAr: form.fullDescriptionAr.trim() || null,
       PricePerPerson: Number(form.pricePerPerson),
       PricePerChild: Number(form.pricePerChild),
+      PricePerInfant: Number(form.pricePerInfant ?? 0),
       CurrencyId: Number(form.currencyId),
       DurationDays: Number(form.durationDays),
       Durationhours: Number(form.durationHours),

@@ -14,7 +14,7 @@
                         (click)="editMeal(meal)"
                         class="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-start hover:border-primary"><i
                             class="mdi text-xl text-primary"
-                            [class]="'mdi-' + (meal.iconKey || 'food-outline')"></i><span><span
+                            [class]="iconClass(meal.iconKey, 'mdi-food-outline')"></i><span><span
                                 class="block font-semibold">{{ meal.code }} — {{ meal.nameEng }}</span><span
                                 class="text-xs text-slate-500">{{ meal.nameAr }}</span></span></button> }</div>
                

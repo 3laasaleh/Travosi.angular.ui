@@ -27,7 +27,9 @@ describe('QuotationsFromCard', () => {
     arrivalAirport: 'DXB - Dubai International Airport',
     departureTime: '2030-05-10T08:00:00',
     arrivalTime: '2030-05-10T12:00:00',
-    price: 125,
+    pricePerPerson: 125,
+    pricePerChild: 80,
+    pricePerInfant: 0,
     isActive: true,
   };
   const hotel = {
@@ -168,13 +170,21 @@ describe('QuotationsFromCard', () => {
       id: 0,
       value: 'Non-refundable after confirmation',
     }]);
-    expect(payload.items.find((item: any) => item.itemType === 4)).toMatchObject({
+    expect(payload.items.find((item: any) => /Adults$/i.test(item.description))).toMatchObject({
       itemType: 4,
       flightId: flight.id,
-      quantity: 4,
+      quantity: 2,
       sellingPrice: 125,
       pricePerItem: 125,
-      totalPrice: 500,
+      totalPrice: 250,
+    });
+    expect(payload.items.find((item: any) => /Children$/i.test(item.description))).toMatchObject({
+      itemType: 4,
+      flightId: flight.id,
+      quantity: 1,
+      sellingPrice: 80,
+      pricePerItem: 80,
+      totalPrice: 80,
     });
     expect(payload.items.find((item: any) => item.itemType === 5)).toMatchObject({
       itemType: 5,

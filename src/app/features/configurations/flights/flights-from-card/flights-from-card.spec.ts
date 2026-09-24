@@ -237,7 +237,7 @@ describe('FlightsFromCard', () => {
     const segment = fixture.componentInstance.segments(0).at(0);
     fixture.componentInstance.flightForm.controls.adults.setValue(0);
     fixture.componentInstance.flightForm.controls.adults.markAsTouched();
-    fixture.componentInstance.flightForm.controls.price.markAsTouched();
+    fixture.componentInstance.flightForm.controls.pricePerPerson.markAsTouched();
     segment.controls['airlineId'].markAsTouched();
     segment.controls['flightNumber'].markAsTouched();
     segment.controls['ticketNumber'].markAsTouched();
@@ -253,7 +253,7 @@ describe('FlightsFromCard', () => {
     expect(messages).toContain('ticketNumberRequired');
 
     fixture.componentInstance.flightForm.controls.adults.setValue(1);
-    fixture.componentInstance.flightForm.controls.price.setValue(1);
+    fixture.componentInstance.flightForm.controls.pricePerPerson.setValue(1);
     const leg = fixture.componentInstance.legs.at(0);
     leg.patchValue({ originAirport: 'CAI', destinationAirport: 'DXB' });
     segment.patchValue({

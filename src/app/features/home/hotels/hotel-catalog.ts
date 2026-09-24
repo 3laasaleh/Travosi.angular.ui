@@ -19,46 +19,76 @@ import { ApiService } from '../../../core/services/apiservice.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
+import { DatePicker } from '../../../shared/components/date-picker/date-picker';
+import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
 
 @Component({
   selector: 'app-hotel-catalog',
   standalone: true,
-  imports: [Breadcrumbs, FooterOne, FormsModule, HomeNavbar, RouterLink, TranslatePipe],
+  imports: [Breadcrumbs, DatePicker, FooterOne, FormsModule, HomeNavbar, RouterLink, TranslatePipe],
   templateUrl: './hotel-catalog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelCatalog implements OnInit {
+  readonly iconClass = mdiIconClass;
   @ViewChild('destinationControl') private destinationControl?: ElementRef<HTMLElement>;
+  @ViewChild('guestControl') private guestControl?: ElementRef<HTMLElement>;
   private readonly api = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly seo = inject(SeoService);
   private readonly language = inject(LanguageService);
   hotels: any[] = [];
+  destinations: any[] = [];
   loading = true;
   searching = false;
   destinationQuery = '';
+  selectedDestinationId: number | null = null;
   checkInDate = '';
   checkOutDate = '';
+  adults = 1;
+  children = 0;
+  infants = 0;
   roomCount = 1;
   destinationMenuOpen = false;
+  guestMenuOpen = false;
   availability = new Map<number, any[]>();
+  readonly guestTypes = [
+    { key: 'adults' as const, label: 'adults', minimum: 1 },
+    { key: 'children' as const, label: 'children', minimum: 0 },
+    { key: 'infants' as const, label: 'infants', minimum: 0 },
+  ];
   get isArabic(): boolean {
     return this.language.currentLanguage() === 'ar';
   }
-  get suggestions(): any[] {
+  get suggestions(): Array<{ kind: 'destination' | 'hotel'; item: any }> {
     const query = this.destinationQuery.trim().toLocaleLowerCase();
-    return (
-      query ? this.hotels.filter((hotel) => this.searchable(hotel).includes(query)) : this.hotels
-    ).slice(0, 6);
+    const destinations = (query
+      ? this.destinations.filter((destination) => this.destinationSearchable(destination).includes(query))
+      : this.destinations
+    )
+      .slice(0, 4)
+      .map((item) => ({ kind: 'destination' as const, item }));
+    const hotels = (query
+      ? this.hotels.filter((hotel) => this.searchable(hotel).includes(query))
+      : this.hotels
+    )
+      .slice(0, 6)
+      .map((item) => ({ kind: 'hotel' as const, item }));
+    return [...destinations, ...hotels].slice(0, 8);
   }
   get results(): any[] {
-    const query = this.destinationQuery.trim().toLocaleLowerCase();
-    const filtered = query
-      ? this.hotels.filter((hotel) => this.searchable(hotel).includes(query))
-      : this.hotels;
+    const filtered = this.unfilteredResults();
     return this.availability.size
       ? filtered.filter((hotel) => this.availability.has(Number(hotel.id)))
       : filtered;
+  }
+  get today(): string {
+    const date = new Date();
+    return [
+      date.getFullYear().toString().padStart(4, '0'),
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ].join('-');
   }
   ngOnInit(): void {
     this.seo.updateFrom(
@@ -70,33 +100,58 @@ export class HotelCatalog implements OnInit {
       },
       { schemaType: 'Place' },
     );
-    this.api
-      .getUnauthntecated('Hotels/Public/Default?page=1&pageSize=20')
+    forkJoin({
+      hotels: this.api
+        .getUnauthntecated('Hotels/Public/Default?page=1&pageSize=100')
+        .pipe(catchError(() => of(null))),
+      destinations: this.api
+        .getUnauthntecated('destinations?page=1&pageSize=500')
+        .pipe(catchError(() => of(null))),
+    })
       .pipe(
-        catchError(() => of(null)),
         finalize(() => {
           this.loading = false;
           this.cdr.markForCheck();
         }),
       )
       .subscribe((response: any) => {
-        const payload = response?.data ?? response;
-        this.hotels = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
+        this.hotels = this.rows(response?.hotels);
+        this.destinations = this.rows(response?.destinations).filter(
+          (destination) => destination?.isActive !== false,
+        );
       });
   }
   @HostListener('document:click', ['$event'])
-  closeDestinationMenuOnOutsideClick(event: MouseEvent): void {
-    if (!this.destinationControl?.nativeElement.contains(event.target as Node))
+  closeMenusOnOutsideClick(event: MouseEvent): void {
+    const target = event.target as Node;
+    if (!this.destinationControl?.nativeElement.contains(target))
       this.destinationMenuOpen = false;
+    if (!this.guestControl?.nativeElement.contains(target)) this.guestMenuOpen = false;
   }
   openDestinationMenu(): void {
+    this.destinationMenuOpen = true;
+  }
+  onDestinationQueryChange(): void {
+    this.selectedDestinationId = null;
     this.destinationMenuOpen = true;
   }
   toggleDestinationMenu(): void {
     this.destinationMenuOpen = !this.destinationMenuOpen;
   }
+  toggleGuestMenu(): void {
+    this.guestMenuOpen = !this.guestMenuOpen;
+  }
+  updateGuestCount(type: 'adults' | 'children' | 'infants', change: number): void {
+    const guestType = this.guestTypes.find((item) => item.key === type)!;
+    this[type] = Math.max(guestType.minimum, this[type] + change);
+  }
+  onCheckInDateChange(date: string): void {
+    this.checkInDate = date;
+    if (this.checkOutDate && this.checkOutDate <= date) this.checkOutDate = '';
+  }
   applySearch(): void {
     this.destinationMenuOpen = false;
+    this.guestMenuOpen = false;
     if (!this.checkInDate || !this.checkOutDate || this.checkOutDate <= this.checkInDate) {
       this.availability.clear();
       this.cdr.markForCheck();
@@ -109,7 +164,7 @@ export class HotelCatalog implements OnInit {
       candidates.map((hotel) =>
         this.api
           .getUnauthntecated(
-            `HotelAvailability?${new URLSearchParams({ hotelId: String(hotel.id), checkInDate: this.checkInDate, checkOutDate: this.checkOutDate, adults: '1', children: '0', roomCount: String(this.roomCount) })}`,
+            `HotelAvailability?${new URLSearchParams({ hotelId: String(hotel.id), checkInDate: this.checkInDate, checkOutDate: this.checkOutDate, adults: String(this.adults), children: String(this.children), infants: String(this.infants), roomCount: String(this.roomCount) })}`,
           )
           .pipe(catchError(() => of(null))),
       ),
@@ -130,8 +185,21 @@ export class HotelCatalog implements OnInit {
   }
   selectHotel(hotel: any): void {
     this.destinationQuery = this.hotelName(hotel);
+    this.selectedDestinationId = null;
     this.destinationMenuOpen = false;
     this.cdr.markForCheck();
+  }
+  selectDestination(destination: any): void {
+    this.destinationQuery = this.destinationName(destination);
+    const id = Number(destination?.id ?? destination?.destinationId);
+    this.selectedDestinationId = Number.isFinite(id) ? id : null;
+    this.destinationMenuOpen = false;
+    this.cdr.markForCheck();
+  }
+  destinationName(destination: any): string {
+    return this.isArabic
+      ? destination?.titleAr || destination?.title || destination?.titleEng || destination?.nameAr || destination?.nameEng || destination?.name || ''
+      : destination?.titleEng || destination?.title || destination?.nameEng || destination?.name || destination?.titleAr || destination?.nameAr || '';
   }
   hotelName(hotel: any): string {
     return this.isArabic
@@ -142,6 +210,13 @@ export class HotelCatalog implements OnInit {
     return this.isArabic
       ? hotel?.addressAr || hotel?.addressEng || hotel?.address || hotel?.destinationName || ''
       : hotel?.addressEng || hotel?.address || hotel?.addressAr || hotel?.destinationName || '';
+  }
+  hotelDestinationName(hotel: any): string {
+    const destinationId = Number(hotel?.destinationId);
+    const destination = this.destinations.find(
+      (item) => Number(item?.id ?? item?.destinationId) === destinationId,
+    );
+    return hotel?.destinationName || this.destinationName(destination);
   }
   image(hotel: any): string | null {
     const image = hotel?.images?.find((value: any) => value.isMain) ?? hotel?.images?.[0];
@@ -161,6 +236,11 @@ export class HotelCatalog implements OnInit {
     );
   }
   private unfilteredResults(): any[] {
+    if (this.selectedDestinationId !== null) {
+      return this.hotels.filter(
+        (hotel) => Number(hotel?.destinationId) === this.selectedDestinationId,
+      );
+    }
     const query = this.destinationQuery.trim().toLocaleLowerCase();
     return query
       ? this.hotels.filter((hotel) => this.searchable(hotel).includes(query))
@@ -171,7 +251,7 @@ export class HotelCatalog implements OnInit {
       hotel?.nameEng,
       hotel?.nameAr,
       hotel?.name,
-      hotel?.destinationName,
+      this.hotelDestinationName(hotel),
       hotel?.addressEng,
       hotel?.addressAr,
       hotel?.address,
@@ -179,5 +259,28 @@ export class HotelCatalog implements OnInit {
       .filter(Boolean)
       .join(' ')
       .toLocaleLowerCase();
+  }
+  private destinationSearchable(destination: any): string {
+    return [
+      destination?.title,
+      destination?.titleEng,
+      destination?.titleAr,
+      destination?.name,
+      destination?.nameEng,
+      destination?.nameAr,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLocaleLowerCase();
+  }
+  private rows(response: any): any[] {
+    const data = response?.data ?? response;
+    return Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.items)
+          ? data.items
+          : [];
   }
 }

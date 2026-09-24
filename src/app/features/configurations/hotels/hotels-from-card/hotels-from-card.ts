@@ -17,6 +17,7 @@ import { environment } from '../../../../../environments/environment';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 import { HotelRoomsManager } from '../hotel-rooms-manager/hotel-rooms-manager';
+import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
 
 interface HotelImageUpload { id?: number; file?: File; url: string; altEng: string; altAr: string; existing: boolean; }
 
@@ -26,7 +27,6 @@ export interface HotelDTO {
   nameEng?: string;
   nameAr?: string;
   routeName?: string;
-  slug?: string;
   starRating: number;
   address?: string;
   descriptionEng?: string;
@@ -47,6 +47,7 @@ export interface HotelDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelsFromCard implements OnInit, OnChanges {
+  readonly iconClass = mdiIconClass;
   @Input() selectedHotel: HotelDTO | null = null;
   @Output() hotelSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -101,7 +102,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: form.nameEng.trim(),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
-      slug: form.routeName.trim() || null,
+      routeName: form.routeName.trim() || null,
       starRating: Number(form.starRating),
       destinationId: Number(form.destinationId),
       address: form.address.trim(),
@@ -182,7 +183,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       name: hotel.name ?? '',
       nameEng: hotel.nameEng ?? hotel.name ?? '',
       nameAr: hotel.nameAr ?? hotel.name ?? '',
-      routeName: hotel.routeName ?? hotel.slug ?? '',
+      routeName: hotel.routeName ??'',
       starRating: hotel.starRating ?? 1,
       destinationId: hotel.destinationId ?? null,
       address: hotel.address ?? '',

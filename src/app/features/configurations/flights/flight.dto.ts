@@ -29,7 +29,9 @@ export interface CreateFlightDto {
   adults: number;
   children: number;
   infants: number;
-  price: number;
+  pricePerPerson: number;
+  pricePerChild: number;
+  pricePerInfant: number;
   baggageAllowanceKg: number | null;
   legs: CreateFlightLegDto[];
 }

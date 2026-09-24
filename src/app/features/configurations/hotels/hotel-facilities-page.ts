@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
 
 type Amenity = {
   id: number;
@@ -22,6 +23,7 @@ type Amenity = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelFacilitiesPage implements OnInit {
+  readonly iconClass = mdiIconClass;
   icons: string[] = [];
   categories: Array<{ id: number; nameEng: string; nameAr: string; iconKey: string }> = [];
   readonly kinds = [1, 2, 3];
@@ -42,7 +44,7 @@ export class HotelFacilitiesPage implements OnInit {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(150)],
     }),
-    iconKey: new FormControl('check-circle', {
+    iconKey: new FormControl('mdi-check-circle', {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -65,7 +67,12 @@ export class HotelFacilitiesPage implements OnInit {
       icons: this.api.get('HotelAmenities/IconKeys').pipe(catchError(() => of([]))),
       categories: this.api.get('FacilityCategories/Active').pipe(catchError(() => of(null))),
     }).subscribe(({ icons, categories }: any) => {
-      this.icons = Array.isArray(icons) ? icons : [];
+      const iconRows: unknown[] = Array.isArray(icons)
+        ? icons
+        : Array.isArray(icons?.data)
+          ? icons.data
+          : [];
+      this.icons = [...new Set<string>(iconRows.map((icon) => mdiIconClass(icon)))];
       const data = categories?.data ?? categories;
       this.categories = Array.isArray(data) ? data : [];
       if (!this.form.controls.facilityCategoryId.value && this.categories[0])
@@ -104,7 +111,11 @@ export class HotelFacilitiesPage implements OnInit {
   }
   edit(item: Amenity): void {
     this.selected = item;
-    this.form.reset({ ...item, facilityCategoryId: item.facilityCategoryId ?? 0 });
+    this.form.reset({
+      ...item,
+      iconKey: mdiIconClass(item.iconKey),
+      facilityCategoryId: item.facilityCategoryId ?? 0,
+    });
   }
   newFacility(): void {
     this.selected = null;
@@ -112,7 +123,7 @@ export class HotelFacilitiesPage implements OnInit {
       id: 0,
       nameEng: '',
       nameAr: '',
-      iconKey: this.icons[0] ?? 'check-circle',
+      iconKey: this.icons[0] ?? 'mdi-check-circle',
       facilityCategoryId: this.categories[0]?.id ?? 0,
       kind: 2,
       isActive: true,
@@ -125,7 +136,8 @@ export class HotelFacilitiesPage implements OnInit {
     }
     this.saving = true;
     this.error = '';
-    const value = this.form.getRawValue();
+    const rawValue = this.form.getRawValue();
+    const value = { ...rawValue, iconKey: mdiIconClass(rawValue.iconKey) };
     const request = value.id
       ? this.api.put(`HotelAmenities/${value.id}`, value)
       : this.api.post('HotelAmenities', value);

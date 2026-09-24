@@ -79,9 +79,9 @@
         </div>
 
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-          <div>
+          <div class="xl:col-span-2">
             <label class="required-field-label mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label>
             <input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
             @if (
@@ -96,7 +96,7 @@
             <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p>
             }
           </div>
-          <div>
+          <div class="xl:col-span-2">
             <label class="required-field-label mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label>
             <input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />
             @if (
@@ -108,6 +108,23 @@
             tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('arabicText')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
+            }
+          </div>
+
+          <div class="xl:col-span-2">
+            <label class="required-field-label mb-2 block text-sm font-medium">
+              {{ 'routeName' | translate }}
+            </label>
+            <input
+              formControlName="routeName"
+              maxlength="180"
+              placeholder="tours/routeName"
+              class="w-full rounded-2xl border px-3 py-2"
+            />
+            @if (tourForm.controls.routeName.touched && tourForm.controls.routeName.hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
+            } @else if (tourForm.controls.routeName.touched && tourForm.controls.routeName.hasError('pattern')) {
+              <p class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p>
             }
           </div>
           <!-- destinations dropdown -->
@@ -195,10 +212,112 @@
             }
           </div>
 
-
-
-          <!-- startDate and endDate  -->
           <div>
+            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label>
+            <input formControlName="durationDays" type="text" appNumbersOnly
+              [readonly]="tourForm.controls.isOneDayTour.value"
+              [class.bg-slate-100]="tourForm.controls.isOneDayTour.value" class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.durationDays.touched) {
+            @if (tourForm.controls.durationDays.hasError('required')) {
+            <p class="mt-1 text-xs text-red-600">
+              {{ 'fieldRequired' | translate }}
+            </p>
+            }
+
+            @if (tourForm.controls.durationDays.hasError('min')) {
+            <p class="mt-1 text-xs text-red-600">
+              {{ 'positiveValueRequired' | translate }}
+            </p>
+            }
+            }
+          </div>
+          <div>
+            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'additionalHours' | translate }}</label><input
+              formControlName="durationHours" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
+            @if (
+            tourForm.controls.durationHours.touched && tourForm.controls.durationHours.invalid
+            ) {
+            <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p>
+            }
+            @if (tourForm.hasError('invalidTourDuration')) {
+            <p class="mt-1 text-xs text-red-600">
+              {{
+              (tourForm.controls.isOneDayTour.value
+              ? 'oneDayHoursRequired'
+              : 'multiDayDurationRequired'
+              ) | translate
+              }}
+            </p>
+            }
+          </div>
+          <div>
+            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input
+              formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
+            }
+          </div>
+          <div class="hidden xl:block" aria-hidden="true"></div>
+
+          <!-- prices -->
+          <div>
+            <label for="tour-price-per-person" class="required-field-label mb-2 block text-sm font-medium">{{
+              'pricePerPerson' | translate
+              }}</label>
+            <div class="relative">
+              <span
+                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+                id="tour-price-per-person" formControlName="pricePerPerson" type="text" appNumbersOnly
+                class="w-full rounded-2xl border py-2 pe-3 ps-12"
+                [attr.aria-invalid]="tourForm.controls.pricePerPerson.touched && tourForm.controls.pricePerPerson.invalid" />
+            </div>
+            @if (
+            tourForm.controls.pricePerPerson.touched && tourForm.controls.pricePerPerson.invalid
+            ) {
+            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
+            }
+          </div>
+          <div>
+            <label for="tour-price-per-child" class="required-field-label mb-2 block text-sm font-medium">{{
+              'pricePerChild' | translate
+              }}</label>
+            <div class="relative">
+              <span
+                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+                id="tour-price-per-child" formControlName="pricePerChild" type="text" appNumbersOnly
+                class="w-full rounded-2xl border py-2 pe-3 ps-12"
+                [attr.aria-invalid]="tourForm.controls.pricePerChild.touched && tourForm.controls.pricePerChild.invalid" />
+            </div>
+            @if (
+            tourForm.controls.pricePerChild.touched && tourForm.controls.pricePerChild.invalid
+            ) {
+            <p class="mt-1 text-xs text-red-600">
+              {{ 'nonNegativeValueRequired' | translate }}
+            </p>
+            }
+          </div>
+          <div>
+            <label for="tour-price-per-infant" class="mb-2 block text-sm font-medium">{{
+              'pricePerInfant' | translate
+              }}</label>
+            <div class="relative">
+              <span
+                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
+                id="tour-price-per-infant" formControlName="pricePerInfant" type="text" appNumbersOnly
+                class="w-full rounded-2xl border py-2 pe-3 ps-12"
+                [attr.aria-invalid]="tourForm.controls.pricePerInfant.touched && tourForm.controls.pricePerInfant.invalid" />
+            </div>
+            @if (
+            tourForm.controls.pricePerInfant.touched && tourForm.controls.pricePerInfant.invalid
+            ) {
+            <p class="mt-1 text-xs text-red-600">
+              {{ 'nonNegativeValueRequired' | translate }}
+            </p>
+            }
+          </div>
+
+          <!-- startDate and endDate -->
+          <div class="xl:col-span-2">
             <label class="mb-2 block text-sm font-medium">{{ 'startDate' | translate }}
             </label>
             <div class="group relative">
@@ -210,7 +329,7 @@
             <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
             }
           </div>
-          <div>
+          <div class="xl:col-span-2">
             <label class="mb-2 block text-sm font-medium">{{ 'endDate' | translate }}
             </label>
             <div class="group relative">
@@ -222,42 +341,6 @@
             <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
             } @else if (tourForm.controls.endDate.touched && tourForm.hasError('invalidDateRange')) {
             <p class="mt-1 text-xs text-red-600">{{ 'endDateBeforeStart' | translate }}</p>
-            }
-          </div>
-
-          <!-- prices -->
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">{{
-              'pricePerPerson' | translate
-              }}</label>
-            <div class="relative">
-              <span
-                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
-                formControlName="pricePerPerson" type="text" appNumbersOnly
-                class="w-full rounded-2xl border py-2 pe-3 ps-12" />
-            </div>
-            @if (
-            tourForm.controls.pricePerPerson.touched && tourForm.controls.pricePerPerson.invalid
-            ) {
-            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">{{
-              'pricePerChild' | translate
-              }}</label>
-            <div class="relative">
-              <span
-                class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span><input
-                formControlName="pricePerChild" type="text" appNumbersOnly
-                class="w-full rounded-2xl border py-2 pe-3 ps-12" />
-            </div>
-            @if (
-            tourForm.controls.pricePerChild.touched && tourForm.controls.pricePerChild.invalid
-            ) {
-            <p class="mt-1 text-xs text-red-600">
-              {{ 'nonNegativeValueRequired' | translate }}
-            </p>
             }
           </div>
 
@@ -288,69 +371,6 @@
               class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
             <label for="showInRecommendedTours" class="text-sm font-medium">{{ 'showInRecommendedTours' | translate }}</label>
           </div>
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'durationDays' | translate }}</label>
-            <input formControlName="durationDays" type="text" appNumbersOnly
-              [readonly]="tourForm.controls.isOneDayTour.value"
-              [class.bg-slate-100]="tourForm.controls.isOneDayTour.value" class="w-full rounded-2xl border px-3 py-2" />
-            @if (tourForm.controls.durationDays.touched) {
-            @if (tourForm.controls.durationDays.hasError('required')) {
-            <p class="mt-1 text-xs text-red-600">
-              {{ 'fieldRequired' | translate }}
-            </p>
-            }
-
-            @if (tourForm.controls.durationDays.hasError('min')) {
-            <p class="mt-1 text-xs text-red-600">
-              {{ 'positiveValueRequired' | translate }}
-            </p>
-            }
-            }
-          </div>
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'tourHours' | translate }}</label><input
-              formControlName="durationHours" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
-            @if (
-            tourForm.controls.durationHours.touched && tourForm.controls.durationHours.invalid
-            ) {
-            <p class="mt-1 text-xs text-red-600">{{ 'durationHoursRange' | translate }}</p>
-            }
-            @if (tourForm.hasError('invalidTourDuration')) {
-            <p class="mt-1 text-xs text-red-600">
-              {{
-              (tourForm.controls.isOneDayTour.value
-              ? 'oneDayHoursRequired'
-              : 'multiDayDurationRequired'
-              ) | translate
-              }}
-            </p>
-            }
-          </div>
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'maxSeats' | translate }}</label><input
-              formControlName="maxSeats" type="text" appNumbersOnly class="w-full rounded-2xl border px-3 py-2" />
-            @if (tourForm.controls.maxSeats.touched && tourForm.controls.maxSeats.invalid) {
-            <p class="mt-1 text-xs text-red-600">{{ 'positiveValueRequired' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="required-field-label mb-2 block text-sm font-medium">
-              {{ 'routeName' | translate }}
-            </label>
-            <input
-              formControlName="routeName"
-              maxlength="180"
-              placeholder="tours/routeName"
-              class="w-full rounded-2xl border px-3 py-2"
-            />
-            @if (tourForm.controls.routeName.touched && tourForm.controls.routeName.hasError('required')) {
-              <p class="mt-1 text-xs text-red-600">{{ 'fieldRequired' | translate }}</p>
-            } @else if (tourForm.controls.routeName.touched && tourForm.controls.routeName.hasError('pattern')) {
-              <p class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p>
-            }
-          </div>
-
-
         </div>
 
 

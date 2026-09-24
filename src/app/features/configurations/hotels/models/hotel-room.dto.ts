@@ -21,11 +21,8 @@ export interface HotelRoomDto {
   bedType?: string | null;
   bedSize: string | null;
 
-  numberOfBathrooms: number;
   smokingAllowed: boolean;
 
-  bathroom: string | null;
-  view: string | null;
   childrenPolicies: string | null;
 
   avilableRoomsCount: number;

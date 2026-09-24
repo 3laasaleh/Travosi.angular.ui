@@ -94,6 +94,8 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
   @Input() inputClass = '';
   @Input() icon = 'mdi-calendar-month-outline';
   @Input() includeTime = false;
+  /** Select today in the underlying Flowbite picker when the control is empty. */
+  @Input() autoSelectToday = true;
 
   selectedDate: Date | undefined;
   timeValue = '00:00';
@@ -141,7 +143,9 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['min'] || changes['max']) this.schedulePickerRebuild();
+    if (changes['min'] || changes['max'] || changes['autoSelectToday']) {
+      this.schedulePickerRebuild();
+    }
   }
 
   ngOnDestroy(): void {
@@ -205,7 +209,7 @@ export class DatePicker implements ControlValueAccessor, OnChanges, AfterViewIni
       maxDate: this.normalizeBoundary(this.max),
       orientation: 'bottom',
       buttons: true,
-      autoSelectToday: 1,
+      autoSelectToday: this.autoSelectToday ? 1 : 0,
       language: this.isArabic ? 'ar' : 'en',
       rangePicker: false,
     };

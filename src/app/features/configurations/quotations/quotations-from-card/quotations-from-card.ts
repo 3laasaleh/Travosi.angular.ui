@@ -246,17 +246,33 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return Number(item.pricePerChild ?? 0);
   }
 
-  catalogTotal(item: any): number {
-    return this.packagePrice(item) * this.quotationForm.controls.adults.value
-      + this.childPrice(item) * this.quotationForm.controls.children.value;
+  infantPrice(item: any): number {
+    return Number(item.pricePerInfant ?? 0);
   }
 
-  flightPrice(flight: any): number {
-    return Number(flight?.price ?? 0);
+  catalogTotal(item: any): number {
+    return this.packagePrice(item) * this.quotationForm.controls.adults.value
+      + this.childPrice(item) * this.quotationForm.controls.children.value
+      + this.infantPrice(item) * this.quotationForm.controls.infants.value;
+  }
+
+  flightAdultPrice(flight: any): number {
+    return Number(flight?.pricePerPerson ?? flight?.price ?? 0);
+  }
+
+  flightChildPrice(flight: any): number {
+    return Number(flight?.pricePerChild ?? 0);
+  }
+
+  flightInfantPrice(flight: any): number {
+    return Number(flight?.pricePerInfant ?? 0);
   }
 
   flightTotal(flight: any): number {
-    return this.flightPrice(flight) * this.travelerCount;
+    const form = this.quotationForm.controls;
+    return this.flightAdultPrice(flight) * form.adults.value
+      + this.flightChildPrice(flight) * form.children.value
+      + this.flightInfantPrice(flight) * form.infants.value;
   }
 
   hotelRoom(hotel: any): any | null {
@@ -333,6 +349,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     const addCatalogItem = (item: any, itemType: number, reference: 'packageId' | 'tourId') => {
       const adultItem = this.savedCatalogItem(itemType, reference, item.id, 'adults');
       const childItem = this.savedCatalogItem(itemType, reference, item.id, 'children');
+      const infantItem = this.savedCatalogItem(itemType, reference, item.id, 'infants');
       const base = {
         itemType,
         description: this.itemName(item),
@@ -343,6 +360,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       };
       const adults = this.quotationForm.controls.adults.value;
       const children = this.quotationForm.controls.children.value;
+      const infants = this.quotationForm.controls.infants.value;
       if (adults > 0) items.push({
         ...base,
         ...this.savedLineDetails(adultItem),
@@ -352,13 +370,22 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         sellingPrice: Number(adultItem?.sellingPrice ?? this.packagePrice(item)),
         sortOrder: base.sortOrder,
       });
-      if (children > 0 && (this.childPrice(item) > 0 || childItem)) items.push({
+      if (children > 0) items.push({
         ...base,
         ...this.savedLineDetails(childItem),
         description: childItem?.description || `${base.description} - Children`,
         quantity: children,
         costPrice: Number(childItem?.costPrice ?? base.costPrice),
         sellingPrice: Number(childItem?.sellingPrice ?? this.childPrice(item)),
+        sortOrder: sortOrder++,
+      });
+      if (infants > 0) items.push({
+        ...base,
+        ...this.savedLineDetails(infantItem),
+        description: infantItem?.description || `${base.description} - Infants`,
+        quantity: infants,
+        costPrice: Number(infantItem?.costPrice ?? base.costPrice),
+        sellingPrice: Number(infantItem?.sellingPrice ?? this.infantPrice(item)),
         sortOrder: sortOrder++,
       });
     };
@@ -388,19 +415,26 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       });
     });
     this.selectedFlights.forEach((flight) => {
-      const savedItem = this.savedCatalogItem(4, 'flightId', flight.id);
-      items.push({
-        ...this.flightLineDetails(flight),
-        ...this.savedLineDetails(savedItem),
-        itemType: 4,
-        description: savedItem?.description || this.flightName(flight),
-        quantity: Math.max(1, this.travelerCount),
-        costPrice: Number(savedItem?.costPrice ?? flight.costPrice ?? flight.cost ?? 0),
-        sellingPrice: Number(savedItem?.sellingPrice ?? this.flightPrice(flight)),
-        discount: Number(savedItem?.discount ?? 0),
-        sortOrder: sortOrder++,
-        flightId: Number(flight.id),
-      });
+      const addFlightLine = (audience: 'adults' | 'children' | 'infants', quantity: number, price: number) => {
+        const savedItem = this.savedCatalogItem(4, 'flightId', flight.id, audience);
+        if (quantity <= 0) return;
+        items.push({
+          ...this.flightLineDetails(flight),
+          ...this.savedLineDetails(savedItem),
+          itemType: 4,
+          description: savedItem?.description || `${this.flightName(flight)} - ${audience[0].toUpperCase()}${audience.slice(1)}`,
+          quantity,
+          costPrice: Number(savedItem?.costPrice ?? flight.costPrice ?? flight.cost ?? 0),
+          sellingPrice: Number(savedItem?.sellingPrice ?? price),
+          discount: Number(savedItem?.discount ?? 0),
+          sortOrder: sortOrder++,
+          flightId: Number(flight.id),
+        });
+      };
+      const form = this.quotationForm.controls;
+      addFlightLine('adults', form.adults.value, this.flightAdultPrice(flight));
+      addFlightLine('children', form.children.value, this.flightChildPrice(flight));
+      addFlightLine('infants', form.infants.value, this.flightInfantPrice(flight));
     });
     this.transfersArray.getRawValue().forEach((transfer: any) => {
       const from = String(transfer.from ?? '').trim();
@@ -446,12 +480,14 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     });
   }
 
-  private savedCatalogItem(itemType: number, reference: 'packageId' | 'tourId' | 'hotelId' | 'flightId', id: number, audience?: 'adults' | 'children'): any | undefined {
+  private savedCatalogItem(itemType: number, reference: 'packageId' | 'tourId' | 'hotelId' | 'flightId', id: number, audience?: 'adults' | 'children' | 'infants'): any | undefined {
     const candidates = (this.selectedQuotation?.items ?? []).filter((item: any) =>
       this.itemTypeNumber(item) === itemType && Number(item?.[reference]) === Number(id));
     if (!audience) return candidates[0];
 
-    const marker = audience === 'adults' ? /\badult(s)?\b/i : /\bchild(ren)?\b/i;
+    const marker = audience === 'adults'
+      ? /\badult(s)?\b/i
+      : audience === 'children' ? /\bchild(ren)?\b/i : /\binfant(s)?\b/i;
     return candidates.find((item: any) => marker.test(String(item?.description ?? '')))
       ?? (audience === 'adults' ? candidates[0] : undefined);
   }

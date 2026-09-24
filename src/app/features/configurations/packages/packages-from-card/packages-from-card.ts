@@ -173,6 +173,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.durationHours,
       controls.pricePerPerson,
       controls.pricePerChild,
+      controls.pricePerInfant,
       controls.maxCapacity,
       controls.dateFrom,
       controls.dateTo,
@@ -611,6 +612,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       durationHours: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0), Validators.max(23)] }),
       pricePerPerson: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0.01)] }),
       pricePerChild: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
+      pricePerInfant: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       maxCapacity: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       showInRealtedTourSection: new FormControl(false, { nonNullable: true }),
@@ -678,7 +680,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private validateDetailsStep(): boolean {
-    const names = ['nameEng', 'nameAr', 'routeName', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
+    const names = ['nameEng', 'nameAr', 'routeName', 'descriptionEng', 'descriptionAr',  'durationDays', 'durationHours', 'pricePerPerson', 'pricePerChild', 'pricePerInfant', 'maxCapacity', 'isFreeCancelation', 'dateFrom', 'dateTo', 'destinationIds'] as const;
     names.forEach((name) => this.packageForm.controls[name].markAsTouched());
     this.cancellationPoliciesArray.markAllAsTouched();
     this.highlightsArray.markAllAsTouched();
@@ -702,6 +704,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       Description: value.descriptionEng.trim(),
       DurationDays: Number(value.durationDays), DurationHours: Number(value.durationHours),
       PricePerPerson: Number(value.pricePerPerson), PricePerChild: Number(value.pricePerChild),
+      PricePerInfant: Number(value.pricePerInfant ?? 0),
       MaxCapacity: Number(value.maxCapacity),
       CancellationPolicies: this.toLocalizedListPayload(value.cancellationPolicies),
       Highlights: this.toLocalizedListPayload(value.highlights),
@@ -711,7 +714,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       ShowInRealtedTourSection: value.showInRealtedTourSection,
       ShowInRecomendedTourSection: value.showInRecomendedTourSection,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
-      Destinations: value.destinationIds.map((destinationId, index) => ({ DestinationId: destinationId })),
+      Destinations: value.destinationIds.map((destinationId) => ({ DestinationId: destinationId })),
       Images: [], Itinerary: [], IsActive: false,
     };
     if (id) payload.Id = id;
@@ -755,6 +758,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       descriptionEng: item?.descriptionEng ?? item?.description ?? '', descriptionAr: item?.descriptionAr ?? '',
       durationDays: Number(item?.durationDays) || 1, durationHours: Number(item?.durationHours) || 0,
       pricePerPerson: Number(item?.pricePerPerson) || 0, pricePerChild: Number(item?.pricePerChild) || 0,
+      pricePerInfant: Number(item?.pricePerInfant ?? 0),
       maxCapacity: Number(item?.maxCapacity) || 1,
       isFreeCancelation: item?.isFreeCancelation === true,
       showInRealtedTourSection: item?.showInRealtedTourSection === true,
@@ -785,7 +789,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.validationSubmitted = false;
     this.initialItinerarySnapshot = '';
     this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
-      pricePerPerson: 0, pricePerChild: 0, maxCapacity: 1, isFreeCancelation: false,
+      pricePerPerson: 0, pricePerChild: 0, pricePerInfant: 0, maxCapacity: 1, isFreeCancelation: false,
       showInRealtedTourSection: false, showInRecomendedTourSection: false, isActive: true,
       dateFrom: this.tomorrow, dateTo: this.dayAfterTomorrow, destinationIds: [], images: [] });
     this.itineraryArray.clear();

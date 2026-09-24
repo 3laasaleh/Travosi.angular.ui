@@ -18,6 +18,7 @@ export interface PackageDTO {
 
   pricePerPerson: number;
   pricePerChild: number;
+  pricePerInfant: number;
 
   currencyId: number;
 
@@ -42,6 +43,7 @@ export interface PackageDTO {
 
   discountedPricePerPerson?: number | null;
   discountedPricePerChild?: number | null;
+  discountedPricePerInfant?: number | null;
 
   destinations: PackageDestinationDTO[];
   images: ImageDTO[];
