@@ -265,9 +265,9 @@ export class HotelCatalog implements OnInit {
       : hotel?.addressEng || hotel?.address || hotel?.addressAr || hotel?.destinationName || '';
   }
   hotelDescription(hotel: any): string {
-    return hotel?.description || (this.isArabic
-      ? hotel?.descriptionAr || hotel?.descriptionEng
-      : hotel?.descriptionEng || hotel?.descriptionAr) || '';
+    return (this.isArabic
+      ? hotel?.descriptionAr || hotel?.description || hotel?.descriptionEng
+      : hotel?.description || hotel?.descriptionEng || hotel?.descriptionAr) || '';
   }
   hotelDestinationName(hotel: any): string {
     const destinationId = Number(hotel?.destinationId);

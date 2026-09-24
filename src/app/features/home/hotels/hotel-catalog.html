@@ -11,9 +11,9 @@
       </div>
 
       <form
-        class="relative grid gap-1 rounded-xl bg-amber-400 p-1.5 shadow-lg lg:grid-cols-[minmax(15rem,1.45fr)_minmax(11rem,1fr)_minmax(11rem,1fr)_minmax(15rem,1.2fr)_auto]"
+        class="relative grid w-full min-w-0 gap-1 rounded-xl bg-amber-400 p-1.5 shadow-lg lg:grid-cols-[minmax(15rem,1.45fr)_minmax(11rem,1fr)_minmax(11rem,1fr)_minmax(15rem,1.2fr)_auto]"
         (ngSubmit)="applySearch()">
-        <div #destinationControl class="relative">
+        <div #destinationControl class="relative min-w-0">
           <label for="hotel-destination" class="sr-only">{{ 'destination' | translate }}</label>
           <i class="mdi mdi-bed-outline pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2 text-xl text-slate-600" aria-hidden="true"></i>
           <input
@@ -53,7 +53,7 @@
           }
         </div>
 
-        <label class="block">
+        <label class="block min-w-0">
           <span class="sr-only">{{ 'checkIn' | translate }}</span>
           <app-date-picker
             [(ngModel)]="checkInDate"
@@ -66,7 +66,7 @@
             (ngModelChange)="onCheckInDateChange($event)" />
         </label>
 
-        <label class="block">
+        <label class="block min-w-0">
           <span class="sr-only">{{ 'checkOut' | translate }}</span>
           <app-date-picker
             [(ngModel)]="checkOutDate"
@@ -79,7 +79,7 @@
             (ngModelChange)="onCheckOutDateChange($event)" />
         </label>
 
-        <div #guestControl class="relative">
+        <div #guestControl class="relative min-w-0">
           <button type="button" class="flex h-12 w-full items-center gap-3 rounded-lg bg-white px-3 text-start text-sm text-slate-900 shadow-sm" [attr.aria-expanded]="guestMenuOpen" (click)="toggleGuestMenu()">
             <i class="mdi mdi-account-multiple-outline text-xl text-slate-600" aria-hidden="true"></i>
             <span class="min-w-0 flex-1 truncate font-medium">{{ adults }} {{ 'adults' | translate }} · {{ children }} {{ 'children' | translate }} · {{ roomCount }} {{ 'rooms' | translate }}</span>
@@ -147,12 +147,12 @@
             <p class="mt-1 text-sm text-slate-500">{{ numberOfDays }} {{ 'days' | translate }} / {{ numberOfNights }} {{ 'nights' | translate }} · {{ adults + children + infants }} {{ 'guests' | translate }} · {{ roomCount }} {{ 'rooms' | translate }}</p>
           }
         </div>
-        <div class="flex items-center gap-2">
+        <div class="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 sm:flex sm:w-auto">
           <button type="button" class="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary lg:hidden" (click)="mobileFiltersOpen = !mobileFiltersOpen"><i class="mdi mdi-tune-variant"></i>{{ 'filters' | translate }}</button>
-          <label class="relative">
+          <label class="relative min-w-0 sm:min-w-64">
             <span class="sr-only">{{ 'sortBy' | translate }}</span>
             <i class="mdi mdi-sort pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-primary"></i>
-            <select [(ngModel)]="sortOption" class="rounded-full border border-primary bg-white py-2 pe-9 ps-9 text-sm font-semibold text-primary outline-none focus:ring-2 focus:ring-primary/20">
+            <select [(ngModel)]="sortOption" class="w-full min-w-0 max-w-full rounded-full border border-primary bg-white py-2 pe-9 ps-9 text-sm font-semibold text-primary outline-none focus:ring-2 focus:ring-primary/20">
               <option value="recommended">{{ 'recommended' | translate }}</option>
               <option value="price-asc">{{ 'priceLowestFirst' | translate }}</option>
               <option value="distance">{{ 'distanceFromDowntown' | translate }}</option>
