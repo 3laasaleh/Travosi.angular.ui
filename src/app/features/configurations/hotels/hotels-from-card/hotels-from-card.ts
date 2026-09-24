@@ -9,7 +9,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
@@ -30,6 +30,13 @@ export interface HotelDTO {
   starRating: number;
   distanceFromDowntownKm?: number | null;
   hasFreeAirportTaxi?: boolean;
+  googleMapsUrl?: string | null;
+  from?: string | null;
+  to?: string | null;
+  policiesEng?: string | null;
+  policiesAr?: string | null;
+  isFreeCancelation?: boolean | null;
+  description?: string | null;
   address?: string;
   descriptionEng?: string;
   descriptionAr?: string;
@@ -100,6 +107,18 @@ export class HotelsFromCard implements OnInit, OnChanges {
       return;
     }
     const form = this.hotelForm.getRawValue();
+    const policies = this.cancellationPoliciesArray.getRawValue()
+      .map((item: any) => ({ valueEng: String(item.valueEng ?? '').trim(), valueAr: String(item.valueAr ?? '').trim() }))
+      .filter((item) => item.valueEng || item.valueAr);
+    if (!form.isFreeCancelation && (!policies.length || policies.some((item) => !item.valueEng || !item.valueAr))) {
+      this.cancellationPoliciesArray.markAllAsTouched();
+      this.errorMessage = 'cancellationPolicyRequired';
+      return;
+    }
+    if (form.from && form.to && form.to < form.from) {
+      this.errorMessage = 'endDateBeforeStart';
+      return;
+    }
     const payload: any = {
       name: form.nameEng.trim(),
       nameEng: form.nameEng.trim(),
@@ -108,6 +127,12 @@ export class HotelsFromCard implements OnInit, OnChanges {
       starRating: Number(form.starRating),
       distanceFromDowntownKm: form.distanceFromDowntownKm === null ? null : Number(form.distanceFromDowntownKm),
       hasFreeAirportTaxi: form.hasFreeAirportTaxi === true,
+      googleMapsUrl: form.googleMapsUrl.trim() || null,
+      from: form.from || null,
+      to: form.to || null,
+      policiesEng: policies.map((item) => item.valueEng).join(';'),
+      policiesAr: policies.map((item) => item.valueAr).join(';'),
+      isFreeCancelation: form.isFreeCancelation === true,
       destinationId: Number(form.destinationId),
       address: form.address.trim(),
       descriptionEng: form.descriptionEng.trim(),
@@ -183,7 +208,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
 
   private populateForm(hotel: HotelDTO): void {
     this.validationSubmitted = false;
-    this.hotelForm.setValue({
+    this.hotelForm.patchValue({
       name: hotel.name ?? '',
       nameEng: hotel.nameEng ?? hotel.name ?? '',
       nameAr: hotel.nameAr ?? hotel.name ?? '',
@@ -191,6 +216,10 @@ export class HotelsFromCard implements OnInit, OnChanges {
       starRating: hotel.starRating ?? 1,
       distanceFromDowntownKm: hotel.distanceFromDowntownKm ?? null,
       hasFreeAirportTaxi: hotel.hasFreeAirportTaxi === true,
+      googleMapsUrl: hotel.googleMapsUrl ?? '',
+      from: hotel.from ?? null,
+      to: hotel.to ?? null,
+      isFreeCancelation: hotel.isFreeCancelation === true,
       destinationId: hotel.destinationId ?? null,
       address: hotel.address ?? '',
       descriptionEng: hotel.descriptionEng ?? '',
@@ -201,6 +230,12 @@ export class HotelsFromCard implements OnInit, OnChanges {
       isActive: hotel.isActive !== false,
       showAsDefault: hotel.showAsDefault === true,
     });
+    this.cancellationPoliciesArray.clear();
+    const policiesEng = this.splitPolicies(hotel.policiesEng);
+    const policiesAr = this.splitPolicies(hotel.policiesAr);
+    for (let index = 0; index < Math.max(policiesEng.length, policiesAr.length); index++) {
+      this.addCancellationPolicy({ valueEng: policiesEng[index] ?? '', valueAr: policiesAr[index] ?? '' });
+    }
     this.revokeNewImageUrls();
     this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
     this.selectedHotelFacilityIds = new Set(((hotel as any).amenities ?? []).map((facility: any) => Number(facility.id)).filter(Boolean));
@@ -217,6 +252,10 @@ export class HotelsFromCard implements OnInit, OnChanges {
       starRating: 1,
       distanceFromDowntownKm: null,
       hasFreeAirportTaxi: false,
+      googleMapsUrl: '',
+      from: null,
+      to: null,
+      isFreeCancelation: false,
       destinationId: null,
       address: '',
       descriptionEng: '',
@@ -227,6 +266,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       isActive: true,
       showAsDefault: false,
     });
+    this.cancellationPoliciesArray.clear();
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -266,6 +306,25 @@ export class HotelsFromCard implements OnInit, OnChanges {
   private revokeNewImageUrls(): void { this.imageUploads.filter(image => image.file).forEach(image => URL.revokeObjectURL(image.url)); }
   private rows(response: any): any[] { const data = response?.data ?? response; return Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : Array.isArray(data?.items) ? data.items : []; }
 
+  get cancellationPoliciesArray(): FormArray<FormGroup> {
+    return this.hotelForm.controls.cancellationPolicies;
+  }
+
+  addCancellationPolicy(value: { valueEng?: string; valueAr?: string } = {}): void {
+    this.cancellationPoliciesArray.push(new FormGroup({
+      valueEng: new FormControl(value.valueEng ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] }),
+      valueAr: new FormControl(value.valueAr ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000), arabicTextValidator()] }),
+    }));
+  }
+
+  removeCancellationPolicy(index: number): void {
+    this.cancellationPoliciesArray.removeAt(index);
+  }
+
+  private splitPolicies(value: unknown): string[] {
+    return typeof value === 'string' ? value.split(';').map((item) => item.trim()).filter(Boolean) : [];
+  }
+
   private createForm() {
     return new FormGroup({
       // `nameEng` is the displayed/editable name; keep the legacy field only for API compatibility.
@@ -279,6 +338,11 @@ export class HotelsFromCard implements OnInit, OnChanges {
       }),
       distanceFromDowntownKm: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
       hasFreeAirportTaxi: new FormControl(false, { nonNullable: true }),
+      googleMapsUrl: new FormControl('', { nonNullable: true }),
+      from: new FormControl<string | null>(null),
+      to: new FormControl<string | null>(null),
+      isFreeCancelation: new FormControl(false, { nonNullable: true }),
+      cancellationPolicies: new FormArray<FormGroup>([]),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       address: new FormControl('', { nonNullable: true }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
