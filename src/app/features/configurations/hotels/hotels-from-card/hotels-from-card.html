@@ -93,9 +93,9 @@
         <div formArrayName="cancellationPolicies">@for (itemGroup of cancellationPoliciesArray.controls; track
           itemGroup; let index = $index) {<div [formGroupName]="index"
             class="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-3 md:grid-cols-[1fr_1fr_auto]">
-            <textarea formControlName="valueEng" rows="2" maxlength="1000" [placeholder]="'englishValue' | translate"
+            <textarea formControlName="valueEng" rows="1" maxlength="1000" [placeholder]="'englishValue' | translate"
               class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea><textarea
-              formControlName="valueAr" rows="2" maxlength="1000" dir="rtl" [placeholder]="'arabicValue' | translate"
+              formControlName="valueAr" rows="1" maxlength="1000" dir="rtl" [placeholder]="'arabicValue' | translate"
               class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea><button
               type="button"
               class="grid h-9 w-9 place-items-center self-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"

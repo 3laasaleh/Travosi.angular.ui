@@ -56,7 +56,7 @@
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         {{ 'englishSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <textarea formControlName="summaryEng" maxlength="500" rows="2"
+        <textarea formControlName="summaryEng" maxlength="500" rows="1"
           class="mt-1 w-full rounded-xl border p-2"
           [class.border-red-500]="form.controls.summaryEng.touched && form.controls.summaryEng.invalid"></textarea>
         @if (form.controls.summaryEng.touched && form.controls.summaryEng.hasError('maxlength')) {
@@ -65,7 +65,7 @@
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <textarea formControlName="summaryAr" maxlength="500" rows="2" dir="rtl"
+        <textarea formControlName="summaryAr" maxlength="500" rows="1" dir="rtl"
           class="mt-1 w-full rounded-xl border p-2"
           [class.border-red-500]="form.controls.summaryAr.touched && form.controls.summaryAr.invalid"></textarea>
         @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('maxlength')) {

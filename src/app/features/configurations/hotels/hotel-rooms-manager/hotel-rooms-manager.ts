@@ -128,13 +128,13 @@ export class HotelRoomsManager implements OnChanges {
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
   ) {
-    this.rates.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    this.roomPeriodPrices.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.validateAllPeriods();
       this.cdr.markForCheck();
     });
   }
 
-  get rates(): FormArray<FormGroup> {
+  get roomPeriodPrices(): FormArray<FormGroup> {
     return this.roomForm.controls.roomPeriodPrices;
   }
   get childrenPolicies(): FormArray<FormGroup> {
@@ -239,14 +239,15 @@ get todayAfterMonth(): string {
       maxAdults: Number(room.maxAdults ?? 1),
       maxChildren: Number(room.maxChildren ?? 0),
       maxInfants: Number(room.maxInfants ?? 0),
+      childrenPolicies:[],
     });
 
 
-    this.rates.clear();
+    this.roomPeriodPrices.clear();
     ((room as any).roomPeriodPrices ?? [])
       .sort((left: any, right: any) => String(left.startDate).localeCompare(String(right.startDate)))
       .forEach((period: any) => this.addPeriod(period));
-    if (!this.rates.length) this.addPeriod();
+    if (!this.roomPeriodPrices.length) this.addPeriod();
     this.childrenPolicies.clear();
     readRoomChildrenPolicies(room.childrenPolicies).forEach((policy) => this.addChildPolicy(policy));
     this.cdr.markForCheck();
@@ -277,8 +278,9 @@ get todayAfterMonth(): string {
       maxAdults: 1,
       maxChildren: 0,
       maxInfants: 0,
+      childrenPolicies:[]
     });
-    this.rates.clear();
+    this.roomPeriodPrices.clear();
     this.addPeriod();
     this.childrenPolicies.clear();
   }
@@ -296,14 +298,14 @@ get todayAfterMonth(): string {
     group.facilities.forEach((facility) => this.toggleFacility(Number(facility.id), checked));
   }
   addPeriod(value: any = {}): void {
-    const previousEndDate = this.rates.length
-      ? String(this.rates.at(this.rates.length - 1).controls['endDate'].value ?? '')
+    const previousEndDate = this.roomPeriodPrices.length
+      ? String(this.roomPeriodPrices.at(this.roomPeriodPrices.length - 1).controls['endDate'].value ?? '')
       : '';
-    this.rates.push(
+    this.roomPeriodPrices.push(
       new FormGroup({
         id: new FormControl(Number(value.id ?? 0)),
         startDate: new FormControl(
-          value.startDate ?? (this.rates.length && previousEndDate ? this.addDays(previousEndDate, 1) : this.today),
+          value.startDate ?? (this.roomPeriodPrices.length && previousEndDate ? this.addDays(previousEndDate, 1) : this.today),
           { nonNullable: true, validators: [Validators.required] },
         ),
         endDate: new FormControl(value.endDate ?? '', {
@@ -323,8 +325,8 @@ get todayAfterMonth(): string {
     this.validateAllPeriods();
   }
   removePeriod(index: number): void {
-    if (this.rates.length > 1) {
-      this.rates.removeAt(index);
+    if (this.roomPeriodPrices.length > 1) {
+      this.roomPeriodPrices.removeAt(index);
       this.validateAllPeriods();
     }
   }
@@ -557,7 +559,8 @@ get todayAfterMonth(): string {
         this.facilities = this.rows(result.facilities)
           .filter((facility) => Number(facility?.kind) === 2);
         this.mealPlans = this.rows(result.mealPlans);
-        if (!this.roomFormOpen()) this.reset();
+        if (!this.roomFormOpen()) 
+          this.reset();
       });
   }
   private rows(response: any): any[] {
@@ -621,7 +624,7 @@ getMinimumStartDate(index: number): string {
   }
 
   const previousPeriod =
-    this.rates.at(index - 1) as FormGroup;
+    this.roomPeriodPrices.at(index - 1) as FormGroup;
 
   const previousEndDate =
     previousPeriod.get('endDate')?.value;
@@ -631,18 +634,18 @@ getMinimumStartDate(index: number): string {
     : this.today;
 }
   private validateAllPeriods(): void {
-    this.rates.controls.forEach((period) => {
+    this.roomPeriodPrices.controls.forEach((period) => {
       this.removeError(period.controls['startDate'], 'previousPeriod');
       this.removeError(period.controls['endDate'], 'dateOrder');
     });
 
-    this.rates.controls.forEach((period, index) => {
+    this.roomPeriodPrices.controls.forEach((period, index) => {
       const startDate = String(period.controls['startDate'].value ?? '');
       const endDate = String(period.controls['endDate'].value ?? '');
       if (startDate && endDate && endDate <= startDate) this.addError(period.controls['endDate'], 'dateOrder');
 
       if (index > 0 && startDate) {
-        const previousEndDate = String(this.rates.at(index - 1).controls['endDate'].value ?? '');
+        const previousEndDate = String(this.roomPeriodPrices.at(index - 1).controls['endDate'].value ?? '');
         if (previousEndDate && startDate <= previousEndDate) this.addError(period.controls['startDate'], 'previousPeriod');
       }
     });
