@@ -1397,6 +1397,9 @@
   "findYourStay": "Find a stay that feels like yours",
   "findYourStayHint": "Search trusted hotels, compare stay prices, and check room availability for your dates.",
   "searchHotelsDestination": "Search hotel or destination",
+  "searchToursDestination": "Search tour or destination",
+  "searchPackagesDestination": "Search package or destination",
+  "noResultsFound": "No results found",
   "checkIn": "Check-in",
   "checkOut": "Check-out",
   "destination": "Destination",
@@ -1460,5 +1463,17 @@
   "classType": "Cabin class",
   "departureTimeZone": "Departure time zone",
   "arrivalTimeZone": "Arrival time zone",
-  "flightLoadError": "Unable to load the complete flight itinerary."
+  "flightLoadError": "Unable to load the complete flight itinerary.",
+  "bookingService": "Service",
+  "mostPopularFacilities": "Most popular facilities",
+  "showOnGoogleMaps": "Show on Google Maps",
+  "availableRooms": "Available rooms",
+  "reserveRoom": "Reserve room",
+  "hotelBookingRequest": "Hotel booking request",
+  "hotelBookingConfirmation": "Your hotel booking request was received. We will call you soon to confirm it.",
+  "hotelRoomUnavailable": "This room is no longer available for the selected stay.",
+  "hotelOccupancyExceeded": "The selected guests exceed this room's capacity.",
+  "hotelStayDatesInvalid": "Select valid future check-in and check-out dates.",
+  "hotelGuestCountsInvalid": "Enter valid guest counts.",
+  "hotelRateUnavailable": "No rate is available for every night of this stay."
 }

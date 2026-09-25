@@ -3,11 +3,15 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  ElementRef,
+  HostListener,
   Input,
   OnInit,
   inject,
+  signal,
+  viewChild,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import {
@@ -43,6 +47,7 @@ export class TourBookingCard implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private bookingLoaderElement: HTMLElement | null = null;
   @Input() tour: any = null;
   @Input() travelPackage: any = null;
@@ -70,6 +75,35 @@ export class TourBookingCard implements OnInit {
   errorMessage = '';
   successMessage = '';
   guestBookingOpen = false;
+  readonly travelerMenuOpen = signal(false);
+  readonly travelerTypes = [
+    { key: 'adults', ageLabel: 'adultsAgeLabel', minimum: 1 },
+    { key: 'children', ageLabel: 'childrenAgeLabel', minimum: 0 },
+    { key: 'infants', ageLabel: 'infantsAgeLabel', minimum: 0 },
+  ] as const;
+  private readonly travelerControl = viewChild<ElementRef<HTMLElement>>('travelerControl');
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.travelerMenuOpen() && !this.travelerControl()?.nativeElement.contains(event.target as Node)) {
+      this.travelerMenuOpen.set(false);
+    }
+  }
+
+  onTravelerFocusOut(event: FocusEvent): void {
+    if (!this.travelerControl()?.nativeElement.contains(event.relatedTarget as Node | null)) {
+      this.travelerMenuOpen.set(false);
+    }
+  }
+
+  updateTravelerCount(type: 'adults' | 'children' | 'infants', change: number): void {
+    const control = this.bookingForm.controls[type];
+    const minimum = type === 'adults' ? 1 : 0;
+    const current = Number.isFinite(control.value) ? Math.trunc(control.value) : minimum;
+    control.markAsDirty();
+    control.markAsTouched();
+    control.setValue(Math.max(minimum, current + change));
+  }
 
   bookingForm = new FormGroup(
     {
@@ -237,6 +271,7 @@ export class TourBookingCard implements OnInit {
 
   ngOnInit(): void {
     this.setDefaultDates();
+    this.applyCatalogSelection();
     this.destroyRef.onDestroy(() => this.hideBookingLoader());
     this.bookingForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -567,6 +602,32 @@ export class TourBookingCard implements OnInit {
     this.availabilityConfirmed = false;
     this.availabilityStatus = null;
     this.availabilitySeats = 0;
+  }
+
+  private applyCatalogSelection(): void {
+    const state = this.location.getState() as { catalogBooking?: Record<string, unknown> } | null;
+    const selection = state?.catalogBooking;
+    if (!selection) return;
+
+    for (const { key, minimum } of this.travelerTypes) {
+      const value = selection[key];
+      if (typeof value === 'number' && Number.isSafeInteger(value) && value >= minimum) {
+        this.bookingForm.controls[key].setValue(value);
+      }
+    }
+
+    const dateFrom = this.toDateInput(selection['dateFrom']);
+    const dateTo = this.isOneDayTour ? dateFrom : this.toDateInput(selection['dateTo']);
+    const withinAvailability = (value: string) => Boolean(value) && value >= this.minTravelDate
+      && (!this.maxTravelDate || value <= this.maxTravelDate);
+    if (withinAvailability(dateFrom)) {
+      this.bookingForm.controls.dateFrom.setValue(dateFrom);
+      // Keep a valid range when only a start date was selected in the catalogue.
+      if (this.bookingForm.controls.dateTo.value < dateFrom) this.bookingForm.controls.dateTo.setValue(dateFrom);
+    }
+    if (withinAvailability(dateTo) && dateTo >= this.bookingForm.controls.dateFrom.value) {
+      this.bookingForm.controls.dateTo.setValue(dateTo);
+    }
   }
 
   private setDefaultDates(): void {

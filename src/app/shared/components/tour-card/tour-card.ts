@@ -4,6 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { UtilityService } from '../../../core/services/utilityservice';
 import type { TourHomeDTO } from '../../../features/home/home-sections/tours-section/tours-section';
+import type { CatalogBookingSelection } from '../catalog-search-form/catalog-search-form';
 
 @Component({
   selector: 'app-tour-card',
@@ -22,6 +23,7 @@ export class TourCard implements OnChanges {
 
   @Input({ required: true }) tour: TourHomeDTO|null=null;
   @Input() compact = false;
+  @Input() bookingSelection?: CatalogBookingSelection;
 
   get routeLink(): string[] {
     return this.tour?.routeName ? ['/tours', this.tour.routeName] : ['/tours'];

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { mdiIconClass } from '../../utils/mdi-icon.util';
+import { readRoomChildrenPolicies } from '../../utils/hotel-room-children-policies.util';
 
 @Component({
   selector: 'app-hotel-room-card',
@@ -59,7 +60,8 @@ export class HotelRoomCard {
   }
 
   childrenPolicyItems(room: any): string[] {
-    return this.semicolonItems(room?.childrenPolicies);
+    return readRoomChildrenPolicies(room?.childrenPolicies)
+      .map(policy => this.localized(policy.valueEng, policy.valueAr)).filter(Boolean);
   }
 
   private localized(english: unknown, arabic: unknown, fallback = ''): string {
@@ -67,9 +69,4 @@ export class HotelRoomCard {
     return typeof value === 'string' ? value : fallback;
   }
 
-  private semicolonItems(value: unknown): string[] {
-    return typeof value === 'string'
-      ? value.split(';').map((item) => item.trim()).filter(Boolean)
-      : [];
-  }
 }

@@ -1,4 +1,5 @@
 import { ImageDTO } from "../../../../shared/models/image-dto";
+import { HotelRoomChildrenPolicy } from '../../../../shared/utils/hotel-room-children-policies.util';
 
 export interface HotelRoomDto {
   id: number;
@@ -23,7 +24,7 @@ export interface HotelRoomDto {
 
   smokingAllowed: boolean;
 
-  childrenPolicies: string | null;
+  childrenPolicies: HotelRoomChildrenPolicy[];
 
   avilableRoomsCount: number;
   hasBalcony: boolean;

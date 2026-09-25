@@ -29,6 +29,8 @@ import { DatePicker } from '../../../../shared/components/date-picker/date-picke
 import { HotelRoomDto } from '../models/hotel-room.dto';
 import { LanguageService } from '../../../../core/services/language.service';
 import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
+import { HotelRoomChildrenPolicy, readRoomChildrenPolicies } from '../../../../shared/utils/hotel-room-children-policies.util';
+import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 
 interface FacilityGroup {
   id: number;
@@ -246,7 +248,7 @@ get todayAfterMonth(): string {
       .forEach((period: any) => this.addPeriod(period));
     if (!this.rates.length) this.addPeriod();
     this.childrenPolicies.clear();
-    this.parseStringValues(room.childrenPolicies).forEach((policy) => this.addChildPolicy(policy));
+    readRoomChildrenPolicies(room.childrenPolicies).forEach((policy) => this.addChildPolicy(policy));
     this.cdr.markForCheck();
   }
 
@@ -327,12 +329,16 @@ get todayAfterMonth(): string {
     }
   }
 
-  addChildPolicy(value: string = ''): void {
+  addChildPolicy(value: Partial<HotelRoomChildrenPolicy> = {}): void {
     this.childrenPolicies.push(
       new FormGroup({
-        value: new FormControl(value, {
+        valueEng: new FormControl(value.valueEng ?? '', {
           nonNullable: true,
-          validators: [Validators.required, Validators.maxLength(1000)],
+          validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000)],
+        }),
+        valueAr: new FormControl(value.valueAr ?? '', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000), arabicTextValidator()],
         }),
       }),
     );
@@ -415,9 +421,10 @@ get todayAfterMonth(): string {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
       ...roomValue,
-      childrenPolicies: childrenPolicies
-        .flatMap((policy) => this.parseStringValues(policy['value']))
-        .join(';'),
+      childrenPolicies: childrenPolicies.map((policy) => ({
+        valueEng: String(policy['valueEng']).trim(),
+        valueAr: String(policy['valueAr']).trim(),
+      })),
       roomType: Number(value.roomType),
       mealPlan: Number(value.mealPlan),
       roomSize: value.roomSize === null ? null : Number(value.roomSize),
@@ -562,14 +569,6 @@ get todayAfterMonth(): string {
         : Array.isArray(data?.items)
           ? data.items
           : [];
-  }
-  private parseStringValues(value: unknown): string[] {
-    return typeof value === 'string'
-      ? value
-          .split(';')
-          .map((item) => item.trim())
-          .filter(Boolean)
-      : [];
   }
   private removeRoomImageLocally(index: number): void {
     const [removed] = this.roomImages.splice(index, 1);

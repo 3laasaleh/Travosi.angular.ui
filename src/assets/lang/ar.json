@@ -1397,6 +1397,9 @@
   "findYourStay": "اعثر على إقامة تناسبك",
   "findYourStayHint": "ابحث عن الفنادق الموثوقة وقارن أسعار الإقامة وتحقق من توفر الغرف في تواريخك.",
   "searchHotelsDestination": "ابحث عن فندق أو وجهة",
+  "searchToursDestination": "ابحث عن رحلة أو وجهة",
+  "searchPackagesDestination": "ابحث عن باقة أو وجهة",
+  "noResultsFound": "لا توجد نتائج",
   "checkIn": "تسجيل الوصول",
   "checkOut": "تسجيل المغادرة",
   "destination": "الوجهة",
@@ -1463,4 +1466,16 @@
   "arrivalTimeZone": "المنطقة الزمنية للوصول",
   "flightLoadError": "تعذر تحميل مسار الرحلة الكامل."
 
+  ,"bookingService": "الخدمة",
+  "mostPopularFacilities": "أشهر المرافق",
+  "showOnGoogleMaps": "Show on Google Maps",
+  "availableRooms": "Available rooms",
+  "reserveRoom": "Reserve room",
+  "hotelBookingRequest": "طلب حجز فندق",
+  "hotelBookingConfirmation": "تم استلام طلب حجز الفندق. سنتصل بك قريباً لتأكيده.",
+  "hotelRoomUnavailable": "This room is no longer available for the selected stay.",
+  "hotelOccupancyExceeded": "The selected guests exceed this room's capacity.",
+  "hotelStayDatesInvalid": "Select valid future check-in and check-out dates.",
+  "hotelGuestCountsInvalid": "Enter valid guest counts.",
+  "hotelRateUnavailable": "No rate is available for every night of this stay."
 }

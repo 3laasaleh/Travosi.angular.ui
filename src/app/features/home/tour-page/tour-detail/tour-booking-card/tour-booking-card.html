@@ -5,20 +5,22 @@
       <span class="text-xs font-semibold">{{ 'limitedTimeOffer' | translate }}</span>
     </div>
   }
-  <div class="flex items-end justify-between gap-3 border-b border-slate-100 pb-3">
+  <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
     <div>
-      <span class="text-xs font-medium text-slate-400">{{ 'pricePerPerson' | translate }}</span>
+      <span class="text-xs font-medium text-slate-400">{{ 'adult' | translate }}</span>
       <p class="text-xl font-bold leading-tight text-slate-900">{{ formattedPricePerPerson }} @if (hasDiscount) { <span class="ms-1 text-xs font-medium text-slate-400 line-through">{{ formattedOriginalPricePerPerson }}</span> }</p>
     </div>
     @if (pricePerChild > 0) {
       <div class="text-end">
-        <span class="text-xs font-medium text-slate-400">{{ 'pricePerChild' | translate }}</span>
-        <p class="text-base font-semibold">{{ formattedPricePerChild }} @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerChild }}</span> }</p>
+        <span class="text-xs font-medium text-slate-400">{{ 'child' | translate }}</span>
+        <p class="text-base font-semibold">{{ formattedPricePerChild }} 
+          @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerChild }}</span> }</p>
       </div>
     }
     <div class="text-end">
-      <span class="text-xs font-medium text-slate-400">{{ 'pricePerInfant' | translate }}</span>
-      <p class="text-base font-semibold">{{ formattedPricePerInfant }} @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerInfant }}</span> }</p>
+      <span class="text-xs font-medium text-slate-400">{{ 'infant' | translate }}</span>
+      <p class="text-base font-semibold">{{ formattedPricePerInfant }} 
+        @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerInfant }}</span> }</p>
     </div>
   </div>
 
@@ -96,28 +98,60 @@
         <span class="text-amber-600 text-xs font-semibold ">{{'bookingIsAvlAfterThreeDays'|translate}}</span>
     </div>
 
-    <div class="mb-3 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-      <div>
-        <label for="adults" class="text-xs font-semibold text-slate-600">{{ 'adultsAgeLabel' | translate }}</label>
-        <input id="adults" type="number" min="1" step="1" formControlName="adults"
-          class="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800" />
-        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'atLeastOneAdult' | translate }}</p> }
-        @if (bookingForm.controls.adults.touched && bookingForm.controls.adults.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
-      </div>
-      <div>
-        <label for="children" class="text-xs font-semibold text-slate-600">{{ 'childrenAgeLabel' | translate }}</label>
-        <input id="children" type="number" min="0" step="1" formControlName="children"
-          class="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800" />
-        @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'childrenCannotBeNegative' | translate }}</p> }
-        @if (bookingForm.controls.children.touched && bookingForm.controls.children.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
-      </div>
-      <div>
-        <label for="infants" class="text-xs font-semibold text-slate-600">{{ 'infantsAgeLabel' | translate }}</label>
-        <input id="infants" type="number" min="0" step="1" formControlName="infants"
-          class="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-primary-400 dark:border-gray-800" />
-        @if (bookingForm.controls.infants.touched && bookingForm.controls.infants.hasError('min')) { <p class="mt-1 text-xs text-red-500">{{ 'infantsCannotBeNegative' | translate }}</p> }
-        @if (bookingForm.controls.infants.touched && bookingForm.controls.infants.hasError('pattern')) { <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p> }
-      </div>
+    <div #travelerControl class="relative mb-3 min-w-0" (focusout)="onTravelerFocusOut($event)"
+      (keydown.escape)="travelerMenuOpen.set(false); travelerTrigger.focus(); $event.stopPropagation()">
+      <button #travelerTrigger type="button"
+        class="flex min-h-12 w-full items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-start text-sm text-slate-900 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        [attr.aria-expanded]="travelerMenuOpen()" (click)="travelerMenuOpen.set(!travelerMenuOpen())">
+        <i class="mdi mdi-account-multiple-outline shrink-0 text-xl text-slate-600" aria-hidden="true"></i>
+        <span class="min-w-0 flex-1 font-medium">
+          {{ bookingForm.controls.adults.value }} {{ 'adults' | translate }} ·
+          {{ bookingForm.controls.children.value }} {{ 'children' | translate }} ·
+          {{ bookingForm.controls.infants.value }} {{ 'infants' | translate }}
+        </span>
+        <i class="mdi shrink-0 text-slate-500" [class.mdi-chevron-up]="travelerMenuOpen()" [class.mdi-chevron-down]="!travelerMenuOpen()" aria-hidden="true"></i>
+      </button>
+
+      @if (travelerMenuOpen()) {
+        <div class="absolute end-0 z-40 mt-2 w-full rounded-xl border border-slate-200 bg-white p-4 text-slate-800 shadow-2xl"
+          role="group" [attr.aria-label]="'travelers' | translate">
+          @for (travelerType of travelerTypes; track travelerType.key) {
+            <div class="border-b border-slate-100 py-3">
+              <div class="flex items-center justify-between gap-3">
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold">{{ travelerType.key | translate }}</span>
+                  <span class="block text-xs text-slate-500">{{ travelerType.ageLabel | translate }}</span>
+                </span>
+                <span class="flex shrink-0 items-center gap-3">
+                  <button type="button"
+                    class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+                    [disabled]="bookingForm.controls[travelerType.key].value <= travelerType.minimum"
+                    [attr.aria-label]="('decreaseByOne' | translate) + ': ' + (travelerType.key | translate)"
+                    (click)="updateTravelerCount(travelerType.key, -1)">
+                    <i class="mdi mdi-minus" aria-hidden="true"></i>
+                  </button>
+                  <span class="min-w-5 text-center font-semibold" aria-live="polite">{{ bookingForm.controls[travelerType.key].value }}</span>
+                  <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary"
+                    [attr.aria-label]="('increaseByOne' | translate) + ': ' + (travelerType.key | translate)"
+                    (click)="updateTravelerCount(travelerType.key, 1)">
+                    <i class="mdi mdi-plus" aria-hidden="true"></i>
+                  </button>
+                </span>
+              </div>
+              @if (bookingForm.controls[travelerType.key].touched) {
+                @if (bookingForm.controls[travelerType.key].hasError('min') || bookingForm.controls[travelerType.key].hasError('required')) {
+                  <p class="mt-1 text-xs text-red-500">{{ (travelerType.key === 'adults' ? 'atLeastOneAdult' : travelerType.key === 'children' ? 'childrenCannotBeNegative' : 'infantsCannotBeNegative') | translate }}</p>
+                }
+                @if (bookingForm.controls[travelerType.key].hasError('pattern')) {
+                  <p class="mt-1 text-xs text-red-500">{{ 'travelersWholeNumber' | translate }}</p>
+                }
+              }
+            </div>
+          }
+          <button type="button" class="mt-2 w-full rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/5"
+            (click)="travelerMenuOpen.set(false); travelerTrigger.focus()">{{ 'done' | translate }}</button>
+        </div>
+      }
     </div>
 
 

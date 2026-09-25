@@ -24,6 +24,11 @@ interface UserBookingItem {
   tourRouteName?: string;
   packageName?: string;
   packageRouteName?: string;
+  hotelId?: number;
+  hotelName?: string;
+  hotelRoomName?: string;
+  hotelRouteName?: string;
+  bookingType?: string;
   createdDate: string;
   dateFrom: string;
   dateTo: string;

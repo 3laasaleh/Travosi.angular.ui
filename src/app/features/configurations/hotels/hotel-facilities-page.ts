@@ -12,7 +12,7 @@ type Amenity = {
   iconKey: string;
   facilityCategoryId?: number;
   kind: number;
-  isActive: boolean;
+  isMostPopular: boolean;
 };
 
 @Component({
@@ -26,7 +26,7 @@ export class HotelFacilitiesPage implements OnInit {
   readonly iconClass = mdiIconClass;
   icons: string[] = [];
   categories: Array<{ id: number; nameEng: string; nameAr: string; iconKey: string }> = [];
-  readonly kinds = [1, 2, 3];
+  readonly kinds = [1, 2];
   facilities: Amenity[] = [];
   filtered: Amenity[] = [];
   filter = '';
@@ -50,7 +50,7 @@ export class HotelFacilitiesPage implements OnInit {
     }),
     facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
-    isActive: new FormControl(true, { nonNullable: true }),
+    isMostPopular: new FormControl(false, { nonNullable: true }),
   });
 
   constructor(
@@ -126,7 +126,7 @@ export class HotelFacilitiesPage implements OnInit {
       iconKey: this.icons[0] ?? 'mdi-check-circle',
       facilityCategoryId: this.categories[0]?.id ?? 0,
       kind: 2,
-      isActive: true,
+      isMostPopular: false,
     });
   }
   save(): void {
@@ -162,6 +162,6 @@ export class HotelFacilitiesPage implements OnInit {
     return this.categories.find((x) => x.id === value)?.nameEng ?? '';
   }
   kindName(value: number): string {
-    return ['Hotel facility', 'Room facility', 'Privilege'][value - 1] ?? 'Hotel facility';
+    return value === 2 ? 'Room facility' : 'Hotel facility';
   }
 }

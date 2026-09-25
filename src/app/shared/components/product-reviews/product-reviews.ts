@@ -30,7 +30,7 @@ export interface ProductRatingSummary {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductReviews implements OnChanges {
-  @Input({ required: true }) productType: 'tour' | 'package' = 'tour';
+  @Input({ required: true }) productType: 'tour' | 'package' | 'hotel' = 'tour';
   @Input({ required: true }) productId: number | null | undefined;
   @Output() readonly ratingSummaryChange = new EventEmitter<ProductRatingSummary>();
 
@@ -120,7 +120,11 @@ export class ProductReviews implements OnChanges {
     ).subscribe((response: any) => {
       const bookings = Array.isArray(response) ? response : (response?.data ?? []);
       const matching = bookings.filter((booking: any) => {
-        const id = this.productType === 'tour' ? booking.tourId ?? booking.TourId : booking.packageId ?? booking.PackageId;
+        const id = this.productType === 'tour'
+          ? booking.tourId ?? booking.TourId
+          : this.productType === 'package'
+            ? booking.packageId ?? booking.PackageId
+            : booking.hotelId ?? booking.HotelId;
         return Number(id) === productId && String(booking.statusName ?? booking.StatusName ?? '').toLowerCase() === 'completed';
       });
       if (!matching.length) return;

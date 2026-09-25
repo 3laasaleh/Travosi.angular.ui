@@ -66,7 +66,13 @@ export class FacilityCategoriesPage implements OnInit {
   constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { this.load(); }
+setSelctedIcon(icon:string){
+  debugger
+  if(icon.startsWith('mdi-'))
+  icon=icon.replace('mdi-','');
+  this.facilityForm.controls.iconKey.setValue(icon)
 
+}
   load(): void {
     this.loading = true;
     this.error = '';
@@ -195,7 +201,7 @@ export class FacilityCategoriesPage implements OnInit {
     return ['Hotel facility', 'Room facility', 'Privilege'][value - 1] ?? 'Hotel facility';
   }
 
-  private get defaultIcon(): string { return this.icons[0] ?? 'mdi-check-circle'; }
+  private get defaultIcon(): string { return this.icons[0] ?? 'check-circle'; }
 
   private resetCategoryForm(): void {
     this.selectedCategory = null;

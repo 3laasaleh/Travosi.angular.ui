@@ -1,0 +1,111 @@
+<form [class]="formClass" (submit)="submit($event)">
+  @if (showSearchControls) {
+    <div #destinationControl class="relative min-w-0" (focusout)="closeOnFocusOut($event, 'destination')"
+      (keydown.escape)="destinationMenuOpen.set(false); $event.stopPropagation()">
+      <label [for]="inputId" class="sr-only">{{ 'search' | translate }}</label>
+      <i class="mdi mdi-magnify pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2 text-xl text-slate-600" aria-hidden="true"></i>
+      <input
+        [id]="inputId"
+        type="text"
+        [ngModel]="query"
+        (ngModelChange)="query = $event; queryChange.emit($event); destinationMenuOpen.set(true)"
+        name="query"
+        autocomplete="off"
+        (focus)="destinationMenuOpen.set(true)"
+        [attr.aria-expanded]="destinationMenuOpen()"
+        [attr.aria-controls]="inputId + '-suggestions'"
+        class="h-12 w-full rounded-lg border-0 bg-white py-2 pe-10 ps-11 text-sm font-medium text-slate-900 shadow-sm outline-none ring-0 placeholder:font-normal placeholder:text-slate-500 focus:ring-2 focus:ring-primary"
+        [placeholder]="searchPlaceholder | translate" />
+      <button type="button" class="absolute end-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full text-slate-500 hover:bg-slate-100"
+        [attr.aria-label]="'destination' | translate" [attr.aria-expanded]="destinationMenuOpen()"
+        (click)="destinationMenuOpen.set(!destinationMenuOpen())">
+        <i class="mdi" [class.mdi-chevron-up]="destinationMenuOpen()" [class.mdi-chevron-down]="!destinationMenuOpen()" aria-hidden="true"></i>
+      </button>
+      @if (destinationMenuOpen()) {
+        <div [id]="inputId + '-suggestions'" class="absolute z-40 mt-2 max-h-80 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 text-slate-800 shadow-2xl">
+          @for (suggestion of filteredSuggestions; track suggestion) {
+            <button type="button" (click)="selectSuggestion(suggestion)" class="flex w-full items-center gap-3 rounded-lg p-2.5 text-start transition hover:bg-primary/5">
+              <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><i class="mdi mdi-map-marker-outline text-xl" aria-hidden="true"></i></span>
+              <span class="min-w-0 truncate font-semibold">{{ suggestion }}</span>
+            </button>
+          } @empty {
+            <p class="px-3 py-6 text-center text-sm text-slate-500">{{ 'noResultsFound' | translate }}</p>
+          }
+        </div>
+      }
+    </div>
+
+    <label class="block min-w-0">
+      <span class="sr-only">{{ 'dateFrom' | translate }}</span>
+      <app-date-picker
+        [ngModel]="dateFrom"
+        (ngModelChange)="dateFromChange.emit($event)"
+        name="dateFrom"
+        [autoSelectToday]="false"
+        [placeholder]="'dateFrom' | translate"
+        [ariaLabel]="'dateFrom' | translate"
+        inputClass="h-12 rounded-lg border-0 font-medium shadow-sm focus:ring-primary" />
+    </label>
+
+    <label class="block min-w-0">
+      <span class="sr-only">{{ 'dateTo' | translate }}</span>
+      <app-date-picker
+        [ngModel]="dateTo"
+        (ngModelChange)="dateToChange.emit($event)"
+        name="dateTo"
+        [min]="dateFrom || null"
+        [autoSelectToday]="false"
+        [placeholder]="'dateTo' | translate"
+        [ariaLabel]="'dateTo' | translate"
+        inputClass="h-12 rounded-lg border-0 font-medium shadow-sm focus:ring-primary" />
+    </label>
+
+    <div #guestControl class="relative min-w-0" (focusout)="closeOnFocusOut($event, 'guest')"
+      (keydown.escape)="guestMenuOpen.set(false); guestTrigger.focus(); $event.stopPropagation()">
+      <button #guestTrigger type="button" class="flex h-12 w-full items-center gap-3 rounded-lg bg-white px-3 text-start text-sm text-slate-900 shadow-sm"
+        [attr.aria-expanded]="guestMenuOpen()" [attr.aria-controls]="inputId + '-travelers'" (click)="guestMenuOpen.set(!guestMenuOpen())">
+        <i class="mdi mdi-account-multiple-outline shrink-0 text-xl text-slate-600" aria-hidden="true"></i>
+        <span class="min-w-0 flex-1 truncate font-medium">{{ travelers.adults }} {{ 'adults' | translate }} · {{ travelers.children }} {{ 'children' | translate }} · {{ travelers.infants }} {{ 'infants' | translate }}</span>
+        <i class="mdi shrink-0 text-slate-500" [class.mdi-chevron-up]="guestMenuOpen()" [class.mdi-chevron-down]="!guestMenuOpen()" aria-hidden="true"></i>
+      </button>
+      @if (guestMenuOpen()) {
+        <div [id]="inputId + '-travelers'" class="absolute end-0 z-40 mt-2 w-full rounded-xl border border-slate-200 bg-white p-4 text-slate-800 shadow-2xl lg:w-72" role="group" [attr.aria-label]="'travelers' | translate">
+          @for (guestType of guestTypes; track guestType.key) {
+            <div class="flex items-center justify-between gap-3 border-b border-slate-100 py-3">
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold">{{ guestType.key | translate }}</span>
+                <span class="block text-xs text-slate-500">{{ guestType.ageLabel | translate }}</span>
+              </span>
+              <span class="flex shrink-0 items-center gap-3">
+                <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+                  [disabled]="travelers[guestType.key] <= guestType.minimum" [attr.aria-label]="('decreaseByOne' | translate) + ': ' + (guestType.key | translate)"
+                  (click)="updateGuestCount(guestType.key, -1)"><i class="mdi mdi-minus" aria-hidden="true"></i></button>
+                <span class="min-w-5 text-center font-semibold" aria-live="polite">{{ travelers[guestType.key] }}</span>
+                <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary"
+                  [attr.aria-label]="('increaseByOne' | translate) + ': ' + (guestType.key | translate)"
+                  (click)="updateGuestCount(guestType.key, 1)"><i class="mdi mdi-plus" aria-hidden="true"></i></button>
+              </span>
+            </div>
+          }
+          <button type="button" class="mt-2 w-full rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/5"
+            (click)="guestMenuOpen.set(false); guestTrigger.focus()">{{ 'done' | translate }}</button>
+        </div>
+      }
+    </div>
+
+      <button type="submit" [disabled]="loading" class="h-12 rounded-lg bg-primary px-7 text-base font-bold text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60">
+        @if (loading) { <i class="mdi mdi-loading mdi-spin me-1" aria-hidden="true"></i> }
+        {{ 'search' | translate }}
+      </button>
+      @if (query || dateFrom || dateTo || travelers.adults !== 1 || travelers.children || travelers.infants) {
+      <button type="button" [disabled]="loading" (click)="cleared.emit()" class="mt-2 justify-self-end text-sm font-semibold text-primary hover:underline disabled:opacity-60 lg:col-span-full">
+        {{ 'clear' | translate }}
+      </button>
+      }
+
+    @if (dateRangeError) {
+      <p role="alert" class="mt-3 text-sm text-red-600 lg:col-span-full">{{ 'bookingDateRangeInvalid' | translate }}</p>
+    }
+  }
+  <ng-content />
+</form>

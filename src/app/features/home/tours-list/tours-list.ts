@@ -5,6 +5,7 @@ import {
   DestroyRef,
   OnInit,
   inject,
+  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { DatePicker } from '../../../shared/components/date-picker/date-picker';
+import { CatalogSearchForm, CatalogTravelers } from '../../../shared/components/catalog-search-form/catalog-search-form';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -30,7 +31,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-tours-list',
   standalone: true,
-  imports: [Breadcrumbs, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, DatePicker, TourCard],
+  imports: [Breadcrumbs, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, TourCard, CatalogSearchForm],
   templateUrl: './tours-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,6 +55,11 @@ export class HomeToursList implements OnInit {
   dateFrom = '';
   dateTo = '';
   dateRangeError = false;
+  readonly travelers = signal<CatalogTravelers>({ adults: 1, children: 0, infants: 0 });
+
+  get bookingSelection() {
+    return { ...this.travelers(), dateFrom: this.dateFrom, dateTo: this.dateTo };
+  }
   private appliedSearchText = '';
   private appliedDateFrom = '';
   private appliedDateTo = '';
@@ -95,6 +101,7 @@ export class HomeToursList implements OnInit {
   }
 
   clearFilters(): void {
+    this.travelers.set({ adults: 1, children: 0, infants: 0 });
     this.searchText = '';
     this.dateFrom = '';
     this.dateTo = '';

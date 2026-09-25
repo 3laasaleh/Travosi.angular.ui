@@ -13,7 +13,7 @@
     translate }}</p> }
   @if (loading) { <p class="py-6 text-center text-sm text-slate-500">{{ 'loading' | translate }}</p> }
 
-  <div class="  ">
+
     <div class="space-y-3">
       @for (room of rooms; track room.id) {
       <div class="relative">
@@ -28,7 +28,7 @@
     </div>
 
     @if (roomFormOpen()) {
-    <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+    <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4 mt-3">
       <div class="flex items-center justify-between">
         <h4 class="font-semibold">{{ (editingRoom ? 'editRoom' : 'addRoom') | translate }}</h4>
         <button type="button" class="text-sm text-red-600" (click)="reset()">{{ 'cancel' | translate }}</button> 
@@ -276,5 +276,5 @@
       }
     </div>
     }
-  </div>
+  
 </section>
