@@ -40,9 +40,7 @@
         (hotelForm.controls.routeName.touched && hotelForm.controls.routeName.invalid) { <p
           class="mt-1 text-xs text-red-600">Use letters, numbers, and hyphens only.</p> }</div>
     </div>
-    <div><label class="mb-2 block text-sm font-medium">{{ 'address' | translate }} <span class="text-slate-400">({{
-          'optional' | translate }})</span></label><input formControlName="address" type="text"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
+    
     <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span
           class="text-red-600">*</span></label><textarea formControlName="descriptionEng" rows="4" maxlength="4000"
         class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>@if
@@ -54,16 +52,7 @@
       (hotelForm.controls.descriptionAr.touched && hotelForm.controls.descriptionAr.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ hotelForm.controls.descriptionAr.hasError('arabicText') ?
         ('arabicNameInvalid' | translate) : ('descriptionRequired' | translate) }}</p> }</div>
-    <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'phone' | translate }} <span class="text-slate-400">({{
-            'optional' | translate }})</span></label><input formControlName="phoneNumber" type="tel"
-          class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'email' | translate }} <span class="text-slate-400">({{
-            'optional' | translate }})</span></label><input formControlName="email" type="email"
-          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (hotelForm.get('email')?.touched &&
-        hotelForm.get('email')?.hasError('email')) { <p class="mt-1 text-xs text-red-600">{{ 'emailInvalid' | translate
-          }}</p> }</div>
-    </div>
+ 
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'website' | translate }} <span class="text-slate-400">({{
             'optional' | translate }})</span></label><input formControlName="website" type="url"

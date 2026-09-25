@@ -23,26 +23,17 @@ interface HotelImageUpload { id?: number; file?: File; url: string; altEng: stri
 
 export interface HotelDTO {
   id: number;
-  name: string;
   nameEng?: string;
   nameAr?: string;
   routeName?: string;
   starRating: number;
   distanceFromDowntownKm?: number | null;
   hasFreeAirportTaxi?: boolean;
-  googleMapsUrl?: string | null;
-  from?: string | null;
-  to?: string | null;
   policiesEng?: string | null;
   policiesAr?: string | null;
   isFreeCancelation?: boolean | null;
-  description?: string | null;
-  address?: string;
   descriptionEng?: string;
   descriptionAr?: string;
-  phoneNumber?: string;
-  email?: string;
-  website?: string;
   isActive: boolean;
   showAsDefault: boolean;
   destinationId: number;
@@ -136,7 +127,6 @@ export class HotelsFromCard implements OnInit, OnChanges {
       policiesAr: policies.map((item) => item.valueAr).join(';'),
       isFreeCancelation: form.isFreeCancelation === true,
       destinationId: Number(form.destinationId),
-      address: form.address.trim(),
       descriptionEng: form.descriptionEng.trim(),
       descriptionAr: form.descriptionAr.trim(),
       phoneNumber: form.phoneNumber.trim(),
@@ -211,24 +201,16 @@ export class HotelsFromCard implements OnInit, OnChanges {
   private populateForm(hotel: HotelDTO): void {
     this.validationSubmitted = false;
     this.hotelForm.patchValue({
-      name: hotel.name ?? '',
-      nameEng: hotel.nameEng ?? hotel.name ?? '',
-      nameAr: hotel.nameAr ?? hotel.name ?? '',
+      nameEng: hotel.nameEng ?? '',
+      nameAr: hotel.nameAr ??  '',
       routeName: hotel.routeName ??'',
       starRating: hotel.starRating ?? 1,
       distanceFromDowntownKm: hotel.distanceFromDowntownKm ?? null,
       hasFreeAirportTaxi: hotel.hasFreeAirportTaxi === true,
-      googleMapsUrl: hotel.googleMapsUrl ?? '',
-      from: hotel.from ?? null,
-      to: hotel.to ?? null,
       isFreeCancelation: hotel.isFreeCancelation === true,
       destinationId: hotel.destinationId ?? null,
-      address: hotel.address ?? '',
       descriptionEng: hotel.descriptionEng ?? '',
       descriptionAr: hotel.descriptionAr ?? '',
-      phoneNumber: hotel.phoneNumber ?? '',
-      email: hotel.email ?? '',
-      website: hotel.website ?? '',
       isActive: hotel.isActive !== false,
       showAsDefault: hotel.showAsDefault === true,
     });
@@ -263,12 +245,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
       to: null,
       isFreeCancelation: false,
       destinationId: null,
-      address: '',
       descriptionEng: '',
       descriptionAr: '',
-      phoneNumber: '',
-      email: '',
-      website: '',
       isActive: true,
       showAsDefault: false,
     });
@@ -357,7 +335,6 @@ export class HotelsFromCard implements OnInit, OnChanges {
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       cancellationPolicies: new FormArray<FormGroup>([]),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-      address: new FormControl('', { nonNullable: true }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       phoneNumber: new FormControl('', { nonNullable: true }),

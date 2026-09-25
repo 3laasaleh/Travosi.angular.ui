@@ -85,9 +85,6 @@ export class HomeTourPage implements OnInit {
     return Array.isArray(value) ? value : [];
   }
 
-  get title(): string {
-    return this.tour?.title ?? '';
-  }
 
   /** The brief description belongs below the gallery; the detail component keeps the full text. */
   get shortDescription(): string {
@@ -160,10 +157,12 @@ export class HomeTourPage implements OnInit {
     return this.utilityService.imageUrl(source);
   }
 
-  imageAlt(source: any, fallback = this.title): string {
+  imageAlt(source: any, fallback = this.tour.name): string {
     return this.utilityService.imageAlt(source, fallback);
   }
-
+  get title(): string {
+    return this.tour?.name ?? '';
+  }
   onImageError(event: Event): void {
     this.utilityService.onImageError(event);
   }
