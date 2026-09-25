@@ -5,8 +5,8 @@ export interface TourItineraryItem {
   orderNumber: number;
   parentId: number | null;
   isChildNode: boolean;
-  titleAr: string;
-  titleEng: string;
+  nameAr: string;
+  nameEng: string;
   valueAr: string;
   valueEng: string;
   notesEng: string;
@@ -24,8 +24,8 @@ export function createEmptyTourItinerary(tourId: number | null = null): TourItin
     orderNumber: 0,
     parentId: null,
     isChildNode: false,
-    titleAr: '',
-    titleEng: '',
+    nameAr: '',
+    nameEng: '',
     valueAr: '',
     valueEng: '',
     notesEng: '',
@@ -47,8 +47,8 @@ export function readTourItinerary(
     orderNumber: Number(item?.orderNumber ?? item?.OrderNumber) || 0,
     parentId: toOptionalId(item?.parentId ?? item?.ParentId),
     isChildNode: (item?.isChildNode ?? item?.IsChildNode) === true,
-    titleAr: String(item?.titleAr ?? item?.TitleAr ?? item?.title ?? ''),
-    titleEng: String(item?.titleEng ?? item?.TitleEng ?? item?.title ?? ''),
+    nameAr: String(item?.nameAr ?? item?.nameAr ?? item?.title ?? ''),
+    nameEng: String(item?.nameEng ?? item?.nameEng ?? item?.title ?? ''),
     valueAr: String(item?.valueAr ?? item?.ValueAr ?? item?.value ?? ''),
     valueEng: String(item?.valueEng ?? item?.ValueEng ?? item?.value ?? ''),
     // Keep a legacy one-language note usable when editing existing records.
@@ -72,8 +72,8 @@ export function toTourItineraryPayload(
     orderNumber: Number(item?.orderNumber) || 0,
     parentId: isChildNode ? toOptionalId(item?.parentId) : null,
     isChildNode,
-    titleAr: String(item?.titleAr ?? item?.title ?? '').trim(),
-    titleEng: String(item?.titleEng ?? item?.title ?? '').trim(),
+    nameAr: String(item?.nameAr ?? item?.title ?? '').trim(),
+    nameEng: String(item?.nameEng ?? item?.title ?? '').trim(),
     valueAr: String(item?.valueAr ?? item?.value ?? '').trim(),
     valueEng: String(item?.valueEng ?? item?.value ?? '').trim(),
     notesEng: String(item?.notesEng ?? item?.NotesEng ?? '').trim(),

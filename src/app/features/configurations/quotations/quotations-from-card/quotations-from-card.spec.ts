@@ -61,7 +61,7 @@ describe('QuotationsFromCard', () => {
           return of({ data: { items: [{ id: 11, nameEng: 'Dubai package' }] } });
         }
         if (url.startsWith('Tours')) {
-          return of({ data: { tours: [{ id: 21, titleEng: 'City tour' }] } });
+          return of({ data: { tours: [{ id: 21, nameEng: 'City tour' }] } });
         }
         if (url.startsWith('Hotels')) {
           return of({ data: { data: [hotel] } });
@@ -93,7 +93,7 @@ describe('QuotationsFromCard', () => {
     expect(apiService.get).toHaveBeenCalledWith('Flights/GetAll?page=1&pageSize=100');
     expect(component.customers).toEqual([{ id: 7, firstName: 'Mona', lastName: 'Ali' }]);
     expect(component.packages).toEqual([{ id: 11, nameEng: 'Dubai package' }]);
-    expect(component.tours).toEqual([{ id: 21, titleEng: 'City tour' }]);
+    expect(component.tours).toEqual([{ id: 21, nameEng: 'City tour' }]);
     expect(component.hotels).toEqual([hotel]);
     expect(component.flights).toEqual([flight]);
     expect(component.optionsLoading).toBe(false);

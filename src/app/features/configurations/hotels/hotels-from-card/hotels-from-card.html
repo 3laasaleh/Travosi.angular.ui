@@ -30,7 +30,7 @@
             class="text-red-600">*</span></label><select formControlName="destinationId"
           class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
           <option [ngValue]="null">{{ 'selectDestination' | translate }}</option>@for (destination of destinations;
-          track destination.id) { <option [ngValue]="destination.id">{{ destination.titleEng ?? destination.title }}
+          track destination.id) { <option [ngValue]="destination.id">{{ destination.nameEng ?? destination.title }}
           </option> }
         </select>@if (hotelForm.controls.destinationId.touched && hotelForm.controls.destinationId.invalid) { <p
           class="mt-1 text-xs text-red-600">{{ 'destinationRequired' | translate }}</p> }</div>

@@ -23,14 +23,14 @@ export class TourDetail {
 
   get title(): string {
     return this.isArabic
-      ? (this.tour?.titleAr || this.tour?.nameAr || this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
-      : (this.tour?.titleEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.titleAr || this.tour?.nameAr || '');
+      ? (this.tour?.nameAr || this.tour?.nameAr || this.tour?.nameEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
+      : (this.tour?.nameEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.nameAr || this.tour?.nameAr || '');
   }
 
   get destinationName(): string {
     return (
       this.tour?.destinationName ??
-      this.tour?.destination?.titleEng ??
+      this.tour?.destination?.nameEng ??
       this.tour?.destination?.name ??
       ''
     );

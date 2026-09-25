@@ -3,7 +3,7 @@ import { isWithinDateRange, matchesSearchQuery } from './list-search.util';
 
 describe('list search helpers', () => {
   it('matches a title or destination search', () => {
-    const item = { titleEng: 'Dubai City Escape', destinationName: 'Dubai' };
+    const item = { nameEng: 'Dubai City Escape', destinationName: 'Dubai' };
 
     expect(matchesSearchQuery('dubai', item)).toBe(true);
     expect(matchesSearchQuery('escape', item)).toBe(true);

@@ -128,11 +128,11 @@ export class HomePackagePage implements OnInit {
   get destinationName(): string {
     const destination = this.travelPackage?.destination ?? this.travelPackage?.destinations?.[0] ?? null;
     const title = destination?.title ?? destination?.name ?? '';
-    const titleEng = destination?.titleEng ?? '';
-    const titleAr = destination?.titleAr ?? '';
+    const nameEng = destination?.nameEng ?? '';
+    const nameAr = destination?.nameAr ?? '';
     const currentLanguage = this.translate.currentLang()?.toLowerCase() ?? '';
     return this.travelPackage?.destinationName
-      ?? (currentLanguage.startsWith('ar') ? (title || titleAr || titleEng) : (title || titleEng || titleAr))
+      ?? (currentLanguage.startsWith('ar') ? (title || nameAr || nameEng) : (title || nameEng || nameAr))
       ?? '';
   }
 
@@ -233,9 +233,9 @@ export class HomePackagePage implements OnInit {
   tourTitle(tour: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
     const title = tour?.title ?? tour?.name ?? '';
-    const titleAr = tour?.titleAr ?? tour?.nameAr ?? '';
-    const titleEng = tour?.titleEng ?? tour?.nameEng ?? '';
-    return arabic ? (title || titleAr || titleEng) : (title || titleEng || titleAr);
+    const nameAr = tour?.nameAr ?? tour?.nameAr ?? '';
+    const nameEng = tour?.nameEng ?? tour?.nameEng ?? '';
+    return arabic ? (title || nameAr || nameEng) : (title || nameEng || nameAr);
   }
 
   private loadPackage(routeName: string): void {

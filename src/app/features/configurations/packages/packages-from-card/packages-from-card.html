@@ -724,22 +724,22 @@
               <div>
                 <label class="mb-1 block text-xs font-medium">
                   {{ 'englishTitle' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-                </label><input formControlName="titleEng" maxlength="200"
+                </label><input formControlName="nameEng" maxlength="200"
                   class="w-full rounded-xl border bg-white px-3 py-2" />
-                @if (itineraryDraft.controls['titleEng'].touched && itineraryDraft.controls['titleEng'].invalid) {
+                @if (itineraryDraft.controls['nameEng'].touched && itineraryDraft.controls['nameEng'].invalid) {
                 <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p>
                 }
               </div>
               <div>
                 <label class="mb-1 block text-xs font-medium">{{ 'arabicTitle' | translate }} <span
                     class="text-rose-600" aria-hidden="true">*</span></label>
-                <input formControlName="titleAr" dir="rtl" maxlength="200"
+                <input formControlName="nameAr" dir="rtl" maxlength="200"
                   class="w-full rounded-xl border bg-white px-3 py-2" />
-                @if (itineraryDraft.controls['titleAr'].touched &&
-                itineraryDraft.controls['titleAr'].hasError('required')) {
+                @if (itineraryDraft.controls['nameAr'].touched &&
+                itineraryDraft.controls['nameAr'].hasError('required')) {
                 <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p>
-                } @else if (itineraryDraft.controls['titleAr'].touched &&
-                itineraryDraft.controls['titleAr'].hasError('arabicText')) {
+                } @else if (itineraryDraft.controls['nameAr'].touched &&
+                itineraryDraft.controls['nameAr'].hasError('arabicText')) {
                 <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
                 }
               </div>
@@ -868,7 +868,7 @@
                     'journeyStep' | translate }}
                     {{ stepIndex + 1 }}
                   </p>
-                  <h5 class="mt-1 font-semibold">{{ stepGroup.controls['titleEng'].value }}</h5>
+                  <h5 class="mt-1 font-semibold">{{ stepGroup.controls['nameEng'].value }}</h5>
                   @if (stepGroup.controls['startTime'].value || stepGroup.controls['endTime'].value) {
                   <p class="mt-1 text-xs text-slate-500">
                     {{ stepGroup.controls['startTime'].value || '--:--' }} - {{ stepGroup.controls['endTime'].value ||
@@ -911,7 +911,7 @@
                       {{ childGroup.controls['arrivalDate'].value || '-' }} · {{ 'childStep' | translate }} {{
                       childIndex + 1 }}
                     </p>
-                    <p class="text-sm font-medium">{{ childGroup.controls['titleEng'].value }}</p>
+                    <p class="text-sm font-medium">{{ childGroup.controls['nameEng'].value }}</p>
                     @if (childGroup.controls['startTime'].value || childGroup.controls['endTime'].value) {
                     <p class="mt-1 text-xs text-slate-500">{{ childGroup.controls['startTime'].value || '--:--' }} - {{
                       childGroup.controls['endTime'].value || '--:--' }}</p>

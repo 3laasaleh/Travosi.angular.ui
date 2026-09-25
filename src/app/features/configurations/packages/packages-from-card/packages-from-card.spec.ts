@@ -103,8 +103,8 @@ describe('PackagesFromCard validation', () => {
   it('allows an empty itinerary date and orders entered dates chronologically', () => {
     component.packageForm.patchValue({ dateFrom: '2030-01-01', dateTo: '2030-12-31' });
     const previousStep = (component as any).createItineraryGroup({
-      titleEng: 'First step',
-      titleAr: '\u0627\u0644\u062e\u0637\u0648\u0629 \u0627\u0644\u0623\u0648\u0644\u0649',
+      nameEng: 'First step',
+      nameAr: '\u0627\u0644\u062e\u0637\u0648\u0629 \u0627\u0644\u0623\u0648\u0644\u0649',
       valueEng: 'First step details',
       valueAr: '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062e\u0637\u0648\u0629',
       arrivalDate: '2030-03-01',
@@ -150,26 +150,26 @@ describe('PackagesFromCard validation', () => {
 
     expect(component.validationSubmitted).toBe(false);
     expect(component.errorMessage).toBe('');
-    expect(component.itineraryDraft!.controls['titleEng'].touched).toBe(false);
+    expect(component.itineraryDraft!.controls['nameEng'].touched).toBe(false);
     expect(component.itineraryDraft!.controls['arrivalDate'].hasError('required')).toBe(false);
     expect(component.itineraryDraft!.controls['notesEng'].hasError('required')).toBe(false);
     expect(component.itineraryDraft!.controls['notesAr'].hasError('required')).toBe(false);
 
     component.saveItineraryStep();
 
-    expect(component.itineraryDraft!.controls['titleEng'].touched).toBe(true);
+    expect(component.itineraryDraft!.controls['nameEng'].touched).toBe(true);
     expect(component.itineraryDraft!.controls['valueEng'].touched).toBe(true);
     expect(component.itineraryDraft!.controls['startTime'].touched).toBe(true);
   });
 
   it('loads and saves itinerary steps in ascending insertion order', () => {
     (component as any).setItinerary([
-      { id: 3, orderNumber: 3, titleEng: 'Step 3' },
-      { id: 2, orderNumber: 2, titleEng: 'Step 2' },
-      { id: 1, orderNumber: 1, titleEng: 'Step 1' },
+      { id: 3, orderNumber: 3, nameEng: 'Step 3' },
+      { id: 2, orderNumber: 2, nameEng: 'Step 2' },
+      { id: 1, orderNumber: 1, nameEng: 'Step 1' },
     ]);
 
-    expect(component.itineraryArray.getRawValue().map((item) => item['titleEng']))
+    expect(component.itineraryArray.getRawValue().map((item) => item['nameEng']))
       .toEqual(['Step 1', 'Step 2', 'Step 3']);
     expect((component as any).buildItineraryPayload().map((item: any) => item.OrderNumber))
       .toEqual([1, 2, 3]);
@@ -178,8 +178,8 @@ describe('PackagesFromCard validation', () => {
   it('saves an itinerary step without an optional date or notes', () => {
     component.openItineraryStepEditor();
     component.itineraryDraft!.patchValue({
-      titleEng: 'Arrival',
-      titleAr: '\u0627\u0644\u0648\u0635\u0648\u0644',
+      nameEng: 'Arrival',
+      nameAr: '\u0627\u0644\u0648\u0635\u0648\u0644',
       valueEng: 'Meet at the hotel',
       valueAr: '\u0627\u0644\u0644\u0642\u0627\u0621 \u0641\u064a \u0627\u0644\u0641\u0646\u062f\u0642',
       startTime: '09:00',

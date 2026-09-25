@@ -298,7 +298,7 @@ export class Vouchers implements OnInit {
         return [service?.flightNumber, `${service?.departureAirport ?? ''} - ${service?.arrivalAirport ?? ''}`]
           .filter(Boolean).join(' - ');
       case 2: return service?.name ?? '';
-      case 3: return service?.titleEng ?? service?.titleAr ?? service?.name ?? '';
+      case 3: return service?.nameEng ?? service?.nameAr ?? service?.name ?? '';
       case 4: return service?.nameEng ?? service?.nameAr ?? service?.name ?? '';
       default: return '';
     }
@@ -436,7 +436,7 @@ export class Vouchers implements OnInit {
     const fallback: any = { id: serviceId };
     if (serviceType === 1) fallback.flightNumber = voucher.serviceName;
     else if (serviceType === 2) fallback.name = voucher.serviceName;
-    else if (serviceType === 3) fallback.titleEng = voucher.serviceName;
+    else if (serviceType === 3) fallback.nameEng = voucher.serviceName;
     else fallback.nameEng = voucher.serviceName;
     target.push(fallback);
   }

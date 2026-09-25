@@ -105,8 +105,8 @@ export class CityPage implements OnInit {
   }
   tourTitle(tour: any): string {
     return tour?.title ?? (this.isArabic
-      ? (tour?.titleAr ?? tour?.titleEng ?? '')
-      : (tour?.titleEng ?? tour?.titleAr ?? ''));
+      ? (tour?.nameAr ?? tour?.nameEng ?? '')
+      : (tour?.nameEng ?? tour?.nameAr ?? ''));
   }
   formattedTourPrice(tour: any): string {
     return this.utilityService.formattedPrice(this.currencyService, tour);

@@ -40,8 +40,8 @@ interface CityImageDto {
 
 export interface CityDTO {
   id: number;
-  titleEng: string;
-  titleAr: string;
+  nameEng: string;
+  nameAr: string;
   routeName?: string;
   descriptionEng: string;
   descriptionAr: string;
@@ -117,8 +117,8 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
     const form = this.cityForm.getRawValue();
     const payload = new FormData();
     if (this.selectedCity?.id) payload.append('Id', String(this.selectedCity.id));
-    payload.append('TitleEng', form.titleEng.trim());
-    payload.append('TitleAr', form.titleAr.trim());
+    payload.append('nameEng', form.nameEng.trim());
+    payload.append('nameAr', form.nameAr.trim());
     payload.append('RouteName', form.routeName.trim().toLowerCase());
     payload.append('DescriptionEng', form.descriptionEng.trim());
     payload.append('DescriptionAr', form.descriptionAr.trim());
@@ -274,7 +274,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
       altAr: image.altAr ?? '',
     })).filter((image) => !!image.url);
     this.cityForm.setValue({
-      titleEng: city.titleEng ?? '', titleAr: city.titleAr ?? '', routeName: city.routeName ?? '',
+      nameEng: city.nameEng ?? '', nameAr: city.nameAr ?? '', routeName: city.routeName ?? '',
       descriptionEng: city.descriptionEng ?? '', descriptionAr: city.descriptionAr ?? '', destinationId: city.destinationId ?? null,
       images: this.imageUploads.map((image) => image.url),
     });
@@ -286,7 +286,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageUploads = [];
     this.imageValidationMessage = '';
     this.imageAltErrorsVisible = false;
-    this.cityForm.reset({ titleEng: '', titleAr: '', routeName: '', descriptionEng: '', descriptionAr: '', destinationId: null, images: [] });
+    this.cityForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '', destinationId: null, images: [] });
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -312,8 +312,8 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      titleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150), Validators.pattern(/^[A-Za-z].*$/)] }),
-      titleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()] }),
+      nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150), Validators.pattern(/^[A-Za-z].*$/)] }),
+      nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()] }),
       routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),

@@ -79,7 +79,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   };
 
   form = new FormGroup({
-    titleEng: new FormControl('', {
+    nameEng: new FormControl('', {
       nonNullable: true,
       validators: [
         Validators.required,
@@ -87,7 +87,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
         Validators.pattern(/^[A-Za-z].*$/),
       ],
     }),
-    titleAr: new FormControl('', {
+    nameAr: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
@@ -185,8 +185,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       }))
       .filter((image: BlogImageUpload) => !!image.url);
     this.form.reset({
-      titleEng: blog?.titleEng ?? blog?.TitleEng,
-      titleAr: blog?.titleAr ?? blog?.TitleAr,
+      nameEng: blog?.nameEng ?? blog?.nameEng,
+      nameAr: blog?.nameAr ?? blog?.nameAr,
       routeName: blog?.routeName ?? blog?.RouteName,
       summaryEng: blog?.summaryEng ?? blog?.SummaryEng,
       summaryAr: blog?.summaryAr ?? blog?.SummaryAr,
@@ -345,8 +345,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     const blogId = this.selectedBlog?.id ?? this.selectedBlog?.Id;
     if (blogId) data.append('Id', String(blogId));
 
-    data.append('TitleEng', value.titleEng.trim());
-    data.append('TitleAr', value.titleAr.trim());
+    data.append('nameEng', value.nameEng.trim());
+    data.append('nameAr', value.nameAr.trim());
     data.append('RouteName', value.routeName.trim().toLowerCase());
     data.append('SummaryEng', value.summaryEng.trim());
     data.append('SummaryAr', value.summaryAr.trim());
@@ -494,9 +494,9 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.headerData.push(
       this.createHeaderDataGroup({
         headerType: 2,
-        headerEng: contentEng ? (blog?.titleEng ?? blog?.TitleEng ?? '') : '',
+        headerEng: contentEng ? (blog?.nameEng ?? blog?.nameEng ?? '') : '',
         descriptionEng: contentEng,
-        headerAr: contentAr ? (blog?.titleAr ?? blog?.TitleAr ?? '') : '',
+        headerAr: contentAr ? (blog?.nameAr ?? blog?.nameAr ?? '') : '',
         descriptionAr: contentAr,
       }),
     );

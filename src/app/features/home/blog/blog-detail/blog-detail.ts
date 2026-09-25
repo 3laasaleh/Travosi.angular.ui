@@ -89,8 +89,8 @@ export class BlogDetail implements OnInit {
       this.blog?.title ??
       this.blog?.Title ??
       (this.isArabic
-        ? this.blog?.titleAr || this.blog?.titleEng || ''
-        : this.blog?.titleEng || this.blog?.titleAr || '')
+        ? this.blog?.nameAr || this.blog?.nameEng || ''
+        : this.blog?.nameEng || this.blog?.nameAr || '')
     );
   }
   get summary(): string {

@@ -41,8 +41,8 @@ interface DestinationImageDto {
 }
 export interface DestinationDTO {
   id: number;
-  titleEng: string;
-  titleAr: string;
+  nameEng: string;
+  nameAr: string;
   subDescriptionEng?: string;
   subDescriptionAr?: string;
   descriptionEng?: string;
@@ -113,8 +113,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     const payload = new FormData();
     if (this.selectedDestination?.id) payload.append('Id', this.selectedDestination?.id.toString());
 
-    payload.append('TitleEng', form.titleEng.trim());
-    payload.append('TitleAr', form.titleAr.trim());
+    payload.append('nameEng', form.nameEng.trim());
+    payload.append('nameAr', form.nameAr.trim());
     payload.append('RouteName', form.routeName.trim().toLowerCase());
     payload.append('SubDescriptionEng', form.subDescriptionEng.trim());
     payload.append('SubDescriptionAr', form.subDescriptionAr.trim());
@@ -273,8 +273,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       }))
       .filter((image: DestinationImageUpload) => !!image.url);
     this.destinationForm.setValue({
-      titleEng: destination.titleEng ?? destination.title ?? '',
-      titleAr: destination.titleAr ?? '',
+      nameEng: destination.nameEng ?? destination.title ?? '',
+      nameAr: destination.nameAr ?? '',
       routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
       subDescriptionAr: destination.subDescriptionAr ?? '',
@@ -293,8 +293,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.imageValidationMessage = '';
     this.imageAltErrorsVisible = false;
     this.destinationForm.reset({
-      titleEng: '',
-      titleAr: '',
+      nameEng: '',
+      nameAr: '',
       routeName: '',
       subDescriptionEng: '',
       subDescriptionAr: '',
@@ -334,11 +334,11 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      titleEng: new FormControl('', {
+      nameEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
       }),
-      titleAr: new FormControl('', {
+      nameAr: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, arabicTextValidator()],
       }),

@@ -130,8 +130,8 @@ export class HotelCatalog implements OnInit {
     this.applyQueryParameters();
     this.seo.updateFrom(
       {
-        titleEng: 'Hotels',
-        titleAr: 'الفنادق',
+        nameEng: 'Hotels',
+        nameAr: 'الفنادق',
         descriptionEng: 'Search hotels and room availability with Sea World Holidays.',
         descriptionAr: 'ابحث عن الفنادق وتوفر الغرف مع سي وورلد هوليدايز.',
       },
@@ -252,8 +252,8 @@ export class HotelCatalog implements OnInit {
   }
   destinationName(destination: any): string {
     return this.isArabic
-      ? destination?.titleAr || destination?.title || destination?.titleEng || destination?.nameAr || destination?.nameEng || destination?.name || ''
-      : destination?.titleEng || destination?.title || destination?.nameEng || destination?.name || destination?.titleAr || destination?.nameAr || '';
+      ? destination?.nameAr || destination?.title || destination?.nameEng || destination?.nameAr || destination?.nameEng || destination?.name || ''
+      : destination?.nameEng || destination?.title || destination?.nameEng || destination?.name || destination?.nameAr || destination?.nameAr || '';
   }
   hotelName(hotel: any): string {
     return this.isArabic
@@ -433,8 +433,8 @@ export class HotelCatalog implements OnInit {
   private destinationSearchable(destination: any): string {
     return [
       destination?.title,
-      destination?.titleEng,
-      destination?.titleAr,
+      destination?.nameEng,
+      destination?.nameAr,
       destination?.name,
       destination?.nameEng,
       destination?.nameAr,

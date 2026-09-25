@@ -16,15 +16,15 @@ export function matchesSearchQuery(query: string, item: any): boolean {
   if (!cleanedQuery) return true;
 
   const searchableValues = [
-    item?.titleEng,
-    item?.titleAr,
-    item?.titleEng,
-    item?.titleAr,
+    item?.nameEng,
+    item?.nameAr,
+    item?.nameEng,
+    item?.nameAr,
     item?.name,
     item?.title,
     item?.destinationName,
-    item?.destination?.titleEng,
-    item?.destination?.titleAr,
+    item?.destination?.nameEng,
+    item?.destination?.nameAr,
     item?.destination?.name,
     item?.description,
     item?.descriptionEng,

@@ -18,12 +18,12 @@ describe('ToursFromCard validation', () => {
     expect(component.currentStepInvalid).toBe(true);
 
     component.tourForm.patchValue({
-      titleEng: 'Cairo Highlights',
+      nameEng: 'Cairo Highlights',
       routeName: 'cairo-highlights',
 
       descriptionEng: 'Explore the most important Cairo landmarks.',
       descriptionAr: 'استكشف أهم معالم القاهرة.',
-      titleAr: 'معالم القاهرة',
+      nameAr: 'معالم القاهرة',
       destinationId: 1,
       cityId: 2,
       pricePerPerson: 100,
@@ -120,26 +120,26 @@ describe('ToursFromCard validation', () => {
 
     expect(component.validationSubmitted).toBe(false);
     expect(component.errorMessage).toBe('');
-    expect(component.itineraryDraft!.controls['titleEng'].touched).toBe(false);
+    expect(component.itineraryDraft!.controls['nameEng'].touched).toBe(false);
     expect(component.itineraryDraft!.controls['arrivalDate'].hasError('required')).toBe(false);
     expect(component.itineraryDraft!.controls['notesEng'].hasError('required')).toBe(false);
     expect(component.itineraryDraft!.controls['notesAr'].hasError('required')).toBe(false);
 
     component.saveItineraryStep();
 
-    expect(component.itineraryDraft!.controls['titleEng'].touched).toBe(true);
+    expect(component.itineraryDraft!.controls['nameEng'].touched).toBe(true);
     expect(component.itineraryDraft!.controls['valueEng'].touched).toBe(true);
     expect(component.itineraryDraft!.controls['startTime'].touched).toBe(true);
   });
 
   it('loads and saves itinerary steps in ascending insertion order', () => {
     (component as any).setItinerary([
-      { id: 3, orderNumber: 3, titleEng: 'Step 3' },
-      { id: 2, orderNumber: 2, titleEng: 'Step 2' },
-      { id: 1, orderNumber: 1, titleEng: 'Step 1' },
+      { id: 3, orderNumber: 3, nameEng: 'Step 3' },
+      { id: 2, orderNumber: 2, nameEng: 'Step 2' },
+      { id: 1, orderNumber: 1, nameEng: 'Step 1' },
     ]);
 
-    expect(component.itineraryArray.getRawValue().map((item) => item['titleEng']))
+    expect(component.itineraryArray.getRawValue().map((item) => item['nameEng']))
       .toEqual(['Step 1', 'Step 2', 'Step 3']);
     expect((component as any).buildItineraryPayload().map((item: any) => item.OrderNumber))
       .toEqual([1, 2, 3]);
@@ -148,8 +148,8 @@ describe('ToursFromCard validation', () => {
   it('saves an itinerary step without an optional date or notes', () => {
     component.openItineraryStepEditor();
     component.itineraryDraft!.patchValue({
-      titleEng: 'Arrival',
-      titleAr: '\u0627\u0644\u0648\u0635\u0648\u0644',
+      nameEng: 'Arrival',
+      nameAr: '\u0627\u0644\u0648\u0635\u0648\u0644',
       valueEng: 'Meet at the hotel',
       valueAr: '\u0627\u0644\u0644\u0642\u0627\u0621 \u0641\u064a \u0627\u0644\u0641\u0646\u062f\u0642',
       startTime: '09:00',
@@ -168,13 +168,13 @@ describe('ToursFromCard validation', () => {
   it('matches package itinerary date sequencing and last-step deletion rules', () => {
     component.tourForm.patchValue({ startDate: '2030-01-01', endDate: '2030-12-31' });
     const firstStep = (component as any).createItineraryGroup({
-      titleEng: 'First step',
+      nameEng: 'First step',
       arrivalDate: '2030-03-01',
       startTime: '09:00',
       endTime: '10:00',
     });
     const secondStep = (component as any).createItineraryGroup({
-      titleEng: 'Second step',
+      nameEng: 'Second step',
       arrivalDate: '2030-03-02',
       startTime: '10:15',
       endTime: '11:00',

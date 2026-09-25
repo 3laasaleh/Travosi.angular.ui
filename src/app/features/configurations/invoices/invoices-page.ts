@@ -465,7 +465,7 @@ export class Invoices implements OnInit {
       const route = [item?.departureAirport, item?.arrivalAirport].filter(Boolean).join(' - ');
       return [item?.airlineName ?? item?.airline?.name, item.flightNumber, route].filter(Boolean).join(' · ');
     }
-    return item?.nameEng ?? item?.titleEng ?? item?.nameAr ?? item?.titleAr ?? item?.name ?? '';
+    return item?.nameEng ?? item?.nameEng ?? item?.nameAr ?? item?.nameAr ?? item?.name ?? '';
   }
 
   itemTypeKey(type: unknown): string {
@@ -595,7 +595,7 @@ export class Invoices implements OnInit {
     const target = this.serviceOptionsForType(type);
     if (target.some((option) => Number(option.id) === id)) return;
     if (type === 1) target.push({ id, nameEng: description, pricePerPerson: price });
-    else if (type === 2) target.push({ id, titleEng: description, pricePerPerson: price });
+    else if (type === 2) target.push({ id, nameEng: description, pricePerPerson: price });
     else if (type === 3) target.push({ id, name: description, price });
     else if (type === 4) target.push({ id, flightNumber: description, price });
   }

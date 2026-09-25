@@ -98,18 +98,18 @@ export class Packages {
   }
 
   packageTitle(travelPackage: any): string {
-    return travelPackage?.titleEng ?? travelPackage?.title ?? travelPackage?.nameEng ?? travelPackage?.name ?? '';
+    return travelPackage?.nameEng ?? travelPackage?.title ?? travelPackage?.nameEng ?? travelPackage?.name ?? '';
   }
 
   destinationName(travelPackage: any): string {
     const destinations = Array.isArray(travelPackage?.destinations) ? travelPackage.destinations : [];
     if (destinations.length) {
       return destinations
-        .map((destination: any) => destination?.destinationName ?? destination?.titleEng ?? destination?.title)
+        .map((destination: any) => destination?.destinationName ?? destination?.nameEng ?? destination?.title)
         .filter(Boolean)
         .join(', ');
     }
-    return travelPackage?.destination?.titleEng ?? travelPackage?.destinationName
+    return travelPackage?.destination?.nameEng ?? travelPackage?.destinationName
       ?? this.translate.instant('destinationNumber', { id: travelPackage?.destinationId ?? '-' });
   }
 

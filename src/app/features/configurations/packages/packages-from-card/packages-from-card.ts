@@ -421,7 +421,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   destinationId(destination: any): number { return Number(destination?.id ?? destination?.destinationId); }
   destinationLabel(destination: any): string {
-    return [destination?.titleEng ?? destination?.title, destination?.titleAr].filter(Boolean).join(' — ');
+    return [destination?.nameEng ?? destination?.title, destination?.nameAr].filter(Boolean).join(' — ');
   }
   updateDestinationSearch(event: Event): void { this.destinationSearchTerm = (event.target as HTMLInputElement).value; }
   closeDestinationMenu(): void { this.destinationMenuOpen = false; this.destinationSearchTerm = ''; }
@@ -727,7 +727,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       OrderNumber: orderNumber,
       ParentId: this.toOptionalId(item?.parentId),
       IsChildNode: item?.isChildNode === true,
-      TitleAr: String(item?.titleAr ?? '').trim(), TitleEng: String(item?.titleEng ?? '').trim(), ValueAr: String(item?.valueAr ?? '').trim(), ValueEng: String(item?.valueEng ?? '').trim(),
+      nameAr: String(item?.nameAr ?? '').trim(), nameEng: String(item?.nameEng ?? '').trim(), ValueAr: String(item?.valueAr ?? '').trim(), ValueEng: String(item?.valueEng ?? '').trim(),
       NotesEng: String(item?.notesEng ?? '').trim(), NotesAr: String(item?.notesAr ?? '').trim(), ArrivalDate: item?.arrivalDate || null, StartTime: item?.startTime || null, EndTime: item?.endTime || null,
       Childs: (item?.childs ?? []).map((child: any, index: number) => this.toItineraryPayload(child, index + 1)),
     };
@@ -840,8 +840,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       orderNumber: new FormControl(itinerary.orderNumber, { nonNullable: true }),
       parentId: new FormControl<number | null>(itinerary.parentId),
       isChildNode: new FormControl(itinerary.isChildNode, { nonNullable: true }),
-      titleEng: new FormControl(itinerary.titleEng, { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
-      titleAr: new FormControl(itinerary.titleAr, { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
+      nameEng: new FormControl(itinerary.nameEng, { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+      nameAr: new FormControl(itinerary.nameAr, { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
       valueEng: new FormControl(itinerary.valueEng, { nonNullable: true, validators: [Validators.required, Validators.maxLength(2000)] }),
       valueAr: new FormControl(itinerary.valueAr, { nonNullable: true, validators: [Validators.required, Validators.maxLength(2000), arabicTextValidator()] }),
       notesEng: new FormControl(itinerary.notesEng, { nonNullable: true, validators: [Validators.maxLength(2000)] }),

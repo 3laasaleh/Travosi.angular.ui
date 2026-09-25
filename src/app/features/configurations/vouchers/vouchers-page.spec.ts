@@ -70,7 +70,7 @@ describe('Vouchers', () => {
     );
 
     component.selectServiceType(3);
-    component.selectService({ id: 42, titleEng: 'Nile dinner cruise' });
+    component.selectService({ id: 42, nameEng: 'Nile dinner cruise' });
 
     expect(component.form.controls.serviceType.value).toBe(3);
     expect(component.isServiceSelected(42)).toBe(true);

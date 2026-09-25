@@ -74,7 +74,7 @@ describe('Invoices', () => {
       { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
       { instant: (key: string) => key } as unknown as TranslateService,
     );
-    const tour = { id: 12, titleEng: 'Cairo highlights', pricePerPerson: 85 };
+    const tour = { id: 12, nameEng: 'Cairo highlights', pricePerPerson: 85 };
 
     component.toggleCatalogItem(2, tour, true);
 

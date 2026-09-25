@@ -75,8 +75,8 @@ export class CatalogSearchForm implements OnInit {
   get filteredSuggestions(): string[] {
     const arabic = this.language.currentLanguage() === 'ar';
     const names = this.destinations().map(item => arabic
-      ? item.titleAr || item.title || item.nameAr || item.name || item.titleEng || item.nameEng || ''
-      : item.titleEng || item.title || item.nameEng || item.name || item.titleAr || item.nameAr || '');
+      ? item.nameAr || item.title || item.nameAr || item.name || item.nameEng || item.nameEng || ''
+      : item.nameEng || item.title || item.nameEng || item.name || item.nameAr || item.nameAr || '');
     const query = this.query.trim().toLocaleLowerCase();
     return [...new Set([...names, ...this.suggestions].map(value => String(value).trim()).filter(Boolean))]
       .filter(value => value.toLocaleLowerCase().includes(query)).slice(0, 8);

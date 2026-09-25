@@ -326,7 +326,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   itemName(item: any): string {
-    return item?.nameEng ?? item?.titleEng ?? item?.title ?? item?.name ?? '';
+    return item?.nameEng ?? item?.nameEng ?? item?.title ?? item?.name ?? '';
   }
 
   thumbnail(item: any): string {

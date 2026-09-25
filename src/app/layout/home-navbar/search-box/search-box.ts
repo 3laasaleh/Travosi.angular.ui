@@ -21,7 +21,7 @@ interface SearchResultItem {
   id: number;
   type: SearchResultType;
   titleEn: string;
-  titleAr?: string | null;
+  nameAr?: string | null;
   description?: string | null;
   imageUrl?: string | null;
   price?: number | null;
@@ -61,8 +61,8 @@ export class SearchBox implements OnInit {
 
   displayName(item: SearchResultItem): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    const preferredTitle = arabic ? item.titleAr : item.titleEn;
-    const fallbackTitle = arabic ? item.titleEn : item.titleAr;
+    const preferredTitle = arabic ? item.nameAr : item.titleEn;
+    const fallbackTitle = arabic ? item.titleEn : item.nameAr;
     return preferredTitle?.trim() || fallbackTitle?.trim() || '';
   }
 
@@ -187,7 +187,7 @@ export class SearchBox implements OnInit {
         Number.isInteger(item.id) &&
         item.id > 0 &&
         validTypes.includes(item.type) &&
-        Boolean(item.titleEn || item.titleAr),
+        Boolean(item.titleEn || item.nameAr),
     );
   }
 

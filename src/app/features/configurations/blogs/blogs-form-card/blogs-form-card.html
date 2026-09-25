@@ -15,26 +15,26 @@
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         {{ 'englishTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
-        <input formControlName="titleEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2"
-          [class.border-red-500]="form.controls.titleEng.touched && form.controls.titleEng.invalid" />
-        @if (form.controls.titleEng.touched && form.controls.titleEng.hasError('required')) {
+        <input formControlName="nameEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2"
+          [class.border-red-500]="form.controls.nameEng.touched && form.controls.nameEng.invalid" />
+        @if (form.controls.nameEng.touched && form.controls.nameEng.hasError('required')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</span>
-        } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('maxlength')) {
+        } @else if (form.controls.nameEng.touched && form.controls.nameEng.hasError('maxlength')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
-        } @else if (form.controls.titleEng.touched && form.controls.titleEng.hasError('pattern')) {
+        } @else if (form.controls.nameEng.touched && form.controls.nameEng.hasError('pattern')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</span>
         }
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
-        <input formControlName="titleAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2"
-          [class.border-red-500]="form.controls.titleAr.touched && form.controls.titleAr.invalid" />
-        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('required')) {
+        <input formControlName="nameAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2"
+          [class.border-red-500]="form.controls.nameAr.touched && form.controls.nameAr.invalid" />
+        @if (form.controls.nameAr.touched && form.controls.nameAr.hasError('required')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</span>
-        } @else if (form.controls.titleAr.touched && form.controls.titleAr.hasError('maxlength')) {
+        } @else if (form.controls.nameAr.touched && form.controls.nameAr.hasError('maxlength')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         }
-        @if (form.controls.titleAr.touched && form.controls.titleAr.hasError('arabicText')) { <span
+        @if (form.controls.nameAr.touched && form.controls.nameAr.hasError('arabicText')) { <span
           class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>

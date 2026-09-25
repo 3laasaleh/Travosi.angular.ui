@@ -1,6 +1,6 @@
 interface ItineraryScheduleItem {
-  titleEng?: unknown;
-  titleAr?: unknown;
+  nameEng?: unknown;
+  nameAr?: unknown;
   valueEng?: unknown;
   valueAr?: unknown;
   arrivalDate?: unknown;
@@ -25,8 +25,8 @@ export function hasInvalidItinerary(items: ItineraryScheduleItem[]): boolean {
     const children = readChildren(item);
 
     let parentRes= (
-      !String(item?.titleEng ?? '').trim() ||
-      !String(item?.titleAr ?? '').trim() ||
+      !String(item?.nameEng ?? '').trim() ||
+      !String(item?.nameAr ?? '').trim() ||
       !String(item?.valueEng ?? '').trim() ||
       !String(item?.valueAr ?? '').trim() ||
       startMinutes === null ||

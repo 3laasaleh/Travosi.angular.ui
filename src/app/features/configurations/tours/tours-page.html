@@ -36,7 +36,7 @@
 
         <div class="relative overflow-hidden rounded-t-[2rem] bg-slate-200 ">
           @if (getImages(previewTour)[previewImageIndex]; as image) {
-            <img [src]="imageUrl(image)" [alt]="previewTour.titleEng ?? previewTour.title" class="mx-auto aspect-[16/9] max-h-[540px] w-full object-cover" />
+            <img [src]="imageUrl(image)" [alt]="previewTour.nameEng ?? previewTour.title" class="mx-auto aspect-[16/9] max-h-[540px] w-full object-cover" />
             @if (getImages(previewTour).length > 1) {
               <button type="button" class="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-black/45 text-2xl text-white backdrop-blur transition hover:bg-primary" (click)="previewPreviousImage()">
                 <i class="mdi mdi-chevron-left"></i>
@@ -58,7 +58,7 @@
           <div class="flex gap-3 overflow-x-auto border-b border-slate-200 bg-white px-5 py-4 dark:border-slate-800 ">
             @for (image of getImages(previewTour); track $index; let index = $index) {
               <button type="button" class="shrink-0 overflow-hidden rounded-xl border-2 transition" [class.border-primary]="index === previewImageIndex" [class.opacity-60]="index !== previewImageIndex" [class.border-transparent]="index !== previewImageIndex" (click)="showPreviewImage(index)">
-                <img [src]="imageUrl(image)" [alt]="previewTour.titleEng ?? previewTour.title" class="h-16 w-24 object-cover" />
+                <img [src]="imageUrl(image)" [alt]="previewTour.nameEng ?? previewTour.title" class="h-16 w-24 object-cover" />
               </button>
             }
           </div>

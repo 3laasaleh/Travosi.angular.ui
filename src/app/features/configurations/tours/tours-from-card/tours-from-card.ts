@@ -204,8 +204,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get detailsStepInvalid(): boolean {
     const controls: AbstractControl[] = [
-      this.tourForm.controls.titleEng,
-      this.tourForm.controls.titleAr,
+      this.tourForm.controls.nameEng,
+      this.tourForm.controls.nameAr,
       this.tourForm.controls.routeName,
       this.tourForm.controls.descriptionEng,
       this.tourForm.controls.descriptionAr,
@@ -877,7 +877,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   destinationLabel(destination: any): string {
-    return [destination?.titleEng ?? destination?.title, destination?.titleAr]
+    return [destination?.nameEng ?? destination?.title, destination?.nameAr]
       .filter(Boolean)
       .join(' — ');
   }
@@ -956,9 +956,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.imageUploads[0].isCover = true;
     }
     this.tourForm.patchValue({
-      titleEng: tour.titleEng ?? '',
-      titleAr: tour.titleAr ?? '',
-      routeName: tour.routeName ?? tour.titleEng ?? '',
+      nameEng: tour.nameEng ?? '',
+      nameAr: tour.nameAr ?? '',
+      routeName: tour.routeName ?? tour.nameEng ?? '',
       destinationId: tour.destinationId ?? '',
       cityId: tour.cityId ?? '',
       descriptionEng: tour.descriptionEng ?? '',
@@ -1009,8 +1009,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.imageValidationMessage = '';
     this.imageAltErrorsVisible = false;
     this.tourForm.reset({
-      titleEng: '',
-      titleAr: '',
+      nameEng: '',
+      nameAr: '',
       routeName: '',
       destinationId: '',
       cityId: '',
@@ -1052,11 +1052,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private createForm() {
     return new FormGroup(
       {
-        titleEng: new FormControl('', {
+        nameEng: new FormControl('', {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
         }),
-        titleAr: new FormControl('', {
+        nameAr: new FormControl('', {
           nonNullable: true,
           validators: [Validators.required, arabicTextValidator()],
         }),
@@ -1172,11 +1172,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         orderNumber: new FormControl(itinerary.orderNumber, { nonNullable: true }),
         parentId: new FormControl<number | null>(itinerary.parentId),
         isChildNode: new FormControl(itinerary.isChildNode, { nonNullable: true }),
-        titleEng: new FormControl(itinerary.titleEng, {
+        nameEng: new FormControl(itinerary.nameEng, {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(200)],
         }),
-        titleAr: new FormControl(itinerary.titleAr, {
+        nameAr: new FormControl(itinerary.nameAr, {
           nonNullable: true,
           validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
         }),
@@ -1284,8 +1284,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const form = this.tourForm.getRawValue();
     return {
       ...(tourId ? { Id: tourId } : {}),
-      TitleEng: form.titleEng.trim(),
-      TitleAr: form.titleAr.trim(),
+      nameEng: form.nameEng.trim(),
+      nameAr: form.nameAr.trim(),
       RouteName: form.routeName.trim(),
       DestinationId: Number(form.destinationId),
       CityId: Number(form.cityId),
@@ -1330,7 +1330,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private buildItineraryPayload(): Record<string, unknown>[] {
     return this.itineraryArray
       .getRawValue()
-      .filter((item: any) => !!item.titleEng || !!item.titleAr || !!item.valueEng || !!item.valueAr)
+      .filter((item: any) => !!item.nameEng || !!item.nameAr || !!item.valueEng || !!item.valueAr)
       .map((item: any, index: number) => this.mapItineraryItem(item, index + 1));
   }
 
@@ -1341,8 +1341,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       OrderNumber: orderNumber,
       ParentId: this.toOptionalId(item?.parentId),
       IsChildNode: item?.isChildNode === true,
-      TitleAr: String(item?.titleAr ?? '').trim(),
-      TitleEng: String(item?.titleEng ?? '').trim(),
+      nameAr: String(item?.nameAr ?? '').trim(),
+      nameEng: String(item?.nameEng ?? '').trim(),
       ValueAr: String(item?.valueAr ?? '').trim(),
       ValueEng: String(item?.valueEng ?? '').trim(),
       NotesEng: String(item?.notesEng ?? '').trim(),

@@ -115,8 +115,8 @@ export interface PackageItineraryDTO {
   value: string;
   notes: string;
 
-  titleAr: string;
-  titleEng: string;
+  nameAr: string;
+  nameEng: string;
 
   valueAr: string;
   valueEng: string;

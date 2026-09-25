@@ -83,29 +83,29 @@
 
           <div class="xl:col-span-2">
             <label class="required-field-label mb-2 block text-sm font-medium">{{ 'englishTitle' | translate }}</label>
-            <input formControlName="titleEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
+            <input formControlName="nameEng" type="text" class="w-full rounded-2xl border px-3 py-2" />
             @if (
-            tourForm.controls.titleEng.touched &&
-            tourForm.controls.titleEng.hasError('required')
+            tourForm.controls.nameEng.touched &&
+            tourForm.controls.nameEng.hasError('required')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p>
             }
             @if (
-            tourForm.controls.titleEng.touched && tourForm.controls.titleEng.hasError('pattern')
+            tourForm.controls.nameEng.touched && tourForm.controls.nameEng.hasError('pattern')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p>
             }
           </div>
           <div class="xl:col-span-2">
             <label class="required-field-label mb-2 block text-sm font-medium">{{ 'arabicTitle' | translate }}</label>
-            <input formControlName="titleAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />
+            <input formControlName="nameAr" type="text" dir="rtl" class="w-full rounded-2xl border px-3 py-2" />
             @if (
-            tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('required')
+            tourForm.controls.nameAr.touched && tourForm.controls.nameAr.hasError('required')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p>
             }
             @if (
-            tourForm.controls.titleAr.touched && tourForm.controls.titleAr.hasError('arabicText')
+            tourForm.controls.nameAr.touched && tourForm.controls.nameAr.hasError('arabicText')
             ) {
             <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p>
             }
@@ -204,7 +204,7 @@
                 {{ (citiesLoading ? 'loadingCities' : 'selectCity') | translate }}
               </option>
               @for (city of cities; track city.id) {
-              <option [ngValue]="city.id">{{ city.titleEng }} — {{ city.titleAr }}</option>
+              <option [ngValue]="city.id">{{ city.nameEng }} — {{ city.nameAr }}</option>
               }
             </select>
             @if (tourForm.controls.cityId.touched && tourForm.controls.cityId.invalid) {
@@ -800,13 +800,13 @@
               </div>
               <div>
                 <label class="required-field-label mb-1 block text-xs font-medium">{{ 'englishTitle' | translate }}</label>
-                <input formControlName="titleEng" type="text" maxlength="200" class="w-full rounded-2xl border px-3 py-2" />
-                @if (itineraryDraft.controls['titleEng'].touched && itineraryDraft.controls['titleEng'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }
+                <input formControlName="nameEng" type="text" maxlength="200" class="w-full rounded-2xl border px-3 py-2" />
+                @if (itineraryDraft.controls['nameEng'].touched && itineraryDraft.controls['nameEng'].invalid) { <p class="mt-1 text-xs text-red-600">{{ 'englishTitleRequired' | translate }}</p> }
               </div>
               <div>
                 <label class="required-field-label mb-1 block text-xs font-medium">{{ 'arabicTitle' | translate }}</label>
-                <input formControlName="titleAr" type="text" dir="rtl" maxlength="200" class="w-full rounded-2xl border px-3 py-2" />
-                @if (itineraryDraft.controls['titleAr'].touched && itineraryDraft.controls['titleAr'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> } @else if (itineraryDraft.controls['titleAr'].touched && itineraryDraft.controls['titleAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+                <input formControlName="nameAr" type="text" dir="rtl" maxlength="200" class="w-full rounded-2xl border px-3 py-2" />
+                @if (itineraryDraft.controls['nameAr'].touched && itineraryDraft.controls['nameAr'].hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicTitleRequired' | translate }}</p> } @else if (itineraryDraft.controls['nameAr'].touched && itineraryDraft.controls['nameAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
               </div>
               <div>
                 <label class="required-field-label mb-1 block text-xs font-medium">{{
@@ -922,7 +922,7 @@
                         {{ 'date' | translate }} {{ stepGroup.controls['arrivalDate'].value }}
                       </p>
                       <h4 class="mt-1 font-semibold">
-                        {{ stepGroup.controls['titleEng'].value }}
+                        {{ stepGroup.controls['nameEng'].value }}
                       </h4>
                     </div>
                     <div class="flex gap-1">
@@ -980,7 +980,7 @@
                             {{ childGroup.controls['arrivalDate'].value }}
                           </p>
                           <h5 class="mt-1 font-medium">
-                            {{ childGroup.controls['titleEng'].value }}
+                            {{ childGroup.controls['nameEng'].value }}
                           </h5>
                         </div>
                         <div class="flex gap-1">

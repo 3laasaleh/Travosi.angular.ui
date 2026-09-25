@@ -195,18 +195,18 @@ export class PackagesList implements OnInit, OnChanges {
   }
 
   packageTitle(item: any): string {
-    return item?.titleEng ?? item?.title ?? item?.nameEng ?? item?.name ?? '';
+    return item?.nameEng ?? item?.title ?? item?.nameEng ?? item?.name ?? '';
   }
 
   destinationName(item: any): string {
     const destinations = Array.isArray(item?.destinations) ? item.destinations : [];
     if (destinations.length) {
       return destinations
-        .map((destination: any) => destination?.destinationName ?? destination?.titleEng ?? destination?.title)
+        .map((destination: any) => destination?.destinationName ?? destination?.nameEng ?? destination?.title)
         .filter(Boolean)
         .join(', ');
     }
-    return item?.destination?.titleEng ?? item?.destinationName ?? `#${item?.destinationId ?? '-'}`;
+    return item?.destination?.nameEng ?? item?.destinationName ?? `#${item?.destinationId ?? '-'}`;
   }
 
   imageUrl(item: any): string {

@@ -112,11 +112,11 @@ export class HomeDestinationsList implements OnInit {
   destinationName(destination: any): string {
     const isArabic = this.languageService.getCurrentLanguage() === 'ar';
     const title = destination?.title ?? '';
-    const titleAr = destination?.titleAr ?? '';
-    const titleEng = destination?.titleEng ?? '';
+    const nameAr = destination?.nameAr ?? '';
+    const nameEng = destination?.nameEng ?? '';
     return isArabic
-      ? title || titleAr || titleEng
-      : title || titleEng || titleAr;
+      ? title || nameAr || nameEng
+      : title || nameEng || nameAr;
   }
 
   destinationDescription(destination: any): string {

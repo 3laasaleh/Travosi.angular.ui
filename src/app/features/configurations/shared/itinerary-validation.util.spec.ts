@@ -3,8 +3,8 @@ import { hasInvalidItinerary, hasItineraryTimeOverlap, isQuarterHourTime, isVali
 describe('itinerary validation', () => {
   const validStep = {
     arrivalDate: '2030-01-02',
-    titleEng: 'Museum visit',
-    titleAr: 'زيارة المتحف',
+    nameEng: 'Museum visit',
+    nameAr: 'زيارة المتحف',
     valueEng: 'Visit details',
     valueAr: 'تفاصيل الزيارة',
     startTime: '09:15',
@@ -23,7 +23,7 @@ describe('itinerary validation', () => {
   });
 
   it('detects overlapping steps only when they share the same date', () => {
-    const overlapping = { ...validStep, titleEng: 'Gallery', startTime: '10:00', endTime: '12:00' };
+    const overlapping = { ...validStep, nameEng: 'Gallery', startTime: '10:00', endTime: '12:00' };
     const nextDay = { ...overlapping, arrivalDate: '2030-01-03' };
 
     expect(hasItineraryTimeOverlap([validStep, overlapping])).toBe(true);

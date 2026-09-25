@@ -19,7 +19,7 @@
         <option [ngValue]="null" disabled>{{ (destinationsLoading ? 'loadingDestinations' : 'selectDestination') |
           translate }}</option>
         @for (destination of destinations; track destination.id) {
-        <option [ngValue]="destination.id">{{ destination.titleEng }} — {{ destination.titleAr }}</option>
+        <option [ngValue]="destination.id">{{ destination.nameEng }} — {{ destination.nameAr }}</option>
         }
       </select>
       @if (cityForm.controls.destinationId.touched && cityForm.controls.destinationId.invalid) {
@@ -28,25 +28,25 @@
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }} <span class="text-red-600">*</span></label>
-      <input formControlName="titleEng" type="text" maxlength="150"
+      <input formControlName="nameEng" type="text" maxlength="150"
         class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('required')) {
+      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p>
       }
-      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('maxlength')) { <p
+      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.hasError('maxlength')) { <p
         class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
-      @if (cityForm.controls.titleEng.touched && cityForm.controls.titleEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
+      @if (cityForm.controls.nameEng.touched && cityForm.controls.nameEng.hasError('pattern')) { <p class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }} <span class="text-red-600">*</span></label>
-      <input formControlName="titleAr" type="text" maxlength="150" dir="rtl"
+      <input formControlName="nameAr" type="text" maxlength="150" dir="rtl"
         class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
-      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('required')) {
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</p>
       }
-      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('arabicText')) { <p
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('arabicText')) { <p
         class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-      @if (cityForm.controls.titleAr.touched && cityForm.controls.titleAr.hasError('maxlength')) { <p
+      @if (cityForm.controls.nameAr.touched && cityForm.controls.nameAr.hasError('maxlength')) { <p
         class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }
     </div>
     <div><label class="mb-2 block text-sm font-medium">{{ 'routeName' | translate }} <span class="text-red-600">*</span></label><input formControlName="routeName"

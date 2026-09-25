@@ -25,7 +25,7 @@ export class ItineraryTimeline {
   }
 
   title(item: any): string {
-    return String(item?.title ?? item?.titleEng ??  '');
+    return String(item?.title ?? item?.nameEng ??  '');
   }
 
   value(item: any): string {

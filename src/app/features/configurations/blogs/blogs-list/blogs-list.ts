@@ -232,12 +232,12 @@ export class BlogsList implements OnInit, OnChanges {
     return blog?.isActive ?? blog?.IsActive ?? false;
   }
 
-  titleEng(blog: any): string {
-    return blog?.titleEng ?? blog?.TitleEng ?? '';
+  nameEng(blog: any): string {
+    return blog?.nameEng ?? blog?.nameEng ?? '';
   }
 
-  titleAr(blog: any): string {
-    return blog?.titleAr ?? blog?.TitleAr ?? '';
+  nameAr(blog: any): string {
+    return blog?.nameAr ?? blog?.nameAr ?? '';
   }
 
   summaryEng(blog: any): string {

@@ -40,7 +40,7 @@ export class DiscountManager implements OnInit {
   }
 
   get productName(): string {
-    return this.product?.titleEng ?? this.product?.nameEng ?? this.product?.title ?? this.product?.name ?? '';
+    return this.product?.nameEng ?? this.product?.nameEng ?? this.product?.title ?? this.product?.name ?? '';
   }
 
   get minDateTime(): string {
