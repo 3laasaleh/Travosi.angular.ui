@@ -43,7 +43,7 @@ export class CatalogSearchForm implements OnInit {
     { key: 'children', ageLabel: 'childrenAgeLabel', minimum: 0 },
     { key: 'infants', ageLabel: 'infantsAgeLabel', minimum: 0 },
   ] as const;
-  @Input() formClass = 'relative grid w-full min-w-0 gap-1 rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto]';
+  formClass = 'relative grid w-full min-w-0 gap-1 rounded-[20px] border border-slate-200 bg-amber-400 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto]';
   @Input() showSearchControls = false;
   @Input() inputId = 'catalog-search';
   @Input() query = '';
