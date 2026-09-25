@@ -1,4 +1,5 @@
 {
+  "roomPeriodPriceMinimum": "يجب ألا يقل السعر عن 0.01.",
   "searchingHotels": "جارٍ البحث عن الفنادق...",
   "availableHotels": "الفنادق المتاحة",
   "propertiesFound": "مكان إقامة",

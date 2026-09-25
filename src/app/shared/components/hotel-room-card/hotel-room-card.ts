@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CurrencyService } from './../../../core/services/currency.service';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { mdiIconClass } from '../../utils/mdi-icon.util';
@@ -17,8 +18,10 @@ export class HotelRoomCard {
   @Input() isArabic = false;
   @Input() editable = false;
   @Output() editRequested = new EventEmitter<any>();
+  _currencyService=inject(CurrencyService);
 
   image(room: any): string | null {
+    
     const url = room?.images?.find((image: any) => image.isMain)?.imageUrl
       ?? room?.images?.[0]?.imageUrl
       ?? null;

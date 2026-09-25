@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Input,
   OnChanges,
   SimpleChanges,
   inject,
+  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -50,6 +53,7 @@ export class HotelRoomsManager implements OnChanges {
   saving = false;
   error = '';
   editingRoom: any | null = null;
+  readonly roomFormOpen = signal(false);
   selectedFacilityIds = new Set<number>();
   roomImages: Array<{
     id?: number;
@@ -62,6 +66,7 @@ export class HotelRoomsManager implements OnChanges {
   imageMessage = '';
   readonly maxImages = 5;
   private readonly language = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly hotelRooms = [
     { value: 1, label: 'Single' },
@@ -113,22 +118,25 @@ export class HotelRoomsManager implements OnChanges {
     maxAdults: new FormControl(1, { nonNullable: true, validators: [Validators.min(1)] }),
     maxChildren: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
     maxInfants: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
-    isPublished: new FormControl(false, { nonNullable: true }),
     roomPeriodPrices: new FormArray<FormGroup>([]),
-    policies: new FormArray<FormGroup>([]),
+    childrenPolicies: new FormArray<FormGroup>([]),
   });
 
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
   ) {
+    this.rates.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.validateAllPeriods();
+      this.cdr.markForCheck();
+    });
   }
 
   get rates(): FormArray<FormGroup> {
     return this.roomForm.controls.roomPeriodPrices;
   }
-  get policies(): FormArray<FormGroup> {
-    return this.roomForm.controls.policies;
+  get childrenPolicies(): FormArray<FormGroup> {
+    return this.roomForm.controls.childrenPolicies;
   }
   get isArabic(): boolean {
     return this.language.currentLanguage() === 'ar';
@@ -174,7 +182,26 @@ get todayAfterMonth(): string {
     return [...groups.values()];
   }
 
+  addRoom(): void {
+    this.reset();
+    this.roomFormOpen.set(true);
+  }
+
   edit(room: HotelRoomDto): void {
+    this.roomFormOpen.set(true);
+    this.error = '';
+    this.api.get(`HotelRooms/${room.id}/Edit`).pipe(catchError(() => of(null))).subscribe((response: any) => {
+      if (!response?.isSuccess || !response.data) {
+        this.error = response?.message || 'roomLoadError';
+        this.roomFormOpen.set(false);
+        this.cdr.markForCheck();
+        return;
+      }
+      this.populateEditRoom(response.data);
+    });
+  }
+
+  private populateEditRoom(room: HotelRoomDto): void {
     this.editingRoom = room;
     this.revokeNewImageUrls();
     this.roomImages = (room.images ?? [])
@@ -189,7 +216,9 @@ get todayAfterMonth(): string {
       .filter((image: any) => !!image.url);
     this.imageMessage = '';
     this.selectedFacilityIds = new Set(
-      (room.amenities ?? []).map((facility: any) => Number(facility.id)).filter(Boolean),
+      (room.amenities ?? [])
+        .map((facility: any) => Number(typeof facility === 'number' ? facility : facility?.id))
+        .filter(Boolean),
     );
     this.roomForm.reset({
       nameEng: room.nameEng  ?? '',
@@ -216,12 +245,13 @@ get todayAfterMonth(): string {
       .sort((left: any, right: any) => String(left.startDate).localeCompare(String(right.startDate)))
       .forEach((period: any) => this.addPeriod(period));
     if (!this.rates.length) this.addPeriod();
-    this.policies.clear();
-    this.parseStringValues(room.childrenPolicies).forEach((policy) => this.addPolicy(policy));
+    this.childrenPolicies.clear();
+    this.parseStringValues(room.childrenPolicies).forEach((policy) => this.addChildPolicy(policy));
     this.cdr.markForCheck();
   }
 
   reset(): void {
+    this.roomFormOpen.set(false);
     this.revokeNewImageUrls();
     this.roomImages = [];
     this.imageMessage = '';
@@ -245,11 +275,10 @@ get todayAfterMonth(): string {
       maxAdults: 1,
       maxChildren: 0,
       maxInfants: 0,
-      isPublished: false,
     });
     this.rates.clear();
     this.addPeriod();
-    this.policies.clear();
+    this.childrenPolicies.clear();
   }
 
   toggleFacility(id: number, checked: boolean): void {
@@ -280,8 +309,10 @@ get todayAfterMonth(): string {
           validators: [Validators.required],
         }),
 
-        price: new FormControl(Number(value.price ?? value.nightlyRate ?? 0), {
-          nonNullable: true,
+        price: new FormControl<number | null>(
+          value.price != null || value.nightlyRate != null
+            ? Number(value.price ?? value.nightlyRate)
+            : null, {
           validators: [Validators.required, Validators.min(0.01)],
         }),
         isActive: new FormControl(value.isActive !== false, { nonNullable: true }),
@@ -296,8 +327,8 @@ get todayAfterMonth(): string {
     }
   }
 
-  addPolicy(value: string = ''): void {
-    this.policies.push(
+  addChildPolicy(value: string = ''): void {
+    this.childrenPolicies.push(
       new FormGroup({
         value: new FormControl(value, {
           nonNullable: true,
@@ -306,8 +337,8 @@ get todayAfterMonth(): string {
       }),
     );
   }
-  removePolicy(index: number): void {
-    this.policies.removeAt(index);
+  removeChildPolicy(index: number): void {
+    this.childrenPolicies.removeAt(index);
   }
 
   async onRoomImagesSelected(event: Event): Promise<void> {
@@ -379,14 +410,13 @@ get todayAfterMonth(): string {
       return;
     }
     const value = this.roomForm.getRawValue();
-    const { policies, ...roomValue } = value;
+    const { childrenPolicies, ...roomValue } = value;
     const payload = {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
       ...roomValue,
-      childrenPolicies: policies
-        .map((policy) => String(policy['value'] ?? '').trim())
-        .filter(Boolean)
+      childrenPolicies: childrenPolicies
+        .flatMap((policy) => this.parseStringValues(policy['value']))
         .join(';'),
       roomType: Number(value.roomType),
       mealPlan: Number(value.mealPlan),
@@ -517,9 +547,10 @@ get todayAfterMonth(): string {
       )
       .subscribe((result) => {
         this.rooms = this.rows(result.rooms);
-        this.facilities = this.rows(result.facilities);
+        this.facilities = this.rows(result.facilities)
+          .filter((facility) => Number(facility?.kind) === 2);
         this.mealPlans = this.rows(result.mealPlans);
-        if (!this.editingRoom) this.reset();
+        if (!this.roomFormOpen()) this.reset();
       });
   }
   private rows(response: any): any[] {
@@ -557,7 +588,7 @@ private addError(
   control.setErrors({
     ...control.errors,
     [errorName]: true
-  });
+  }, { emitEvent: false });
 }
 
 private removeError(
@@ -573,7 +604,8 @@ private removeError(
   delete errors[errorName];
 
   control.setErrors(
-    Object.keys(errors).length > 0 ? errors : null
+    Object.keys(errors).length > 0 ? errors : null,
+    { emitEvent: false }
   );
 }
 addDays(date: string, days: number): string {
@@ -599,8 +631,6 @@ getMinimumStartDate(index: number): string {
     ? this.addDays(previousEndDate, 1)
     : this.today;
 }
-  validatePeriod(_index: number): void { this.validateAllPeriods(); }
-
   private validateAllPeriods(): void {
     this.rates.controls.forEach((period) => {
       this.removeError(period.controls['startDate'], 'previousPeriod');

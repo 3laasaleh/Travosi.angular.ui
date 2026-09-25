@@ -4,8 +4,10 @@
       <h3 class="font-semibold">{{ 'hotelRooms' | translate }}</h3>
       <p class="mt-1 text-sm text-slate-500">{{ 'manageHotelRoomsHint' | translate }}</p>
     </div>
+    @if (!roomFormOpen()) {
     <button type="button" class="rounded-full border border-primary px-3 py-1.5 text-sm font-semibold text-primary"
-      (click)="reset()"><i class="mdi mdi-plus"></i> {{ 'addRoom' | translate }}</button>
+      (click)="addRoom()"><i class="mdi mdi-plus"></i> {{ 'addRoom' | translate }}</button>
+    }
   </div>
   @if (error) { <p class="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ error |
     translate }}</p> }
@@ -25,10 +27,11 @@
         translate }}</p> } }
     </div>
 
+    @if (roomFormOpen()) {
     <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4">
       <div class="flex items-center justify-between">
-        <h4 class="font-semibold">{{ (editingRoom ? 'editRoom' : 'addRoom') | translate }}</h4>@if (editingRoom) {
-        <button type="button" class="text-sm text-slate-600" (click)="reset()">{{ 'cancel' | translate }}</button> }
+        <h4 class="font-semibold">{{ (editingRoom ? 'editRoom' : 'addRoom') | translate }}</h4>
+        <button type="button" class="text-sm text-red-600" (click)="reset()">{{ 'cancel' | translate }}</button> 
       </div>
       @if (roomForm; as form) {
       <form class="configuration-form" [formGroup]="form" (ngSubmit)="save()">
@@ -138,11 +141,11 @@
               (click)="addPeriod()" [attr.title]="'addPricingPeriod' | translate"><i class="mdi mdi-plus"></i></button>
           </div>
           <div formArrayName="roomPeriodPrices" class="mt-3 space-y-3">
-        @for (period of rates.controls; track $index) {
+        @for (period of rates.controls; track period) {
 
   <div
     class="grid gap-3 rounded-xl border border-slate-200 p-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_.8fr_auto_auto] xl:items-start"
-    [formGroupName]="$index">
+    [formGroup]="period">
 
     <!-- Start Date -->
     <label class="text-sm">
@@ -151,11 +154,11 @@
 
       <app-date-picker
         formControlName="startDate"
+        [autoSelectToday]="false"
         [id]="'room-rate-from-' + $index"
         [min]="getMinimumStartDate($index)"
         [placeholder]="'startDate' | translate"
         [ariaLabel]="'startDate' | translate"
-        (change)="validatePeriod($index)"
       />
 
       @if (
@@ -186,11 +189,11 @@
 
       <app-date-picker
         formControlName="endDate"
+        [autoSelectToday]="false"
         [id]="'room-rate-to-' + $index"
         [min]="minimumEndDate(period.controls['startDate'].value)"
         [placeholder]="'endDate' | translate"
         [ariaLabel]="'endDate' | translate"
-        (change)="validatePeriod($index)"
       />
 
       @if (
@@ -216,9 +219,17 @@
     <label class="text-sm">
       {{ 'price' | translate }}
       <span class="text-red-600">*</span>
-      <input formControlName="price" type="number" min="0.01" step="0.01" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
-      @if (period.controls['price'].touched && period.controls['price'].invalid) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'priceRequired' | translate }}</span>
+      <span class="relative mt-1 block">
+        <span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center border-e text-sm font-semibold text-slate-500">$</span>
+        <input formControlName="price" type="number" min="0.01" step="0.01" inputmode="decimal"
+          class="w-full rounded-xl border border-slate-300 py-2 pe-3 ps-12" />
+      </span>
+      @if (period.controls['price'].touched) {
+        @if (period.controls['price'].hasError('required')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'priceRequired' | translate }}</span>
+        } @else if (period.controls['price'].hasError('min')) {
+          <span class="mt-1 block text-xs text-red-600">{{ 'roomPeriodPriceMinimum' | translate }}</span>
+        }
       }
     </label>
 
@@ -227,7 +238,7 @@
       {{ 'active' | translate }}
     </label>
 
-    <button type="button" [disabled]="rates.length === 1" class="mt-6 grid size-10 place-items-center rounded-full text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-30" (click)="removePeriod($index)" [attr.title]="'remove' | translate"><i class="mdi mdi-minus"></i></button>
+    <button type="button" [disabled]="rates.length === 1" class="mt-6 grid size-10 place-items-center rounded-full text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-30" (click)="removePeriod($index)" [attr.title]="'remove' | translate"><i class="mdi mdi-delete"></i></button>
 
   </div>
 }
@@ -238,11 +249,11 @@
           <div class="flex items-center justify-between">
             <h5 class="font-semibold">{{ 'childrenPolicies' | translate }}</h5><button type="button"
               class="grid size-9 place-items-center rounded-full border border-primary text-lg text-primary"
-              (click)="addPolicy()" [attr.title]="'add' | translate"><i class="mdi mdi-plus"></i></button>
+              (click)="addChildPolicy()" [attr.title]="'add' | translate"><i class="mdi mdi-plus"></i></button>
           </div>
-          <div formArrayName="policies" class="mt-3 space-y-3">
-            @for (policy of policies.controls; track $index) {
-              <div class="rounded-xl border border-slate-200 p-3" [formGroupName]="$index">
+          <div formArrayName="childrenPolicies" class="mt-3 space-y-3">
+            @for (policy of childrenPolicies.controls; track policy) {
+              <div class="rounded-xl border border-slate-200 p-3" [formGroup]="policy">
                 <label class="text-sm">{{ 'childPolicy' | translate }} <span class="text-red-600">*</span>
                   <textarea formControlName="value" rows="2" maxlength="1000"
                     [placeholder]="'childPolicyPlaceholder' | translate"
@@ -252,7 +263,7 @@
                   }
                 </label>
                 <div class="mt-2 flex justify-end"><button type="button" class="text-sm text-rose-600"
-                    (click)="removePolicy($index)">{{ 'remove' | translate }}</button></div>
+                    (click)="removeChildPolicy($index)">{{ 'remove' | translate }}</button></div>
               </div>
             }
           </div>
@@ -264,5 +275,6 @@
       </form>
       }
     </div>
+    }
   </div>
 </section>

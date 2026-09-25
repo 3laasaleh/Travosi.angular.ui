@@ -1,4 +1,5 @@
 {
+  "roomPeriodPriceMinimum": "Price must be at least 0.01.",
   "searchingHotels": "Searching hotels...",
   "availableHotels": "Available hotels",
   "propertiesFound": "properties found",

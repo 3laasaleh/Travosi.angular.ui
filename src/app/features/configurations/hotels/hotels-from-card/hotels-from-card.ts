@@ -51,7 +51,7 @@ export interface HotelDTO {
 @Component({
   selector: 'app-hotels-from-card',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, TranslatePipe, HotelRoomsManager],
+  imports: [FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './hotels-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -73,6 +73,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   destinations: any[] = [];
   hotelFacilities: any[] = [];
   selectedHotelFacilityIds = new Set<number>();
+  private originalHotelFacilityIds = new Set<number>();
   imageUploads: HotelImageUpload[] = [];
   imageValidationMessage = '';
 
@@ -89,7 +90,8 @@ export class HotelsFromCard implements OnInit, OnChanges {
       const page = destinations?.data ?? destinations;
       const rows = page?.data ?? page?.items ?? page?.destinations ?? page;
       this.destinations = (Array.isArray(rows) ? rows : []).filter((item) => item?.isActive !== false);
-      this.hotelFacilities = this.rows(facilities);
+      this.hotelFacilities = this.rows(facilities)
+        .filter((facility) => Number(facility?.kind) === 1 );
     });
   }
 
@@ -238,12 +240,16 @@ export class HotelsFromCard implements OnInit, OnChanges {
     }
     this.revokeNewImageUrls();
     this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
-    this.selectedHotelFacilityIds = new Set(((hotel as any).amenities ?? []).map((facility: any) => Number(facility.id)).filter(Boolean));
+    const amenityIds = ((hotel as any).amenities ?? [])
+      .map((facility: any) => Number(facility.id))
+      .filter(Boolean);
+    this.selectedHotelFacilityIds = new Set(amenityIds);
+    this.originalHotelFacilityIds = new Set(amenityIds);
   }
 
   private resetForm(emitCancel: boolean): void {
     this.validationSubmitted = false;
-    this.revokeNewImageUrls(); this.imageUploads = []; this.imageValidationMessage = ''; this.selectedHotelFacilityIds = new Set();
+    this.revokeNewImageUrls(); this.imageUploads = []; this.imageValidationMessage = ''; this.selectedHotelFacilityIds = new Set(); this.originalHotelFacilityIds = new Set();
     this.hotelForm.reset({
       name: '',
       nameEng: '',
@@ -295,8 +301,15 @@ export class HotelsFromCard implements OnInit, OnChanges {
   toggleHotelFacilityGroup(group: { facilities: any[] }, checked: boolean): void { group.facilities.forEach((facility) => this.toggleHotelFacility(Number(facility.id), checked)); }
   private saveHotelFacilities(hotelId: number, message: string): void {
     this.isLoading = true;
-    this.apiService.put(`HotelAmenities/Hotels/${hotelId}`, [...this.selectedHotelFacilityIds]).pipe(catchError(() => of(null))).subscribe((response: any) => {
+    const facilities = this.hotelFacilities.map((facility) => {
+      const id = Number(facility.id);
+      const selected = this.selectedHotelFacilityIds.has(id);
+      const originallySelected = this.originalHotelFacilityIds.has(id);
+      return { facilityId: id, status: selected === originallySelected ? null : selected ? 'add' : 'remove' };
+    });
+    this.apiService.put(`HotelAmenities/Hotels/${hotelId}`, { facilities }).pipe(catchError(() => of(null))).subscribe((response: any) => {
       if (!response?.isSuccess) { this.errorMessage = response?.message || 'hotelFacilitiesSaveError'; this.isLoading = false; this.cdr.markForCheck(); return; }
+      this.originalHotelFacilityIds = new Set(this.selectedHotelFacilityIds);
       if (!this.imageUploads.some(image => image.file)) { this.isLoading = false; this.completeSave(message); return; }
       this.uploadNewImages(hotelId, message);
     });

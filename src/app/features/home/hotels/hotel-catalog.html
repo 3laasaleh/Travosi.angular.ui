@@ -99,7 +99,7 @@
                     </span>
                   </span>
                   <span class="flex items-center gap-3">
-                    <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300" [disabled]="this[guestType.key] <= guestType.minimum" [attr.aria-label]="'decreaseByOne' | translate" (click)="updateGuestCount(guestType.key, -1)"><i class="mdi mdi-minus"></i></button>
+                    <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300" [disabled]="this[guestType.key] <= guestType.minimum" [attr.aria-label]="'decreaseByOne' | translate" (click)="updateGuestCount(guestType.key, -1)"><i class="mdi mdi-delete"></i></button>
                     <span class="w-5 text-center font-semibold">{{ this[guestType.key] }}</span>
                     <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary" [attr.aria-label]="'increaseByOne' | translate" (click)="updateGuestCount(guestType.key, 1)"><i class="mdi mdi-plus"></i></button>
                   </span>
@@ -108,7 +108,7 @@
               <div class="flex items-center justify-between gap-4 py-3">
                 <span class="text-sm font-semibold">{{ 'rooms' | translate }}</span>
                 <span class="flex items-center gap-3">
-                  <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300" [disabled]="roomCount <= 1" [attr.aria-label]="'decreaseByOne' | translate" (click)="onRoomCountChange(roomCount - 1)"><i class="mdi mdi-minus"></i></button>
+                  <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300" [disabled]="roomCount <= 1" [attr.aria-label]="'decreaseByOne' | translate" (click)="onRoomCountChange(roomCount - 1)"><i class="mdi mdi-delete"></i></button>
                   <span class="w-5 text-center font-semibold">{{ roomCount }}</span>
                   <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary" [attr.aria-label]="'increaseByOne' | translate" (click)="onRoomCountChange(roomCount + 1)"><i class="mdi mdi-plus"></i></button>
                 </span>
@@ -217,7 +217,7 @@
 
               <div class="min-w-0 px-1 py-4 md:px-4 md:py-1">
                 <div class="flex flex-wrap items-center gap-2">
-                  <a class="text-xl font-bold leading-tight text-primary hover:underline" [routerLink]="['/hotels', hotel.routeName]" [queryParams]="{ checkIn: checkInDate, checkOut: checkOutDate, adults: adults, children: children, infants: infants, rooms: roomCount }">{{ hotelName(hotel) }}</a>
+                  <a class="text-xl font-bold leading-tight text-primary hover:underline" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]">{{ hotelName(hotel) }}</a>
                   <span class="inline-flex gap-0.5" [attr.aria-label]="hotel.starRating + ' ' + ('starRating' | translate)">
                     @for (_ of starRange(hotel); track $index) { <i class="mdi mdi-star text-sm text-amber-400" aria-hidden="true"></i> }
                   </span>
@@ -273,7 +273,7 @@
                   <p class="text-sm text-slate-500">{{ checkInDate && checkOutDate ? ('viewAvailableRooms' | translate) : ('chooseDatesForHotelPrice' | translate) }}</p>
                 }
 
-                <a class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110" [routerLink]="['/hotels', hotel.routeName]" [queryParams]="{ checkIn: checkInDate, checkOut: checkOutDate, adults: adults, children: children, infants: infants, rooms: roomCount }">
+                <a class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]">
                   {{ 'seeAvailability' | translate }}
                   <i class="mdi" [class.mdi-chevron-left]="isArabic" [class.mdi-chevron-right]="!isArabic" aria-hidden="true"></i>
                 </a>
