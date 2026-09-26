@@ -55,6 +55,7 @@ export class HotelCatalog implements OnInit {
   adults = 1;
   children = 0;
   infants = 0;
+  childrenAges: number[] = [];
   roomCount = 1;
   destinationMenuOpen = false;
   guestMenuOpen = false;
@@ -183,6 +184,7 @@ export class HotelCatalog implements OnInit {
   updateGuestCount(type: 'adults' | 'children' | 'infants', change: number): void {
     const guestType = this.guestTypes.find((item) => item.key === type)!;
     this[type] = Math.max(guestType.minimum, this[type] + change);
+    if (type === 'children') this.syncChildrenAges();
     this.invalidateAvailability();
   }
   onCheckInDateChange(date: string): void {
@@ -196,6 +198,12 @@ export class HotelCatalog implements OnInit {
   }
   onRoomCountChange(value: number): void {
     this.roomCount = Math.max(1, Number(value) || 1);
+    this.invalidateAvailability();
+  }
+  onChildAgeChange(): void {
+    this.childrenAges = this.childrenAges.map((age) =>
+      Math.max(0, Math.min(17, Number.isInteger(Number(age)) ? Number(age) : 6)),
+    );
     this.invalidateAvailability();
   }
   applySearch(): void {
@@ -214,7 +222,7 @@ export class HotelCatalog implements OnInit {
       candidates.map((hotel) =>
         this.api
           .getUnauthntecated(
-            `HotelAvailability?${new URLSearchParams({ hotelId: String(hotel.id), checkInDate: this.checkInDate, checkOutDate: this.checkOutDate, adults: String(this.adults), children: String(this.children), infants: String(this.infants), roomCount: String(this.roomCount) })}`,
+            `HotelAvailability?${this.availabilityQuery(hotel.id)}`,
           )
           .pipe(catchError(() => of(null))),
       ),
@@ -227,9 +235,10 @@ export class HotelCatalog implements OnInit {
       )
       .subscribe((responses) => {
         responses.forEach((response: any, index) => {
-          const rooms = response?.data;
-          if (Array.isArray(rooms) && rooms.length)
-            this.availability.set(Number(candidates[index].id), rooms);
+          const rooms = Array.isArray(response?.data)
+            ? response.data.filter((room: any) => Number(room?.availableQuantity ?? 0) >= this.roomCount)
+            : [];
+          if (rooms.length) this.availability.set(Number(candidates[index].id), rooms);
         });
         this.availabilitySearchApplied = true;
         this.cdr.markForCheck();
@@ -389,6 +398,7 @@ export class HotelCatalog implements OnInit {
     this.children = this.nonNegativeInteger(query.get('children') ?? query.get('group_children'));
     this.infants = this.nonNegativeInteger(query.get('infants'));
     this.roomCount = this.positiveInteger(query.get('rooms') ?? query.get('no_rooms'), 1);
+    this.syncChildrenAges();
     this.destinationQuery = query.get('destination') ?? query.get('query') ?? '';
     const destinationId = Number(query.get('destinationId'));
     this.selectedDestinationId = Number.isFinite(destinationId) && destinationId > 0 ? destinationId : null;
@@ -400,6 +410,28 @@ export class HotelCatalog implements OnInit {
   private nonNegativeInteger(value: string | null): number {
     const parsed = Math.floor(Number(value));
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+  }
+  private syncChildrenAges(): void {
+    this.childrenAges = Array.from(
+      { length: this.children },
+      (_, index) => {
+        const age = Number(this.childrenAges[index]);
+        return Number.isInteger(age) && age >= 0 && age <= 17 ? age : 6;
+      },
+    );
+  }
+  private availabilityQuery(hotelId: unknown): string {
+    const query = new URLSearchParams({
+      hotelId: String(hotelId),
+      checkInDate: this.checkInDate,
+      checkOutDate: this.checkOutDate,
+      adults: String(this.adults),
+      children: String(this.children),
+      infants: String(this.infants),
+      roomCount: String(this.roomCount),
+    });
+    this.childrenAges.forEach((age) => query.append('childrenAges', String(age)));
+    return query.toString();
   }
   private unfilteredResults(): any[] {
     if (this.selectedDestinationId !== null) {

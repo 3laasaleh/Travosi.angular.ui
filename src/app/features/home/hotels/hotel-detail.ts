@@ -202,7 +202,7 @@ export class HotelDetail implements OnInit {
     this.guestMenuOpen = false;
     this.availabilitySearched = false;
     this.availability.clear();
-    this.searching = false;
+    this.searching = true;
     this.api
       .getUnauthntecated(`HotelAvailability?${query.toString()}`)
       .pipe(
@@ -222,7 +222,9 @@ export class HotelDetail implements OnInit {
           return;
         }
         this.availability = new Map(
-          (response?.data ?? []).map((item: any) => [Number(item.hotelRoomId), item]),
+          (response?.data ?? [])
+            .filter((item: any) => Number(item?.availableQuantity ?? 0) >= this.roomCount)
+            .map((item: any) => [Number(item.hotelRoomId), item]),
         );
         this.availabilitySearched = true;
       });
