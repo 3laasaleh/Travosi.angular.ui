@@ -1,23 +1,26 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
+import { SaveFeedbackService } from '../shared/save-feedback.service';
 
 interface Facility {
   id: number;
+  name: string;
   nameEng: string;
   nameAr: string;
   iconKey: string;
   facilityCategoryId: number;
   kind: number;
-  
+  isMostPopular: boolean;
   isActive: boolean;
 }
 
 interface FacilityCategory {
   id: number;
+  name: string;
   nameEng: string;
   nameAr: string;
   iconKey: string;
@@ -34,6 +37,7 @@ interface FacilityCategory {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FacilityCategoriesPage implements OnInit {
+  private readonly feedback = inject(SaveFeedbackService);
   readonly iconClass = mdiIconClass;
   categories: FacilityCategory[] = [];
   icons: string[] = [];
@@ -60,6 +64,7 @@ export class FacilityCategoriesPage implements OnInit {
     iconKey: new FormControl('mdi-check-circle', { nonNullable: true, validators: [Validators.required] }),
     facilityCategoryId: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
     kind: new FormControl(1, { nonNullable: true }),
+    isMostPopular: new FormControl(false, { nonNullable: true }),
     isActive: new FormControl(true, { nonNullable: true }),
   });
 
@@ -67,21 +72,32 @@ export class FacilityCategoriesPage implements OnInit {
 
   ngOnInit(): void { this.load(); }
 setSelctedIcon(icon:string){
-  debugger
-  if(icon.startsWith('mdi-'))
-  icon=icon.replace('mdi-','');
-  this.facilityForm.controls.iconKey.setValue(icon)
+  const form = this.editor === 'category' ? this.categoryForm : this.facilityForm;
+  form.controls.iconKey.setValue(mdiIconClass(icon));
+  form.controls.iconKey.markAsDirty();
 
 }
   load(): void {
     this.loading = true;
+    this.cdr.markForCheck();
     this.error = '';
     forkJoin({
       icons: this.api.get('HotelAmenities/IconKeys').pipe(catchError(() => of([]))),
-      categories: this.api.get('FacilityCategories').pipe(catchError(() => of(null))),
+      categories: this.api.get('FacilityCategories').pipe(catchError(error => {
+        this.error = this.feedback.errorMessage(error, 'facilityCategoriesLoadError');
+        this.feedback.show('error', this.error);
+        return of(null);
+      })),
     })
       .pipe(finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
       .subscribe(({ icons, categories }: any) => {
+        if (!categories || categories.isSuccess === false) {
+          if (categories) {
+            this.error = this.feedback.errorMessage(categories, 'facilityCategoriesLoadError');
+            this.feedback.show('error', this.error);
+          }
+          return;
+        }
         const iconRows: unknown[] = Array.isArray(icons)
           ? icons
           : Array.isArray(icons?.data)
@@ -91,9 +107,7 @@ setSelctedIcon(icon:string){
         const data = categories?.data ?? categories;
         this.categories = (Array.isArray(data) ? data : []).map((category: any) => ({
           ...category,
-          facilities: Array.isArray(category?.facilities)
-            ? [...category.facilities].sort((a: Facility, b: Facility) =>  a.nameEng.localeCompare(b.nameEng))
-            : [],
+          facilities: category?.facilities ?? []
         }));
         this.restoreSelectedCategory();
         if (this.selectedCategory) {
@@ -151,8 +165,10 @@ setSelctedIcon(icon:string){
   closeEditorOnEscape(): void { this.closeEditor(); }
 
   saveCategory(): void {
-    if (this.savingCategory || this.categoryForm.invalid) {
+    if (this.savingCategory) return;
+    if (this.categoryForm.invalid) {
       this.categoryForm.markAllAsTouched();
+      this.feedback.show('warning', 'pleaseCorrectFormErrors');
       return;
     }
     this.savingCategory = true;
@@ -163,10 +179,20 @@ setSelctedIcon(icon:string){
       ? this.api.put(`FacilityCategories/${value.id}`, value)
       : this.api.post('FacilityCategories', value);
     request.pipe(
-      catchError(() => { this.error = 'facilityCategorySaveError'; return of(null); }),
+      catchError(error => {
+        this.error = this.feedback.errorMessage(error, 'facilityCategorySaveError');
+        this.feedback.show('error', this.error);
+        return of(null);
+      }),
       finalize(() => { this.savingCategory = false; this.cdr.markForCheck(); }),
     ).subscribe((response: any) => {
-      if (response?.isSuccess === false || !response) return;
+      if (!response) return;
+      if (response.isSuccess === false) {
+        this.error = this.feedback.errorMessage(response, 'facilityCategorySaveError');
+        this.feedback.show('error', this.error);
+        return;
+      }
+      this.feedback.show('success', 'facilityCategorySaved');
       const savedId = Number(response?.data?.id ?? value.id);
       this.selectedCategory = savedId ? ({ id: savedId } as FacilityCategory) : null;
       this.editor = null;
@@ -175,22 +201,38 @@ setSelctedIcon(icon:string){
   }
 
   saveFacility(): void {
-    if (this.savingFacility || this.facilityForm.invalid) {
+    if (this.savingFacility) return;
+    if (this.facilityForm.invalid) {
       this.facilityForm.markAllAsTouched();
+      this.feedback.show('warning', 'pleaseCorrectFormErrors');
       return;
     }
     this.savingFacility = true;
     this.error = '';
     const rawValue = this.facilityForm.getRawValue();
-    const value = { ...rawValue, iconKey: mdiIconClass(rawValue.iconKey) };
+    const value = {
+      ...rawValue,
+      iconKey: mdiIconClass(rawValue.iconKey),
+      isMostPopular: rawValue.kind === 1 && rawValue.isMostPopular,
+    };
     const request = value.id
       ? this.api.put(`HotelAmenities/${value.id}`, value)
       : this.api.post('HotelAmenities', value);
     request.pipe(
-      catchError(() => { this.error = 'hotelFacilitiesSaveError'; return of(null); }),
+      catchError(error => {
+        this.error = this.feedback.errorMessage(error, 'hotelFacilitiesSaveError');
+        this.feedback.show('error', this.error);
+        return of(null);
+      }),
       finalize(() => { this.savingFacility = false; this.cdr.markForCheck(); }),
     ).subscribe((response: any) => {
-      if (response?.isSuccess === false || !response) return;
+      if (!response) return;
+      if (response.isSuccess === false) {
+        this.error = this.feedback.errorMessage(response, 'hotelFacilitiesSaveError');
+        this.feedback.show('error', this.error);
+        return;
+      }
+      this.feedback.show('success', 'hotelFacilitySaved');
       this.selectedCategory = ({ id: value.facilityCategoryId } as FacilityCategory);
       this.editor = null;
       this.load();
@@ -211,7 +253,7 @@ setSelctedIcon(icon:string){
     });
     this.facilityForm.reset({
       id: 0, nameEng: '', nameAr: '', iconKey: this.defaultIcon, facilityCategoryId: 0,
-      kind: 1,
+      kind: 1, isMostPopular: false,
       isActive: true,
     });
   }
@@ -222,7 +264,7 @@ setSelctedIcon(icon:string){
       id: 0, nameEng: '', nameAr: '', 
       iconKey: this.defaultIcon,
       facilityCategoryId: category.id, kind: 1,
-       isActive: true,
+       isMostPopular: false, isActive: true,
     });
   }
 

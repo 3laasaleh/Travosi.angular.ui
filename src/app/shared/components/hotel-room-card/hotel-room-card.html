@@ -1,115 +1,52 @@
-<article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:flex">
-      
-  @if (image(room); as url) {
-    <img class="h-52 w-full object-cover md:w-64" [src]="url" [alt]="roomName(room)" />
-  }
-  <div class="min-w-0 flex-1 p-5">
-    <div class="flex flex-wrap items-start justify-between gap-3">
-      @if (editable) {
-        <button type="button" class=" h-8 w-8 place-items-center rounded-full border border-amber/400 text-amber-400 transition hover:bg-amber-400 hover:text-white" [attr.title]="'edit' | translate" (click)="editRequested.emit(room)">
-          <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>
-        </button>
-      }
-      <div>
-        <h3 class="text-xl font-semibold">{{ roomName(room) }}</h3>
-        <p class="mt-1 text-sm text-slate-500">
-          {{ bedTypeName(room) }}
-          @if (room.bedSize) { · {{ room.bedSize }} }
-          @if (room.roomSize) { · {{ room.roomSize }} m² }
-        </p>
-        @if (roomDescription(room); as description) {
-          <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{{ description }}</p>
-        }
-        <div class="mt-3 flex flex-wrap gap-2" [attr.aria-label]="'guests' | translate">
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-slate-700">
-            <i class="mdi mdi-account-outline text-base text-primary" aria-hidden="true"></i>
-            {{ room.maxAdults ?? 0 }} {{ 'adults' | translate }}
-          </span>
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-slate-700">
-            <i class="mdi mdi-human-child text-base text-primary" aria-hidden="true"></i>
-            {{ room.maxChildren ?? 0 }} {{ 'children' | translate }}
-          </span>
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-slate-700">
-            <i class="mdi mdi-baby-face-outline text-base text-primary" aria-hidden="true"></i>
-            {{ room.maxInfants ?? 0 }} {{ 'infants' | translate }}
-          </span>
-        </div>
-        @if (room.hasBalcony || room.avilableRoomsCount != null) {
-          <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600">
-            @if (room.hasBalcony) { <span><i class="mdi mdi-balcony text-primary" aria-hidden="true"></i> {{ 'hasBalcony' | translate }}</span> }
-            @if (room.avilableRoomsCount != null) { <span><i class="mdi mdi-door-open text-primary" aria-hidden="true"></i> {{ room.avilableRoomsCount }} {{ 'roomsAvailable' | translate }}</span> }
-          </p>
-        }
+<article class="overflow-hidden bg-white md:grid md:grid-cols-[240px_minmax(0,1fr)]">
+  <div class="relative min-h-52 bg-slate-100">
+    @if (image(room); as url) {
+      <img class="absolute inset-0 h-full w-full object-cover" [src]="url" [alt]="roomName(room)" />
+    } @else {
+      <div class="grid h-full min-h-52 place-items-center text-5xl text-slate-300"><i class="mdi mdi-bed-king-outline"></i></div>
+    }
+    @if (room.hasBalcony) { <span class="absolute bottom-3 start-3 rounded-lg bg-white/95 px-2.5 py-1 text-xs font-bold text-slate-700 shadow"><i class="mdi mdi-balcony me-1 text-primary"></i>{{ 'hasBalcony' | translate }}</span> }
+  </div>
+
+  <div class="min-w-0 p-5">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h3 class="text-xl font-bold text-slate-950">{{ roomName(room) }}</h3>
+        <p class="mt-1 text-sm text-slate-500">{{ bedTypeName(room) }} @if (room.bedSize) { · {{ room.bedSize }} } @if (room.roomSize) { · {{ room.roomSize }} m² }</p>
       </div>
-  
+      @if (editable) {
+        <button type="button" class="grid size-9 shrink-0 place-items-center rounded-full border border-amber-400 text-amber-500 transition hover:bg-amber-400 hover:text-white" [attr.title]="'edit' | translate" (click)="editRequested.emit(room)"><i class="mdi mdi-pencil-outline"></i></button>
+      }
     </div>
 
-    @if (childrenPolicyItems(room); as policies) {
-      @if (policies.length) {
-        <div class="mt-3 rounded-xl bg-amber-50 p-3">
-          <p class="text-sm font-semibold text-slate-700"><i class="mdi mdi-human-male-child me-1 text-primary" aria-hidden="true"></i>{{ 'childrenPolicies' | translate }}</p>
-          <div class="mt-2 space-y-1">
-            @for (policy of policies; track policy) {
-              <p class="text-xs text-slate-600"><i class="mdi mdi-check text-primary" aria-hidden="true"></i> {{ policy }}</p>
-            }
-          </div>
-        </div>
-      }
-    }
+    @if (roomDescription(room); as description) { <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ description }}</p> }
+
+    <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-slate-700" [attr.aria-label]="'guests' | translate">
+      <span><i class="mdi mdi-account me-1 text-base text-primary"></i>{{ room.maxAdults ?? 0 }} {{ 'adults' | translate }}</span>
+      <span><i class="mdi mdi-human-child me-1 text-base text-primary"></i>{{ room.maxChildren ?? 0 }} {{ 'children' | translate }}</span>
+      <span><i class="mdi mdi-baby-face me-1 text-base text-primary"></i>{{ room.maxInfants ?? 0 }} {{ 'infants' | translate }}</span>
+      @if (room.avilableRoomsCount != null) { <span><i class="mdi mdi-door-open me-1 text-base text-primary"></i>{{ room.avilableRoomsCount }} {{ 'roomsAvailable' | translate }}</span> }
+    </div>
 
     @if (room.amenities?.length) {
       <div class="mt-3 flex flex-wrap gap-2">
-        @for (amenity of room.amenities; track amenity.id) {
-          <span class="rounded-full bg-slate-100 px-2 py-1 text-xs">
-            <i class="mdi text-primary" [class]="iconClass(amenity.iconKey)"></i>
-            {{ amenityName(amenity) }}
-          </span>
-        }
+        @for (amenity of room.amenities.slice(0, 6); track amenity.id) { <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><i class="mdi me-1" [class]="iconClass(amenity.iconKey)"></i>{{ amenityName(amenity) }}</span> }
       </div>
     }
 
-    @if (availability) {
-      @for (plan of availability.ratePlans; track plan.ratePlanId) {
-        <div class="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
-          <div class="flex flex-wrap justify-between gap-3">
-            <span class="font-medium">{{ ratePlanName(room, plan.ratePlanId) }}</span>
-            <span class="font-semibold">{{ plan.grandTotal }} {{ plan.currencyCode }} · {{ plan.numberOfNights }} {{ 'nights' | translate }}</span>
-          </div>
-          @if (ratePlan(room, plan.ratePlanId); as definition) {
-            @if (mealPlanName(definition)) {
-              <p class="mt-2 text-sm text-slate-600"><i class="mdi mdi-silverware-fork-knife text-primary"></i> {{ mealPlanName(definition) }}</p>
-            }
-            @if (definition.benefits?.length) {
-              <div class="mt-2 flex flex-wrap gap-2">
-                @for (benefit of definition.benefits; track benefit.id) {
-                  <span class="rounded-full bg-white px-2 py-1 text-xs"><i class="mdi text-primary" [class]="iconClass(benefit.iconKey)"></i> {{ amenityName(benefit) }}</span>
-                }
-              </div>
-            }
-          }
-          <details class="mt-2 text-sm text-slate-600">
-            <summary class="cursor-pointer font-medium text-primary">{{ 'viewPriceBreakdown' | translate }}</summary>
-            @for (period of plan.periodBreakdown; track period.startDate) {
-              <p class="mt-1"> {{ period.pricePerNight }} = {{ period.subtotal }} {{ plan.currencyCode }}</p>
-            }
-            <p class="mt-2 font-medium">{{ 'accommodationTotal' | translate }}: {{ plan.accommodationTotal }} · {{ 'taxes' | translate }}: {{ plan.taxes }} · {{ 'serviceFee' | translate }}: {{ plan.serviceFees }}</p>
-          </details>
-        </div>
-      }
-    } @else if (room.roomPeriodPrices?.length) {
-      <div class="mt-3 flex flex-wrap gap-2">
-        @for (period of room.roomPeriodPrices; track period.id) {
-          <span class="rounded-full  px-3 py-1 text-xs font-semibold text-slate-600">
-            {{ period.startDate }} – {{ period.endDate }}  Price is :
-          </span>
-          <span class=" rounded-full  px-3 py-1 text-xs font-semibold text-primary-600 bg-primary/5"> {{ period.price }} {{_currencyService.currentCurrency().symbol}} / {{ 'night' | translate }}</span>
-        }
+    @if (childrenPolicyItems(room); as policies) {
+      @if (policies.length) { <p class="mt-3 text-xs text-slate-500"><i class="mdi mdi-human-male-child me-1 text-primary"></i>{{ policies.join(' · ') }}</p> }
+    }
+
+    @if (displayedQuote(availability); as plan) {
+      <div class="mt-4 flex flex-wrap items-end justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+        <span><strong class="block text-sm text-slate-700">{{ 'totalPrice' | translate }}</strong><small class="text-slate-500">{{ plan.numberOfNights }} {{ 'nights' | translate }}</small></span>
+        <strong class="text-xl text-primary">{{ formatPrice(plan.grandTotal, plan) }}</strong>
       </div>
-    } @else if (room.ratePlans?.length) {
-      <div class="mt-3 flex flex-wrap gap-2">
-        @for (plan of room.ratePlans; track plan.id) {
-          <span class="rounded-full bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">{{ plan.baseNightlyRate }} {{ plan.currencyCode }} / {{ 'night' | translate }}</span>
-        }
+    } @else if (currentPeriod(room); as period) {
+      <div class="mt-4 flex items-end justify-between gap-3 rounded-xl bg-primary/5 p-4">
+        <span class="text-sm font-medium text-slate-600">{{ 'currentPrice' | translate }}</span>
+        <strong class="text-xl text-primary">{{ formatPrice(period.price, period) }} <small class="text-xs font-medium text-slate-500">/ {{ 'night' | translate }}</small></strong>
       </div>
     }
   </div>

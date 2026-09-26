@@ -6,13 +6,19 @@
         <h1 class="mt-1 text-2xl font-semibold">{{ 'hotelFacilities' | translate }}</h1>
         <p class="mt-1 text-sm text-slate-500">{{ 'facilityCatalogHint' | translate }}</p>
       </div>
-      <button type="button" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90" (click)="newCategory()">
+      <button type="button" [disabled]="loading || savingCategory || savingFacility" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60" (click)="newCategory()">
         <i class="mdi mdi-plus" aria-hidden="true"></i> {{ 'addFacilityCategory' | translate }}
       </button>
     </div>
 
+    @if (error && !editor) {
+      <div role="alert" class="mb-4 whitespace-pre-line rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">{{ error | translate }}</div>
+    }
     @if (loading) {
-      <p class="py-12 text-center text-slate-500">{{ 'loading' | translate }}</p>
+      <div class="flex min-h-64 flex-col items-center justify-center gap-3 py-12 text-primary" role="status" aria-live="polite">
+        <i class="mdi mdi-loading mdi-spin text-4xl" aria-hidden="true"></i>
+        <span class="text-sm font-semibold">{{ 'loading' | translate }}</span>
+      </div>
     } @else {
       <div class="space-y-4">
         @for (category of categories; track category.id) {
@@ -61,6 +67,15 @@
   </main>
 </section>
 
+@if (savingCategory || savingFacility) {
+  <div class="fixed inset-0 z-[10000] grid place-items-center bg-slate-950/30" role="status" aria-live="polite">
+    <div class="flex items-center gap-3 rounded-2xl bg-white px-6 py-4 text-primary shadow-xl">
+      <i class="mdi mdi-loading mdi-spin text-3xl" aria-hidden="true"></i>
+      <span class="text-sm font-semibold">{{ 'saving' | translate }}</span>
+    </div>
+  </div>
+}
+
 @if (editor === 'category') {
   <div class="fixed inset-0 z-[9999] grid place-items-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="facility-category-dialog-title">
     <button type="button" class="absolute inset-0 cursor-default" [attr.aria-label]="'close' | translate" (click)="closeEditor()"></button>
@@ -76,8 +91,8 @@
       <form class="space-y-4 p-5" [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
         @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">{{ error | translate }}</p> }
         <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (categoryForm.controls.nameEng.touched && categoryForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
-          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (categoryForm.controls.nameAr.touched && categoryForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
+          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" maxlength="150" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (categoryForm.controls.nameEng.touched && categoryForm.controls.nameEng.invalid) { <span class="mt-1 block text-xs text-red-600">{{ categoryForm.controls.nameEng.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 150 }) : ('englishNameRequired' | translate) }}</span> }</label>
+          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" maxlength="150" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (categoryForm.controls.nameAr.touched && categoryForm.controls.nameAr.invalid) { <span class="mt-1 block text-xs text-red-600">{{ categoryForm.controls.nameAr.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 150 }) : ('arabicNameRequired' | translate) }}</span> }</label>
         </div>
         <div>
           <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
@@ -118,8 +133,8 @@
       <form class="space-y-4 p-5" [formGroup]="facilityForm" (ngSubmit)="saveFacility()">
         @if (error) { <p class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">{{ error | translate }}</p> }
         <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (facilityForm.controls.nameEng.touched && facilityForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
-          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (facilityForm.controls.nameAr.touched && facilityForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
+          <label class="block text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng" maxlength="150" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />@if (facilityForm.controls.nameEng.touched && facilityForm.controls.nameEng.invalid) { <span class="mt-1 block text-xs text-red-600">{{ facilityForm.controls.nameEng.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 150 }) : ('englishNameRequired' | translate) }}</span> }</label>
+          <label class="block text-sm" dir="rtl">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr" maxlength="150" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-right" />@if (facilityForm.controls.nameAr.touched && facilityForm.controls.nameAr.invalid) { <span class="mt-1 block text-xs text-red-600">{{ facilityForm.controls.nameAr.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 150 }) : ('arabicNameRequired' | translate) }}</span> }</label>
         </div>
         <div>
           <p class="mb-2 text-sm font-medium">{{ 'selectIcon' | translate }} <span class="text-red-600">*</span></p>
@@ -136,6 +151,7 @@
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <label class="text-sm">{{ 'facilityType' | translate }}<select formControlName="kind" class="mt-1 w-full rounded-xl border border-slate-300 px-2 py-2">@for (kind of kinds; track kind) { <option [ngValue]="kind">{{ kindName(kind) }}</option> }</select></label>
+          @if (facilityForm.controls.kind.value === 1) { <label class="flex items-center gap-2 self-end rounded-xl border border-slate-200 px-3 py-2 text-sm"><input formControlName="isMostPopular" type="checkbox" />{{ 'mostPopularFacilities' | translate }}</label> }
         </div>
         
         <footer class="flex justify-end gap-3 border-t border-slate-100 pt-4">

@@ -20,7 +20,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, of, switchMap, throwError } from 'rxjs';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
@@ -31,6 +31,8 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
 import { HotelRoomChildrenPolicy, readRoomChildrenPolicies } from '../../../../shared/utils/hotel-room-children-policies.util';
 import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
+import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
+import { SaveFeedbackService } from '../../shared/save-feedback.service';
 
 interface FacilityGroup {
   id: number;
@@ -67,6 +69,10 @@ export class HotelRoomsManager implements OnChanges {
   }> = [];
   imageMessage = '';
   readonly maxImages = 5;
+  readonly processingImages = signal(false);
+  readonly validationSubmitted = signal(false);
+  private persistedRoomId: number | null = null;
+  private readonly feedback = inject(SaveFeedbackService);
   private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -107,7 +113,7 @@ export class HotelRoomsManager implements OnChanges {
     descriptionAr: new FormControl('', { nonNullable: true }),
     roomType: new FormControl(1, { nonNullable: true }),
     mealPlan: new FormControl(1, { nonNullable: true }),
-    roomSize: new FormControl<number | null>(null),
+    roomSize: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
     bedTypeEng: new FormControl('', { nonNullable: true }),
     bedTypeAr: new FormControl('', { nonNullable: true }),
     bedSize: new FormControl('', { nonNullable: true }),
@@ -185,11 +191,13 @@ get todayAfterMonth(): string {
   }
 
   addRoom(): void {
+    if (this.saving || this.processingImages()) return;
     this.reset();
     this.roomFormOpen.set(true);
   }
 
   edit(room: HotelRoomDto): void {
+    if (this.saving || this.processingImages()) return;
     this.roomFormOpen.set(true);
     this.error = '';
     this.api.get(`HotelRooms/${room.id}/Edit`).pipe(catchError(() => of(null))).subscribe((response: any) => {
@@ -204,6 +212,8 @@ get todayAfterMonth(): string {
   }
 
   private populateEditRoom(room: HotelRoomDto): void {
+    this.persistedRoomId = room.id;
+    this.validationSubmitted.set(false);
     this.editingRoom = room;
     this.revokeNewImageUrls();
     this.roomImages = (room.images ?? [])
@@ -254,6 +264,8 @@ get todayAfterMonth(): string {
   }
 
   reset(): void {
+    this.persistedRoomId = null;
+    this.validationSubmitted.set(false);
     this.roomFormOpen.set(false);
     this.revokeNewImageUrls();
     this.roomImages = [];
@@ -334,6 +346,7 @@ get todayAfterMonth(): string {
   addChildPolicy(value: Partial<HotelRoomChildrenPolicy> = {}): void {
     this.childrenPolicies.push(
       new FormGroup({
+        id: new FormControl(value.id ?? 0, { nonNullable: true }),
         valueEng: new FormControl(value.valueEng ?? '', {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(1000)],
@@ -350,6 +363,7 @@ get todayAfterMonth(): string {
   }
 
   async onRoomImagesSelected(event: Event): Promise<void> {
+    if (this.saving || this.processingImages()) return;
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
@@ -358,12 +372,11 @@ get todayAfterMonth(): string {
       this.imageMessage = 'hotelImageLimit';
       return;
     }
-    for (const file of files) {
-      if (
-        !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
-        file.size > 5 * 1024 * 1024
-      ) {
-        this.imageMessage = file.size > 5 * 1024 * 1024 ? 'imageTooLarge' : 'invalidImageType';
+    this.processingImages.set(true);
+    try { for (const file of files) {
+      const error = hotelImageFileError(file);
+      if (error) {
+        this.imageMessage = error;
         continue;
       }
       try {
@@ -379,11 +392,14 @@ get todayAfterMonth(): string {
         this.imageMessage =
           error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
+    } } finally {
+      this.processingImages.set(false);
+      this.cdr.markForCheck();
     }
-    this.cdr.markForCheck();
   }
 
   removeRoomImage(index: number): void {
+    if (this.saving || this.processingImages()) return;
     const image = this.roomImages[index];
     if (!image) return;
     if (image.existing && image.id && this.editingRoom?.id) {
@@ -410,13 +426,21 @@ get todayAfterMonth(): string {
   }
 
   save(): void {
-    if (!this.hotelId || this.saving) return;
+    if (!this.hotelId || this.saving || this.processingImages()) return;
+    this.validationSubmitted.set(true);
     this.validateAllPeriods();
     if (this.roomForm.invalid) {
       this.roomForm.markAllAsTouched();
       this.error = 'pleaseCorrectFormErrors';
+      this.feedback.show('warning', this.error);
       return;
     }
+    this.imageMessage = hotelImagesError(this.roomImages);
+    if (this.imageMessage) {
+      this.feedback.show('warning', this.imageMessage);
+      return;
+    }
+    const existingId = this.editingRoom?.id ?? this.persistedRoomId;
     const value = this.roomForm.getRawValue();
     const { childrenPolicies, ...roomValue } = value;
     const payload = {
@@ -424,6 +448,7 @@ get todayAfterMonth(): string {
       name: value.nameEng.trim(),
       ...roomValue,
       childrenPolicies: childrenPolicies.map((policy) => ({
+        id: Number(policy['id']) || 0,
         valueEng: String(policy['valueEng']).trim(),
         valueAr: String(policy['valueAr']).trim(),
       })),
@@ -443,37 +468,41 @@ get todayAfterMonth(): string {
         price: Number(period.price),
         isActive: period.isActive !== false,
       })),
-      ...(this.editingRoom ? { id: Number(this.editingRoom.id) } : {}),
+      imageUpdates: this.roomImages.filter(image => image.existing && image.id).map(image => ({
+        id: image.id, altEng: image.altEng.trim(), altAr: image.altAr.trim(),
+      })),
+      ...(existingId ? { id: Number(existingId) } : {}),
     };
     this.saving = true;
     this.error = '';
-    const request = this.editingRoom
+    const request = existingId
       ? this.api.put('HotelRooms', payload)
       : this.api.post('HotelRooms', payload);
     request
       .pipe(
+        switchMap((response: any) => {
+          if (!response?.isSuccess) return throwError(() => ({ error: response || { message: 'roomSaveError' } }));
+          const roomId = Number(response.data?.id ?? existingId);
+          if (!roomId) return throwError(() => ({ error: { message: 'roomSaveError' } }));
+          this.persistedRoomId = roomId;
+          return this.api.put(`HotelAmenities/Rooms/${roomId}`, [...this.selectedFacilityIds]).pipe(
+            switchMap((facilities: any) => facilities?.isSuccess
+              ? this.uploadNewRoomImages(roomId)
+              : throwError(() => ({ error: facilities || { message: 'hotelFacilitiesSaveError' } }))),
+          );
+        }),
         catchError((error) => {
-          this.error = error?.error?.message || 'roomSaveError';
+          this.error = this.feedback.errorMessage(error, 'roomSaveError');
+          this.feedback.show('error', this.error);
           return of(null);
         }),
+        finalize(() => { this.saving = false; this.cdr.markForCheck(); }),
       )
       .subscribe((response: any) => {
-        if (!response?.isSuccess) {
-          if (response) this.error = response.message || 'roomSaveError';
-          this.saving = false;
-          this.cdr.markForCheck();
-          return;
-        }
-        const roomId = Number(response.data?.id ?? this.editingRoom?.id);
-        if (!roomId) {
-          this.error = 'roomSaveError';
-          this.saving = false;
-          this.cdr.markForCheck();
-          return;
-        }
-        this.api.put(`HotelAmenities/Rooms/${roomId}`, [...this.selectedFacilityIds])
-          .pipe(catchError(() => of(null)))
-          .subscribe(() => this.uploadNewRoomImages(roomId));
+        if (response === null) return;
+        this.feedback.show('success', 'hotelRoomSavedSuccessfully');
+        this.reset();
+        this.load();
       });
   }
 
@@ -499,42 +528,21 @@ get todayAfterMonth(): string {
       });
   }
 
-  private uploadNewRoomImages(roomId: number): void {
+  private uploadNewRoomImages(roomId: number) {
     const images = this.roomImages.filter((image) => image.file);
-    if (!images.length) {
-      this.reset();
-      this.load();
-      return;
-    }
-    if (images.some((image) => !image.altEng.trim() || !image.altAr.trim())) {
-      this.imageMessage = 'imageAltRequired';
-      this.cdr.markForCheck();
-      return;
-    }
+    if (!images.length) return of({ isSuccess: true });
     const form = new FormData();
     images.forEach((image, index) => {
       form.append(`Images[${index}].Image`, image.file!, image.file!.name);
       form.append(`Images[${index}].AltEng`, image.altEng.trim());
       form.append(`Images[${index}].AltAr`, image.altAr.trim());
     });
-    this.saving = true;
-    this.api
+    return this.api
       .post(`HotelRooms/${roomId}/Images`, form)
       .pipe(
-        catchError(() => of(null)),
-        finalize(() => {
-          this.saving = false;
-          this.cdr.markForCheck();
-        }),
-      )
-      .subscribe((response: any) => {
-        if (!response?.isSuccess) {
-          this.imageMessage = response?.message || 'hotelImageSaveError';
-          return;
-        }
-        this.reset();
-        this.load();
-      });
+        switchMap((response: any) => response?.isSuccess ? of(response)
+          : throwError(() => ({ error: response || { message: 'hotelImageSaveError' } }))),
+      );
   }
 
 

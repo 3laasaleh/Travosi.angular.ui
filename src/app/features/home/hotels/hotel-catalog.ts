@@ -260,11 +260,7 @@ export class HotelCatalog implements OnInit {
       ? hotel?.nameAr || hotel?.nameEng || hotel?.name
       : hotel?.nameEng || hotel?.name || hotel?.nameAr || '';
   }
-  hotelAddress(hotel: any): string {
-    return this.isArabic
-      ? hotel?.addressAr || hotel?.addressEng || hotel?.address || hotel?.destinationName || ''
-      : hotel?.addressEng || hotel?.address || hotel?.addressAr || hotel?.destinationName || '';
-  }
+
   hotelDescription(hotel: any): string {
     return (this.isArabic
       ? hotel?.descriptionAr || hotel?.description || hotel?.descriptionEng
@@ -423,7 +419,6 @@ export class HotelCatalog implements OnInit {
       hotel?.name,
       this.hotelDestinationName(hotel),
       hotel?.addressEng,
-      hotel?.addressAr,
       hotel?.address,
     ]
       .filter(Boolean)

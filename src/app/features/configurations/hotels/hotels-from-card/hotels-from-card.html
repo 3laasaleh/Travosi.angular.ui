@@ -1,14 +1,17 @@
 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-  @if (errorMessage) { <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{
+  @if (errorMessage) { <div role="alert" class="mb-4 whitespace-pre-line rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{
     errorMessage | translate }}</div> }
   @if (successMessage) { <div
     class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">{{
     successMessage | translate }}</div> }
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedHotel ? 'editHotel' : 'addHotel') | translate }}</h2>
   <form class="configuration-form space-y-4" [formGroup]="hotelForm" (ngSubmit)="saveHotel()">
-    @if (validationSubmitted && hotelForm.invalid) { <p
-      class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{
-      'pleaseCorrectFormErrors' | translate }}</p> }
+    @if (invalidFieldMessages.length) {
+      <ul class="list-inside list-disc rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        @for (message of invalidFieldMessages; track message) { <li>{{ message }}</li> }
+      </ul>
+    }
+    <fieldset [disabled]="isLoading || processingImages()" class="space-y-4" [attr.aria-busy]="isLoading || processingImages()">
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'nameEnglish' | translate }} <span
             class="text-red-600">*</span></label><input formControlName="nameEng" type="text"
@@ -38,9 +41,9 @@
             class="text-red-600">*</span></label><input formControlName="routeName" type="text" maxlength="100"
           placeholder="grand-palace-hotel" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
         (hotelForm.controls.routeName.touched && hotelForm.controls.routeName.invalid) { <p
-          class="mt-1 text-xs text-red-600">Use letters, numbers, and hyphens only.</p> }</div>
+          class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p> }</div>
     </div>
-    
+     <div class="grid gap-4 md:grid-cols-2">
     <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span
           class="text-red-600">*</span></label><textarea formControlName="descriptionEng" rows="4" maxlength="4000"
         class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>@if
@@ -53,19 +56,28 @@
         class="mt-1 text-xs text-red-600">{{ hotelForm.controls.descriptionAr.hasError('arabicText') ?
         ('arabicNameInvalid' | translate) : ('descriptionRequired' | translate) }}</p> }</div>
  
+  </div>
+
     <div class="grid gap-4 md:grid-cols-2">
-      <div><label class="mb-2 block text-sm font-medium">{{ 'website' | translate }} <span class="text-slate-400">({{
-            'optional' | translate }})</span></label><input formControlName="website" type="url"
-          class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'googleMapsUrl' | translate }} <span
-            class="text-slate-400">({{ 'optional' | translate }})</span></label><input formControlName="googleMapsUrl"
-          type="url" class="w-full rounded-2xl border border-slate-300 px-3 py-2" /></div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'distanceFromDowntown' | translate }} <span
-            class="text-slate-400">({{ 'optional' | translate }})</span></label>
-        <div class="relative"><input formControlName="distanceFromDowntownKm" type="number" min="0" step="0.1"
-            class="w-full rounded-2xl border border-slate-300 px-3 py-2 pe-16" /><span
-            class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">km</span></div>
-      </div>
+      <label class="block text-sm font-medium">{{ 'distanceFromDowntown' | translate }}
+        <input formControlName="distanceFromDowntownKm" type="number" min="0" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (hotelForm.controls.distanceFromDowntownKm.touched && hotelForm.controls.distanceFromDowntownKm.hasError('min')) { <span class="mt-1 block text-xs text-red-600">{{ 'valueCannotBeNegative' | translate }}</span> }
+      </label>
+      <label class="block text-sm font-medium">{{ 'googleMapsUrl' | translate }}
+        <input formControlName="googleMapsUrl" type="url" dir="ltr" placeholder="https://maps.google.com/..." class="mt-2 w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (hotelForm.controls.googleMapsUrl.touched && hotelForm.controls.googleMapsUrl.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'invalidUrl' | translate }}</span> }
+      </label>
+      <label class="block text-sm font-medium">{{ 'phone' | translate }}
+        <input formControlName="phoneNumber" type="tel" dir="ltr" class="mt-2 w-full rounded-2xl border border-slate-300 px-3 py-2" />
+      </label>
+      <label class="block text-sm font-medium">{{ 'email' | translate }}
+        <input formControlName="email" type="email" dir="ltr" class="mt-2 w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (hotelForm.controls.email.touched && hotelForm.controls.email.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'emailInvalid' | translate }}</span> }
+      </label>
+      <label class="block text-sm font-medium md:col-span-2">{{ 'website' | translate }}
+        <input formControlName="website" type="url" dir="ltr" placeholder="https://example.com" class="mt-2 w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (hotelForm.controls.website.touched && hotelForm.controls.website.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'invalidUrl' | translate }}</span> }
+      </label>
     </div>
 
     <section class="rounded-2xl border border-slate-200 bg-white p-4">
@@ -82,10 +94,20 @@
         <div formArrayName="cancellationPolicies">@for (itemGroup of cancellationPoliciesArray.controls; track
           itemGroup; let index = $index) {<div [formGroupName]="index"
             class="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-3 md:grid-cols-[1fr_1fr_auto]">
-            <textarea formControlName="valueEng" rows="1" maxlength="1000" [placeholder]="'englishValue' | translate"
-              class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea><textarea
-              formControlName="valueAr" rows="1" maxlength="1000" dir="rtl" [placeholder]="'arabicValue' | translate"
-              class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea><button
+            <label class="block text-xs font-medium">{{ 'englishValue' | translate }}
+              <textarea formControlName="valueEng" rows="1" maxlength="1000" [placeholder]="'englishValue' | translate"
+                class="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
+              @if (itemGroup.controls['valueEng'].touched && itemGroup.controls['valueEng'].invalid) {
+                <span class="text-xs text-red-600">{{ itemGroup.controls['valueEng'].hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 1000 }) : ('englishValueRequired' | translate) }}</span>
+              }
+            </label>
+            <label class="block text-xs font-medium">{{ 'arabicValue' | translate }}
+              <textarea formControlName="valueAr" rows="1" maxlength="1000" dir="rtl" [placeholder]="'arabicValue' | translate"
+                class="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
+              @if (itemGroup.controls['valueAr'].touched && itemGroup.controls['valueAr'].invalid) {
+                <span class="text-xs text-red-600">{{ itemGroup.controls['valueAr'].hasError('arabicText') ? ('arabicNameInvalid' | translate) : itemGroup.controls['valueAr'].hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 1000 }) : ('arabicValueRequired' | translate) }}</span>
+              }
+            </label><button
               type="button"
               class="grid h-9 w-9 place-items-center self-center rounded-full border border-rose-200 bg-white text-rose-600 hover:bg-rose-50"
               (click)="removeCancellationPolicy(index)" [attr.aria-label]="'delete' | translate"><i
@@ -110,7 +132,7 @@
               class="flex items-center gap-2 text-sm"><input type="checkbox"
                 [checked]="selectedHotelFacilityIds.has(facility.id)"
                 (change)="toggleHotelFacility(facility.id, $any($event.target).checked)" /><i class="mdi text-primary"
-                [class]="iconClass(facility.iconKey)"></i>{{ facility.nameEng }}</label> }</div>
+                [class]="iconClass(facility.iconKey)"></i>{{ facility.name }}</label> }</div>
         </fieldset> } @empty { <p class="text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</p> }</div>
     </section>
     <section class="rounded-2xl border border-slate-200 bg-white p-4">
@@ -134,11 +156,24 @@
               (click)="removeImage(index)"><i class="mdi mdi-close"></i></button>@if (index === 0) { <span
               class="absolute bottom-2 left-2 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-white">{{
               'cover' | translate }}</span> }</div>
-          <div class="grid gap-1 p-2"><input [(ngModel)]="image.altEng" [ngModelOptions]="{standalone: true}"
+          <div class="grid gap-1 p-2"><input [(ngModel)]="image.altEng" [ngModelOptions]="{standalone: true}" required maxlength="500"
+              #altEngInput="ngModel" [attr.aria-label]="'blogEnglishAltText' | translate"
               class="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              [placeholder]="'blogEnglishAltText' | translate" /><input [(ngModel)]="image.altAr"
+              [placeholder]="'blogEnglishAltText' | translate" />
+            @if ((validationSubmitted || altEngInput.touched) && !image.altEng.trim()) {
+              <p class="text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+            }
+            <input [(ngModel)]="image.altAr" required maxlength="500" dir="rtl"
+              #altArInput="ngModel" [attr.aria-label]="'blogArabicAltText' | translate"
               [ngModelOptions]="{standalone: true}" class="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              [placeholder]="'blogArabicAltText' | translate" /></div>
+              [placeholder]="'blogArabicAltText' | translate" />
+            @if ((validationSubmitted || altArInput.touched) && !image.altAr.trim()) {
+              <p class="text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+            }
+            @if (image.altEng.trim().length > 500 || image.altAr.trim().length > 500) {
+              <p class="text-xs text-red-600">{{ 'hotelImageAltTooLong' | translate }}</p>
+            }
+          </div>
         </div> }</div> }
     </section>
     <div class="flex flex-wrap gap-5"><label class="flex items-center gap-2 text-sm font-medium"><input
@@ -146,11 +181,13 @@
         class="flex items-center gap-2 text-sm font-medium"><input formControlName="showAsDefault" type="checkbox" />{{
         'showAsDefaultHotel' | translate }}</label><label class="flex items-center gap-2 text-sm font-medium"><input
           formControlName="hasFreeAirportTaxi" type="checkbox" />{{ 'freeAirportTaxi' | translate }}</label></div>
-    <div class="flex gap-3"><button type="submit" [disabled]="isLoading"
+    @if (processingImages()) { <p role="status" class="text-sm text-primary"><i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i> {{ 'processingHotelImages' | translate }}</p> }
+    <div class="flex gap-3"><button type="submit" [disabled]="isLoading || processingImages()"
         class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">@if
         (isLoading) { <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i><span>{{ 'saving' | translate }}</span>
         } @else { {{ (selectedHotel ? 'update' : 'add') | translate }} }</button>@if (selectedHotel) { <button
         type="button" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" [disabled]="isLoading"
         (click)="cancelEdit()">{{ 'cancel' | translate }}</button> }</div>
+    </fieldset>
   </form>
 </div>

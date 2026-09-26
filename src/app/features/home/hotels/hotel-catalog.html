@@ -42,7 +42,9 @@
                 } @else {
                   <button type="button" role="option" (click)="selectHotel(suggestion.item)" class="flex w-full items-center gap-3 rounded-lg p-2.5 text-start transition hover:bg-primary/5">
                     <img [src]="image(suggestion.item) || 'assets/images/main-logo.png'" class="size-10 rounded-lg object-cover" [alt]="hotelName(suggestion.item)" />
-                    <span class="min-w-0"><span class="block truncate font-semibold">{{ hotelName(suggestion.item) }}</span><span class="block truncate text-xs text-slate-500">{{ hotelAddress(suggestion.item) }}</span></span>
+                    <span class="min-w-0"><span class="block truncate font-semibold">{{ hotelName(suggestion.item) }}</span>
+
+                  </span>
                   </button>
                 }
               } @empty {
@@ -209,9 +211,9 @@
                 } @else {
                   <div class="absolute inset-0 grid place-items-center bg-slate-100 text-4xl text-slate-300"><i class="mdi mdi-image-off-outline"></i></div>
                 }
-                @if (hotel.showAsDefault) {
+                <!-- @if (hotel.showAsDefault) {
                   <span class="absolute start-2 top-2 rounded bg-primary px-2 py-1 text-xs font-bold text-white shadow">{{ featuredLabel(hotel) | translate }}</span>
-                }
+                } -->
               </div>
 
               <div class="min-w-0 px-1 py-4 md:px-4 md:py-1">
@@ -223,7 +225,7 @@
                 </div>
 
                 <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                  <span class="font-semibold text-primary"><i class="mdi mdi-map-marker-outline" aria-hidden="true"></i> {{ hotelDestinationName(hotel) || hotelAddress(hotel) }}</span>
+                  <span class="font-semibold text-primary"><i class="mdi mdi-map-marker-outline" aria-hidden="true"></i> {{ hotelDestinationName(hotel) }}</span>
                   @if (hotel.distanceFromDowntownKm != null) { <span class="text-slate-600">{{ hotel.distanceFromDowntownKm }} km {{ 'fromDowntown' | translate }}</span> }
                 </p>
 

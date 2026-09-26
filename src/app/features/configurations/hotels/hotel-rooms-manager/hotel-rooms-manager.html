@@ -31,15 +31,16 @@
     <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4 mt-3">
       <div class="flex items-center justify-between">
         <h4 class="font-semibold">{{ (editingRoom ? 'editRoom' : 'addRoom') | translate }}</h4>
-        <button type="button" class="text-sm text-red-600" (click)="reset()">{{ 'cancel' | translate }}</button> 
+        <button type="button" [disabled]="saving || processingImages()" class="text-sm text-red-600 disabled:opacity-50" (click)="reset()">{{ 'cancel' | translate }}</button>
       </div>
       @if (roomForm; as form) {
       <form class="configuration-form" [formGroup]="form" (ngSubmit)="save()">
+        <fieldset [disabled]="saving || processingImages()" [attr.aria-busy]="saving || processingImages()">
         <div class="mt-4 grid gap-3 md:grid-cols-2">
             <label class="text-sm">{{ 'nameEnglish' | translate }} <span class="text-red-600">*</span><input formControlName="nameEng"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.nameEng.touched && roomForm.controls.nameEng.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'englishNameRequired' | translate }}</span> }</label>
+              maxlength="200" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.nameEng.touched && roomForm.controls.nameEng.invalid) { <span class="mt-1 block text-xs text-red-600">{{ roomForm.controls.nameEng.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 200 }) : ('englishNameRequired' | translate) }}</span> }</label>
             <label class="text-sm">{{ 'nameArabic' | translate }} <span class="text-red-600">*</span><input formControlName="nameAr"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" />@if (roomForm.controls.nameAr.touched && roomForm.controls.nameAr.hasError('required')) { <span class="mt-1 block text-xs text-red-600">{{ 'arabicNameRequired' | translate }}</span> }</label>
+              maxlength="200" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right" />@if (roomForm.controls.nameAr.touched && roomForm.controls.nameAr.invalid) { <span class="mt-1 block text-xs text-red-600">{{ roomForm.controls.nameAr.hasError('maxlength') ? ('maximumCharacters' | translate:{ count: 200 }) : ('arabicNameRequired' | translate) }}</span> }</label>
           <label class="text-sm">{{ 'roomType' | translate }}<select formControlName="roomType"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of hotelRooms; track
               type.value) { <option [value]="type.value">{{ type.label }}</option> }</select></label>
@@ -48,7 +49,7 @@
               track plan.id) { <option [value]="plan.id">{{ mealPlanName(plan) }}</option> } @empty { <option
               [value]="1">{{ 'noMealPlansFound' | translate }}</option> }</select></label>
           <label class="text-sm">{{ 'roomSize' | translate }}<input formControlName="roomSize" type="number" min="0"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.roomSize.touched && roomForm.controls.roomSize.hasError('min')) { <span class="mt-1 block text-xs text-red-600">{{ 'valueCannotBeNegative' | translate }}</span> }</label>
             <label class="text-sm">{{ 'bedTypeEnglish' | translate }}<input formControlName="bedTypeEng"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
             <label class="text-sm">{{ 'bedTypeArabic' | translate }}<input formControlName="bedTypeAr"
@@ -58,13 +59,13 @@
 
 
           <label class="text-sm">{{ 'availableRoomsCount' | translate }}<input formControlName="avilableRoomsCount"
-              type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+              type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.avilableRoomsCount.touched && roomForm.controls.avilableRoomsCount.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'valueCannotBeNegative' | translate }}</span> }</label>
           <label class="text-sm">{{ 'adults' | translate }}<input formControlName="maxAdults" type="number" min="1"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxAdults.touched && roomForm.controls.maxAdults.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'atLeastOneAdult' | translate }}</span> }</label>
           <label class="text-sm">{{ 'children' | translate }}<input formControlName="maxChildren" type="number" min="0"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxChildren.touched && roomForm.controls.maxChildren.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'childrenCannotBeNegative' | translate }}</span> }</label>
           <label class="text-sm">{{ 'infants' | translate }}<input formControlName="maxInfants" type="number" min="0"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" /></label>
+              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxInfants.touched && roomForm.controls.maxInfants.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'infantsCannotBeNegative' | translate }}</span> }</label>
         </div>
         <label class="mt-3 block text-sm">{{ 'englishDescription' | translate }}<textarea
             formControlName="descriptionEng" rows="1"
@@ -121,12 +122,25 @@
                   class="aspect-[3/2] w-full object-cover" /><button type="button"
                   class="absolute end-2 top-2 grid size-8 place-items-center rounded-full bg-black/70 text-white hover:bg-rose-600"
                   (click)="removeRoomImage(index)"><i class="mdi mdi-delete"></i></button></div>
-              <div class="grid gap-1 p-2"><input [(ngModel)]="image.altEng" [ngModelOptions]="{ standalone: true }"
+              <div class="grid gap-1 p-2"><input [(ngModel)]="image.altEng" [ngModelOptions]="{ standalone: true }" required maxlength="500"
+                  #altEngInput="ngModel" [attr.aria-label]="'blogEnglishAltText' | translate"
                   class="rounded border border-slate-200 px-2 py-1 text-xs"
-                  [placeholder]="'blogEnglishAltText' | translate" /><input [(ngModel)]="image.altAr"
+                  [placeholder]="'blogEnglishAltText' | translate" />
+                @if ((validationSubmitted() || altEngInput.touched) && !image.altEng.trim()) {
+                  <p class="text-xs text-red-600">{{ 'englishValueRequired' | translate }}</p>
+                }
+                <input [(ngModel)]="image.altAr" required maxlength="500" dir="rtl"
+                  #altArInput="ngModel" [attr.aria-label]="'blogArabicAltText' | translate"
                   [ngModelOptions]="{ standalone: true }"
                   class="rounded border border-slate-200 px-2 py-1 text-xs"
-                  [placeholder]="'blogArabicAltText' | translate" /></div>
+                  [placeholder]="'blogArabicAltText' | translate" />
+                @if ((validationSubmitted() || altArInput.touched) && !image.altAr.trim()) {
+                  <p class="text-xs text-red-600">{{ 'arabicValueRequired' | translate }}</p>
+                }
+                @if (image.altEng.trim().length > 500 || image.altAr.trim().length > 500) {
+                  <p class="text-xs text-red-600">{{ 'hotelImageAltTooLong' | translate }}</p>
+                }
+              </div>
             </div> }</div> }
         </section>
 
@@ -297,10 +311,12 @@
    
         </div>
   
-        <button type="submit" [disabled]="saving"
+        @if (processingImages()) { <p role="status" class="mt-3 text-sm text-primary"><i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i> {{ 'processingHotelImages' | translate }}</p> }
+        <button type="submit" [disabled]="saving || processingImages()"
           class="mt-5 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white disabled:opacity-60">
           @if (saving) { <i class="mdi mdi-loading mdi-spin"></i> {{ 'saving' | translate }} } @else { {{ 'save' | translate }} }
         </button>
+        </fieldset>
       </form>
       }
     </div>

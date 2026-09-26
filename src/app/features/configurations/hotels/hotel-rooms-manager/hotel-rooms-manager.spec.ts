@@ -29,7 +29,7 @@ describe('HotelRoomsManager pricing periods', () => {
 
   it('distinguishes empty and nonpositive first-row prices, and accepts a decimal entered in the input', () => {
     const fixture = setup();
-    const price = fixture.componentInstance.rates.at(0).controls['price'];
+    const price = fixture.componentInstance.roomPeriodPrices.at(0).controls['price'];
     const input: HTMLInputElement = fixture.nativeElement.querySelector('input[formControlName="price"]');
     const label = input.closest('label')!;
     input.dispatchEvent(new Event('blur'));
@@ -52,7 +52,7 @@ describe('HotelRoomsManager pricing periods', () => {
 
   it('rechecks the first end date on form-value changes without a native change event', () => {
     const fixture = setup();
-    const period = fixture.componentInstance.rates.at(0);
+    const period = fixture.componentInstance.roomPeriodPrices.at(0);
     period.patchValue({ startDate: '2030-10-01', endDate: '2030-10-03', price: 100 });
     expect(period.valid).toBe(true);
 
@@ -70,13 +70,13 @@ describe('HotelRoomsManager pricing periods', () => {
   it('rechecks later rows when the preceding end date changes', () => {
     const fixture = setup();
     const component = fixture.componentInstance;
-    component.rates.at(0).patchValue({ startDate: '2030-10-01', endDate: '2030-10-03', price: 100 });
+    component.roomPeriodPrices.at(0).patchValue({ startDate: '2030-10-01', endDate: '2030-10-03', price: 100 });
     component.addPeriod({ endDate: '2030-10-09', price: 150 });
-    const secondStart = component.rates.at(1).controls['startDate'];
+    const secondStart = component.roomPeriodPrices.at(1).controls['startDate'];
     expect(secondStart.value).toBe('2030-10-04');
-    component.rates.at(0).controls['endDate'].setValue('2030-10-05');
+    component.roomPeriodPrices.at(0).controls['endDate'].setValue('2030-10-05');
     expect(secondStart.hasError('previousPeriod')).toBe(true);
-    component.rates.at(0).controls['endDate'].setValue('2030-10-03');
+    component.roomPeriodPrices.at(0).controls['endDate'].setValue('2030-10-03');
     expect(secondStart.valid).toBe(true);
   });
 
@@ -94,7 +94,7 @@ describe('HotelRoomsManager pricing periods', () => {
     input = fixture.nativeElement.querySelector('input[formControlName="price"]');
     input.value = '75';
     input.dispatchEvent(new Event('input'));
-    expect(component.rates.at(0).controls['price'].value).toBe(75);
-    expect(component.rates.at(0).controls['price'].valid).toBe(true);
+    expect(component.roomPeriodPrices.at(0).controls['price'].value).toBe(75);
+    expect(component.roomPeriodPrices.at(0).controls['price'].valid).toBe(true);
   });
 });

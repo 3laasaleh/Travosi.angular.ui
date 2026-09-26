@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { mdiIconClass } from '../../utils/mdi-icon.util';
 import { readRoomChildrenPolicies } from '../../utils/hotel-room-children-policies.util';
+import { formatHomePrice } from '../../../features/home/home-price.util';
 
 @Component({
   selector: 'app-hotel-room-card',
@@ -57,6 +58,22 @@ export class HotelRoomCard {
 
   mealPlanName(plan: any): string {
     return this.localized(plan?.mealPlanDetails?.nameEng, plan?.mealPlanDetails?.nameAr, '');
+  }
+
+  currentPeriod(room: any): any | null {
+    const today = new Date();
+    const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    return (room?.roomPeriodPrices ?? [])
+      .filter((period: any) => period?.isActive !== false && period?.startDate <= date && period?.endDate >= date)
+      .sort((left: any, right: any) => String(right.startDate).localeCompare(String(left.startDate)))[0] ?? null;
+  }
+
+  displayedQuote(availability: any): any | null {
+    return availability?.ratePlans?.[0] ?? null;
+  }
+
+  formatPrice(value: unknown, source: any = { currencyCode: 'USD' }): string {
+    return formatHomePrice(this._currencyService, value, source);
   }
 
   childrenPolicyItems(room: any): string[] {

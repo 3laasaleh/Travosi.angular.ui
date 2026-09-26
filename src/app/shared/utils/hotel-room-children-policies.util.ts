@@ -1,4 +1,5 @@
 export interface HotelRoomChildrenPolicy {
+  id?: number;
   valueEng: string;
   valueAr: string;
 }
@@ -22,7 +23,7 @@ export function readRoomChildrenPolicies(value: unknown): HotelRoomChildrenPolic
     if (!item || typeof item !== 'object') return [];
     const valueEng = String(item.valueEng ?? item.ValueEng ?? '').trim();
     const valueAr = String(item.valueAr ?? item.ValueAr ?? '').trim();
-    if (valueEng || valueAr) return [{ valueEng, valueAr }];
+    if (valueEng || valueAr) return [{ id: Number(item.id ?? item.Id) || 0, valueEng, valueAr }];
     const legacy = String(item.value ?? item.Value ?? '').trim();
     return legacy ? [legacyPolicy(legacy)] : [];
   });
