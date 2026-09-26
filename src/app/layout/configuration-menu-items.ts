@@ -15,7 +15,7 @@ export const CONFIGURATION_MENU_ITEMS: readonly ConfigurationMenuItem[] = [
   { label: 'bookings', path: '/configurations/bookings', icon: 'mdi-calendar-check-outline' },
   { label: 'hotels', path: '/configurations/hotels', icon: 'mdi-bed-outline' },
   { label: 'hotelRooms', path: '/configurations/hotel-rooms', icon: 'mdi-door-open' },
-  { label: 'hotelCommercialPolicies', path: '/configurations/hotel-commercial-policies', icon: 'mdi-food-outline' },
+  { label: 'mealPlans', path: '/configurations/hotel-commercial-policies', icon: 'mdi-food-outline' },
   { label: 'hotelFacilities', path: '/configurations/facility-categories', icon: 'mdi-shape-outline' },
 
   { label: 'flights', path: '/configurations/flights', icon: 'mdi-airplane-takeoff' },
