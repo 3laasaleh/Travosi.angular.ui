@@ -1,7 +1,7 @@
 <article class="overflow-hidden bg-white md:grid md:grid-cols-[240px_minmax(0,1fr)]">
   <div class="relative min-h-52 bg-slate-100">
     @if (image(room); as url) {
-      <img class="absolute inset-0 h-full w-full object-cover" [src]="url" [alt]="roomName(room)" />
+      <img class="" [src]="url" [alt]="roomName(room)" />
     } @else {
       <div class="grid h-full min-h-52 place-items-center text-5xl text-slate-300"><i class="mdi mdi-bed-king-outline"></i></div>
     }
@@ -19,7 +19,8 @@
       }
     </div>
 
-    @if (roomDescription(room); as description) { <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ description }}</p> }
+    @if (roomDescription(room); as description) { 
+      <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ description }}</p> }
 
     <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-slate-700" [attr.aria-label]="'guests' | translate">
       <span><i class="mdi mdi-account me-1 text-base text-primary"></i>{{ room.maxAdults ?? 0 }} {{ 'adults' | translate }}</span>
@@ -45,8 +46,8 @@
       </div>
     } @else if (currentPeriod(room); as period) {
       <div class="mt-4 flex items-end justify-between gap-3 rounded-xl bg-primary/5 p-4">
-        <span class="text-sm font-medium text-slate-600">{{ 'currentPrice' | translate }}</span>
-        <strong class="text-xl text-primary">{{ formatPrice(period.price, period) }} <small class="text-xs font-medium text-slate-500">/ {{ 'night' | translate }}</small></strong>
+        <strong class="text-xl text-primary">{{ formatPrice(period.price, period) }} 
+          <small class="text-xs font-medium text-slate-500">/ {{ 'night' | translate }}</small></strong>
       </div>
     }
   </div>

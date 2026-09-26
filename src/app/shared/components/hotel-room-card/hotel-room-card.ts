@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { mdiIconClass } from '../../utils/mdi-icon.util';
-import { readRoomChildrenPolicies } from '../../utils/hotel-room-children-policies.util';
 import { formatHomePrice } from '../../../features/home/home-price.util';
 
 @Component({
@@ -17,7 +16,6 @@ export class HotelRoomCard {
   readonly iconClass = mdiIconClass;
   @Input() room: any;
   @Input() availability: any | null = null;
-  @Input() isArabic = false;
   @Input() editable = false;
   @Output() editRequested = new EventEmitter<any>();
   _currencyService=inject(CurrencyService);
@@ -32,24 +30,24 @@ export class HotelRoomCard {
   }
 
   roomName(room: any): string {
-    return this.localized(room?.nameEng ?? room?.name, room?.nameAr);
+    return room?.name;
   }
 
   roomDescription(room: any): string {
-    return this.localized(room?.descriptionEng ?? room?.description, room?.descriptionAr);
+    return room?.description;
   }
 
   bedTypeName(room: any): string {
-    return this.localized(room?.bedTypeEng ?? room?.bedType, room?.bedTypeAr, room?.roomTypeName ?? '');
+    return room?.bedType;
   }
 
   amenityName(amenity: any): string {
-    return this.localized(amenity?.nameEng ?? amenity?.name, amenity?.nameAr);
+    return amenity?.name;
   }
 
   ratePlanName(room: any, ratePlanId: number): string {
     const plan = this.ratePlan(room, ratePlanId);
-    return this.localized(plan?.nameEng ?? plan?.name, plan?.nameAr, 'Rate plan');
+    return plan?.name;
   }
 
   ratePlan(room: any, ratePlanId: number): any | null {
@@ -57,7 +55,7 @@ export class HotelRoomCard {
   }
 
   mealPlanName(plan: any): string {
-    return this.localized(plan?.mealPlanDetails?.nameEng, plan?.mealPlanDetails?.nameAr, '');
+    return plan?.mealPlanDetails?.name;
   }
 
   currentPeriod(room: any): any | null {
@@ -77,13 +75,10 @@ export class HotelRoomCard {
   }
 
   childrenPolicyItems(room: any): string[] {
-    return readRoomChildrenPolicies(room?.childrenPolicies)
-      .map(policy => this.localized(policy.valueEng, policy.valueAr)).filter(Boolean);
-  }
+    debugger;
+    return room.childrenPolicies ?? [];
 
-  private localized(english: unknown, arabic: unknown, fallback = ''): string {
-    const value = this.isArabic ? arabic || english || fallback : english || arabic || fallback;
-    return typeof value === 'string' ? value : fallback;
-  }
+
+}
 
 }

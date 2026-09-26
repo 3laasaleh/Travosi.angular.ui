@@ -29,7 +29,7 @@ import { DatePicker } from '../../../../shared/components/date-picker/date-picke
 import { HotelRoomDto } from '../models/hotel-room.dto';
 import { LanguageService } from '../../../../core/services/language.service';
 import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
-import { HotelRoomChildrenPolicy, readRoomChildrenPolicies } from '../../../../shared/utils/hotel-room-children-policies.util';
+import { HotelRoomChildrenPolicy } from '../../../../shared/utils/hotel-room-children-policies.util';
 import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
 import { SaveFeedbackService } from '../../shared/save-feedback.service';
@@ -259,7 +259,7 @@ get todayAfterMonth(): string {
       .forEach((period: any) => this.addPeriod(period));
     if (!this.roomPeriodPrices.length) this.addPeriod();
     this.childrenPolicies.clear();
-    readRoomChildrenPolicies(room.childrenPolicies).forEach((policy) => this.addChildPolicy(policy));
+    room.childrenPolicies?.forEach((policy:any) => this.addChildPolicy(policy));
     this.cdr.markForCheck();
   }
 
