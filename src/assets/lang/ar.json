@@ -114,6 +114,7 @@
   "showAsDefaultHotel": "إظهار كفندق افتراضي",
   "hotelRecords": "سجلات الفنادق",
   "roomsCount": "غرف",
+  "rooms": "الغرف",
   "loadingHotels": "جاري تحميل الفنادق...",
   "noHotelsFound": "لا توجد فنادق.",
   "hotelSaveError": "تعذر حفظ الفندق.",

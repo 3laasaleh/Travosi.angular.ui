@@ -1,10 +1,11 @@
-import { CurrencyService } from './../../../core/services/currency.service';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { environment } from '../../../../environments/environment';
-import { mdiIconClass } from '../../utils/mdi-icon.util';
-import { formatHomePrice } from '../../../features/home/home-price.util';
+import { environment } from '../../../../../environments/environment';
+import { CurrencyService } from '../../../../core/services/currency.service';
+import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
+import { formatHomePrice } from '../../home-price.util';
+
 
 @Component({
   selector: 'app-hotel-room-card',

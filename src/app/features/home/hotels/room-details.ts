@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, OnInit, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -23,7 +23,7 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-room-details',
   standalone: true,
-  imports: [Breadcrumbs, DatePicker, FooterOne, FormsModule, HomeNavbar, ImageViewerModal, ProductReviews, RouterLink, TranslatePipe],
+  imports: [Breadcrumbs, DatePicker, FooterOne, FormsModule, HomeNavbar, ImageViewerModal, ProductReviews, TranslatePipe],
   templateUrl: './room-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

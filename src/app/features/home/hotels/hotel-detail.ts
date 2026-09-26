@@ -23,11 +23,11 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
-import { HotelRoomCard } from '../../../shared/components/hotel-room-card/hotel-room-card';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
 import { AuthService } from '../../user/_services/auth.service';
+import { HotelRoomCard } from './hotel-room-card/hotel-room-card';
 
 @Component({
   selector: 'app-hotel-detail',

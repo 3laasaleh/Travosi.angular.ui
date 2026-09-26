@@ -99,6 +99,7 @@
   "showAsDefaultHotel": "Show as default hotel",
   "hotelRecords": "Hotel records",
   "roomsCount": "rooms",
+  "rooms": "Rooms",
   "loadingHotels": "Loading hotels...",
   "noHotelsFound": "No hotels found.",
   "hotelSaveError": "The hotel could not be saved.",

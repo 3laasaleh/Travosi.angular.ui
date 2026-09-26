@@ -24,7 +24,6 @@ import { catchError, finalize, forkJoin, of, switchMap, throwError } from 'rxjs'
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
-import { HotelRoomCard } from '../../../../shared/components/hotel-room-card/hotel-room-card';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { HotelRoomDto } from '../models/hotel-room.dto';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -33,6 +32,7 @@ import { HotelRoomChildrenPolicy } from '../../../../shared/utils/hotel-room-chi
 import { arabicTextValidator } from '../../../../core/validators/arabic-text.validator';
 import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
 import { SaveFeedbackService } from '../../shared/save-feedback.service';
+import { HotelRoomCard } from '../../../home/hotels/hotel-room-card/hotel-room-card';
 
 interface FacilityGroup {
   id: number;

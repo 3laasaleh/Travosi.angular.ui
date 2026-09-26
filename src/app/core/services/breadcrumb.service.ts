@@ -49,6 +49,7 @@ const SEGMENTS: Record<string, SegmentDefinition> = {
   'user-notification': { en: 'Notifications', ar: 'الإشعارات' },
   configurations: { en: 'Dashboard', ar: 'لوحة التحكم' },
   hotels: { en: 'Hotels', ar: 'الفنادق' },
+  rooms: { en: 'Rooms', ar: 'الغرف' },
   airlines: { en: 'Airlines', ar: 'شركات الطيران' },
   flights: { en: 'Flights', ar: 'الرحلات الجوية' },
   customers: { en: 'Customers', ar: 'العملاء' },
@@ -104,6 +105,17 @@ export class BreadcrumbService {
       { name: language === 'ar' ? 'الرئيسية' : 'Home', path: `${root}/home` },
     ];
     if (!section || section === 'home') return items;
+
+    // Keep the room collection level visible on room detail pages:
+    // Home / Hotels / Hotel name / Rooms / Room name.
+    if (section === 'hotels' && rest[2] === 'rooms' && rest[1] && rest[3]) {
+      items.push({ name: this.label(SEGMENTS['hotels'], 'hotels', language), path: `${root}/hotels` });
+      const hotelPath = `${root}/hotels/${rest[1]}`;
+      items.push({ name: this.humanize(rest[1]), path: hotelPath });
+      items.push({ name: this.label(SEGMENTS['rooms'], 'rooms', language), path: hotelPath });
+      items.push({ name: currentTitle || this.humanize(rest[3]), path });
+      return items;
+    }
 
     const definition = SEGMENTS[section];
     if (definition?.parent) {
