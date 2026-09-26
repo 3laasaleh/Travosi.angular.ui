@@ -43,6 +43,10 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/hotels/hotel-catalog').then((m) => m.HotelCatalog),
   },
   {
+    path: 'hotels/:routeName/rooms/:roomRouteName',
+    loadComponent: () => import('./features/home/hotels/room-details').then((m) => m.RoomDetails),
+  },
+  {
     path: 'hotels/:routeName',
     loadComponent: () => import('./features/home/hotels/hotel-detail').then((m) => m.HotelDetail),
   },

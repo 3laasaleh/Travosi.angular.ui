@@ -1,5 +1,6 @@
 import { CurrencyService } from './../../../core/services/currency.service';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { mdiIconClass } from '../../utils/mdi-icon.util';
@@ -8,7 +9,7 @@ import { formatHomePrice } from '../../../features/home/home-price.util';
 @Component({
   selector: 'app-hotel-room-card',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './hotel-room-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,6 +18,8 @@ export class HotelRoomCard {
   @Input() room: any;
   @Input() availability: any | null = null;
   @Input() editable = false;
+  @Input() hotelRouteName = '';
+  @Input() isArabic = false;
   @Output() editRequested = new EventEmitter<any>();
   _currencyService=inject(CurrencyService);
 
@@ -30,7 +33,7 @@ export class HotelRoomCard {
   }
 
   roomName(room: any): string {
-    return room?.name;
+    return room?.name || room?.nameEng || room?.nameAr || '';
   }
 
   roomDescription(room: any): string {
@@ -75,10 +78,28 @@ export class HotelRoomCard {
   }
 
   childrenPolicyItems(room: any): string[] {
-    debugger;
-    return room.childrenPolicies ?? [];
+    return (Array.isArray(room?.childrenPolicies) ? room.childrenPolicies : [])
+      .map((policy: any) => typeof policy === 'string'
+        ? policy
+        : policy?.value || policy?.valueEng || policy?.valueAr || '')
+      .map((policy: string) => policy.trim())
+      .filter(Boolean);
+  }
 
+  get roomDetailsLink(): string[] | null {
+    const roomRouteName = this.roomRouteName(this.room);
+    if (!this.hotelRouteName || !roomRouteName) return null;
+    return [this.isArabic ? '/ar/hotels' : '/en/hotels', this.hotelRouteName, 'rooms', roomRouteName];
+  }
 
-}
+  private roomRouteName(room: any): string {
+    const storedRouteName = String(room?.routeName ?? '').trim();
+    if (storedRouteName) return storedRouteName;
+    return String(room?.nameEng ?? room?.name ?? '')
+      .trim()
+      .toLocaleLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
 
 }
