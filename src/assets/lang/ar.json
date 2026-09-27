@@ -1502,5 +1502,7 @@
   "currentPrice": "السعر الحالي",
   "stars": "نجوم",
   "invalidUrl": "أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://.",
-  "valueCannotBeNegative": "لا يمكن أن تكون القيمة سالبة."
+  "valueCannotBeNegative": "لا يمكن أن تكون القيمة سالبة.",
+  "reserveNow":"احجز الأن"
+
 }

@@ -4,55 +4,113 @@
   @if (loading) {
   <section class="mx-auto max-w-7xl animate-pulse" aria-busy="true">
     <div class="h-8 w-2/3 rounded-full bg-slate-200"></div>
-    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]"><div class="h-[460px] rounded-2xl bg-slate-200"></div><div class="h-96 rounded-2xl bg-white p-6"><div class="h-6 w-2/3 rounded-full bg-slate-200"></div><div class="mt-6 space-y-4"><div class="h-12 rounded-lg bg-slate-200"></div><div class="h-12 rounded-lg bg-slate-200"></div><div class="h-12 rounded-lg bg-slate-200"></div><div class="h-12 rounded-lg bg-slate-200"></div></div></div></div>
+    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div class="h-[460px] rounded-2xl bg-slate-200"></div>
+      <div class="h-96 rounded-2xl bg-white p-6">
+        <div class="h-6 w-2/3 rounded-full bg-slate-200"></div>
+        <div class="mt-6 space-y-4">
+          <div class="h-12 rounded-lg bg-slate-200"></div>
+          <div class="h-12 rounded-lg bg-slate-200"></div>
+          <div class="h-12 rounded-lg bg-slate-200"></div>
+          <div class="h-12 rounded-lg bg-slate-200"></div>
+        </div>
+      </div>
+    </div>
   </section>
   } @else if (hotel && room) {
   <section class="mx-auto max-w-7xl">
     <header class="mt-3 flex flex-wrap items-start justify-between gap-4">
-      @if (room.roomSize) { <span class="order-last inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-slate-700"><i class="mdi mdi-ruler-square me-1 text-primary"></i>{{ 'roomSize' | translate }}: {{ room.roomSize }} m²</span> }
-      <div><p class="text-sm font-semibold text-primary">{{ room.roomTypeName || ('room' | translate) }}</p><h1 class="mt-1 text-3xl font-bold text-slate-950 md:text-4xl">{{ roomName }}</h1><p class="mt-2 text-sm text-slate-600"><i class="mdi mdi-bed-king-outline me-1 text-primary"></i>{{ room.bedType }} @if (room.bedSize) { · {{ room.bedSize }} }</p></div>
-      <div class="flex flex-wrap gap-2 text-sm font-semibold text-slate-700"><span><i class="mdi mdi-account-outline me-1 text-primary"></i>{{ room.maxAdults ?? 0 }} {{ 'adults' | translate }}</span><span><i class="mdi mdi-human-child me-1 text-primary"></i>{{ room.maxChildren ?? 0 }} {{ 'children' | translate }}</span><span><i class="mdi mdi-baby-face-outline me-1 text-primary"></i>{{ room.maxInfants ?? 0 }} {{ 'infants' | translate }}</span></div>
+      @if (room.roomSize) { <span
+        class="order-last inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-slate-700"><i
+          class="mdi mdi-ruler-square me-1 text-primary"></i>{{ 'roomSize' | translate }}: {{ room.roomSize }} m²</span>
+      }
+      <div>
+        <p class="text-sm font-semibold text-primary">{{ room.roomTypeName || ('room' | translate) }}</p>
+        <h1 class="mt-1 text-3xl font-bold text-slate-950 md:text-4xl">{{ roomName }}</h1>
+        <p class="mt-2 text-sm text-slate-600"><i class="mdi mdi-bed-king-outline me-1 text-primary"></i>{{ room.bedType
+          }} @if (room.bedSize) { · {{ room.bedSize }} }</p>
+      </div>
+     
     </header>
 
     <div class="mt-6 grid gap-7 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div>
         @if (images.length) {
-        <div class="relative overflow-hidden rounded-2xl bg-slate-200 md:grid md:h-[450px] md:grid-cols-[2fr_1fr] md:gap-2">
-          <button type="button" class="group h-full overflow-hidden" (click)="openGallery(0)"><img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" class="h-full min-h-72 w-full object-cover transition duration-500 group-hover:scale-105" /></button>
-          @if (images.length > 1) { <div class="hidden grid-rows-2 gap-2 md:grid">@for (image of images.slice(1, 3); track image.id ?? $index; let index = $index) { <button type="button" class="overflow-hidden" (click)="openGallery(index + 1)"><img [src]="imageUrl(image)" [alt]="imageAlt(image)" class="h-full w-full object-cover" /></button> }</div> }
-          <button type="button" (click)="openGallery()" class="absolute bottom-4 end-4 rounded-lg bg-white px-3 py-2 text-sm font-bold text-slate-900 shadow"><i class="mdi mdi-image-multiple-outline me-1"></i>{{ images.length }} {{ 'photos' | translate }}</button>
+        <div
+          class="relative overflow-hidden rounded-2xl bg-slate-200 md:grid md:h-[450px] md:grid-cols-[2fr_1fr] md:gap-2">
+          <button type="button" class="group h-full overflow-hidden" (click)="openGallery(0)"><img
+              [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])"
+              class="h-full min-h-72 w-full object-cover transition duration-500 group-hover:scale-105" /></button>
+          @if (images.length > 1) { <div class="hidden grid-rows-2 gap-2 md:grid">@for (image of images.slice(1, 3);
+            track image.id ?? $index; let index = $index) { <button type="button" class="overflow-hidden"
+              (click)="openGallery(index + 1)"><img [src]="imageUrl(image)" [alt]="imageAlt(image)"
+                class="h-full w-full object-cover" /></button> }</div> }
+          <button type="button" (click)="openGallery()"
+            class="absolute bottom-4 end-4 rounded-lg bg-white px-3 py-2 text-sm font-bold text-slate-900 shadow"><i
+              class="mdi mdi-image-multiple-outline me-1"></i>{{ images.length }} {{ 'photos' | translate }}</button>
         </div>
-        } @else { <div class="grid h-72 place-items-center rounded-2xl bg-slate-200 text-6xl text-slate-400"><i class="mdi mdi-bed-king-outline"></i></div> }
+        } @else { <div class="grid h-72 place-items-center rounded-2xl bg-slate-200 text-6xl text-slate-400"><i
+            class="mdi mdi-bed-king-outline"></i></div> }
 
-        @if (roomDescription) { <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-bold">{{ 'description' | translate }}</h2><p class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">{{ roomDescription }}</p></section> }
-        <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-bold">{{ 'roomFacilities' | translate }}</h2><div class="mt-4 grid gap-3 sm:grid-cols-2">@for (amenity of room.amenities ?? []; track amenity.id) { <p class="flex items-center gap-2 text-sm text-slate-700"><i class="mdi text-xl text-primary" [class]="iconClass(amenity.iconKey)"></i>{{ amenityName(amenity) }}</p> } @empty { <p class="text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</p> }</div></section>
-        @if (room.childrenPolicies?.length) { <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-bold">{{ 'childrenPolicies' | translate }}</h2><ul class="mt-4 space-y-2 text-sm text-slate-600">@for (policy of room.childrenPolicies; track policy.id ?? $index) { <li class="flex gap-2"><i class="mdi mdi-check-circle-outline text-primary"></i>{{ policyText(policy) }}</li> }</ul></section> }
+        @if (roomDescription) { <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 class="text-xl font-bold">{{ 'description' | translate }}</h2>
+          <p class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">{{ roomDescription }}</p>
+        </section> }
+        <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 class="text-xl font-bold">{{ 'roomFacilities' | translate }}</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">@for (amenity of room.amenities ?? []; track amenity.id) { <p
+              class="flex items-center gap-2 text-sm text-slate-700"><i class="mdi text-xl text-primary"
+                [class]="iconClass(amenity.iconKey)"></i>{{ amenityName(amenity) }}</p> } @empty { <p
+              class="text-sm text-slate-500">{{ 'noFacilitiesFound' | translate }}</p> }</div>
+        </section>
+        @if (room.childrenPolicies?.length) { <section class="mt-7 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 class="text-xl font-bold">{{ 'childrenPolicies' | translate }}</h2>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600">@for (policy of room.childrenPolicies; track policy.id ??
+            $index) { <li class="flex gap-2"><i class="mdi mdi-check-circle-outline text-primary"></i>{{
+              policyText(policy) }}</li> }</ul>
+        </section> }
       </div>
 
       <aside class="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 lg:sticky lg:top-24">
         <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-          <div><span class="text-xs font-medium text-slate-400">{{ 'room' | translate }}</span><p class="text-sm font-bold text-slate-900">{{ roomName }}</p></div>
-          @if (currentPeriod(); as period) { <div class="text-end"><span class="text-xs text-slate-400">{{ 'pricesStartingFrom' | translate }}</span><p class="text-xl font-bold text-primary">{{ formatPrice(period.price, period) }}</p><span class="text-xs text-slate-500">{{ 'perNight' | translate }}</span></div> }
+          <div>
+            
+            <p class="text-sm font-bold text-slate-900">{{ roomName }}</p>
+          </div>
+          @if (currentPeriod(); as period) { <div class="text-end">
+            <p class="text-xl font-bold text-primary">{{ formatPrice(period.price, period) }}</p>
+          </div> }
         </div>
         <form class="mt-3" (ngSubmit)="reserve()" novalidate>
-          <div class="room-traveler-summary mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3" aria-label="{{ 'travelers' | translate }}">
-            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{{ 'travelers' | translate }}</p>
-            <div class="grid grid-cols-3 gap-2 text-center">
-              <div class="rounded-lg bg-white px-2 py-2"><i class="mdi mdi-account text-lg text-primary"></i><strong class="block text-sm text-slate-900">{{ adults }}</strong><span class="text-xs text-slate-500">{{ 'adults' | translate }}</span></div>
-              <div class="rounded-lg bg-white px-2 py-2"><i class="mdi mdi-human-child text-lg text-primary"></i><strong class="block text-sm text-slate-900">{{ children }}</strong><span class="text-xs text-slate-500">{{ 'children' | translate }}</span></div>
-              <div class="rounded-lg bg-white px-2 py-2"><i class="mdi mdi-baby-face-outline text-lg text-primary"></i><strong class="block text-sm text-slate-900">{{ infants }}</strong><span class="text-xs text-slate-500">{{ 'infants' | translate }}</span></div>
-            </div>
-            @if (childrenAges.length) { <p class="mt-2 text-xs text-slate-500">{{ 'children' | translate }}: {{ childrenAges.join(', ') }}</p> }
-            <p class="mt-2 border-t border-slate-200 pt-2 text-xs text-slate-500">{{ 'maxCapacity' | translate }}: {{ room.maxAdults ?? 0 }} {{ 'adults' | translate }} · {{ room.maxChildren ?? 0 }} {{ 'children' | translate }} · {{ room.maxInfants ?? 0 }} {{ 'infants' | translate }}</p>
+          <div class="room-traveler-summary mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3"
+            aria-label="{{ 'travelers' | translate }}">
+            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{{ 'capcity' | translate }}
+            </p>
+            <div class="flex flex-wrap gap-2 text-sm font-semibold text-slate-700"><span><i
+            class="mdi mdi-account-outline me-1 text-primary"></i>{{ room.maxAdults ?? 0 }} {{ 'adults' | translate
+          }}</span><span><i class="mdi mdi-human-child me-1 text-primary"></i>{{ room.maxChildren ?? 0 }} {{ 'children'
+          | translate }}</span>
+          <span>
+            <i class="mdi mdi-baby-face-outline me-1 text-primary"></i>
+            {{ room.maxInfants ?? 0}} {{ 'infants' | translate }}</span>
+          </div>
+            @if (childrenAges.length) { <p class="mt-2 text-xs text-slate-500">{{ 'children' | translate }}: {{
+              childrenAges.join(', ') }}</p> }
+           
           </div>
 
-          @if (error) { <div class="mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">{{ error | translate }}</div> }
-          <button type="submit" [disabled]="booking" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">@if (booking) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span> } @else { <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'bookNow' | translate }}</span> }</button>
+          @if (error) { <div class="mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">{{
+            error | translate }}</div> }
+          <button type="submit" [disabled]="booking"
+            class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">@if
+            (booking) { <i class="mdi mdi-loading mdi-spin"></i><span>{{ 'creatingBooking' | translate }}</span> } @else
+            { <i class="mdi mdi-calendar-check-outline"></i><span>{{ 'reserveNow' | translate }}</span> }</button>
         </form>
       </aside>
     </div>
     <section class="mt-10"><app-product-reviews productType="hotel" [productId]="hotel.id" /></section>
-    @if (imageViewerOpen) { <app-image-viewer-modal [images]="resolvedImages" [title]="roomName" [(selectedIndex)]="selectedImageIndex" (closed)="imageViewerOpen = false" /> }
+    @if (imageViewerOpen) { <app-image-viewer-modal [images]="resolvedImages" [title]="roomName"
+      [(selectedIndex)]="selectedImageIndex" (closed)="imageViewerOpen = false" /> }
   </section>
   } @else { <p class="py-24 text-center text-slate-500">{{ 'noRoomsFound' | translate }}</p> }
 </main>

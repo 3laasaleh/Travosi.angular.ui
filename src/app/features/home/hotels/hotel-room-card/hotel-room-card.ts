@@ -99,13 +99,12 @@ export class HotelRoomCard {
   }
 
   get roomDetailsQueryParams(): Record<string, string | number | null> {
-    const ages = Array.isArray(this.bookingChildrenAges) ? this.bookingChildrenAges : [];
     return {
       adults: Math.max(1, Number(this.bookingAdults) || 1),
       children: Math.max(0, Number(this.bookingChildren) || 0),
       infants: Math.max(0, Number(this.bookingInfants) || 0),
-      childrenAges: ages.length
-        ? ages.map((age) => Number(age) || 0).join(',')
+      childrenAges: this.bookingChildrenAges.length
+        ? this.bookingChildrenAges.map((age) => Number(age) || 0).join(',')
         : null,
     };
   }
