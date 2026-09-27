@@ -62,11 +62,18 @@ export class HotelCatalog implements OnInit {
   availability = new Map<number, any[]>();
   availabilitySearchApplied = false;
   mobileFiltersOpen = false;
-  freeTaxiOnly = false;
-  featuredOnly = false;
+  selectedMealPlans = new Set<number>();
   selectedStars = new Set<number>();
   sortOption: HotelSort = 'recommended';
   readonly starOptions = [5, 4, 3, 2, 1];
+  readonly mealPlans = [
+    { value: 1, label: 'roomOnly' },
+    { value: 2, label: 'bedAndBreakfast' },
+    { value: 3, label: 'halfBoard' },
+    { value: 4, label: 'fullBoard' },
+    { value: 5, label: 'allInclusive' },
+    { value: 6, label: 'ultraAllInclusive' },
+  ];
   readonly guestTypes = [
     { key: 'adults' as const, label: 'adults', minimum: 1 },
     { key: 'children' as const, label: 'children', minimum: 0 },
@@ -99,8 +106,9 @@ export class HotelCatalog implements OnInit {
     if (this.selectedStars.size) {
       filtered = filtered.filter((hotel) => this.selectedStars.has(Number(hotel.starRating)));
     }
-    if (this.freeTaxiOnly) filtered = filtered.filter((hotel) => this.hasFreeAirportTaxi(hotel));
-    if (this.featuredOnly) filtered = filtered.filter((hotel) => hotel?.showAsDefault === true);
+    if (this.selectedMealPlans.size) {
+      filtered = filtered.filter((hotel) => this.hotelMatchesMealPlans(hotel));
+    }
 
     return [...filtered].sort((left, right) => {
       if (this.sortOption === 'stars-desc') {
@@ -117,7 +125,7 @@ export class HotelCatalog implements OnInit {
     });
   }
   get hasActiveFilters(): boolean {
-    return this.freeTaxiOnly || this.featuredOnly || this.selectedStars.size > 0;
+    return this.selectedMealPlans.size > 0 || this.selectedStars.size > 0;
   }
   get today(): string {
     const date = new Date();
@@ -346,10 +354,17 @@ export class HotelCatalog implements OnInit {
     next.has(stars) ? next.delete(stars) : next.add(stars);
     this.selectedStars = next;
   }
+  toggleMealPlan(mealPlan: number): void {
+    const next = new Set(this.selectedMealPlans);
+    next.has(mealPlan) ? next.delete(mealPlan) : next.add(mealPlan);
+    this.selectedMealPlans = next;
+  }
   clearFilters(): void {
     this.selectedStars = new Set<number>();
-    this.freeTaxiOnly = false;
-    this.featuredOnly = false;
+    this.selectedMealPlans = new Set<number>();
+  }
+  mealPlanHotelCount(mealPlan: number): number {
+    return this.unfilteredResults().filter((hotel) => this.hotelHasMealPlan(hotel, mealPlan)).length;
   }
   starHotelCount(stars: number): number {
     return this.unfilteredResults().filter((hotel) => Number(hotel?.starRating) === stars).length;
@@ -443,6 +458,18 @@ export class HotelCatalog implements OnInit {
     return query
       ? this.hotels.filter((hotel) => this.searchable(hotel).includes(query))
       : this.hotels;
+  }
+  private hotelMatchesMealPlans(hotel: any): boolean {
+    return [...this.selectedMealPlans].some((mealPlan) => this.hotelHasMealPlan(hotel, mealPlan));
+  }
+  private hotelHasMealPlan(hotel: any, mealPlan: number): boolean {
+    const availableRoomIds = this.availabilitySearchApplied
+      ? new Set((this.availability.get(Number(hotel?.id)) ?? []).map((room) => Number(room?.hotelRoomId)))
+      : null;
+    return (hotel?.rooms ?? []).some((room: any) =>
+      (!availableRoomIds || availableRoomIds.has(Number(room?.id)))
+      && Number(room?.mealPlan) === mealPlan,
+    );
   }
   private searchable(hotel: any): string {
     return [

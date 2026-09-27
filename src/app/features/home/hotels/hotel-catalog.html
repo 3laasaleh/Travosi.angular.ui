@@ -191,15 +191,14 @@
               @if (hasActiveFilters) { <button type="button" class="text-xs font-semibold text-primary hover:underline" (click)="clearFilters()">{{ 'clearFilters' | translate }}</button> }
             </div>
             <fieldset class="border-b border-slate-200 p-4">
-              <legend class="mb-3 font-semibold text-slate-900">{{ 'popularFilters' | translate }}</legend>
-              <label class="flex cursor-pointer items-start gap-2.5 py-1.5 text-sm text-slate-700">
-                <input type="checkbox" class="mt-0.5 size-4 rounded border-slate-300 text-primary focus:ring-primary" [(ngModel)]="freeTaxiOnly" />
-                <span class="flex-1">{{ 'freeAirportTaxi' | translate }}</span>
-              </label>
-              <label class="flex cursor-pointer items-start gap-2.5 py-1.5 text-sm text-slate-700">
-                <input type="checkbox" class="mt-0.5 size-4 rounded border-slate-300 text-primary focus:ring-primary" [(ngModel)]="featuredOnly" />
-                <span class="flex-1">{{ 'featuredProperties' | translate }}</span>
-              </label>
+              <legend class="mb-3 font-semibold text-slate-900">{{ 'mealPlans' | translate }}</legend>
+              @for (mealPlan of mealPlans; track mealPlan.value) {
+                <label class="flex cursor-pointer items-center gap-2.5 py-1.5 text-sm text-slate-700">
+                  <input type="checkbox" class="size-4 rounded border-slate-300 text-primary focus:ring-primary" [checked]="selectedMealPlans.has(mealPlan.value)" (change)="toggleMealPlan(mealPlan.value)" />
+                  <span class="flex-1">{{ mealPlan.label | translate }}</span>
+                  <span class="text-xs text-slate-400">{{ mealPlanHotelCount(mealPlan.value) }}</span>
+                </label>
+              }
             </fieldset>
             <fieldset class="p-4">
               <legend class="mb-3 font-semibold text-slate-900">{{ 'starRating' | translate }}</legend>

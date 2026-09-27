@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, OnInit, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
@@ -13,7 +12,6 @@ import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
-import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
@@ -23,7 +21,7 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-room-details',
   standalone: true,
-  imports: [Breadcrumbs, DatePicker, FooterOne, FormsModule, HomeNavbar, ImageViewerModal, ProductReviews, TranslatePipe],
+  imports: [Breadcrumbs, FooterOne, HomeNavbar, ImageViewerModal, ProductReviews, TranslatePipe],
   templateUrl: './room-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,27 +30,15 @@ export class RoomDetails implements OnInit {
   hotel: any = null;
   room: any = null;
   loading = true;
-  searching = false;
   booking = false;
-  checkInDate = '';
-  checkOutDate = '';
   adults = 1;
   children = 0;
   infants = 0;
   childrenAges: number[] = [];
   specialRequests = '';
-  availability: any | null = null;
-  availabilitySearched = false;
-  validationSubmitted = false;
   error = '';
   imageViewerOpen = false;
   selectedImageIndex = 0;
-  readonly travelerMenuOpen = signal(false);
-  readonly travelerTypes = [
-    { key: 'adults' as const, ageLabel: 'adultsAgeLabel', minimum: 1 },
-    { key: 'children' as const, ageLabel: 'childrenAgeLabel', minimum: 0 },
-    { key: 'infants' as const, ageLabel: 'infantsAgeLabel', minimum: 0 },
-  ];
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -65,7 +51,6 @@ export class RoomDetails implements OnInit {
   private readonly seo = inject(SeoService);
   private readonly translate = inject(TranslateService);
   private readonly utility = inject(UtilityService);
-  private readonly travelerControl = viewChild<ElementRef<HTMLElement>>('travelerControl');
 
   get isArabic(): boolean { return this.language.currentLanguage() === 'ar'; }
   get today(): string {
@@ -77,7 +62,6 @@ export class RoomDetails implements OnInit {
     return [...images].sort((left, right) => Number(right?.isMain) - Number(left?.isMain));
   }
   get resolvedImages(): string[] { return this.images.map((image) => this.utility.imageUrl(image)); }
-  get quote(): any | null { return this.availability?.ratePlans?.[0] ?? null; }
   get travelers(): number { return this.adults + this.children + this.infants; }
   get roomName(): string { return this.room?.name || this.room?.nameEng || this.room?.nameAr || ''; }
   get roomDescription(): string { return this.room?.description || this.room?.descriptionEng || this.room?.descriptionAr || ''; }
@@ -89,17 +73,6 @@ export class RoomDetails implements OnInit {
       distinctUntilChanged((left, right) => left.routeName === right.routeName && left.roomRouteName === right.roomRouteName),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ routeName, roomRouteName }) => this.loadRoom(routeName, roomRouteName));
-  }
-
-  @HostListener('document:click', ['$event'])
-  closeTravelerMenu(event: MouseEvent): void {
-    if (this.travelerMenuOpen() && !this.travelerControl()?.nativeElement.contains(event.target as Node))
-      this.travelerMenuOpen.set(false);
-  }
-
-  onTravelerFocusOut(event: FocusEvent): void {
-    if (!this.travelerControl()?.nativeElement.contains(event.relatedTarget as Node | null))
-      this.travelerMenuOpen.set(false);
   }
 
   loadRoom(routeName: string, roomRouteName: string): void {
@@ -121,36 +94,18 @@ export class RoomDetails implements OnInit {
       this.room = room;
       if (!hotel || !room) { this.seo.markNotFound('Hotel room not found'); return; }
       this.seo.updateFrom({ ...room, name: this.roomName, description: this.roomDescription }, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Place' });
-      if (this.checkInDate && this.checkOutDate) this.checkAvailability();
-    });
-  }
-
-  checkAvailability(): void {
-    this.validationSubmitted = true;
-    this.error = '';
-    if (!this.isValidSelection()) { this.availability = null; this.availabilitySearched = false; return; }
-    const query = new URLSearchParams({
-      hotelId: String(this.hotel.id), checkInDate: this.checkInDate, checkOutDate: this.checkOutDate,
-      adults: String(this.adults), children: String(this.children), infants: String(this.infants), roomCount: '1',
-    });
-    this.childrenAges.forEach((age) => query.append('childrenAges', String(age)));
-    this.searching = true;
-    this.availability = null;
-    this.availabilitySearched = false;
-    this.api.getUnauthntecated(`HotelAvailability?${query}`).pipe(
-      catchError((error) => { this.error = error?.error?.message || 'hotelAvailabilitySearchFailed'; return of(null); }),
-      finalize(() => { this.searching = false; this.cdr.markForCheck(); }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((response: any) => {
-      if (!response || response?.isSuccess === false) { this.error = response?.message || this.error || 'hotelAvailabilitySearchFailed'; return; }
-      this.availability = (response?.data ?? []).find((item: any) => Number(item?.hotelRoomId) === Number(this.room.id)) ?? null;
-      this.availabilitySearched = true;
-      if (!this.availability) this.error = 'hotelRoomUnavailable';
     });
   }
 
   async reserve(): Promise<void> {
-    if (!this.quote || !this.availability || this.availability.availableQuantity < 1) return;
+    this.error = '';
+    if (!this.hotel?.id || !this.room?.id || this.adults < 1 || this.children < 0 || this.infants < 0 ||
+      !this.roomCapacityValid() ||
+      this.childrenAges.length !== this.children || this.childrenAges.some((age) => !Number.isInteger(Number(age)) || Number(age) < 0 || Number(age) > 17)) {
+      this.error = this.roomCapacityValid() ? 'hotelGuestCountsInvalid' : 'hotelOccupancyExceeded';
+      this.cdr.markForCheck();
+      return;
+    }
     const user = this.auth.getCurentUser();
     if (!user || this.auth.isTokenExpired()) {
       await this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
@@ -158,20 +113,19 @@ export class RoomDetails implements OnInit {
     }
     const confirmation = await Swal.fire({
       title: this.translate.instant('hotelBookingRequest'),
-      text: `${this.roomName} — ${this.quote.grandTotal ?? this.quote.total ?? 0} USD`,
+      text: `${this.roomName}${this.currentPeriod()?.price != null ? ` — ${this.currentPeriod()!.price} USD` : ''}`,
       icon: 'question', showCancelButton: true, confirmButtonText: this.translate.instant('confirm'), cancelButtonText: this.translate.instant('cancel'), confirmButtonColor: '#0891b2',
     });
     if (!confirmation.isConfirmed) return;
     this.booking = true;
     this.api.post('Bookings', {
       hotelId: this.hotel.id, hotelRoomId: this.room.id, roomCount: 1, adults: this.adults, children: this.children,
-      childrenAges: this.childrenAges, infants: this.infants, numberOfTravelers: this.travelers, dateFrom: this.checkInDate, dateTo: this.checkOutDate, specialRequests: this.specialRequests,
+      childrenAges: this.childrenAges, infants: this.infants, numberOfTravelers: this.travelers, specialRequests: this.specialRequests,
     }).pipe(finalize(() => { this.booking = false; this.cdr.markForCheck(); }), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: any) => {
           if (!response?.isSuccess) { await Swal.fire({ icon: 'error', text: this.translate.instant(response?.message || 'hotelRoomUnavailable') }); return; }
           await Swal.fire({ icon: 'success', title: this.translate.instant('hotelBookingRequest'), text: this.translate.instant(response?.data?.acknowledgementEmailSent === false ? 'bookingConfirmationEmailPending' : 'hotelBookingConfirmationEmailSent') });
-          this.checkAvailability();
         },
         error: async (error) => Swal.fire({ icon: 'error', text: this.translate.instant(error?.error?.message || 'hotelRoomUnavailable') }),
       });
@@ -180,15 +134,7 @@ export class RoomDetails implements OnInit {
   updateChildren(): void {
     this.children = Math.max(0, Math.min(17, Number(this.children) || 0));
     this.childrenAges = Array.from({ length: this.children }, (_, index) => this.childrenAges[index] ?? 0);
-    this.availabilitySearched = false;
   }
-  updateTravelerCount(type: 'adults' | 'children' | 'infants', change: number): void {
-    const minimum = type === 'adults' ? 1 : 0;
-    this[type] = Math.max(minimum, Math.trunc(Number(this[type]) || 0) + change);
-    if (type === 'children') this.updateChildren();
-    this.availabilitySearched = false;
-  }
-  travelerCount(type: 'adults' | 'children' | 'infants'): number { return this[type]; }
   imageUrl(image: any): string { return this.utility.imageUrl(image); }
   imageAlt(image: any): string { return this.utility.imageAlt(image, this.roomName); }
   formatPrice(value: unknown, source: any): string { return formatHomePrice(this.currency, value, source); }
@@ -200,20 +146,27 @@ export class RoomDetails implements OnInit {
     return (this.room?.roomPeriodPrices ?? []).find((period: any) => period?.isActive !== false && period.startDate <= today && period.endDate >= today) ?? null;
   }
 
-  private isValidSelection(): boolean {
-    return !!this.hotel?.id && !!this.room?.id && !!this.checkInDate && !!this.checkOutDate && this.checkInDate >= this.today && this.checkOutDate > this.checkInDate
-      && Number.isInteger(Number(this.adults)) && this.adults >= 1 && Number.isInteger(Number(this.children)) && this.children >= 0
-      && Number.isInteger(Number(this.infants)) && this.infants >= 0 && this.childrenAges.length === this.children
-      && this.childrenAges.every((age) => Number.isInteger(Number(age)) && Number(age) >= 0 && Number(age) <= 17);
-  }
   private applyQuery(): void {
     const query = this.route.snapshot.queryParamMap;
-    this.checkInDate = query.get('checkIn') ?? '';
-    this.checkOutDate = query.get('checkOut') ?? '';
     this.adults = Math.max(1, Number(query.get('adults')) || 1);
     this.children = Math.max(0, Number(query.get('children')) || 0);
     this.infants = Math.max(0, Number(query.get('infants')) || 0);
+    const rawAges = query.getAll('childrenAges').flatMap((value) => value.split(','));
+    this.childrenAges = rawAges
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value));
     this.updateChildren();
+  }
+
+  private roomCapacityValid(): boolean {
+    const maxAdults = this.room?.maxAdults == null ? Number.POSITIVE_INFINITY : Number(this.room.maxAdults);
+    const maxChildren = this.room?.maxChildren == null ? Number.POSITIVE_INFINITY : Number(this.room.maxChildren);
+    const maxInfants = this.room?.maxInfants == null ? Number.POSITIVE_INFINITY : Number(this.room.maxInfants);
+    const maxTotal = this.room?.maxTotalOccupancy == null ? Number.POSITIVE_INFINITY : Number(this.room.maxTotalOccupancy);
+    return (!Number.isFinite(maxAdults) || this.adults <= maxAdults) &&
+      (!Number.isFinite(maxChildren) || this.children <= maxChildren) &&
+      (!Number.isFinite(maxInfants) || this.infants <= maxInfants) &&
+      (!Number.isFinite(maxTotal) || maxTotal <= 0 || this.travelers <= maxTotal);
   }
   private roomRouteName(room: any): string {
     const storedRouteName = String(room?.routeName ?? '').trim();

@@ -64,7 +64,7 @@
       <p class="text-xs text-slate-500">{{ 'perNight' | translate }}</p>
     }
     @if (roomDetailsLink; as link) {
-      <a [routerLink]="link" queryParamsHandling="preserve" class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110">
+      <a [routerLink]="link" [queryParams]="roomDetailsQueryParams" class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110">
         {{ 'seeAvailability' | translate }}<i class="mdi" [class.mdi-chevron-left]="isArabic" [class.mdi-chevron-right]="!isArabic" aria-hidden="true"></i>
       </a>
     }

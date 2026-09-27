@@ -198,7 +198,8 @@
         <div class="grid gap-5">
           @for (room of (hasSearchedAvailability ? availableRooms : hotel.rooms); track room.id) {
           <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <app-hotel-room-card [room]="room" [availability]="roomAvailability(room.id)" [hotelRouteName]="hotel.routeName" [isArabic]="isArabic" />
+            <app-hotel-room-card [room]="room" [availability]="roomAvailability(room.id)" [hotelRouteName]="hotel.routeName" [isArabic]="isArabic"
+              [bookingAdults]="adults" [bookingChildren]="children" [bookingInfants]="infants" [bookingChildrenAges]="childrenAges" />
             @if (hasSearchedAvailability && roomAvailability(room.id); as roomAvailability) {
             <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-4">
               <span class="text-sm font-medium text-emerald-700">{{ roomAvailability.availableQuantity }} {{

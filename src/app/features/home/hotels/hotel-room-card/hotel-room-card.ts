@@ -21,6 +21,11 @@ export class HotelRoomCard {
   @Input() editable = false;
   @Input() hotelRouteName = '';
   @Input() isArabic = false;
+  /** Guest selection made on the hotel search form. It is carried to the room page as read-only context. */
+  @Input() bookingAdults = 1;
+  @Input() bookingChildren = 0;
+  @Input() bookingInfants = 0;
+  @Input() bookingChildrenAges: number[] = [];
   @Output() editRequested = new EventEmitter<any>();
   _currencyService=inject(CurrencyService);
 
@@ -91,6 +96,18 @@ export class HotelRoomCard {
     const roomRouteName = this.roomRouteName(this.room);
     if (!this.hotelRouteName || !roomRouteName) return null;
     return [this.isArabic ? '/ar/hotels' : '/en/hotels', this.hotelRouteName, 'rooms', roomRouteName];
+  }
+
+  get roomDetailsQueryParams(): Record<string, string | number | null> {
+    const ages = Array.isArray(this.bookingChildrenAges) ? this.bookingChildrenAges : [];
+    return {
+      adults: Math.max(1, Number(this.bookingAdults) || 1),
+      children: Math.max(0, Number(this.bookingChildren) || 0),
+      infants: Math.max(0, Number(this.bookingInfants) || 0),
+      childrenAges: ages.length
+        ? ages.map((age) => Number(age) || 0).join(',')
+        : null,
+    };
   }
 
   private roomRouteName(room: any): string {

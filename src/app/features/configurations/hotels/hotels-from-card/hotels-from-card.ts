@@ -48,6 +48,7 @@ export interface HotelDTO {
   isActive: boolean;
   showAsDefault: boolean;
   destinationId: number;
+  cityId?: number | null;
 }
 
 @Component({
@@ -77,12 +78,15 @@ export class HotelsFromCard implements OnInit, OnChanges {
   readonly maxImageBytes = 5 * 1024 * 1024;
   readonly imageConstraints = { maxWidth: 2400, maxHeight: 1600 };
   destinations: any[] = [];
+  cities: any[] = [];
+  citiesLoading = false;
   hotelFacilities: any[] = [];
   selectedHotelFacilityIds = new Set<number>();
   private originalHotelFacilityIds = new Set<number>();
   imageUploads: HotelImageUpload[] = [];
   imageValidationMessage = '';
   readonly processingImages = signal(false);
+  private citiesRequestSequence = 0;
 
   constructor(
     private apiService: ApiService,
@@ -106,6 +110,45 @@ export class HotelsFromCard implements OnInit, OnChanges {
     if (!changes['selectedHotel']) return;
     if (this.selectedHotel) this.populateForm(this.selectedHotel);
     else this.resetForm(false);
+  }
+
+  onDestinationChange(): void {
+    const destinationId = Number(this.hotelForm.controls.destinationId.value);
+    this.loadCities(destinationId);
+  }
+
+  private loadCities(destinationId: number, selectedCityId?: number): void {
+    const requestSequence = ++this.citiesRequestSequence;
+    if (!Number.isInteger(destinationId) || destinationId <= 0) {
+      this.cities = [];
+      this.citiesLoading = false;
+      this.hotelForm.controls.cityId.setValue(null);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.citiesLoading = true;
+    this.hotelForm.controls.cityId.setValue(null);
+    this.apiService.get(`Cities/GetAll?destinationId=${destinationId}&page=1&pageSize=500`)
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => {
+          if (requestSequence !== this.citiesRequestSequence) return;
+          this.citiesLoading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe((response: any) => {
+        if (requestSequence !== this.citiesRequestSequence) return;
+        this.cities = this.rows(response)
+          .filter((city) => city?.isActive !== false)
+          .map((city) => ({ ...city, id: Number(city?.id ?? city?.cityId) }))
+          .filter((city) => Number.isInteger(city.id) && city.id > 0);
+        const cityId = Number(selectedCityId);
+        this.hotelForm.controls.cityId.setValue(
+          this.cities.some((city) => city.id === cityId) ? cityId : null,
+        );
+      });
   }
 
   saveHotel(): void {
@@ -155,6 +198,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       cancellationPolicyAr: policies.map((item) => item.valueAr).join(';'),
       isFreeCancelation: form.isFreeCancelation === true,
       destinationId: Number(form.destinationId),
+      cityId: Number(form.cityId),
       descriptionEng: form.descriptionEng.trim(),
       descriptionAr: form.descriptionAr.trim(),
       phoneNumber: form.phoneNumber.trim(),
@@ -255,6 +299,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       website: hotel.website ?? '',
       isFreeCancelation: hotel.isFreeCancelation === true,
       destinationId: hotel.destinationId ?? null,
+      cityId: hotel.cityId ?? null,
       descriptionEng: hotel.descriptionEng ?? '',
       descriptionAr: hotel.descriptionAr ?? '',
       isActive: hotel.isActive !== false,
@@ -273,11 +318,15 @@ export class HotelsFromCard implements OnInit, OnChanges {
       .filter(Boolean);
     this.selectedHotelFacilityIds = new Set(amenityIds);
     this.originalHotelFacilityIds = new Set(amenityIds);
+    this.loadCities(Number(hotel.destinationId), Number(hotel.cityId));
   }
 
   private resetForm(emitCancel: boolean): void {
     this.persistedHotelId = null;
     this.validationSubmitted = false;
+    this.citiesRequestSequence++;
+    this.cities = [];
+    this.citiesLoading = false;
     this.revokeNewImageUrls(); this.imageUploads = []; this.imageValidationMessage = ''; this.selectedHotelFacilityIds = new Set(); this.originalHotelFacilityIds = new Set();
     this.hotelForm.reset({
       name: '',
@@ -292,6 +341,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       to: null,
       isFreeCancelation: false,
       destinationId: null,
+      cityId: null,
       descriptionEng: '',
       descriptionAr: '',
       phoneNumber: '',
@@ -360,7 +410,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
     if (!this.validationSubmitted) return [];
     const labels: Record<string, string> = {
       nameEng: 'nameEnglish', nameAr: 'nameArabic', routeName: 'routeName', starRating: 'starRating',
-      destinationId: 'destination', descriptionEng: 'englishDescription', descriptionAr: 'arabicDescription',
+      destinationId: 'destination', cityId: 'city', descriptionEng: 'englishDescription', descriptionAr: 'arabicDescription',
       distanceFromDowntownKm: 'distanceFromDowntown', email: 'email', cancellationPolicies: 'cancellationPolicies',
       googleMapsUrl: 'googleMapsUrl', website: 'website',
     };
@@ -414,6 +464,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       isFreeCancelation: new FormControl(false, { nonNullable: true }),
       cancellationPolicies: new FormArray<FormGroup>([]),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
+      cityId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
       descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
       phoneNumber: new FormControl('', { nonNullable: true }),

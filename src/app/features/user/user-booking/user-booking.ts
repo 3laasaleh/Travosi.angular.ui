@@ -30,8 +30,8 @@ interface UserBookingItem {
   hotelRouteName?: string;
   bookingType?: string;
   createdDate: string;
-  dateFrom: string;
-  dateTo: string;
+  dateFrom?: string | null;
+  dateTo?: string | null;
   numberOfTravelers: number;
   statusName: string;
   totalPrice: number;
