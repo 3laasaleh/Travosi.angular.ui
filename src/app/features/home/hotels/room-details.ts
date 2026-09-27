@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Location } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -31,16 +32,12 @@ export class RoomDetails implements OnInit {
   room: any = null;
   loading = true;
   booking = false;
-  adults = 1;
-  children = 0;
-  infants = 0;
-  childrenAges: number[] = [];
-  specialRequests = '';
   error = '';
   imageViewerOpen = false;
   selectedImageIndex = 0;
 
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly currency = inject(CurrencyService);
@@ -62,7 +59,6 @@ export class RoomDetails implements OnInit {
     return [...images].sort((left, right) => Number(right?.isMain) - Number(left?.isMain));
   }
   get resolvedImages(): string[] { return this.images.map((image) => this.utility.imageUrl(image)); }
-  get travelers(): number { return this.adults + this.children + this.infants; }
   get roomName(): string { return this.room?.name || this.room?.nameEng || this.room?.nameAr || ''; }
   get roomDescription(): string { return this.room?.description || this.room?.descriptionEng || this.room?.descriptionAr || ''; }
 
@@ -98,14 +94,6 @@ export class RoomDetails implements OnInit {
   }
 
   async reserve(): Promise<void> {
-    this.error = '';
-    if (!this.hotel?.id || !this.room?.id || this.adults < 1 || this.children < 0 || this.infants < 0 ||
-      !this.roomCapacityValid() ||
-      this.childrenAges.length !== this.children || this.childrenAges.some((age) => !Number.isInteger(Number(age)) || Number(age) < 0 || Number(age) > 17)) {
-      this.error = this.roomCapacityValid() ? 'hotelGuestCountsInvalid' : 'hotelOccupancyExceeded';
-      this.cdr.markForCheck();
-      return;
-    }
     const user = this.auth.getCurentUser();
     if (!user || this.auth.isTokenExpired()) {
       await this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
@@ -119,8 +107,7 @@ export class RoomDetails implements OnInit {
     if (!confirmation.isConfirmed) return;
     this.booking = true;
     this.api.post('Bookings', {
-      hotelId: this.hotel.id, hotelRoomId: this.room.id, roomCount: 1, adults: this.adults, children: this.children,
-      childrenAges: this.childrenAges, infants: this.infants, numberOfTravelers: this.travelers, specialRequests: this.specialRequests,
+      hotelId: this.hotel.id, hotelRoomId: this.room.id, roomCount: 1,
     }).pipe(finalize(() => { this.booking = false; this.cdr.markForCheck(); }), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: any) => {
@@ -131,10 +118,7 @@ export class RoomDetails implements OnInit {
       });
   }
 
-  updateChildren(): void {
-    this.children = Math.max(0, Math.min(17, Number(this.children) || 0));
-    this.childrenAges = Array.from({ length: this.children }, (_, index) => this.childrenAges[index] ?? 0);
-  }
+
   imageUrl(image: any): string { return this.utility.imageUrl(image); }
   imageAlt(image: any): string { return this.utility.imageAlt(image, this.roomName); }
   formatPrice(value: unknown, source: any): string { return formatHomePrice(this.currency, value, source); }
@@ -148,26 +132,13 @@ export class RoomDetails implements OnInit {
 
   private applyQuery(): void {
     const query = this.route.snapshot.queryParamMap;
-    this.adults = Math.max(1, Number(query.get('adults')) || 1);
-    this.children = Math.max(0, Number(query.get('children')) || 0);
-    this.infants = Math.max(0, Number(query.get('infants')) || 0);
-    const rawAges = query.getAll('childrenAges').flatMap((value) => value.split(','));
-    this.childrenAges = rawAges
-      .map((value) => Number(value))
-      .filter((value) => Number.isFinite(value));
-    this.updateChildren();
+    const state = this.location.getState() as { hotelBooking?: { adults?: unknown; children?: unknown; infants?: unknown; childrenAges?: unknown } };
+    const selection = state?.hotelBooking;
+    const stateAges = Array.isArray(selection?.childrenAges) ? selection.childrenAges.map((value) => String(value)) : [];
+    const rawAges = stateAges.length ? stateAges : query.getAll('childrenAges').flatMap((value) => value.split(','));
+   
   }
 
-  private roomCapacityValid(): boolean {
-    const maxAdults = this.room?.maxAdults == null ? Number.POSITIVE_INFINITY : Number(this.room.maxAdults);
-    const maxChildren = this.room?.maxChildren == null ? Number.POSITIVE_INFINITY : Number(this.room.maxChildren);
-    const maxInfants = this.room?.maxInfants == null ? Number.POSITIVE_INFINITY : Number(this.room.maxInfants);
-    const maxTotal = this.room?.maxTotalOccupancy == null ? Number.POSITIVE_INFINITY : Number(this.room.maxTotalOccupancy);
-    return (!Number.isFinite(maxAdults) || this.adults <= maxAdults) &&
-      (!Number.isFinite(maxChildren) || this.children <= maxChildren) &&
-      (!Number.isFinite(maxInfants) || this.infants <= maxInfants) &&
-      (!Number.isFinite(maxTotal) || maxTotal <= 0 || this.travelers <= maxTotal);
-  }
   private roomRouteName(room: any): string {
     const storedRouteName = String(room?.routeName ?? '').trim();
     if (storedRouteName) return storedRouteName.toLocaleLowerCase();
