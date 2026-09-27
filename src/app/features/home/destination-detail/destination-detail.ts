@@ -23,7 +23,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { SeoService } from '../../../core/services/seo.service';
-import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
@@ -37,7 +37,7 @@ import { TourCard } from '../../../shared/components/tour-card/tour-card';
     FooterOne,
     ImageViewerModal,
     DestinationCitiesCarousel,
-    DescriptionLinks,
+    DescriptionPreview,
     TourCard,
   ],
   templateUrl: './destination-detail.html',

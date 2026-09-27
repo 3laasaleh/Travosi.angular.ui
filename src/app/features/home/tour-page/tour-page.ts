@@ -23,6 +23,7 @@ import { TourDetail } from './tour-detail/tour-detail/tour-detail';
 import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
@@ -31,7 +32,7 @@ import { PaginationModel } from '../../../core/models/pagination.model';
 @Component({
   selector: 'app-home-tour-page',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews, TourCard],
+  imports: [Breadcrumbs, DescriptionPreview, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourDetail, TourBookingCard, ItineraryTimeline, ImageViewerModal, ProductReviews, TourCard],
   templateUrl: './tour-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

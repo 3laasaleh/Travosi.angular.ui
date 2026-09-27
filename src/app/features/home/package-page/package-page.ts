@@ -20,7 +20,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { SeoService } from '../../../core/services/seo.service';
-import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
@@ -35,7 +35,7 @@ import { TourCard } from '../../../shared/components/tour-card/tour-card';
     TourBookingCard,
     ImageViewerModal,
     ProductReviews,
-    DescriptionLinks,
+    DescriptionPreview,
     TourCard,
   ],
   templateUrl: './package-page.html',

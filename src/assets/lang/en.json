@@ -278,6 +278,7 @@
   "viewAllPackages": "View all packages",
   "exploreMore": "Explore more",
   "showMore": "Show more",
+  "showLess": "Show less",
   "loading": "Loading...",
   "searchPlaceholder": "Search destinations, tours, packages...",
   "clearSearch": "Clear search",
@@ -1503,4 +1504,5 @@
   "invalidUrl": "Enter a valid URL starting with http:// or https://.",
   "valueCannotBeNegative": "The value cannot be negative.",
   "reserveNow":"Reserve Now"
+ 
 }

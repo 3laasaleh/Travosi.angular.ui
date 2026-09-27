@@ -18,6 +18,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DestinationHomeDTO } from '../home-sections/destinations-section/destination.model';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 
 interface PaginationInfo {
   page: number;
@@ -29,7 +30,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-destinations-list',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
+  imports: [Breadcrumbs, DescriptionPreview, RouterLink, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
   templateUrl: './destinations-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

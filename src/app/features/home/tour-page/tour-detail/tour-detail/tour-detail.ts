@@ -7,11 +7,11 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../../core/services/currency.service';
 import { UtilityService } from '../../../../../core/services/utilityservice';
-import { DescriptionLinks } from '../../../../../shared/components/description-links/description-links';
+import { DescriptionPreview } from '../../../../../shared/components/description-preview/description-preview';
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [TranslatePipe, DescriptionLinks],
+  imports: [DescriptionPreview, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-detail.html',
 })

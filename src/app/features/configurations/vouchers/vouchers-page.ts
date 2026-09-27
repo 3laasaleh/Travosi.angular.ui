@@ -50,10 +50,10 @@ export class Vouchers implements OnInit {
   readonly today = this.localDate(new Date());
 
   readonly types: VoucherTypeOption[] = [
-    { id: 1, key: 'flight', referenceKey: 'flightId' },
-    { id: 2, key: 'hotel', referenceKey: 'hotelId' },
-    { id: 3, key: 'tour', referenceKey: 'tourId' },
-    { id: 4, key: 'package', referenceKey: 'packageId' },
+    { id: 1, key: 'flights', referenceKey: 'flightId' },
+    { id: 2, key: 'hotels', referenceKey: 'hotelId' },
+    { id: 3, key: 'tours', referenceKey: 'tourId' },
+    { id: 4, key: 'packages', referenceKey: 'packageId' },
     { id: 5, key: 'transfer', referenceKey: null },
   ];
 

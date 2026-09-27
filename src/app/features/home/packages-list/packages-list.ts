@@ -22,6 +22,7 @@ import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagi
 import { formatHomePrice } from '../home-price.util';
 import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 
 interface PaginationInfo {
   page: number;
@@ -33,7 +34,7 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-packages-list',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, CatalogSearchForm],
+  imports: [Breadcrumbs, CatalogSearchForm, DescriptionPreview, RouterLink, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne],
   templateUrl: './packages-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

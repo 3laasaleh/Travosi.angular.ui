@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core
 import { RouterLink } from '@angular/router';
 import { UtilityService } from '../../../core/services/utilityservice';
 import { CityHomeDTO } from '../../models/city-home.model';
+import { DescriptionPreview } from '../description-preview/description-preview';
 
-@Component({ selector: 'app-destination-cities-grid', standalone: true, imports: [RouterLink], templateUrl: './destination-cities-grid.html', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-destination-cities-grid', standalone: true, imports: [DescriptionPreview, RouterLink], templateUrl: './destination-cities-grid.html', changeDetection: ChangeDetectionStrategy.OnPush })
 export class DestinationCitiesGrid {
   private readonly utilityService = inject(UtilityService);
   @Input() destinationId!: number;

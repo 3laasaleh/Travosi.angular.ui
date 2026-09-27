@@ -16,6 +16,7 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
 import { AuthService } from '../../user/_services/auth.service';
 import { formatHomePrice } from '../home-price.util';
@@ -23,7 +24,7 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-room-details',
   standalone: true,
-  imports: [Breadcrumbs, FooterOne, HomeNavbar, ImageViewerModal, ProductReviews, ReactiveFormsModule, TranslatePipe],
+  imports: [Breadcrumbs, DescriptionPreview, FooterOne, HomeNavbar, ImageViewerModal, ProductReviews, ReactiveFormsModule, TranslatePipe],
   templateUrl: './room-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,10 +78,6 @@ export class RoomDetails implements OnInit {
   get isLoggedIn(): boolean {
     return this.auth.getCurentUser() !== null && !this.auth.isTokenExpired();
   }
-  get roomAdults(): number { return this.capacityValue(this.room?.maxAdults, 1); }
-  get roomChildren(): number { return this.capacityValue(this.room?.maxChildren); }
-  get roomInfants(): number { return this.capacityValue(this.room?.maxInfants); }
-  get roomGuests(): number { return this.roomAdults + this.roomChildren + this.roomInfants; }
   get today(): string {
     const date = new Date();
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -262,20 +259,13 @@ export class RoomDetails implements OnInit {
   }
 
   private createBookingPayload(): Record<string, unknown> | null {
-    const hotelId = Number(this.hotel?.id);
     const hotelRoomId = Number(this.room?.id);
-    if (!Number.isInteger(hotelId) || hotelId <= 0 || !Number.isInteger(hotelRoomId) || hotelRoomId <= 0) {
+    if (!Number.isInteger(hotelRoomId) || hotelRoomId <= 0) {
       this.error = 'bookingCreateError';
       return null;
     }
     return {
-      HotelId: hotelId,
       HotelRoomId: hotelRoomId,
-      RoomCount: 1,
-      NumberOfTravelers: this.roomGuests,
-      Adults: this.roomAdults,
-      Children: this.roomChildren,
-      Infants: this.roomInfants,
     };
   }
 
@@ -285,11 +275,6 @@ export class RoomDetails implements OnInit {
     this.availabilityStatus = 'unavailable';
     this.roomUnavailable = unavailable;
     void Swal.fire({ icon: 'error', text: this.translate.instant(key) });
-  }
-
-  private capacityValue(value: unknown, fallback = 0): number {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) && parsed >= 0 ? Math.trunc(parsed) : fallback;
   }
 
   private bookingErrorMessage(message: unknown): string {

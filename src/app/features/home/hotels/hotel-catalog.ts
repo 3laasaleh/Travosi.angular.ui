@@ -23,6 +23,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { CatalogSearchForm } from '../../../shared/components/catalog-search-form/catalog-search-form';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { formatHomePrice } from '../home-price.util';
 
 type HotelSort = 'recommended' | 'price-asc' | 'distance' | 'stars-desc';
@@ -30,7 +31,7 @@ type HotelSort = 'recommended' | 'price-asc' | 'distance' | 'stars-desc';
 @Component({
   selector: 'app-hotel-catalog',
   standalone: true,
-  imports: [Breadcrumbs, CatalogSearchForm, DatePicker, FooterOne, FormsModule, HomeNavbar, RouterLink, TranslatePipe],
+  imports: [Breadcrumbs, CatalogSearchForm, DatePicker, DescriptionPreview, FooterOne, FormsModule, HomeNavbar, RouterLink, TranslatePipe],
   templateUrl: './hotel-catalog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

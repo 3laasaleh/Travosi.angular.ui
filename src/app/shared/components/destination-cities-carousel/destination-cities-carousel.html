@@ -11,7 +11,7 @@
             <div class="min-w-0">
               <h3 class="font-semibold group-hover:text-primary">{{ cityName(city) }}</h3>
               @if (city.description) {
-                <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{{ city.description }}</p>
+                <p class="mt-2 text-sm leading-6 text-slate-500"><app-description-preview [text]="city.description" /></p>
               }
             </div><i class="mdi mdi-arrow-right text-xl text-primary rtl:rotate-180"></i>
           </div>

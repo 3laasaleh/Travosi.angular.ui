@@ -4,13 +4,14 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../../environments/environment';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
+import { DescriptionPreview } from '../../../../shared/components/description-preview/description-preview';
 import { formatHomePrice } from '../../home-price.util';
 
 
 @Component({
   selector: 'app-hotel-room-card',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [DescriptionPreview, RouterLink, TranslatePipe],
   templateUrl: './hotel-room-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +44,7 @@ export class HotelRoomCard {
   }
 
   roomDescription(room: any): string {
-    return room?.description;
+    return room?.description || room?.descriptionEng || room?.descriptionAr || '';
   }
 
   bedTypeName(room: any): string {

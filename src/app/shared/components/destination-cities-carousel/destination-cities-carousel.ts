@@ -5,11 +5,12 @@ import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import { UtilityService } from '../../../core/services/utilityservice';
 import { CityHomeDTO } from '../../models/city-home.model';
+import { DescriptionPreview } from '../description-preview/description-preview';
 
 @Component({
   selector: 'app-destination-cities-carousel',
   standalone: true,
-  imports: [RouterLink],
+  imports: [DescriptionPreview, RouterLink],
   templateUrl: './destination-cities-carousel.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

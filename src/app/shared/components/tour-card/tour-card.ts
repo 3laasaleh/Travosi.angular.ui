@@ -5,11 +5,12 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { UtilityService } from '../../../core/services/utilityservice';
 import type { TourHomeDTO } from '../../../features/home/home-sections/tours-section/tours-section';
 import type { CatalogBookingSelection } from '../catalog-search-form/catalog-search-form';
+import { DescriptionPreview } from '../description-preview/description-preview';
 
 @Component({
   selector: 'app-tour-card',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [DescriptionPreview, RouterLink, TranslatePipe],
   templateUrl: './tour-card.html',
   host: { class: 'block h-full min-w-0' },
   changeDetection: ChangeDetectionStrategy.OnPush,

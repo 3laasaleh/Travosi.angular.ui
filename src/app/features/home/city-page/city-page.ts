@@ -16,14 +16,14 @@ import { SeoService } from '../../../core/services/seo.service';
 import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { DescriptionLinks } from '../../../shared/components/description-links/description-links';
+import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [Breadcrumbs, RouterLink, TranslatePipe, HomeNavbar, FooterOne, DescriptionLinks,TourCard],
+  imports: [Breadcrumbs, DescriptionPreview, RouterLink, TranslatePipe, HomeNavbar, FooterOne, TourCard],
   templateUrl: './city-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

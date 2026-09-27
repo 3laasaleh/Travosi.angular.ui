@@ -15,10 +15,11 @@ import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationModel } from '../../../../shared/models/pagination.model';
 import { DestinationHomeDTO } from './destination.model';
+import { DescriptionPreview } from '../../../../shared/components/description-preview/description-preview';
 
 @Component({
   selector: 'app-destinations-section',
-  imports: [RouterLink, TranslatePipe],
+  imports: [DescriptionPreview, RouterLink, TranslatePipe],
   templateUrl: './destinations-section.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

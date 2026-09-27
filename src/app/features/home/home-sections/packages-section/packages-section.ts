@@ -8,11 +8,12 @@ import { CurrencyService } from '../../../../core/services/currency.service';
 import { UtilityService } from '../../../../core/services/utilityservice';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { PackageDTO } from './package.model';
+import { DescriptionPreview } from '../../../../shared/components/description-preview/description-preview';
 
 
 @Component({
   selector: 'app-packages-section',
-  imports: [TranslatePipe, RouterLink],
+  imports: [DescriptionPreview, TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './packages-section.html',
 })
