@@ -83,11 +83,9 @@ export class SeoService {
       .join(' ');
     const localizedTitle = (language: 'en' | 'ar') => this.textValue(
       entity,
-      language === 'ar' ? 'titleAr' : 'titleEng',
-      language === 'ar' ? 'TitleAr' : 'TitleEng',
       language === 'ar' ? 'nameAr' : 'nameEng',
       language === 'ar' ? 'NameAr' : 'NameEng',
-      'title', 'Title', 'name', 'Name',
+      'name', 'Name',
     );
     const localizedDescription = (language: 'en' | 'ar') => this.textValue(
       entity,

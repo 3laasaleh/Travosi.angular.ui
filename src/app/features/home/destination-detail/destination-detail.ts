@@ -85,7 +85,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationTitleHomeResolver(destination: any): string {
-    return destination?.title ?? destination?.name ?? '';
+    return destination?.name ?? '';
   }
 
   destinationShortDescription(): string {

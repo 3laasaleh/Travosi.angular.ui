@@ -20,8 +20,8 @@ type SearchResultType = 'destination' | 'tour' | 'package';
 interface SearchResultItem {
   id: number;
   type: SearchResultType;
-  titleEn: string;
-  titleAr?: string | null;
+  nameEn: string;
+  nameAr?: string | null;
   description?: string | null;
   imageUrl?: string | null;
   price?: number | null;
@@ -61,9 +61,8 @@ export class SearchBox implements OnInit {
 
   displayName(item: SearchResultItem): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    const preferredTitle = arabic ? item.titleAr : item.titleEn;
-    const fallbackTitle = arabic ? item.titleEn : item.titleAr;
-    return preferredTitle?.trim() || fallbackTitle?.trim() || '';
+    const preferredTitle = arabic ? item.nameAr : item.nameEn;
+    return preferredTitle?.trim() || '';
   }
 
   displayDescription(item: SearchResultItem): string {
@@ -80,7 +79,6 @@ export class SearchBox implements OnInit {
         distinctUntilChanged(),
         switchMap((term) => {
           if (!term) return this.search(term);
-
           this.hideResultsWhileTyping();
           return timer(300).pipe(
             switchMap(() => {
@@ -93,7 +91,6 @@ export class SearchBox implements OnInit {
       )
       .subscribe((items) => {
           this.isLoading=true;
-
         this.groups = this.buildGroups(items);
         this.cdr.markForCheck();
       });
@@ -187,7 +184,7 @@ export class SearchBox implements OnInit {
         Number.isInteger(item.id) &&
         item.id > 0 &&
         validTypes.includes(item.type) &&
-        Boolean(item.titleEn || item.titleAr),
+        Boolean(item.nameEn || item.nameAr),
     );
   }
 

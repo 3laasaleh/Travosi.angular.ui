@@ -22,7 +22,7 @@ export class TourDetail {
   @Input() tour: any = null;
 
   get title(): string {
-    return this.tour?.name ?? this.tour?.title ?? this.tour?.nameEng ?? this.tour?.nameAr ?? '';
+    return this.tour?.name ?? this.tour?.nameEng ?? this.tour?.nameAr ?? '';
   }
 
   get destinationName(): string {
