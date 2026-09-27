@@ -63,7 +63,7 @@
               </div>
               <div class="max-h-80 overflow-y-auto p-2">
                 @for (task of agentTasks; track task.id) {
-                  <a routerLink="/configurations/tasks" (click)="markNotificationAsRead(task)" class="flex items-start gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-50 dark:hover:bg-slate-800" [class.bg-primary-50]="task.isRead !== true" role="menuitem">
+                  <a [routerLink]="notificationLink(task)" (click)="markNotificationAsRead(task)" class="flex items-start gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-50 dark:hover:bg-slate-800" [class.bg-primary-50]="task.isRead !== true" role="menuitem">
                     <span class="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-primary-50 text-primary">
                       <i class="mdi mdi-bell-ring-outline"></i>
                     </span>

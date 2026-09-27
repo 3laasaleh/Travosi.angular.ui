@@ -108,6 +108,14 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
     this.refreshIcons();
   }
 
+  notificationLink(notification: any): string {
+    // General notifications are created for new hotel-room booking requests;
+    // task notifications still open the agent task board.
+    return Number(notification?.type) === 4
+      ? '/configurations/bookings'
+      : '/configurations/tasks';
+  }
+
   get currentLanguage(): string {
     return this.languageService.getCurrentLanguage();
   }

@@ -236,6 +236,19 @@ export class HotelDetail implements OnInit {
     return this.availability.get(Number(roomId)) ?? null;
   }
 
+  openRoom(room: any): void {
+    const hotelRouteName = String(this.hotel?.routeName ?? '').trim();
+    const roomRouteName = this.roomRouteName(room);
+    if (!hotelRouteName || !roomRouteName) return;
+
+    void this.router.navigate([
+      this.isArabic ? '/ar/hotels' : '/en/hotels',
+      hotelRouteName,
+      'rooms',
+      roomRouteName,
+    ]);
+  }
+
   async reserveRoom(room: any): Promise<void> {
     const availability = this.roomAvailability(room?.id);
     const price = availability?.ratePlans?.[0];
@@ -361,6 +374,16 @@ export class HotelDetail implements OnInit {
   }
   amenityName(amenity: any): string {
     return this.localized(amenity?.nameEng ?? amenity?.name, amenity?.nameAr);
+  }
+
+  private roomRouteName(room: any): string {
+    const storedRouteName = String(room?.routeName ?? '').trim();
+    if (storedRouteName) return storedRouteName;
+    return String(room?.nameEng ?? room?.name ?? '')
+      .trim()
+      .toLocaleLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   private searchValuesValid(): boolean {
