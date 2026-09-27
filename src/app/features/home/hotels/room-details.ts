@@ -93,7 +93,9 @@ export class RoomDetails implements OnInit {
         {
           ...room,
           name: this.roomName,
-          description: this.roomDescription,
+          descriptionEng: this.roomSeoDescription('en'),
+          descriptionAr: this.roomSeoDescription('ar'),
+          description: this.roomSeoDescription(this.language.currentLanguage()),
           hotelName: hotel.name || hotel.nameEng || hotel.nameAr,
           hotelUrl: `/${this.language.currentLanguage()}/hotels/${encodeURIComponent(routeName)}`,
           price: this.currentPeriod()?.price,
@@ -154,5 +156,22 @@ export class RoomDetails implements OnInit {
     const storedRouteName = String(room?.routeName ?? '').trim();
     if (storedRouteName) return storedRouteName.toLocaleLowerCase();
     return String(room?.nameEng ?? room?.name ?? '').trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  private roomSeoDescription(language: 'en' | 'ar'): string {
+    const source = String(language === 'ar'
+      ? this.room?.descriptionAr || this.room?.descriptionEng || this.room?.description || ''
+      : this.room?.descriptionEng || this.room?.descriptionAr || this.room?.description || '').trim();
+    if (source.length >= 40) return source;
+
+    const roomName = String(language === 'ar'
+      ? this.room?.nameAr || this.room?.nameEng || this.room?.name || ''
+      : this.room?.nameEng || this.room?.nameAr || this.room?.name || '').trim();
+    const hotelName = String(language === 'ar'
+      ? this.hotel?.nameAr || this.hotel?.nameEng || this.hotel?.name || ''
+      : this.hotel?.nameEng || this.hotel?.nameAr || this.hotel?.name || '').trim();
+    return language === 'ar'
+      ? `اطّلع على تفاصيل ومرافق وسعة وتوفر غرفة ${roomName} في ${hotelName} واحجز مع سي وورلد هوليدايز.`
+      : `View ${roomName} details, amenities, occupancy and availability at ${hotelName}, and book with Sea World Holidays.`;
   }
 }

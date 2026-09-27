@@ -187,6 +187,7 @@ export class SeoService {
     this.updateOrRemoveProperty('og:description', resolvedDescription);
     this.updateProperty('og:type', schemaType === 'BlogPosting' ? 'article' : 'website');
     this.updateProperty('og:locale', language === 'ar' ? 'ar_EG' : 'en_US');
+    this.updateProperty('og:locale:alternate', language === 'ar' ? 'en_US' : 'ar_EG');
     this.updateProperty('og:url', canonicalUrl);
     this.updateName('twitter:card', imageUrl ? 'summary_large_image' : 'summary');
     this.updateOrRemoveName('twitter:title', resolvedTitle);
