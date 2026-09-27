@@ -140,8 +140,8 @@ export class SeoService {
   }
 
   imageAlt(image: any, fallback = ''): string {
-    const english = image?.altEng ?? image?.AltEng ?? image?.altTextEng ?? image?.AltTextEng;
-    const arabic = image?.altAr ?? image?.AltAr ?? image?.altTextAr ?? image?.AltTextAr;
+    const english = image?.altEng ;
+    const arabic = image?.altAr ;
     return this.languageFromUrl() === 'ar'
       ? arabic || english || image?.imageName || image?.ImageName || fallback
       : english || arabic || image?.imageName || image?.ImageName || fallback;
