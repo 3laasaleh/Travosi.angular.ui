@@ -25,7 +25,7 @@ import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 interface ActiveBlog {
   id?: number;
   routeName?: string;
-  title?: string;
+  name?: string;
   summary?: string;
   publishedAt?: string;
   images?: unknown[];
@@ -106,7 +106,7 @@ export class BlogsSection implements OnInit, OnDestroy {
     return blog.publishedAt ?? blog.publishedAt;
   }
 
-  title(blog: ActiveBlog): string { return blog.title ?? ''; }
+  title(blog: ActiveBlog): string { return blog.name ?? ''; }
 
   summary(blog: ActiveBlog): string { return blog.summary ?? ''; }
 

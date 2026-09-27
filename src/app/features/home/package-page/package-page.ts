@@ -153,13 +153,22 @@ export class HomePackagePage implements OnInit {
   }
 
   get duration(): string {
-    const days = this.travelPackage?.durationDays ?? this.travelPackage?.days;
-    const duration = this.travelPackage?.duration;
-    return days ? `${days}` : duration ? String(duration) : '-';
+    return this.durationDays > 0 ? `${this.durationDays}` : '-';
+  }
+
+  get durationDays(): number {
+    return this.durationNumber(
+      this.travelPackage?.durationDays ?? this.travelPackage?.days ?? this.travelPackage?.duration,
+    );
   }
 
   get durationHours(): number {
-    return Number(this.travelPackage?.durationHours ?? 0);
+    return this.durationNumber(this.travelPackage?.durationHours);
+  }
+
+  private durationNumber(value: unknown): number {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   }
 
   get groupSize(): number {

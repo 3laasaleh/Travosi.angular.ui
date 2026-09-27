@@ -80,7 +80,10 @@
         }
         <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3">
-            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ duration }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div></div>
+            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">
+              @if (durationDays > 0 || durationHours === 0) { {{ durationDays }} {{ 'days' | translate }} }
+              @if (durationHours > 0) { @if (durationDays > 0) { <span aria-hidden="true"> · </span> } {{ durationHours }} {{ 'hours' | translate }} }
+            </p></div></div>
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-account-group-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p></div></div>
             <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-wallet-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'pricePerPerson' | translate }}</p><p class="mt-1 text-lg font-bold text-primary">{{ formattedPrice }}</p>@if (hasDiscount) { <p class="text-xs text-slate-400 line-through">{{ formattedOriginalPrice }}</p> }</div></div>
           </div>
@@ -139,7 +142,10 @@
                 <i class="mdi mdi-clock-outline text-primary">
                 </i>{{ 'duration' | translate }}
               </dt>
-              <dd class="font-semibold">{{ duration }}</dd>
+              <dd class="font-semibold">
+                @if (durationDays > 0 || durationHours === 0) { {{ durationDays }} {{ 'days' | translate }} }
+                @if (durationHours > 0) { @if (durationDays > 0) { <span aria-hidden="true"> · </span> } {{ durationHours }} {{ 'hours' | translate }} }
+              </dd>
             </div>@if (destinationName)
             { <div class="flex items-center justify-between gap-4">
               <dt class="flex items-center gap-2 text-white/55">

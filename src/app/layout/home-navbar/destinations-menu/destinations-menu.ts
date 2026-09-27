@@ -18,20 +18,20 @@ import { ApiService } from '../../../core/services/apiservice.service';
 interface DestinationTourNavigationDTO {
   id: number;
   routeName?: string | null;
-  title: string;
+  name: string;
 }
 
 interface DestinationCityNavigationDTO {
   id: number;
   routeName?: string | null;
-  title: string;
+  name: string;
   tours: DestinationTourNavigationDTO[];
 }
 
 interface DestinationNavigationDTO {
   id: number;
   routeName?: string | null;
-  title: string;
+  name: string;
   cities: DestinationCityNavigationDTO[];
 }
 
@@ -58,11 +58,11 @@ export class DestinationsMenu {
   activeCityId: number | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  destinationName(item: DestinationNavigationDTO): string { return item.title; }
-  cityName(item: DestinationCityNavigationDTO): string { return item.title; }
+  destinationName(item: DestinationNavigationDTO): string { return item.name; }
+  cityName(item: DestinationCityNavigationDTO): string { return item.name; }
   cities(destination: DestinationNavigationDTO): DestinationCityNavigationDTO[] { return destination.cities ?? []; }
   tours(city: DestinationCityNavigationDTO): DestinationTourNavigationDTO[] { return city.tours ?? []; }
-  tourName(item: DestinationTourNavigationDTO): string { return item.title; }
+  tourName(item: DestinationTourNavigationDTO): string { return item.name; }
   get isMobile(): boolean { return this.layout === 'mobile'; }
   get menuId(): string { return `destinations-mega-menu-${this.layout}`; }
   get selectedDestination(): DestinationNavigationDTO | null {

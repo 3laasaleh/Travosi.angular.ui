@@ -36,12 +36,17 @@ export class TourDetail {
     );
   }
 
-  get durationDays(): number | string {
-    return this.tour?.durationDays ?? this.tour?.days ?? this.tour?.duration ?? 0;
+  get durationDays(): number {
+    return this.durationNumber(this.tour?.durationDays ?? this.tour?.days ?? this.tour?.duration);
   }
 
-  get durationHours(): number | string {
-    return this.tour?.durationHours ?? this.tour?.durationhours ?? this.tour?.hours ?? 0;
+  get durationHours(): number {
+    return this.durationNumber(this.tour?.durationHours ?? this.tour?.durationhours ?? this.tour?.hours);
+  }
+
+  private durationNumber(value: unknown): number {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   }
 
   get tourType(): string {

@@ -3,7 +3,10 @@
     <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3 dark:divide-slate-800">
       <div class="flex items-center gap-3 p-4 sm:p-5">
         <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-cyan-50 text-xl text-primary dark:bg-primary/10"><i class="mdi mdi-clock-outline"></i></span>
-        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ durationDays }} {{ 'days' | translate }} @if (durationHours) { · {{ durationHours }} {{ 'hours' | translate }} }</p></div>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">
+          @if (durationDays > 0 || durationHours === 0) { {{ durationDays }} {{ 'days' | translate }} }
+          @if (durationHours > 0) { @if (durationDays > 0) { <span aria-hidden="true"> · </span> } {{ durationHours }} {{ 'hours' | translate }} }
+        </p></div>
       </div>
 
       <div class="flex items-center gap-3 p-4 sm:p-5">

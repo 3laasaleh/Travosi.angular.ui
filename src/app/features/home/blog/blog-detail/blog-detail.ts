@@ -85,16 +85,11 @@ export class BlogDetail implements OnInit {
     return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
   }
   get title(): string {
-    return (
-      this.blog?.title ??
-      this.blog?.Title ??
-      (this.isArabic
-        ? this.blog?.nameAr || this.blog?.nameEng || ''
-        : this.blog?.nameEng || this.blog?.nameAr || '')
-    );
+    return  this.blog?.name ??"";
+
   }
   get summary(): string {
-    return this.blog?.summary ?? this.blog?.Summary ?? '';
+    return this.blog?.summary ?? '';
   }
   get content(): string {
     return this.headerData.length ? '' : this.localizedRawContent;

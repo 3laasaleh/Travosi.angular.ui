@@ -10,17 +10,19 @@
       <span class="text-xs font-medium text-slate-400">{{ 'adult' | translate }}</span>
       <p class="text-xl font-bold leading-tight text-slate-900">{{ formattedPricePerPerson }} @if (hasDiscount) { <span class="ms-1 text-xs font-medium text-slate-400 line-through">{{ formattedOriginalPricePerPerson }}</span> }</p>
     </div>
-    @if (pricePerChild > 0) {
-      <div class="text-end">
-        <span class="text-xs font-medium text-slate-400">{{ 'child' | translate }}</span>
-        <p class="text-base font-semibold">{{ formattedPricePerChild }} 
-          @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerChild }}</span> }</p>
-      </div>
-    }
+    <div class="text-end">
+      <span class="text-xs font-medium text-slate-400">{{ 'child' | translate }}</span>
+      <p class="text-base font-semibold">
+        @if (pricePerChild === 0) { {{ 'free' | translate }} } @else { {{ formattedPricePerChild }} }
+        @if (hasChildDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerChild }}</span> }
+      </p>
+    </div>
     <div class="text-end">
       <span class="text-xs font-medium text-slate-400">{{ 'infant' | translate }}</span>
-      <p class="text-base font-semibold">{{ formattedPricePerInfant }} 
-        @if (hasDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerInfant }}</span> }</p>
+      <p class="text-base font-semibold">
+        @if (pricePerInfant === 0) { {{ 'free' | translate }} } @else { {{ formattedPricePerInfant }} }
+        @if (hasInfantDiscount) { <span class="ms-1 text-[11px] font-normal text-slate-400 line-through">{{ formattedOriginalPricePerInfant }}</span> }
+      </p>
     </div>
   </div>
 

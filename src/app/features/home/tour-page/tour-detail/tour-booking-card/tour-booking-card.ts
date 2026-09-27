@@ -170,6 +170,14 @@ export class TourBookingCard implements OnInit {
     return this.product?.activeDiscount?.isCurrentlyActive === true;
   }
 
+  get hasChildDiscount(): boolean {
+    return this.hasDiscount && this.rawPrice(this.product?.pricePerChild) > this.pricePerChild;
+  }
+
+  get hasInfantDiscount(): boolean {
+    return this.hasDiscount && this.rawPrice(this.product?.pricePerInfant) > this.pricePerInfant;
+  }
+
   get discountPercentage(): number {
     return Number(this.product?.activeDiscount?.percentage ?? 0);
   }

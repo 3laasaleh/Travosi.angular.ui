@@ -62,7 +62,7 @@
                   <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100"><i class="mdi mdi-image-off-outline"></i></div>
                 }
               </td>
-              <td class="px-4 py-3 font-semibold">{{ item.nameEng ?? item.title }}<p class="text-xs font-normal text-slate-500">{{ destinationName(item) }}</p></td>
+              <td class="px-4 py-3 font-semibold">{{ item.nameEng }}<p class="text-xs font-normal text-slate-500">{{ destinationName(item) }}</p></td>
               <td class="px-4 py-3" dir="rtl">{{ item.nameAr }}</td>
               <td class="px-4 py-3">{{ tourDuration(item) }}</td>
               <td class="px-4 py-3 font-semibold text-primary">{{ tourPrice(item) }}</td>
@@ -113,7 +113,7 @@
         <article class="overflow-hidden rounded-xl border">
           @if (getImages(item)[0]; as image) { <img [src]="imageUrl(image)" [alt]="item.nameEng" class="h-32 w-full object-cover" /> }
           <div class="p-3">
-            <h3 class="text-sm font-semibold text-slate-950 ">{{ item.nameEng ?? item.title }}</h3>
+            <h3 class="text-sm font-semibold text-slate-950 ">{{ item.nameEng }}</h3>
             <p dir="rtl" class="text-xs text-slate-500">{{ item.nameAr }}</p>
             <p class="mt-1 flex flex-wrap items-center gap-1 text-xs">
               <span class="font-medium text-slate-950 ">{{ destinationName(item) }}</span>
