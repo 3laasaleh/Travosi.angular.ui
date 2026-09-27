@@ -241,9 +241,9 @@ export class HomePackagePage implements OnInit {
 
   tourTitle(tour: any): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
-    const title = tour?.title ?? tour?.name ?? '';
-    const nameAr = tour?.nameAr ?? tour?.nameAr ?? '';
-    const nameEng = tour?.nameEng ?? tour?.nameEng ?? '';
+    const title = tour?.name ?? '';
+    const nameAr = tour?.nameAr  ?? '';
+    const nameEng = tour?.nameEng  ?? '';
     return arabic ? (title || nameAr || nameEng) : (title || nameEng || nameAr);
   }
 

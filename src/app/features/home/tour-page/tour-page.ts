@@ -55,11 +55,7 @@ export class HomeTourPage implements OnInit {
   averageRating = 0;
 
   get images(): any[] {
-    const cover =
-      this.tour?.coverImageUrl ??
-      this.tour?.imageUrl ??
-      this.tour?.coverImage ??
-      null;
+    const cover =this.tour?.coverImageUrl ;
     const gallery = Array.isArray(this.tour?.images) ? this.tour.images : [];
     if (!cover) return gallery;
     const coverIndex = gallery.findIndex((image: any) => this.imageMatchesCover(image, cover));

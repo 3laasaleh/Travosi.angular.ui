@@ -104,7 +104,7 @@ export class CityPage implements OnInit {
     return this.utilityService.imageAlt(image, this.tourTitle(tour));
   }
   tourTitle(tour: any): string {
-    return tour?.title ?? (this.isArabic
+    return tour?.name ?? (this.isArabic
       ? (tour?.nameAr ?? tour?.nameEng ?? '')
       : (tour?.nameEng ?? tour?.nameAr ?? ''));
   }

@@ -20,7 +20,7 @@ export interface TourHomeDTO {
   routeName?: string | null;
   coverImageUrl: string | null;
   images: TourImageDTO[];
-  title: string;
+  name: string;
   destinationId: number;
   destinationName: string;
   cityId?: number | null;
@@ -100,7 +100,7 @@ export class ToursSection implements OnInit {
   }
 
   tourTitle(item: any): string {
-    return item?.title ?? item?.name ?? '';
+    return  item?.name ?? '';
   }
 
   tourDescription(item: any): string {

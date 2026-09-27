@@ -40,7 +40,7 @@ export class TourCard implements OnChanges {
 
   get imageAlt(): string {
     const images = Array.isArray(this.tour?.images) ? this.tour.images : [];
-    return this.utilityService.imageAlt(images[0], this.tour?.title ?? '');
+    return this.utilityService.imageAlt(images[0], this.tour?.name ?? '');
   }
 
   get formattedPrice(): string {
