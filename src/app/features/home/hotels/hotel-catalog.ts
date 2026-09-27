@@ -144,7 +144,7 @@ export class HotelCatalog implements OnInit {
         descriptionEng: 'Search hotels and room availability with Sea World Holidays.',
         descriptionAr: 'ابحث عن الفنادق وتوفر الغرف مع سي وورلد هوليدايز.',
       },
-      { schemaType: 'Place' },
+      { schemaType: 'WebPage' },
     );
     forkJoin({
       hotels: this.api

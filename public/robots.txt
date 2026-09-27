@@ -1,9 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /configurations/
-Disallow: /account/
-Disallow: /user-
-Disallow: /login
-Disallow: /signup
+Disallow: /*/configurations/
+Disallow: /*/account/
+Disallow: /*/user-
+Disallow: /*/login
+Disallow: /*/signup
 
-Sitemap: https://seaworldholidays.com/sitemap.xml
+Sitemap: https://seaworld-stage.premiumasp.net/sitemap.xml

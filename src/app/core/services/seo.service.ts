@@ -14,6 +14,8 @@ export type SeoSchemaType =
   | 'TouristDestination'
   | 'Place'
   | 'City'
+  | 'Hotel'
+  | 'HotelRoom'
   | 'BlogPosting';
 
 export interface SeoPageOptions {
@@ -25,8 +27,8 @@ export interface SeoPageOptions {
 }
 
 interface LocalizedSeoPage {
-  title?: string | null;
-  description?: string | null;
+  title: Record<'en' | 'ar', string>;
+  description: Record<'en' | 'ar', string>;
   imageUrl?: string;
   imageAlt?: string;
   schemaType: SeoSchemaType;
@@ -34,8 +36,10 @@ interface LocalizedSeoPage {
 }
 
 const SITE_NAME = COMPANY_PROFILE.name;
-const DEFAULT_DESCRIPTION =
-  'Discover curated tours, travel packages, cities and destinations with Sea World Holidays.';
+const DEFAULT_DESCRIPTION: Record<'en' | 'ar', string> = {
+  en: 'Discover curated tours, hotels, travel packages, cities and destinations with Sea World Holidays.',
+  ar: 'اكتشف الجولات والفنادق وباقات السفر والمدن والوجهات المختارة مع سي وورلد هوليدايز.',
+};
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -63,16 +67,36 @@ export class SeoService {
     });
   }
 
-  /** Uses only the entity's existing title/name and description/summary/content fields. */
+  /** Builds language-specific SEO from both bilingual source fields and localized API fields. */
   updateFrom(entity: any, options: SeoPageOptions = {}): void {
-    const headerData = entity?.headerData ;
-    const headerDescription = Array.isArray(headerData)
-      ? headerData
-          .slice()
-          .map((item: any) => item?.description ?? '')
-          .filter((value: unknown) => typeof value === 'string' && value.trim())
-          .join(' ')
-      : '';
+    const currentLanguage = this.languageFromUrl();
+    const otherLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+    const headerData = Array.isArray(entity?.headerData) ? entity.headerData : [];
+    const headerDescription = (language: 'en' | 'ar') => headerData
+      .map((item: any) => this.textValue(
+        item,
+        language === 'ar' ? 'descriptionAr' : 'descriptionEng',
+        language === 'ar' ? 'DescriptionAr' : 'DescriptionEng',
+        'description', 'Description',
+      ) ?? '')
+      .filter(Boolean)
+      .join(' ');
+    const localizedTitle = (language: 'en' | 'ar') => this.textValue(
+      entity,
+      language === 'ar' ? 'titleAr' : 'titleEng',
+      language === 'ar' ? 'TitleAr' : 'TitleEng',
+      language === 'ar' ? 'nameAr' : 'nameEng',
+      language === 'ar' ? 'NameAr' : 'NameEng',
+      'title', 'Title', 'name', 'Name',
+    );
+    const localizedDescription = (language: 'en' | 'ar') => this.textValue(
+      entity,
+      language === 'ar' ? 'descriptionAr' : 'descriptionEng',
+      language === 'ar' ? 'DescriptionAr' : 'DescriptionEng',
+      language === 'ar' ? 'summaryAr' : 'summaryEng',
+      language === 'ar' ? 'SummaryAr' : 'SummaryEng',
+      'description', 'Description', 'summary', 'Summary', 'content', 'Content',
+    ) ?? headerDescription(language);
     const image =
       options.image ??
       entity?.coverImage ??
@@ -81,8 +105,14 @@ export class SeoService {
       entity?.images?.[0] ?? entity?.Images?.[0];
 
     const page: LocalizedSeoPage = {
-      title: entity?.title ?? entity?.name,
-      description: entity?.description ,
+      title: {
+        en: localizedTitle('en') ?? localizedTitle(currentLanguage) ?? localizedTitle(otherLanguage) ?? options.fallbackTitle ?? '',
+        ar: localizedTitle('ar') ?? localizedTitle(currentLanguage) ?? localizedTitle(otherLanguage) ?? options.fallbackTitle ?? '',
+      },
+      description: {
+        en: localizedDescription('en') || localizedDescription(currentLanguage) || localizedDescription(otherLanguage) || options.fallbackDescription || '',
+        ar: localizedDescription('ar') || localizedDescription(currentLanguage) || localizedDescription(otherLanguage) || options.fallbackDescription || '',
+      },
       imageUrl: this.absoluteUrl(options.imageUrl ?? this.imageUrl(image)),
       imageAlt: this.imageAlt(image),
       schemaType: options.schemaType ?? 'WebPage',
@@ -112,8 +142,8 @@ export class SeoService {
   }
 
   imageAlt(image: any, fallback = ''): string {
-    const english = image?.altEng ?? image?.AltEng;
-    const arabic = image?.altAr ?? image?.AltAr;
+    const english = image?.altEng ?? image?.AltEng ?? image?.altTextEng ?? image?.AltTextEng;
+    const arabic = image?.altAr ?? image?.AltAr ?? image?.altTextAr ?? image?.AltTextAr;
     return this.languageFromUrl() === 'ar'
       ? arabic || english || image?.imageName || image?.ImageName || fallback
       : english || arabic || image?.imageName || image?.ImageName || fallback;
@@ -125,8 +155,9 @@ export class SeoService {
   }
 
   private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
-    const title = page.title ??'';
-    const description = page.description ??'';
+    const alternative = language === 'ar' ? 'en' : 'ar';
+    const title = page.title[language] || page.title[alternative];
+    const description = page.description[language] || page.description[alternative];
 
     this.applyDocumentLanguage(language);
     // Detail pages know their entity name, so the last breadcrumb can show it instead of the slug.
@@ -206,12 +237,13 @@ export class SeoService {
       tours: ['Tours & Excursions | Sea World Holidays', 'الجولات والرحلات | سي وورلد هوليدايز'],
       'nile-cruises': ['Nile Cruises | Sea World Holidays', 'رحلات النيل | سي وورلد هوليدايز'],
       packages: ['Travel Packages | Sea World Holidays', 'باقات السفر | سي وورلد هوليدايز'],
+      hotels: ['Hotels & Rooms | Sea World Holidays', 'الفنادق والغرف | سي وورلد هوليدايز'],
       blogs: ['Travel Blog | Sea World Holidays', 'مدونة السفر | سي وورلد هوليدايز'],
     };
     const pageTitle = titles[section ?? 'home'] ?? titles['home'];
     this.setPage(
       language === 'ar' ? pageTitle[1] : pageTitle[0],
-      DEFAULT_DESCRIPTION,
+      DEFAULT_DESCRIPTION[language],
       undefined,
       undefined,
       'WebPage',
@@ -264,6 +296,59 @@ export class SeoService {
         addressLocality: title,
       };
       page['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
+    }
+
+    if (type === 'Hotel') {
+      page['address'] = {
+        '@type': 'PostalAddress',
+        addressCountry: COMPANY_PROFILE.address.country,
+        addressLocality: this.textValue(
+          entity,
+          language === 'ar' ? 'cityNameAr' : 'cityNameEng',
+          language === 'ar' ? 'CityNameAr' : 'CityNameEng',
+          'destinationName', 'DestinationName',
+        ) ?? title,
+      };
+      page['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      const starRating = this.numberValue(entity, 'starRating', 'StarRating');
+      if (starRating) page['starRating'] = { '@type': 'Rating', ratingValue: starRating, bestRating: 5 };
+      const telephone = this.textValue(entity, 'phoneNumber', 'PhoneNumber');
+      const email = this.textValue(entity, 'email', 'Email');
+      if (telephone) page['telephone'] = telephone;
+      if (email) page['email'] = email;
+      const amenities = this.arrayValue(entity, 'amenities', 'Amenities');
+      if (amenities.length) {
+        page['amenityFeature'] = amenities.map((amenity) => ({
+          '@type': 'LocationFeatureSpecification',
+          name: this.textValue(
+            amenity,
+            language === 'ar' ? 'nameAr' : 'nameEng',
+            language === 'ar' ? 'NameAr' : 'NameEng',
+            'name', 'Name',
+          ) ?? '',
+          value: true,
+        })).filter((feature) => feature.name);
+      }
+    }
+
+    if (type === 'HotelRoom') {
+      const hotelName = this.textValue(entity, 'hotelName', 'HotelName');
+      const hotelUrl = this.textValue(entity, 'hotelUrl', 'HotelUrl');
+      if (hotelName) {
+        page['containedInPlace'] = {
+          '@type': 'Hotel',
+          name: hotelName,
+          ...(hotelUrl ? { url: this.absoluteUrl(hotelUrl) } : {}),
+        };
+      }
+      const occupancy = this.numberValue(entity, 'maxTotalOccupancy', 'MaxTotalOccupancy');
+      if (occupancy) page['occupancy'] = { '@type': 'QuantitativeValue', maxValue: occupancy };
+      const roomSize = this.numberValue(entity, 'roomSize', 'RoomSize');
+      if (roomSize) page['floorSize'] = { '@type': 'QuantitativeValue', value: roomSize, unitCode: 'MTK' };
+      const bed = this.textValue(entity, 'bedType', 'BedType');
+      if (bed) page['bed'] = bed;
+      const offer = this.offer(entity, canonicalUrl);
+      if (offer) page['offers'] = offer;
     }
 
     const graph: Record<string, unknown>[] = [page];
@@ -476,6 +561,16 @@ export class SeoService {
       if (typeof value === 'string' && value.trim()) return value.trim();
     }
     return null;
+  }
+
+  private arrayValue(entity: Record<string, unknown> | undefined, ...keys: string[]): Record<string, unknown>[] {
+    for (const key of keys) {
+      const value = entity?.[key];
+      if (Array.isArray(value)) {
+        return value.filter((item): item is Record<string, unknown> => !!item && typeof item === 'object');
+      }
+    }
+    return [];
   }
 
   private updateName(name: string, content: string): void {

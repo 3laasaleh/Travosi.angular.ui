@@ -3,7 +3,7 @@ export const environment = {
   baseUrl: 'https://seeworld.premiumasp.net/api/',
   serverBaseUrl: 'https://seeworld.premiumasp.net/api/',
   imageUrl: 'https://seeworld.premiumasp.net/images/',
-  publicBaseUrl: 'https://seaworld-stage.premiumasp.net',
+  publicBaseUrl: 'https://seaworldholidays.com',
 };
 
 // export const environment = {

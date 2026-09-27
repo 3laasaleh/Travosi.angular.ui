@@ -89,7 +89,18 @@ export class RoomDetails implements OnInit {
       this.hotel = hotel;
       this.room = room;
       if (!hotel || !room) { this.seo.markNotFound('Hotel room not found'); return; }
-      this.seo.updateFrom({ ...room, name: this.roomName, description: this.roomDescription }, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Place' });
+      this.seo.updateFrom(
+        {
+          ...room,
+          name: this.roomName,
+          description: this.roomDescription,
+          hotelName: hotel.name || hotel.nameEng || hotel.nameAr,
+          hotelUrl: `/${this.language.currentLanguage()}/hotels/${encodeURIComponent(routeName)}`,
+          price: this.currentPeriod()?.price,
+          currencyCode: this.currency.currentCurrency().code ?? "USD",
+        },
+        { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'HotelRoom' },
+      );
     });
   }
 

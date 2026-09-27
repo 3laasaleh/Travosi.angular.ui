@@ -164,7 +164,7 @@ export class HotelDetail implements OnInit {
         this.seo.updateFrom(hotel, {
           image: this.images[0],
           imageUrl: this.resolvedImages[0],
-          schemaType: 'Place',
+          schemaType: 'Hotel',
         });
         if (this.checkInDate && this.checkOutDate) this.searchAvailability();
       });

@@ -12,7 +12,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const allowedHosts = (process.env['NG_ALLOWED_HOSTS']
-  || 'localhost,127.0.0.1,seaworld.premiumasp.net,www.seaworld.premiumasp.net,seaworld-stage.premiumasp.net')
+  || 'localhost,127.0.0.1,seaworldholidays.com,www.seaworldholidays.com,seaworld.premiumasp.net,www.seaworld.premiumasp.net,seaworld-stage.premiumasp.net,seaworldholidays-prod.premiumasp.net')
   .split(',')
   .map((host) => host.trim())
   .filter(Boolean);
@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 
   const firstSegment = path.split('/').filter(Boolean)[0]?.toLowerCase();
   const localizedPaths = new Set([
-    'home', 'destinations', 'cities', 'tours', 'nile-cruises', 'packages', 'blogs',
+    'home', 'destinations', 'cities', 'tours', 'nile-cruises', 'packages', 'hotels', 'blogs',
     'configurations', 'account', 'login', 'signup', 'signup-success', 'forgot-password',
     'reset-password', 'user-setting', 'user-profile', 'user-booking', 'user-payment',
     'user-invoice', 'user-social', 'user-notification', 'aboutus', 'helpcenter',
