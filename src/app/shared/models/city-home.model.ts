@@ -5,7 +5,7 @@ export interface CityHomeImageDTO {
 export interface CityHomeDTO {
   id: number;
   routeName?: string | null;
-  title?: string | null;
+  name?: string | null;
   description?: string | null;
   destinationId?: number | null;
   destinationName?: string | null;

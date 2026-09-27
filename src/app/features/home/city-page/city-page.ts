@@ -60,7 +60,7 @@ export class CityPage implements OnInit {
   }
 
   cityNameHomeResolver(city: any): string {
-    return city?.title ?? '';
+    return city?.name ?? '';
   }
 
   cityDescription(): string {

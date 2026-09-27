@@ -273,7 +273,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       }))
       .filter((image: DestinationImageUpload) => !!image.url);
     this.destinationForm.setValue({
-      nameEng: destination.nameEng ?? destination.title ?? '',
+      nameEng: destination.nameEng  ?? '',
       nameAr: destination.nameAr ?? '',
       routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',

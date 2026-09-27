@@ -22,9 +22,7 @@ export class TourDetail {
   @Input() tour: any = null;
 
   get title(): string {
-    return this.isArabic
-      ? (this.tour?.nameAr || this.tour?.nameAr || this.tour?.nameEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || '')
-      : (this.tour?.nameEng || this.tour?.nameEng || this.tour?.title || this.tour?.name || this.tour?.nameAr || this.tour?.nameAr || '');
+    return this.tour?.name ?? this.tour?.title ?? this.tour?.nameEng ?? this.tour?.nameAr ?? '';
   }
 
   get destinationName(): string {
@@ -87,9 +85,7 @@ export class TourDetail {
   }
 
   get description(): string {
-    return this.isArabic
-      ? (this.tour?.fullDescriptionAr || this.tour?.descriptionAr || this.tour?.fullDescriptionEng || this.tour?.descriptionEng || this.tour?.fullDescription || this.tour?.description || '')
-      : (this.tour?.fullDescriptionEng || this.tour?.descriptionEng || this.tour?.fullDescription || this.tour?.description || this.tour?.fullDescriptionAr || this.tour?.descriptionAr || '');
+    return this.tour?.fullDescription ?? this.tour?.description ?? this.tour?.fullDescriptionEng ?? this.tour?.fullDescriptionAr ?? this.tour?.descriptionEng ?? this.tour?.descriptionAr ?? '';
   }
 
   private get isArabic(): boolean {

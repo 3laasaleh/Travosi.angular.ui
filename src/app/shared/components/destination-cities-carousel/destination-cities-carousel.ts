@@ -28,7 +28,7 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
 
   get selector(): string { return `#${this.instanceId}`; }
   cityName(city: CityHomeDTO): string {
-    return city.title ?? '';
+    return city.name ?? '';
   }
   cityImage(city: CityHomeDTO): string {
     return this.utilityService.imageUrl(city.coverImageUrl ?? city.imageUrl ?? city.images?.[0]?.imageUrl ?? '');

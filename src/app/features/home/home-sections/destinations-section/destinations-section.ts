@@ -63,7 +63,7 @@ export class DestinationsSection implements OnInit {
   }
 
   destinationName(destination: DestinationHomeDTO): string {
-    return destination.title;
+    return destination.name;
   }
 
   destinationDescription(destination: DestinationHomeDTO): string {

@@ -17,6 +17,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import { DestinationHomeDTO } from '../home-sections/destinations-section/destination.model';
 
 interface PaginationInfo {
   page: number;
@@ -36,7 +37,6 @@ export class HomeDestinationsList implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly languageService = inject(LanguageService);
   private readonly utilityService = inject(UtilityService);
 
   readonly pageSizeOptions = [10, 20, 50];
@@ -109,24 +109,13 @@ export class HomeDestinationsList implements OnInit {
     this.loadDestinations();
   }
 
-  destinationName(destination: any): string {
-    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
-    const title = destination?.title ?? '';
-    const nameAr = destination?.nameAr ?? '';
-    const nameEng = destination?.nameEng ?? '';
-    return isArabic
-      ? title || nameAr || nameEng
-      : title || nameEng || nameAr;
+  destinationName(destination: DestinationHomeDTO): string {
+    return  destination?.name ?? '';
+   
   }
 
-  destinationDescription(destination: any): string {
-    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
-    const description = destination?.description ?? destination?.subDescription ?? '';
-    const descriptionAr = destination?.descriptionAr ?? destination?.subDescriptionAr ?? '';
-    const descriptionEng = destination?.descriptionEng ?? destination?.subDescriptionEng ?? '';
-    return isArabic
-      ? (description || descriptionAr || descriptionEng || '')
-      : (description || descriptionEng || descriptionAr || '');
+  destinationDescription(destination: DestinationHomeDTO): string {
+    return destination?.description ?? "";
   }
 
   imageItems(destination: any): any[] {

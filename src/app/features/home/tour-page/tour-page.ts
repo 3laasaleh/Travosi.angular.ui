@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { UtilityService } from '../../../core/services/utilityservice';
@@ -40,7 +40,6 @@ export class HomeTourPage implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly translate = inject(TranslateService);
   private readonly seo = inject(SeoService);
   private readonly utilityService = inject(UtilityService);
 
@@ -84,13 +83,7 @@ export class HomeTourPage implements OnInit {
 
   /** The brief description belongs below the gallery; the detail component keeps the full text. */
   get shortDescription(): string {
-    const isArabic = (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
-    const description = this.tour?.description ?? '';
-    const descriptionAr = this.tour?.descriptionAr ?? '';
-    const descriptionEng = this.tour?.descriptionEng ?? '';
-    return isArabic
-      ? (description || descriptionAr || descriptionEng || '')
-      : (description || descriptionEng || descriptionAr || '');
+    return this.tour?.description ?? this.tour?.descriptionEng ?? this.tour?.descriptionAr ?? '';
   }
 
   get destinationName(): string {

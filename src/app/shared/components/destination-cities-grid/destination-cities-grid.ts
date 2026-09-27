@@ -9,7 +9,7 @@ export class DestinationCitiesGrid {
   @Input() destinationId!: number;
   @Input() cities: CityHomeDTO[] = [];
   cityName(city: CityHomeDTO): string {
-    return city.title ?? '';
+    return city.name ?? '';
   }
   cityImage(city: CityHomeDTO): string { return this.utilityService.imageUrl(city.coverImageUrl ?? city.imageUrl ?? city.images?.[0]?.imageUrl ?? ''); }
   onCityImageError(event: Event): void { this.utilityService.onCityImageError(event); }

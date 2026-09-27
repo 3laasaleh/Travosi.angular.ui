@@ -7,7 +7,7 @@ export interface DestinationHomeImageDTO {
 export interface DestinationHomeDTO {
   id: number;
   routeName?: string | null;
-  title: string;
+  name: string;
   subDescription?: string | null;
   description?: string | null;
   isActive: boolean;

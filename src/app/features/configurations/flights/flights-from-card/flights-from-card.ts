@@ -205,7 +205,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   onTripTypeChange(type: FlightTypeEnum): void {
-    debugger
     this.flightForm.controls.flightType.setValue(type);
     if (type === FlightTypeEnum.OneWay)
       while (this.legs.length > 1) this.legs.removeAt(this.legs.length - 1);
@@ -323,7 +322,6 @@ export class FlightsFromCard implements OnInit, OnChanges {
   }
 
   onLegAirportSelected(legIndex: number, isOrigin: boolean, airport: AirportSearchResult): void {
-    debugger
     const leg = this.legs.at(legIndex);
     const controlName = isOrigin ? 'originAirport' : 'destinationAirport';
     const nameControlName = isOrigin ? 'originAirportName' : 'destinationAirportName';
