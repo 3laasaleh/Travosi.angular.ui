@@ -2,7 +2,7 @@
   class="group grid overflow-hidden rounded-xl border border-slate-300 bg-white p-3 shadow-sm transition hover:border-primary/50 hover:shadow-md md:grid-cols-[230px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,1fr)_220px]">
   @if (roomDetailsLink; as link) {
   <a [routerLink]="link" [queryParams]="roomDetailsQueryParams" [attr.aria-label]="('seeAvailability' | translate) + ': ' + roomName(room)"
-    class="relative block min-h-52 overflow-hidden rounded-lg md:min-h-full">
+    class="relative block min-h-52 cursor-pointer overflow-hidden rounded-lg md:min-h-full">
     @if (image(room); as url) {
     <img [src]="url" [alt]="roomName(room)"
       class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
