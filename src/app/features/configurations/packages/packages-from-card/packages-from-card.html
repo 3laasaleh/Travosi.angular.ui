@@ -189,7 +189,9 @@
       </div>
        @if (activeStep === 1) {
       <app-package-benefits-editor [rooms]="packageForm.controls.hotelRooms"
-        [transportations]="packageForm.controls.transportations" [startDate]="packageForm.controls.dateFrom.value" />
+        [transportations]="packageForm.controls.transportations"
+        [destinationIds]="packageForm.controls.destinationIds.value"
+        [startDate]="packageForm.controls.dateFrom.value" />
     }
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div>

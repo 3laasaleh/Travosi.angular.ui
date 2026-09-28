@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, Input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -33,15 +33,13 @@ export function packageTransportGroup(item: any = {}): FormGroup {
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './package-benefits-editor.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PackageBenefitsEditor implements OnInit {
+export class PackageBenefitsEditor implements OnInit, OnChanges {
   @Input({ required: true }) rooms!: FormArray<FormGroup>;
   @Input({ required: true }) transportations!: FormArray<FormGroup>;
+  @Input() destinationIds: readonly number[] = [];
   @Input() startDate = '';
   readonly hotels = signal<any[]>([]);
-  readonly availableRooms = signal<any[]>([]);
-  readonly selectedHotelId = signal(0);
   readonly loading = signal(false);
-  readonly roomsLoading = signal(false);
   readonly error = signal('');
   readonly fields = [
     { key: 'fromEng', label: 'packageFromEng', ar: false }, { key: 'fromAr', label: 'packageFromAr', ar: true },
@@ -54,63 +52,98 @@ export class PackageBenefitsEditor implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   private requestId = 0;
+  private loadedDestinationKey = '';
 
-  ngOnInit(): void { this.loadHotels(); }
-  loadHotels(page = 1): void {
-    if (page === 1) { this.hotels.set([]); this.error.set(''); }
+  ngOnInit(): void { this.loadHotelsForSelectedDestinations(); }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['destinationIds'] && !changes['destinationIds'].firstChange)
+      this.loadHotelsForSelectedDestinations();
+  }
+
+  get hasSelectedDestinations(): boolean { return this.selectedDestinationIds.length > 0; }
+
+  hotelRooms(hotel: any): any[] {
+    return Array.isArray(hotel?.rooms) ? hotel.rooms.filter((room: any) => room?.isActive !== false) : [];
+  }
+
+  retry(): void { this.loadHotelsForSelectedDestinations(true); }
+
+  private get selectedDestinationIds(): number[] {
+    return [...new Set((this.destinationIds ?? []).map(Number).filter((id) => Number.isInteger(id) && id > 0))]
+      .sort((left, right) => left - right);
+  }
+
+  private loadHotelsForSelectedDestinations(force = false): void {
+    const destinationIds = this.selectedDestinationIds;
+    const key = destinationIds.join(',');
+    if (!force && key === this.loadedDestinationKey) return;
+
+    this.loadedDestinationKey = key;
+    const request = ++this.requestId;
+    this.hotels.set([]);
+    this.error.set('');
+
+    if (!destinationIds.length) {
+      this.loading.set(false);
+      this.removeRoomsOutsideSelectedHotels(new Set());
+      return;
+    }
+
     this.loading.set(true);
-    this.api.get(`Hotels?page=${page}&pageSize=100`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    const query = destinationIds.map((id) => `destinationIds=${encodeURIComponent(String(id))}`).join('&');
+    this.api.get(`Hotels/PackageBenefits?${query}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response: any) => {
+        if (request !== this.requestId) return;
         if (response?.isSuccess === false) { this.error.set('packageBenefitsLoadError'); this.loading.set(false); return; }
         const data = response?.data ?? response;
         const rows = data?.data ?? data?.items ?? data;
-        this.hotels.update(current => [...current, ...(Array.isArray(rows) ? rows : [])]);
-        if (page < Number(data?.totalPages ?? Math.ceil(Number(data?.totalCount ?? 0) / 100))) this.loadHotels(page + 1);
-        else this.loading.set(false);
+        const hotels = Array.isArray(rows) ? rows : [];
+        this.hotels.set(hotels);
+        this.removeRoomsOutsideSelectedHotels(new Set(hotels.map((hotel: any) => Number(hotel.id))));
+        this.loading.set(false);
       },
-      error: () => { this.error.set('packageBenefitsLoadError'); this.loading.set(false); },
-    });
-  }
-  selectHotel(event: Event): void {
-    const id = Number((event.target as HTMLSelectElement).value);
-    this.selectedHotelId.set(id); this.availableRooms.set([]); this.error.set('');
-    const request = ++this.requestId;
-    this.roomsLoading.set(!!id);
-    if (!id) return;
-    this.api.get(`HotelRooms/ByHotel/${id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (response: any) => {
+      error: () => {
         if (request !== this.requestId) return;
-        this.roomsLoading.set(false);
-        if (response?.isSuccess === false) { this.error.set('packageBenefitsLoadError'); return; }
-        const rows = response?.data ?? response;
-        this.availableRooms.set((Array.isArray(rows) ? rows : []).filter((r: any) => r.isActive !== false));
+        this.error.set('packageBenefitsLoadError'); this.loading.set(false);
       },
-      error: () => { if (request === this.requestId) { this.roomsLoading.set(false); this.error.set('packageBenefitsLoadError'); } },
     });
   }
+
   label(item: any, prefix = 'name'): string {
     const ar = this.translate.currentLang()?.startsWith('ar');
     return (ar ? item?.[prefix + 'Ar'] || item?.[prefix + 'Eng'] : item?.[prefix + 'Eng'] || item?.[prefix + 'Ar']) || item?.[prefix] || '';
   }
   price(room: any): number | null {
-    const rates = (room.roomPeriodPrices ?? []).filter((p: any) => p.isActive !== false && p.startDate <= this.startDate && p.endDate >= this.startDate);
+    const rates = (room.roomPeriodPrices ?? []).filter((p: any) =>
+      p.isActive !== false && p.startDate <= this.startDate && p.endDate >= this.startDate,
+    );
     return rates.length === 1 ? Number(rates[0].price) : null;
   }
   money(value: number): string { return formatHomePrice(this.currency, value, { currencyCode: 'USD' }); }
   selected(room: any): boolean { return this.rooms.controls.some(c => Number(c.value.hotelRoomId) === Number(room.id)); }
-  toggleRoom(room: any): void {
+  toggleRoom(hotel: any, room: any): void {
     const index = this.rooms.controls.findIndex(c => Number(c.value.hotelRoomId) === Number(room.id));
     if (index >= 0) this.rooms.removeAt(index);
     else {
-      const hotel = this.hotels().find(h => Number(h.id) === this.selectedHotelId());
       this.rooms.push(packageRoomGroup({
-        hotelId: this.selectedHotelId(), hotelRoomId: room.id,
+        hotelId: hotel.id, hotelRoomId: room.id,
         hotelNameEng: hotel?.nameEng ?? hotel?.name, hotelNameAr: hotel?.nameAr ?? hotel?.name,
         roomNameEng: room.nameEng ?? room.name, roomNameAr: room.nameAr ?? room.name,
         adults: room.maxAdults, children: room.maxChildren, infants: room.maxInfants, price: this.price(room),
       }));
     }
     this.rooms.markAsDirty();
+  }
+  private removeRoomsOutsideSelectedHotels(allowedHotelIds: Set<number>): void {
+    let changed = false;
+    for (let index = this.rooms.length - 1; index >= 0; index--) {
+      if (!allowedHotelIds.has(Number(this.rooms.at(index).value.hotelId))) {
+        this.rooms.removeAt(index);
+        changed = true;
+      }
+    }
+    if (changed) this.rooms.markAsDirty();
   }
   removeRoom(index: number): void { this.rooms.removeAt(index); this.rooms.markAsDirty(); }
   addTransport(): void { this.transportations.push(packageTransportGroup()); this.transportations.markAsDirty(); }

@@ -1,9 +1,9 @@
 {
   "packageHotelsRooms": "Included hotels and rooms",
-  "packageBenefitsHint": "Select a hotel, then its included rooms. Prices are per room per night in USD and do not change the package booking price.",
+  "packageBenefitsHint": "Select destinations above to load their hotels and active rooms. Prices are per room per night in USD and do not change the package booking price.",
   "packageSelectHotel": "Select a hotel",
   "packageBenefitsLoadError": "Could not load hotels or rooms. Please try again.",
-  "packageRoomPriceRequired": "Enter a valid room price (zero or more, up to two decimal places).",
+  "packageRoomPriceRequired": "No active room price is available for the package start date.",
   "packageRoomQuantityInvalid": "Enter a whole number of rooms between 1 and 50.",
   "packageRoomNightlyPrice": "Per room per night",
   "packageCapacityPerRoom": "Capacity per room",

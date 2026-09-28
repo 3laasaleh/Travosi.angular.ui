@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { DatePicker } from '../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../shared/components/time-picker/time-picker';
+import { customerPdfDownloadName } from '../../../shared/utils/pdf-download-name.util';
 import { environment } from '../../../../environments/environment';
 
 interface CurrencyOption {
@@ -380,7 +381,7 @@ export class Invoices implements OnInit {
         this.cdr.markForCheck();
       }),
     ).subscribe((blob) => {
-      if (blob) this.download(blob, `${invoice.invoiceNo || `invoice-${invoice.id}`}.pdf`);
+      if (blob) this.download(blob, customerPdfDownloadName(invoice.customerName, invoice.invoiceNo || `invoice-${invoice.id}`));
     });
   }
 

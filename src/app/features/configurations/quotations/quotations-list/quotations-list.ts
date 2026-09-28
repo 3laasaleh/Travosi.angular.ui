@@ -14,6 +14,7 @@ import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
+import { customerPdfDownloadName } from '../../../../shared/utils/pdf-download-name.util';
 import { QuotationStatusEnum } from '../quotations-from-card/quotations-from-card';
 
 interface PaginationInfoDTO {
@@ -266,7 +267,10 @@ export class QuotationsList implements OnInit, OnChanges {
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = `${quotation.quotationNo ?? `quotation-${id}`}.pdf`;
+        anchor.download = customerPdfDownloadName(
+          quotation.customerName ?? `${quotation.customer?.firstName ?? ''} ${quotation.customer?.lastName ?? ''}`,
+          quotation.quotationNo ?? `quotation-${id}`,
+        );
         anchor.click();
         URL.revokeObjectURL(url);
         this.showToast('success', 'quotationPdfDownloaded');

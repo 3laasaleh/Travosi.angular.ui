@@ -1,9 +1,9 @@
 {
   "packageHotelsRooms": "الفنادق والغرف المشمولة",
-  "packageBenefitsHint": "اختر الفندق ثم الغرف المشمولة. الأسعار للغرفة في الليلة بالدولار ولا تغيّر سعر حجز الباقة.",
+  "packageBenefitsHint": "اختر الوجهات أعلاه لتحميل فنادقها وغرفها النشطة. الأسعار للغرفة في الليلة بالدولار ولا تغيّر سعر حجز الباقة.",
   "packageSelectHotel": "اختر فندقاً",
   "packageBenefitsLoadError": "تعذر تحميل الفنادق أو الغرف. يرجى المحاولة مرة أخرى.",
-  "packageRoomPriceRequired": "أدخل سعراً صالحاً للغرفة (صفر أو أكثر وبحد أقصى منزلتين عشريتين).",
+  "packageRoomPriceRequired": "لا يوجد سعر نشط للغرفة في تاريخ بدء الباقة.",
   "packageRoomQuantityInvalid": "أدخل عدداً صحيحاً للغرف بين 1 و50.",
   "packageRoomNightlyPrice": "للغرفة في الليلة",
   "packageCapacityPerRoom": "سعة الغرفة الواحدة",
