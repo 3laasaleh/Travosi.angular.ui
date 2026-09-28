@@ -15,7 +15,7 @@ export function packageRoomGroup(item: any): FormGroup {
     roomNameEng: new FormControl(item.roomNameEng ?? item.roomName ?? ''),
     roomNameAr: new FormControl(item.roomNameAr ?? item.roomName ?? ''),
     adults: new FormControl(item.adults ?? 0), children: new FormControl(item.children ?? 0), infants: new FormControl(item.infants ?? 0),
-    quantity: new FormControl(item.quantity ?? 1, [Validators.required, Validators.min(1), Validators.max(50), Validators.pattern(/^\d+$/)]),
+    quantity: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(1), Validators.pattern(/^\d+$/)]),
     // Display-only value derived from the room's active period price. The API stores only the room link and quantity.
     price: new FormControl(item.price ?? null),
   });
@@ -25,6 +25,10 @@ export function packageTransportGroup(item: any = {}): FormGroup {
   const group = new FormGroup<Record<string, FormControl>>({ id: new FormControl(item.id ?? 0) });
   for (const field of ['fromEng', 'fromAr', 'toEng', 'toAr', 'transportationTypeEng', 'transportationTypeAr'])
     group.addControl(field, new FormControl(item[field] ?? '', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]));
+  group.addControl('fromTime', new FormControl(item.fromTime ?? '', Validators.required));
+  group.addControl('arrivalTime', new FormControl(item.arrivalTime ?? '', Validators.required));
+  group.addControl('numberOfBags', new FormControl(item.numberOfBags ?? 0, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern(/^\d+$/)]));
+  group.addControl('maxKgPerBag', new FormControl(item.maxKgPerBag ?? 0, [Validators.required, Validators.min(0), Validators.max(1000)]));
   return group;
 }
 
@@ -34,6 +38,7 @@ export function packageTransportGroup(item: any = {}): FormGroup {
   templateUrl: './package-benefits-editor.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PackageBenefitsEditor implements OnInit, OnChanges {
+  readonly maxHotels = 3;
   @Input({ required: true }) rooms!: FormArray<FormGroup>;
   @Input({ required: true }) transportations!: FormArray<FormGroup>;
   @Input() destinationIds: readonly number[] = [];
@@ -122,12 +127,25 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
   }
   money(value: number): string { return formatHomePrice(this.currency, value, { currencyCode: 'USD' }); }
   selected(room: any): boolean { return this.rooms.controls.some(c => Number(c.value.hotelRoomId) === Number(room.id)); }
+  canSelectRoom(hotel: any, room: any): boolean {
+    if (this.selected(room)) return true;
+    const hotelId = Number(hotel?.id);
+    const alreadyHasHotel = this.rooms.controls.some(control => Number(control.value.hotelId) === hotelId);
+    return alreadyHasHotel || this.selectedHotelCount < this.maxHotels;
+  }
+  get selectedHotelCount(): number {
+    return new Set(this.rooms.controls.map(control => Number(control.value.hotelId)).filter(id => id > 0)).size;
+  }
   toggleRoom(hotel: any, room: any): void {
     const index = this.rooms.controls.findIndex(c => Number(c.value.hotelRoomId) === Number(room.id));
     if (index >= 0) this.rooms.removeAt(index);
     else {
+      const hotelId = Number(hotel.id);
+      const hotelRoomIndex = this.rooms.controls.findIndex(control => Number(control.value.hotelId) === hotelId);
+      if (hotelRoomIndex < 0 && this.selectedHotelCount >= this.maxHotels) return;
+      if (hotelRoomIndex >= 0) this.rooms.removeAt(hotelRoomIndex);
       this.rooms.push(packageRoomGroup({
-        hotelId: hotel.id, hotelRoomId: room.id,
+        hotelId, hotelRoomId: room.id,
         hotelNameEng: hotel?.nameEng ?? hotel?.name, hotelNameAr: hotel?.nameAr ?? hotel?.name,
         roomNameEng: room.nameEng ?? room.name, roomNameAr: room.nameAr ?? room.name,
         adults: room.maxAdults, children: room.maxChildren, infants: room.maxInfants, price: this.price(room),

@@ -20,6 +20,7 @@ interface ReviewEligibility {
 
 interface UserBookingItem {
   id: number;
+  bookingNo?: string;
   tourTitle?: string;
   tourRouteName?: string;
   packageName?: string;

@@ -6,6 +6,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -28,7 +29,7 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [Breadcrumbs, 
+  imports: [Breadcrumbs, DecimalPipe,
     TranslatePipe,
     HomeNavbar,
     FooterOne,
@@ -59,6 +60,10 @@ export class HomePackagePage implements OnInit {
   imageViewerOpen = false;
   averageRating = 0;
   benefitPrice(room: any): string { return formatHomePrice(this.currencyService, room.price, room); }
+  benefitTime(value: unknown): string {
+    const time = String(value ?? '').trim();
+    return /^\d{2}:\d{2}/.test(time) ? time.slice(0, 5) : '-';
+  }
 
   get title(): string {
     return this.travelPackage?.name ?? '';

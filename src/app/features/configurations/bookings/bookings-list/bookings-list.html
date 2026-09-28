@@ -25,7 +25,7 @@
       <table class="min-w-full text-start text-sm">
         <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
           <tr>
-            <th class="px-4 py-3">{{ 'bookingId' | translate }}</th>
+            <th class="px-4 py-3">{{ 'bookingReference' | translate }}</th>
             <th class="px-4 py-3">{{ 'customer' | translate }}</th>
             <th class="px-4 py-3">{{ 'customerPhone' | translate }}</th>
             <th class="px-4 py-3">{{ 'bookingProduct' | translate }}</th>
@@ -40,7 +40,7 @@
         <tbody>
           @for (booking of bookings; track booking.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50">
-              <td class="px-4 py-3 font-semibold">#{{ booking.id }}</td>
+              <td class="px-4 py-3 font-semibold">{{ booking.bookingNo || ('#' + booking.id) }}</td>
               <td class="px-4 py-3">{{ booking.userName || '-' }}</td>
               <td class="px-4 py-3"><a class="font-medium text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></td>
               <td class="px-4 py-3"><span class="me-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-500">{{ booking.hotelId ? ('hotel' | translate) : booking.tourId ? ('tour' | translate) : ('travelPackage' | translate) }}</span>{{ booking.tourTitle ?? booking.packageName ?? booking.hotelName ?? '-' }}@if (booking.hotelRoomName) { <span class="block text-xs text-slate-500">{{ booking.hotelRoomName }}</span> }</td>
@@ -70,7 +70,7 @@
     <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2">
       @for (booking of bookings; track booking.id) {
         <article class="rounded-2xl border border-slate-200 p-4">
-          <div class="flex items-start justify-between gap-3"><h3 class="font-semibold">#{{ booking.id }} — {{ booking.tourTitle ?? booking.packageName ?? '-' }}</h3><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{{ bookingStatusKey(booking.status) | translate }}</span></div>
+          <div class="flex items-start justify-between gap-3"><h3 class="font-semibold">{{ booking.bookingNo || ('#' + booking.id) }} — {{ booking.tourTitle ?? booking.packageName ?? booking.hotelName ?? '-' }}</h3><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{{ bookingStatusKey(booking.status) | translate }}</span></div>
           <p class="mt-2 text-sm text-slate-500">{{ booking.userName || '-' }} · <a class="text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></p>
           <p class="mt-1 text-sm text-slate-500">{{ booking.createdDate | date: 'mediumDate' }} — {{ booking.numberOfTravelers }} {{ 'guests' | translate }} — ${{ booking.totalPrice | number: '1.0-2' }}</p>
           @if (+booking.cancellationFeeAmount > 0) { <p class="mt-2 text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</p> }

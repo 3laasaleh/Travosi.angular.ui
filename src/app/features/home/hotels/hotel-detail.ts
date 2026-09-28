@@ -302,11 +302,11 @@ export class HotelDetail implements OnInit {
           await Swal.fire({
             icon: 'success',
             title: this.translate.instant('hotelBookingRequest'),
-            text: this.translate.instant(
+            text: `${this.translate.instant('bookingReference')}: ${response?.data?.bookingNo || response?.data?.id}\n${this.translate.instant(
               response?.data?.acknowledgementEmailSent === false
                 ? 'bookingConfirmationEmailPending'
                 : 'hotelBookingConfirmationEmailSent',
-            ),
+            )}`,
           });
           this.searchAvailability();
         },

@@ -641,7 +641,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       highlights: new FormArray<FormGroup>([]),
       includes: new FormArray<FormGroup>([]),
       excludes: new FormArray<FormGroup>([]),
-      hotelRooms: new FormArray<FormGroup>([]),
+      hotelRooms: new FormArray<FormGroup>([], [Validators.minLength(1), Validators.maxLength(3)]),
       transportations: new FormArray<FormGroup>([]),
     }, { validators: PackagesFromCard.packageDateRangeValidator });
   }
@@ -731,6 +731,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
         Id: Number(item.id) || 0,
         FromEng: item.fromEng.trim(), FromAr: item.fromAr.trim(), ToEng: item.toEng.trim(), ToAr: item.toAr.trim(),
         TransportationTypeEng: item.transportationTypeEng.trim(), TransportationTypeAr: item.transportationTypeAr.trim(),
+        FromTime: item.fromTime,
+        ArrivalTime: item.arrivalTime,
+        NumberOfBags: Number(item.numberOfBags),
+        MaxKgPerBag: Number(item.maxKgPerBag),
       })),
       IsFreeCancelation: value.isFreeCancelation,
       ShowInRealtedTourSection: value.showInRealtedTourSection,

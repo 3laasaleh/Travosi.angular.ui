@@ -306,7 +306,7 @@ export class RoomDetails implements OnInit {
       icon: 'success',
       iconColor: '#00d492',
       title: this.translate.instant('bookingRequestReceived'),
-      text: this.translate.instant(messageKey, { time: bookingTime }),
+      text: `${this.translate.instant('bookingReference')}: ${booking?.bookingNo || booking?.id}\n${this.translate.instant(messageKey, { time: bookingTime })}`,
       confirmButtonText: this.translate.instant('ok'),
       confirmButtonColor: '#0891b2',
     });
