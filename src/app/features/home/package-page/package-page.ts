@@ -23,6 +23,7 @@ import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
+import { formatHomePrice } from '../home-price.util';
 
 @Component({
   selector: 'app-home-package-page',
@@ -57,6 +58,7 @@ export class HomePackagePage implements OnInit {
   selectedImageIndex = 0;
   imageViewerOpen = false;
   averageRating = 0;
+  benefitPrice(room: any): string { return formatHomePrice(this.currencyService, room.price, room); }
 
   get title(): string {
     return this.travelPackage?.name ?? '';

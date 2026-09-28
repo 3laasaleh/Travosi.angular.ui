@@ -312,8 +312,8 @@ export class TourBookingCard implements OnInit {
     this.apiService
       .postUnauthenticated('Bookings/CheckAvailability', payload)
       .pipe(
-        catchError(() => {
-          this.errorMessage = 'availabilityCheckError';
+        catchError((error) => {
+          this.errorMessage = this.availabilityResponseMessage(error?.error?.message, error?.error?.errors?.[0]) || 'availabilityCheckError';
           this.showToast('error', this.errorMessage);
           return of(null);
         }),
@@ -330,10 +330,18 @@ export class TourBookingCard implements OnInit {
         this.availabilitySeats = Math.max(0, Number(data?.seatsAvailable ?? 0));
         this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
         this.availabilityConfirmed = isAvailable;
-        if (!isAvailable && response?.isSuccess === false) {
-          this.errorMessage = 'availabilityCheckError';
+        if (!isAvailable) {
+          this.errorMessage = this.availabilityResponseMessage(response?.message, response?.errors?.[0]) || 'availabilityCheckError';
+          this.showToast('error', this.errorMessage);
         }
       });
+  }
+
+  private availabilityResponseMessage(...messages: unknown[]): string {
+    for (const message of messages) {
+      if (typeof message === 'string' && message.trim()) return message.trim();
+    }
+    return '';
   }
 
   bookNow(): void {

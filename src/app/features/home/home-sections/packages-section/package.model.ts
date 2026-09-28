@@ -48,6 +48,40 @@ export interface PackageDTO {
   destinations: PackageDestinationDTO[];
   images: ImageDTO[];
   itinerary: PackageItineraryDTO[];
+  hotelRooms?: PackageHotelRoomDTO[];
+  transportations?: PackageTransportationDTO[];
+}
+
+export interface PackageHotelRoomDTO {
+  id: number;
+  hotelId: number;
+  hotelRoomId: number;
+  hotelName: string;
+  hotelNameEng: string;
+  hotelNameAr: string;
+  roomName: string;
+  roomNameEng: string;
+  roomNameAr: string;
+  adults: number;
+  children: number;
+  infants: number;
+  quantity: number;
+  price: number;
+  currencyCode: string;
+}
+
+export interface PackageTransportationDTO {
+  id: number;
+  sortOrder: number;
+  from: string;
+  fromEng: string;
+  fromAr: string;
+  to: string;
+  toEng: string;
+  toAr: string;
+  transportationType: string;
+  transportationTypeEng: string;
+  transportationTypeAr: string;
 }
 
 export interface PolicyDTO {

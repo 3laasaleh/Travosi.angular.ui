@@ -29,6 +29,7 @@ import {
   isQuarterHourTime,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
+import { PackageBenefitsEditor, packageRoomGroup, packageTransportGroup } from '../package-benefits-editor/package-benefits-editor';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 interface PackageImageUpload {
@@ -49,7 +50,7 @@ type PackageFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-packages-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker, PackageBenefitsEditor],
   templateUrl: './packages-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -181,6 +182,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       controls.highlights,
       controls.includes,
       controls.excludes,
+      controls.hotelRooms,
+      controls.transportations,
     ];
     const cancellationPolicyMissing = !controls.isFreeCancelation.value
       && !this.cancellationPoliciesArray.getRawValue().some((item: any) =>
@@ -263,7 +266,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
           return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
         }
 
-        const packageId = existingId ??detailsResponse.id;
+        const packageId = existingId ?? this.toOptionalId(detailsResponse?.data?.id ?? detailsResponse?.id);
         if (!packageId) {
           return of({ detailsResponse, packageId: null, statusResponse: null, statusError: null });
         }
@@ -280,6 +283,11 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       const packageId = result.packageId;
       if (!packageId) { this.errorMessage = 'packageIdMissingAfterCreate'; return; }
       this.savedPackageId = packageId;
+      const savedDetails = result.detailsResponse?.data ?? result.detailsResponse;
+      if (Array.isArray(savedDetails?.transportations)) {
+        this.packageForm.controls.transportations.clear();
+        savedDetails.transportations.forEach((item: any) => this.packageForm.controls.transportations.push(packageTransportGroup(item)));
+      }
       if (result.statusError) {
         this.handleRequestError(result.statusError, 'statusUpdateError');
         return;
@@ -633,6 +641,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       highlights: new FormArray<FormGroup>([]),
       includes: new FormArray<FormGroup>([]),
       excludes: new FormArray<FormGroup>([]),
+      hotelRooms: new FormArray<FormGroup>([]),
+      transportations: new FormArray<FormGroup>([]),
     }, { validators: PackagesFromCard.packageDateRangeValidator });
   }
 
@@ -686,13 +696,17 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.highlightsArray.markAllAsTouched();
     this.includesArray.markAllAsTouched();
     this.excludesArray.markAllAsTouched();
+    this.packageForm.controls.hotelRooms.markAllAsTouched();
+    this.packageForm.controls.transportations.markAllAsTouched();
     const values = this.packageForm.getRawValue();
     return names.every((name) => this.packageForm.controls[name].valid)
       && !this.packageForm.hasError('invalidPackageDateRange')
       && (values.isFreeCancelation || (this.cancellationPoliciesArray.valid && this.toLocalizedListPayload(values.cancellationPolicies).length > 0))
       && this.highlightsArray.valid
       && this.includesArray.valid
-      && this.excludesArray.valid;
+      && this.excludesArray.valid
+      && this.packageForm.controls.hotelRooms.valid
+      && this.packageForm.controls.transportations.valid;
   }
 
   private buildDetailsPayload(id: number | null): any {
@@ -710,6 +724,14 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       Highlights: this.toLocalizedListPayload(value.highlights),
       Includes: this.toLocalizedListPayload(value.includes),
       Excludes: this.toLocalizedListPayload(value.excludes),
+      HotelRooms: value.hotelRooms.map((room: any) => ({
+        HotelId: Number(room.hotelId), HotelRoomId: Number(room.hotelRoomId), Quantity: Number(room.quantity),
+      })),
+      Transportations: value.transportations.map((item: any) => ({
+        Id: Number(item.id) || 0,
+        FromEng: item.fromEng.trim(), FromAr: item.fromAr.trim(), ToEng: item.toEng.trim(), ToAr: item.toAr.trim(),
+        TransportationTypeEng: item.transportationTypeEng.trim(), TransportationTypeAr: item.transportationTypeAr.trim(),
+      })),
       IsFreeCancelation: value.isFreeCancelation,
       ShowInRealtedTourSection: value.showInRealtedTourSection,
       ShowInRecomendedTourSection: value.showInRecomendedTourSection,
@@ -734,6 +756,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private populateForm(item: any): void {
+    this.packageForm.controls.hotelRooms.clear();
+    (item?.hotelRooms ?? []).forEach((room: any) => this.packageForm.controls.hotelRooms.push(packageRoomGroup(room)));
+    this.packageForm.controls.transportations.clear();
+    (item?.transportations ?? []).forEach((transport: any) => this.packageForm.controls.transportations.push(packageTransportGroup(transport)));
     this.revokeNewImageUrls();
     this.validationSubmitted = false;
     this.imageValidationMessage = '';
@@ -782,6 +808,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   private resetForm(emitCancel: boolean): void {
+    this.packageForm.controls.hotelRooms.clear();
+    this.packageForm.controls.transportations.clear();
     this.closeItineraryEditor(); this.closeDestinationMenu(); this.revokeNewImageUrls();
     this.imageUploads = []; this.savedPackageId = null; this.activeStep = 1; this.completedStep = 0;
     this.imageValidationMessage = ''; this.imageAltErrorsVisible = false;

@@ -3,6 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../admin.service';
 import { readTourItinerary } from '../../shared/tour-itinerary.model';
 import { PackagesFromCard } from './packages-from-card';
+import { packageRoomGroup, packageTransportGroup } from '../package-benefits-editor/package-benefits-editor';
+import { of } from 'rxjs';
 
 describe('PackagesFromCard validation', () => {
   let component: PackagesFromCard;
@@ -50,6 +52,51 @@ describe('PackagesFromCard validation', () => {
     component.packageForm.controls.dateFrom.setValue('2030-06-10');
 
     expect(component.minimumPackageEndDate).toBe('2030-06-11');
+  });
+
+  it('loads hotel rooms and bilingual transportation and preserves them in the save payload', () => {
+    const transport = { id: 4, fromEng: ' Airport ', fromAr: 'المطار', toEng: 'Hotel', toAr: 'الفندق', transportationTypeEng: 'Bus', transportationTypeAr: 'حافلة' };
+    (component as any).populateForm({
+      hotelRooms: [{ hotelId: 2, hotelRoomId: 3, hotelNameEng: 'Beach hotel', roomNameAr: 'غرفة', adults: 2, children: 1, infants: 1, quantity: 2, price: 80 }],
+      transportations: [transport],
+    });
+    const room = component.packageForm.controls.hotelRooms.at(0);
+    expect(room.value).toMatchObject({ adults: 2, children: 1, infants: 1, roomNameAr: 'غرفة' });
+    const payload = (component as any).buildDetailsPayload(7);
+    expect(payload.HotelRooms).toEqual([{ HotelId: 2, HotelRoomId: 3, Quantity: 2 }]);
+    expect(payload.Transportations[0]).toMatchObject({ Id: 4, FromEng: 'Airport', FromAr: 'المطار', TransportationTypeAr: 'حافلة' });
+    component.packageForm.controls.hotelRooms.clear();
+    component.packageForm.controls.transportations.clear();
+    expect((component as any).buildDetailsPayload(7)).toMatchObject({ HotelRooms: [], Transportations: [] });
+  });
+
+  it('validates room quantity and requires both transportation languages', () => {
+    const room = packageRoomGroup({ hotelId: 1, hotelRoomId: 2, quantity: 1, price: 0 });
+    expect(room.valid).toBe(true);
+    room.patchValue({ quantity: 1.5 });
+    expect(room.invalid).toBe(true);
+    const transport = packageTransportGroup({ fromEng: 'Airport', toEng: 'Hotel', transportationTypeEng: 'Bus' });
+    expect(transport.invalid).toBe(true);
+    transport.patchValue({ fromAr: 'المطار', toAr: 'الفندق', transportationTypeAr: 'حافلة' });
+    expect(transport.valid).toBe(true);
+    transport.patchValue({ fromAr: '   ' });
+    expect(transport.invalid).toBe(true);
+  });
+
+  it('uses the wrapped create response ID and retains saved transportation IDs', () => {
+    const transport = { id: 12, fromEng: 'Airport', fromAr: 'المطار', toEng: 'Hotel', toAr: 'الفندق', transportationTypeEng: 'Bus', transportationTypeAr: 'حافلة' };
+    const service = {
+      createPackage: vi.fn(() => of({ isSuccess: true, data: { id: 7, transportations: [transport] } })),
+      changePackageStatus: vi.fn(() => of({ isSuccess: true })),
+    };
+    component = new PackagesFromCard(service as unknown as AdminService, { markForCheck: vi.fn() } as unknown as ChangeDetectorRef, { instant: (key: string) => key } as unknown as TranslateService);
+    vi.spyOn(component as any, 'validateDetailsStep').mockReturnValue(true);
+    vi.spyOn(component as any, 'showToast').mockImplementation(() => {});
+    vi.spyOn(component as any, 'enterImagesStep').mockImplementation(() => {});
+    component.savePackageDetails();
+    expect(component.savedPackageId).toBe(7);
+    expect(service.changePackageStatus).toHaveBeenCalledWith(7, false);
+    expect(component.packageForm.controls.transportations.at(0).value.id).toBe(12);
   });
 
   it('keeps ISO package dates visible and valid while editing', () => {
