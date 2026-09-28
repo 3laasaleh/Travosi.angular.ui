@@ -14,7 +14,10 @@
         <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800 ">{{ groupSize }} {{ 'people' | translate }}</p></div>
       </div>
 
-   
+      <div class="flex items-center gap-3 p-4 sm:p-5">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-xl text-violet-600 dark:bg-violet-500/10"><i class="mdi mdi-translate"></i></span>
+        <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'languages' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ languages }}</p></div>
+      </div>
     </div>
   </section>
 
@@ -41,7 +44,7 @@
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 ">
       <div class="flex items-center gap-3">
         <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-text-box-outline"></i></span>
-        <div><p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'tour' | translate }}</p><h2 class="mt-1 text-xl font-bold text-slate-900 ">{{ 'tourDescriptions' | translate }}</h2></div>
+        <div><h2 class="mt-1 text-xl font-bold text-slate-900 ">{{ 'tourDescriptions' | translate }}</h2></div>
       </div>
       <p class="mt-5 whitespace-pre-line text-base leading-8 text-slate-600 ">
         <app-description-preview [text]="description" /></p>

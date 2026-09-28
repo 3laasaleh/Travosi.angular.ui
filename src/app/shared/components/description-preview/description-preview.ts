@@ -12,7 +12,8 @@ import { DescriptionLinks, parseDescriptionLinks } from '../description-links/de
 })
 export class DescriptionPreview implements OnChanges {
   @Input() text: string | null | undefined = '';
-  @Input() limit = 100;
+  @Input() limit = 300;
+  @Input() hideShowMoreBtn = false;
 
   expanded = false;
   normalizedText = '';
@@ -23,7 +24,7 @@ export class DescriptionPreview implements OnChanges {
     this.expanded = false;
     const parts = parseDescriptionLinks(this.text);
     this.normalizedText = parts.map((part) => part.text).join('');
-    const limit = Math.max(1, Number(this.limit) || 100);
+    const limit = Math.max(1, Number(this.limit) || 300);
     this.hasMore = this.normalizedText.length > limit;
     this.previewText = this.hasMore
       ? `${this.normalizedText.slice(0, Math.max(0, limit - 1)).trimEnd()}…`

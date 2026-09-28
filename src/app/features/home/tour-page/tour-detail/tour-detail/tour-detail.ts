@@ -62,14 +62,56 @@ export class TourDetail {
   }
 
   get languages(): string {
-    const languages = this.tour?.languages ?? this.tour?.language;
-    if (Array.isArray(languages)) {
-      return languages
-        .map((language) => language?.name ?? language?.nameEng ?? language)
-        .filter(Boolean)
-        .join(', ');
-    }
-    return languages || '-';
+    const facilityLanguages = this.languageFacilities
+      .map((facility) => this.localizedFacilityName(facility))
+      .filter(Boolean);
+    const directLanguages = this.toValues(this.tour?.languages ?? this.tour?.language);
+    const values = facilityLanguages.length ? facilityLanguages : directLanguages;
+    return [...new Set(values)].join(', ') || this.translate.instant('languageEnglish');
+  }
+
+  private get languageFacilities(): any[] {
+    const facilities = this.toArray(
+      this.tour?.languageFacilities ?? this.tour?.facilities ?? this.tour?.tourFacilities ?? this.tour?.amenities,
+    );
+    return facilities.filter((facility) => this.isLanguageFacility(facility));
+  }
+
+  private isLanguageFacility(facility: any): boolean {
+    if (facility?.isLanguage === true || facility?.isLanguageFacility === true) return true;
+    const category = [
+      facility?.facilityCategoryName,
+      facility?.facilityCategoryNameEng,
+      facility?.facilityCategoryNameAr,
+      facility?.categoryName,
+      facility?.category,
+      facility?.facilityCategory?.name,
+      facility?.facilityCategory?.nameEng,
+      facility?.facilityCategory?.nameAr,
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (/language|languages|spoken|guide language|لغة/.test(category)) return true;
+
+    const name = this.localizedFacilityName(facility).toLowerCase();
+    return /^(english|arabic|french|german|italian|spanish|russian|chinese|japanese|turkish|portuguese|dutch|polish|korean|hindi|urdu|العربية|الإنجليزية)/.test(name);
+  }
+
+  private localizedFacilityName(facility: any): string {
+    if (typeof facility === 'string') return facility.trim();
+    const source = facility?.facility ?? facility;
+    const value = this.isArabic
+      ? source?.nameAr ?? source?.nameEng ?? source?.name ?? source?.facilityNameAr ?? source?.facilityNameEng ?? source?.facilityName
+      : source?.nameEng ?? source?.nameAr ?? source?.name ?? source?.facilityNameEng ?? source?.facilityNameAr ?? source?.facilityName;
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  private toValues(value: unknown): string[] {
+    return this.toArray(value)
+      .map((item) => this.localizedFacilityName(item))
+      .filter(Boolean);
+  }
+
+  private toArray(value: unknown): any[] {
+    return Array.isArray(value) ? value : value == null ? [] : [value];
   }
 
   get formattedPrice(): string {

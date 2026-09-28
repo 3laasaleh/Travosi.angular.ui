@@ -25,7 +25,8 @@
     <div class="flex flex-1 flex-col p-4">
       <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ tour?.name }}</h3>
       @if (tour?.description ?? tour?.fullDescription ?? tour?.['subDescription']; as description) {
-      <p class="mt-2 text-sm leading-6 text-slate-500"><app-description-preview [text]="description" /></p>
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        <app-description-preview [text]="description" [limit]="50" [hideShowMoreBtn]="true" /></p>
       }
       <div class="mt-auto pt-4">
         <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">

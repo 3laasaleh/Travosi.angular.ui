@@ -177,6 +177,15 @@ export class HomePackagePage implements OnInit {
     return Number(this.travelPackage?.maxCapacity ?? this.travelPackage?.maxSeats ?? 0);
   }
 
+  get languages(): string {
+    const facilityLanguages = this.languageFacilities
+      .map((facility) => this.localizedFacilityName(facility))
+      .filter(Boolean);
+    const directLanguages = this.toValues(this.travelPackage?.languages ?? this.travelPackage?.language);
+    const values = facilityLanguages.length ? facilityLanguages : directLanguages;
+    return [...new Set(values)].join(', ') || this.translate.instant('languageEnglish');
+  }
+
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
@@ -239,6 +248,54 @@ export class HomePackagePage implements OnInit {
       : this.translate.currentLang()?.toLowerCase().startsWith('ar')
         ? (item?.valueAr ?? item?.valueEng ?? item?.value ?? item?.text ?? item?.title ?? item?.name ?? '')
         : (item?.valueEng ?? item?.valueAr ?? item?.value ?? item?.text ?? item?.title ?? item?.name ?? '');
+  }
+
+  private get languageFacilities(): any[] {
+    const facilities = this.toArray(
+      this.travelPackage?.languageFacilities
+      ?? this.travelPackage?.facilities
+      ?? this.travelPackage?.packageFacilities
+      ?? this.travelPackage?.amenities,
+    );
+    return facilities.filter((facility) => this.isLanguageFacility(facility));
+  }
+
+  private isLanguageFacility(facility: any): boolean {
+    if (facility?.isLanguage === true || facility?.isLanguageFacility === true) return true;
+    const category = [
+      facility?.facilityCategoryName,
+      facility?.facilityCategoryNameEng,
+      facility?.facilityCategoryNameAr,
+      facility?.categoryName,
+      facility?.category,
+      facility?.facilityCategory?.name,
+      facility?.facilityCategory?.nameEng,
+      facility?.facilityCategory?.nameAr,
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (/language|languages|spoken|guide language|لغة/.test(category)) return true;
+
+    const name = this.localizedFacilityName(facility).toLowerCase();
+    return /^(english|arabic|french|german|italian|spanish|russian|chinese|japanese|turkish|portuguese|dutch|polish|korean|hindi|urdu|العربية|الإنجليزية)/.test(name);
+  }
+
+  private localizedFacilityName(facility: any): string {
+    if (typeof facility === 'string') return facility.trim();
+    const source = facility?.facility ?? facility;
+    const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
+    const value = arabic
+      ? source?.nameAr ?? source?.nameEng ?? source?.name ?? source?.facilityNameAr ?? source?.facilityNameEng ?? source?.facilityName
+      : source?.nameEng ?? source?.nameAr ?? source?.name ?? source?.facilityNameEng ?? source?.facilityNameAr ?? source?.facilityName;
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  private toValues(value: unknown): string[] {
+    return this.toArray(value)
+      .map((item) => this.localizedFacilityName(item))
+      .filter(Boolean);
+  }
+
+  private toArray(value: unknown): any[] {
+    return Array.isArray(value) ? value : value == null ? [] : [value];
   }
 
   tourTitle(tour: any): string {

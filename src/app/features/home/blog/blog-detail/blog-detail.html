@@ -2,7 +2,15 @@
 <app-breadcrumbs />
 <main class="container py-12 md:py-12">
   @if (isLoading) {
-  <div class=" h-96 animate-pulse rounded-2xl bg-slate-100"></div> }
+  <div class="py-12 md:py-16" aria-busy="true" [attr.aria-label]="'loading' | translate">
+    <article class="mx-auto max-w-5xl">
+      <div class="h-4 w-32 animate-pulse rounded-full bg-slate-200"></div>
+      <div class="mt-4 h-12 w-4/5 animate-pulse rounded-full bg-slate-200"></div>
+      <div class="mt-4 h-5 w-2/3 animate-pulse rounded-full bg-slate-200"></div>
+      <div class="mt-8 aspect-[16/9] animate-pulse rounded-[28px] bg-slate-200"></div>
+      <div class="mt-12 space-y-4">@for (line of [1, 2, 3, 4, 5, 6]; track line) { @if (line < 5) { <div class="h-4 w-[91.6667%] animate-pulse rounded-full bg-slate-200"></div> } @else { <div class="h-4 w-3/4 animate-pulse rounded-full bg-slate-200"></div> } }</div>
+    </article>
+  </div> }
   @else if (blog) {
   <article class="mx-auto  max-w-5xl">
     <p class="text-sm font-medium text-primary">{{ (blog.publishedAt ?? blog.PublishedAt) | date:'longDate' }}</p>
