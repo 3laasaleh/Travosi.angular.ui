@@ -72,6 +72,7 @@ export class TourBookingCard implements OnInit {
   availabilityConfirmed = false;
   availabilityStatus: 'available' | 'unavailable' | null = null;
   availabilitySeats = 0;
+  availabilityMessage = '';
   errorMessage = '';
   successMessage = '';
   guestBookingOpen = false;
@@ -307,14 +308,17 @@ export class TourBookingCard implements OnInit {
     this.isCheckingAvailability = true;
     this.availabilityStatus = null;
     this.availabilityConfirmed = false;
+    this.availabilityMessage = '';
     this.errorMessage = '';
 
     this.apiService
       .postUnauthenticated('Bookings/CheckAvailability', payload)
       .pipe(
         catchError((error) => {
-          this.errorMessage = this.availabilityResponseMessage(error?.error?.message, error?.error?.errors?.[0]) || 'availabilityCheckError';
-          this.showToast('error', this.errorMessage);
+          this.availabilityMessage = this.availabilityResponseMessage(error?.error?.message, error?.error?.errors?.[0])
+            || this.translate.instant('availabilityCheckError');
+          this.availabilityStatus = 'unavailable';
+          this.showAvailabilityToast(this.availabilityMessage);
           return of(null);
         }),
         finalize(() => {
@@ -331,8 +335,9 @@ export class TourBookingCard implements OnInit {
         this.availabilityStatus = isAvailable ? 'available' : 'unavailable';
         this.availabilityConfirmed = isAvailable;
         if (!isAvailable) {
-          this.errorMessage = this.availabilityResponseMessage(response?.message, response?.errors?.[0]) || 'availabilityCheckError';
-          this.showToast('error', this.errorMessage);
+          this.availabilityMessage = this.availabilityResponseMessage(response?.message, response?.errors?.[0])
+            || this.translate.instant('availabilityCheckError');
+          this.showAvailabilityToast(this.availabilityMessage);
         }
       });
   }
@@ -342,6 +347,18 @@ export class TourBookingCard implements OnInit {
       if (typeof message === 'string' && message.trim()) return message.trim();
     }
     return '';
+  }
+
+  private showAvailabilityToast(message: string): void {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: message,
+      showConfirmButton: false,
+      timer: 4200,
+      timerProgressBar: true,
+    });
   }
 
   bookNow(): void {
@@ -618,6 +635,7 @@ export class TourBookingCard implements OnInit {
     this.availabilityConfirmed = false;
     this.availabilityStatus = null;
     this.availabilitySeats = 0;
+    this.availabilityMessage = '';
   }
 
   private applyCatalogSelection(): void {

@@ -178,7 +178,9 @@
       </div>
     } @else if (availabilityStatus === 'unavailable') {
       <div class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700" role="alert">
-        <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-calendar-remove-outline text-lg"></i>{{ (errorMessage || 'selectionUnavailable') | translate }}</p>
+        <p class="flex items-center gap-2 font-semibold"><i class="mdi mdi-calendar-remove-outline text-lg"></i>
+          @if (availabilityMessage) { {{ availabilityMessage }} } @else { {{ 'selectionUnavailable' | translate }} }
+        </p>
       </div>
     }
 
