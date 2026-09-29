@@ -1,7 +1,7 @@
 
 <app-home-navbar />
 @if (isLoading) {
-  <section class="relative grid h-screen place-items-center overflow-hidden bg-slate-200" aria-busy="true" [attr.aria-label]="'loadingHomePage' | translate">
+  <section class="relative grid h-[80vh] min-h-[600px] max-h-[800px] place-items-center overflow-hidden bg-slate-200" aria-busy="true" [attr.aria-label]="'loadingHomePage' | translate">
     <div class="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-300 via-slate-200 to-slate-300"></div>
     <div class="container relative text-center">
       <div class="mx-auto h-40 w-72 animate-pulse rounded-3xl bg-white/45"></div>
@@ -11,8 +11,8 @@
     </div>
   </section>
 } @else {
-<section class="swiper-slider-hero relative block h-screen" id="home">
-    <div class="swiper-container absolute end-0 top-0 w-full h-full">
+<section class="swiper-slider-hero relative block h-[80vh] min-h-[600px] max-h-[800px]" id="home">
+    <div class="swiper-container absolute end-0 top-0 h-[80vh] min-h-[600px] max-h-[800px] w-full">
         <div class="swiper h-full">
             <div class="swiper-wrapper">
                 <!-- Slides come from Home.heroSlides in home.ts — add, remove or edit them there. -->
