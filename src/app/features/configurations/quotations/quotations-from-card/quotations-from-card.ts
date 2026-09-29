@@ -30,6 +30,7 @@ import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
 import { customerPdfDownloadName } from '../../../../shared/utils/pdf-download-name.util';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -74,6 +75,7 @@ export interface QuotationDTO {
 })
 export class QuotationsFromCard implements OnInit, OnChanges {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly currencyService = inject(CurrencyService);
   @Input() selectedQuotation: QuotationDTO | null = null;
   @Output() quotationSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -121,6 +123,28 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadOptions();
+    this.currencyService.loadExchangeRate().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.cdr.markForCheck());
+  }
+
+  formatPrice(value: unknown): string { return this.currencyService.formatDocumentPrice(value, this.quotationForm.controls.currencyId.value); }
+
+  private quotedPrice(value: unknown, source: unknown = 2): number {
+    return this.currencyService.convertForDocument(value, source, this.quotationForm.controls.currencyId.value) ?? Number.NaN;
+  }
+
+  get currencyConversionUnavailable(): boolean {
+    const sources = [...this.selectedPackages, ...this.selectedTours, ...this.selectedHotels, ...this.selectedFlights].map(item => item.currencyId ?? 2);
+    if (this.selectedQuotation) sources.push(this.selectedQuotation.currencyId);
+    return sources.some(source => !Number.isFinite(this.quotedPrice(1, source)));
+  }
+
+  retryCurrencyRate(): void {
+    this.currencyService.loadExchangeRate(true).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.cdr.markForCheck());
+  }
+
+  private savedPrice(item: any, fallback: number): number {
+    const value = item?.pricePerItem ?? item?.sellingPrice;
+    return value == null ? fallback : this.quotedPrice(value, this.selectedQuotation?.currencyId ?? 2);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -194,6 +218,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       && !this.optionsLoading
       && !this.imagesLoading
       && !this.hotelSelectionInvalid
+      && this.pricesValid
+      && !this.currencyConversionUnavailable
+      && !this.missingSelections
       && this.quotationForm.valid
       && this.hasTravelItems
       && this.quotationForm.controls.discount.value <= this.subTotal;
@@ -283,7 +310,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     const saved = this.selectedQuotation;
     if (saved && saved.travelStartDate === start && saved.travelEndDate === end) {
       const lines = saved.items.filter(item => Number(item.hotelRoomId) === Number(room.id));
-      if (lines.length) return lines.map(item => ({ quantity: Number(item.quantity), price: Number(item.pricePerItem ?? item.sellingPrice) }));
+      if (lines.length) return lines.map(item => ({ quantity: Number(item.quantity), price: this.quotedPrice(item.pricePerItem ?? item.sellingPrice, saved.currencyId) }));
     }
     const periods = (room.roomPeriodPrices ?? []).filter((p: any) => p.isActive !== false);
     const rates = new Map<number, number>();
@@ -292,7 +319,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       const period = periods.find((p: any) => String(p.startDate).slice(0, 10) <= date && String(p.endDate).slice(0, 10) >= date);
       const raw = period?.price ?? (!periods.length ? room.sellingPrice : null);
       if (raw == null || !Number.isFinite(Number(raw)) || Number(raw) < 0) return null;
-      const price = this.money(Number(raw));
+      const price = this.quotedPrice(raw, room.currencyId ?? 2);
+      if (!Number.isFinite(price)) return null;
       rates.set(price, (rates.get(price) ?? 0) + 1);
     }
     return [...rates].map(([price, quantity]) => ({ price, quantity }));
@@ -304,6 +332,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   private money(value: number): number { return Math.round((value + Number.EPSILON) * 100) / 100; }
+
+  get pricesValid(): boolean { return this.buildQuotationItems().every(item => Number.isFinite(item.pricePerItem) && item.pricePerItem >= 0); }
 
   async selectImages(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -350,15 +380,15 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   packagePrice(pkg: any): number {
-    return Number(pkg.pricePerPerson ?? pkg.price ?? pkg.totalAmount ?? 0);
+    return this.quotedPrice(pkg.pricePerPerson ?? pkg.price ?? pkg.totalAmount ?? 0, pkg.currencyId ?? 2);
   }
 
   childPrice(item: any): number {
-    return Number(item.pricePerChild ?? 0);
+    return this.quotedPrice(item.pricePerChild ?? 0, item.currencyId ?? 2);
   }
 
   infantPrice(item: any): number {
-    return Number(item.pricePerInfant ?? 0);
+    return this.quotedPrice(item.pricePerInfant ?? 0, item.currencyId ?? 2);
   }
 
   catalogTotal(item: any): number {
@@ -368,15 +398,15 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   flightAdultPrice(flight: any): number {
-    return Number(flight?.pricePerPerson ?? flight?.price ?? 0);
+    return this.quotedPrice(flight?.pricePerPerson ?? flight?.price ?? 0, flight?.currencyId ?? 2);
   }
 
   flightChildPrice(flight: any): number {
-    return Number(flight?.pricePerChild ?? 0);
+    return this.quotedPrice(flight?.pricePerChild ?? 0, flight?.currencyId ?? 2);
   }
 
   flightInfantPrice(flight: any): number {
-    return Number(flight?.pricePerInfant ?? 0);
+    return this.quotedPrice(flight?.pricePerInfant ?? 0, flight?.currencyId ?? 2);
   }
 
   flightTotal(flight: any): number {
@@ -384,19 +414,6 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return this.flightAdultPrice(flight) * form.adults.value
       + this.flightChildPrice(flight) * form.children.value
       + this.flightInfantPrice(flight) * form.infants.value;
-  }
-
-  hotelRoom(hotel: any): any | null {
-    const rooms = Array.isArray(hotel?.rooms) ? hotel.rooms : [];
-    return rooms
-      .filter((room: any) => room?.isActive !== false)
-      .sort((left: any, right: any) => Number(left?.sellingPrice ?? 0) - Number(right?.sellingPrice ?? 0))[0]
-      ?? rooms[0]
-      ?? null;
-  }
-
-  hotelPrice(hotel: any): number {
-    return Number(this.hotelRoom(hotel)?.sellingPrice ?? hotel?.sellingPrice ?? hotel?.price ?? 0);
   }
 
   hotelNights(): number {
@@ -480,7 +497,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: adultItem?.description || `${base.description} - Adults`,
         quantity: adults,
         costPrice: Number(adultItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(adultItem?.pricePerItem ?? adultItem?.sellingPrice ?? this.packagePrice(item)),
+        sellingPrice: this.savedPrice(adultItem, this.packagePrice(item)),
         sortOrder: base.sortOrder,
       });
       if (children > 0) items.push({
@@ -489,7 +506,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: childItem?.description || `${base.description} - Children`,
         quantity: children,
         costPrice: Number(childItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(childItem?.pricePerItem ?? childItem?.sellingPrice ?? this.childPrice(item)),
+        sellingPrice: this.savedPrice(childItem, this.childPrice(item)),
         sortOrder: sortOrder++,
       });
       if (infants > 0) items.push({
@@ -498,7 +515,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: infantItem?.description || `${base.description} - Infants`,
         quantity: infants,
         costPrice: Number(infantItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(infantItem?.pricePerItem ?? infantItem?.sellingPrice ?? this.infantPrice(item)),
+        sellingPrice: this.savedPrice(infantItem, this.infantPrice(item)),
         sortOrder: sortOrder++,
       });
     };
@@ -533,7 +550,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
           description: savedItem?.description || `${this.flightName(flight)} - ${audience[0].toUpperCase()}${audience.slice(1)}`,
           quantity,
           costPrice: Number(savedItem?.costPrice ?? flight.costPrice ?? flight.cost ?? 0),
-          sellingPrice: Number(savedItem?.pricePerItem ?? savedItem?.sellingPrice ?? price),
+          sellingPrice: this.savedPrice(savedItem, price),
           discount: Number(savedItem?.discount ?? 0),
           sortOrder: sortOrder++,
           flightId: Number(flight.id),
@@ -567,7 +584,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return items.map((item) => {
       const quantity = Math.max(1, Number(item.quantity) || 1);
       const sellingPrice = Number(item.sellingPrice);
-      const pricePerItem = Number.isFinite(sellingPrice) ? sellingPrice : 0;
+      const pricePerItem = sellingPrice;
       const transfer = item.itemType === 5 ? {
         from: item.from,
         to: item.to,
@@ -649,6 +666,14 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     if (this.isLoading || this.imagesLoading || this.optionsLoading) return;
     this.validationSubmitted = true;
     this.quotationForm.updateValueAndValidity();
+    if (this.missingSelections) {
+      this.showToast('error', 'quotationOptionsLoadError');
+      return;
+    }
+    if (this.currencyConversionUnavailable || !this.pricesValid) {
+      this.showToast('error', 'currencyRateLoadError');
+      return;
+    }
     if (this.hotelSelectionInvalid) {
       this.showToast('warning', 'quotationSelectRooms');
       return;
@@ -671,11 +696,11 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       travelStartDate: form.travelStartDate,
       travelEndDate: form.travelEndDate,
       adults: form.adults,
-      children: form.children,
-      infants: form.infants,
+      children: Number(form.children ?? 0),
+      infants: Number(form.infants ?? 0),
       subTotal: this.subTotal,
-      discount: form.discount,
-      taxRate: form.taxRate,
+      discount: Number(form.discount ?? 0),
+      taxRate: Number(form.taxRate ?? 0),
       tax: this.tax,
       totalAmount: this.totalAmount,
       totalCost: this.totalCost,
@@ -731,7 +756,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         const link = document.createElement('a');
         link.href = url;
         link.download = customerPdfDownloadName(quote.customerName, quote.quotationNo);
+        document.body.appendChild(link);
         link.click();
+        link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       },
       error: () => this.showToast('error', 'quotationPdfError'),
@@ -747,11 +774,12 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       tours: this.apiService.get('Tours/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       hotels: this.apiService.get('Hotels?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       flights: this.apiService.get('Flights/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
-    }).pipe(finalize(() => {
+    }).pipe(takeUntilDestroyed(this.destroyRef), finalize(() => {
       this.optionsLoading = false;
       if (this.optionsLoadError) this.showToast('error', 'quotationOptionsLoadError');
       this.cdr.markForCheck();
     })).subscribe(({ customers, packages, tours, hotels, flights }) => {
+      if ([customers, packages, tours, hotels, flights].some((response: any) => response?.isSuccess === false)) this.optionsLoadError = true;
       this.customers = this.rows(customers, 'customers');
       this.packages = this.rows(packages, 'packages');
       this.tours = this.rows(tours, 'tours');
@@ -762,6 +790,14 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   retryOptions(): void { this.loadOptions(); }
+
+  private get missingSelections(): boolean {
+    return this.selectedPackages.length !== this.selectedPackageIds.size
+      || this.selectedTours.length !== this.selectedTourIds.size
+      || this.selectedHotels.length !== this.selectedHotelIds.size
+      || this.selectedFlights.length !== this.selectedFlightIds.size
+      || [...this.selectedRoomIds].some(id => !this.selectedHotels.some(hotel => this.hotelRooms(hotel.id).some(room => Number(room.id) === id)));
+  }
 
   private populateForm(quotation: QuotationDTO): void {
     this.validationSubmitted = false;
@@ -973,9 +1009,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private apiMessage(source: any, fallback: string): string {
     const payload = source?.error ?? source;
-    const errors = Array.isArray(payload?.errors)
-      ? payload.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
-      : [];
+    const values = Array.isArray(payload?.errors) ? payload.errors
+      : payload?.errors && typeof payload.errors === 'object' ? Object.values(payload.errors).flat() : [];
+    const errors = values.filter((error: unknown) => typeof error === 'string' && error.trim());
     return errors.length ? errors.join(' ') : payload?.message || fallback;
   }
 

@@ -162,7 +162,7 @@
                       <span class="block text-xs text-slate-500">{{ 'quotationSelectHotelRooms' | translate }}</span>
                     </span>
                   </span>
-                  <strong>{{ hotelTotal(hotel) | number:'1.2-2' }}</strong>
+                  <strong>{{ formatPrice(hotelTotal(hotel)) }}</strong>
                 </label>
               } @empty {
                 <p class="py-4 text-center text-sm text-slate-500">{{ 'noHotelsFound' | translate }}</p>
@@ -317,7 +317,7 @@
                 <span class="min-w-0 flex-1">
                   <strong class="block">{{ itemName(room) }}</strong>
                   <span class="mt-1 block text-xs text-slate-500">{{ room.maxAdults || 0 }} {{ 'adults' | translate }} · {{ room.maxChildren || 0 }} {{ 'children' | translate }} · {{ room.maxInfants || 0 }} {{ 'infants' | translate }}</span>
-                  @if (roomTotal(room) !== null) { <span class="mt-2 block text-sm font-semibold text-primary">{{ 'totalPrice' | translate }}: {{ roomTotal(room) | number:'1.2-2' }}</span> }
+                  @if (roomTotal(room) !== null) { <span class="mt-2 block text-sm font-semibold text-primary">{{ 'totalPrice' | translate }}: {{ formatPrice(roomTotal(room)) }}</span> }
                   @else { <span class="mt-2 block text-xs text-red-600">{{ 'quotationRoomRateMissing' | translate }}</span> }
                 </span>
               </label>
@@ -394,13 +394,16 @@
       </div>
     </div>
 
-    <div class="grid gap-3 rounded-2xl bg-slate-900 p-4 text-sm text-white sm:grid-cols-2">
-      <p>{{ 'subTotal' | translate }}: <strong>{{ subTotal | number:'1.2-2' }}</strong></p>
-      <p>{{ 'discount' | translate }}: <strong>{{ quotationForm.controls.discount.value | number:'1.2-2' }}</strong></p>
-      <p>{{ 'tax' | translate }}: <strong>{{ tax | number:'1.2-2' }}</strong></p>
-      <p>{{ 'totalCost' | translate }}: <strong>{{ totalCost | number:'1.2-2' }}</strong></p>
-      <p class="text-base text-emerald-300 sm:col-span-2">{{ 'finalPriceAfterDiscount' | translate }}: <strong>{{ totalAmount | number:'1.2-2' }}</strong></p>
-    </div>
+    @if (currencyConversionUnavailable) {
+      <div class="rounded-xl bg-red-50 p-3 text-sm text-red-600" role="alert">{{ 'currencyRateLoadError' | translate }} <button type="button" class="font-semibold underline" (click)="retryCurrencyRate()">{{ 'retry' | translate }}</button></div>
+    } @else {
+      <div class="grid gap-3 rounded-2xl bg-slate-900 p-4 text-sm text-white sm:grid-cols-2" aria-live="polite">
+        <p>{{ 'subTotal' | translate }}: <strong>{{ formatPrice(subTotal) }}</strong></p>
+        <p>{{ 'discount' | translate }}: <strong>{{ formatPrice(quotationForm.controls.discount.value) }}</strong></p>
+        <p>{{ 'tax' | translate }}: <strong>{{ formatPrice(tax) }}</strong></p>
+        <p class="text-base text-emerald-300 sm:col-span-2">{{ 'finalPriceAfterDiscount' | translate }}: <strong>{{ formatPrice(totalAmount) }}</strong></p>
+      </div>
+    }
 
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'notes' | translate }}</label>

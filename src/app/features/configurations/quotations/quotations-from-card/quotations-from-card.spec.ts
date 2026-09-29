@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 import {
   QuotationDTO,
   QuotationStatusEnum,
@@ -76,7 +77,11 @@ describe('QuotationsFromCard', () => {
       put: vi.fn().mockReturnValue(of({ isSuccess: true, message: 'Updated' })),
     };
 
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: [{ provide: CurrencyService, useValue: {
+      loadExchangeRate: () => of(null),
+      convertForDocument: (value: unknown, source: unknown, target: unknown) => Number(value) * (source === target ? 1 : target === 1 ? 50 : 1 / 50),
+      formatDocumentPrice: (value: unknown) => String(value),
+    } }] });
     component = TestBed.runInInjectionContext(() => new QuotationsFromCard(
       apiService as unknown as ApiService,
       { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
@@ -158,6 +163,25 @@ describe('QuotationsFromCard', () => {
     expect(component.canSave).toBe(false);
     component.toggleHotel(hotel, false);
     expect(component.selectedRoomIds.size).toBe(0);
+  });
+
+  it('converts catalog prices into the quotation currency without changing the public currency', () => {
+    component.flights = [flight]; component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    component.quotationForm.controls.currencyId.setValue(1);
+    expect(component.subTotal).toBe(6250);
+    component.saveQuotation();
+    expect(apiService.post.mock.calls[0][1].items[0].pricePerItem).toBe(6250);
+  });
+
+  it('blocks save when a required exchange rate is unavailable', () => {
+    component.flights = [flight]; component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    vi.spyOn(TestBed.inject(CurrencyService), 'convertForDocument').mockReturnValue(null);
+    component.quotationForm.controls.currencyId.setValue(1);
+    component.saveQuotation();
+    expect(apiService.post).not.toHaveBeenCalled();
+    expect(component.canSave).toBe(false);
   });
 
   it('saves image placement and refuses more than five uploads', async () => {

@@ -169,6 +169,22 @@ export class CurrencyService {
     return Math.round((converted + Number.EPSILON) * 100) / 100;
   }
 
+  /** CRM documents have their own currency, independent of the public-site selector. */
+  convertForDocument(value: unknown, sourceCurrency: unknown, targetCurrency: unknown): number | null {
+    const price = this.normalizeAmount(value);
+    const source = this.resolveCurrencyCode(sourceCurrency);
+    const target = this.resolveCurrencyCode(targetCurrency);
+    if (source === target) return price;
+    const rate = this.usableExchangeRate();
+    if (rate === null) return null;
+    return Math.round(((source === 'USD' ? price * rate : price / rate) + Number.EPSILON) * 100) / 100;
+  }
+
+  formatDocumentPrice(value: unknown, currency: unknown): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: this.resolveCurrencyCode(currency), minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      .format(this.normalizeAmount(value));
+  }
+
   displayLabel(sourceCurrency: unknown = 'USD'): string {
     return this.displayCurrencyCode(sourceCurrency) === 'EGP' ? 'EGP' : '$';
   }

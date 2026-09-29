@@ -358,9 +358,9 @@ export class QuotationsList implements OnInit, OnChanges {
 
   private apiMessage(source: any, fallback: string): string {
     const payload = source?.error ?? source;
-    const errors = Array.isArray(payload?.errors)
-      ? payload.errors.filter((error: unknown) => typeof error === 'string' && error.trim())
-      : [];
+    const values = Array.isArray(payload?.errors) ? payload.errors
+      : payload?.errors && typeof payload.errors === 'object' ? Object.values(payload.errors).flat() : [];
+    const errors = values.filter((error: unknown) => typeof error === 'string' && error.trim());
     return errors.length ? errors.join(' ') : payload?.message || fallback;
   }
 
