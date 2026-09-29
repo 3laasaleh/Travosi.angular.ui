@@ -66,6 +66,7 @@ describe('QuotationsFromCard', () => {
         if (url.startsWith('Hotels')) {
           return of({ data: { data: [hotel] } });
         }
+        if (url.startsWith('HotelRooms/ByHotel/')) return of({ isSuccess: true, data: hotel.rooms });
         if (url.startsWith('Flights/GetAll')) {
           return of({ data: { data: [flight] } });
         }
@@ -103,10 +104,11 @@ describe('QuotationsFromCard', () => {
     expect(component.thumbnail(flight)).toMatch(/\/images\/airlines\/sea-world-air\.webp$/);
   });
 
-  it('saves a hotel using its lowest active room rate and the quotation stay dates', () => {
+  it('loads all hotel rooms and saves only the explicitly selected room', () => {
     component.hotels = [hotel];
     component.toggleHotel(hotel, true);
     fillRequiredFields(component);
+    component.toggleRoom(hotel.rooms[0], true);
 
     component.saveQuotation();
 
@@ -114,9 +116,9 @@ describe('QuotationsFromCard', () => {
     expect(payload.items).toContainEqual(expect.objectContaining({
       itemType: 3,
       hotelId: hotel.id,
+      hotelRoomId: hotel.rooms[0].id,
       description: 'Nile View Hotel - Deluxe room',
       quantity: 10,
-      costPrice: 70,
       sellingPrice: 100,
       serviceStartDate: '2030-05-10',
       serviceEndDate: '2030-05-20',
@@ -124,6 +126,50 @@ describe('QuotationsFromCard', () => {
       numberOfRooms: 1,
       mealPlan: 'Breakfast',
     }));
+    expect(apiService.get).toHaveBeenCalledWith('HotelRooms/ByHotel/31');
+  });
+
+  it('supports multiple rooms and exact prices across nightly rate periods', () => {
+    const rooms = [
+      { id: 301, name: 'Family room', roomPeriodPrices: [{ startDate: '2030-05-10', endDate: '2030-05-14', price: 100, isActive: true }, { startDate: '2030-05-15', endDate: '2030-05-20', price: 150, isActive: true }] },
+      { id: 302, name: 'Suite', roomPeriodPrices: [{ startDate: '2030-05-10', endDate: '2030-05-20', price: 200, isActive: true }] },
+    ];
+    component.hotels = [hotel];
+    component.roomsByHotel.set(hotel.id, rooms);
+    component.toggleHotel(hotel, true);
+    fillRequiredFields(component);
+    rooms.forEach(room => component.toggleRoom(room, true));
+    component.quotationForm.patchValue({ discount: 250, taxRate: 10 });
+    expect(component.subTotal).toBe(3250);
+    expect(component.totalAmount).toBe(3300);
+    component.saveQuotation();
+    const payload = apiService.post.mock.calls[0][1];
+    expect(payload.items.map((item: any) => [item.hotelRoomId, item.quantity, item.pricePerItem])).toEqual([[301, 5, 100], [301, 5, 150], [302, 10, 200]]);
+  });
+
+  it('requires a room per selected hotel and rejects gaps in stay rates', () => {
+    component.hotels = [hotel];
+    component.toggleHotel(hotel, true);
+    fillRequiredFields(component);
+    component.saveQuotation();
+    expect(apiService.post).not.toHaveBeenCalled();
+    component.roomsByHotel.set(hotel.id, [{ id: 301, roomPeriodPrices: [{ startDate: '2030-05-10', endDate: '2030-05-12', price: 100 }] }]);
+    component.toggleRoom({ id: 301 }, true);
+    expect(component.canSave).toBe(false);
+    component.toggleHotel(hotel, false);
+    expect(component.selectedRoomIds.size).toBe(0);
+  });
+
+  it('saves image placement and refuses more than five uploads', async () => {
+    component.flights = [flight];
+    component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    component.images = [{ data: 'base64', contentType: 'image/jpeg', sortOrder: 0 }];
+    component.imagesAtTop = true;
+    await component.selectImages({ target: { files: Array.from({ length: 5 }, () => new File(['image'], 'photo.jpg', { type: 'image/jpeg' })), value: '' } } as unknown as Event);
+    expect(component.images.length).toBe(1);
+    component.saveQuotation();
+    expect(apiService.post.mock.calls[0][1]).toMatchObject({ imagesAtTop: true, images: [{ data: 'base64', contentType: 'image/jpeg', sortOrder: 0 }] });
   });
 
   it('hides generated fields and initializes all quotation dates', () => {

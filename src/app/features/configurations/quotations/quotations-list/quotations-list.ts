@@ -73,9 +73,9 @@ export class QuotationsList implements OnInit, OnChanges {
     this.isLoading = true;
     this.errorMessage = '';
     this.apiService.get(`Quotations?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`).pipe(
-      catchError(() => {
-        this.errorMessage = 'quotationServiceUnavailable';
-        this.showToast('error', 'quotationServiceUnavailable');
+      catchError((error) => {
+        this.errorMessage = this.apiMessage(error, 'quotationServiceUnavailable');
+        this.showToast('error', this.errorMessage);
         return of(null);
       }),
       finalize(() => {
@@ -235,6 +235,11 @@ export class QuotationsList implements OnInit, OnChanges {
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.errorMessage = this.apiMessage(response, 'quotationLoadError');
+        this.showToast('error', this.errorMessage);
+        return;
+      }
       if (response?.isSuccess === false) {
         this.showToast('error', this.apiMessage(response, 'quotationStatusUpdateError'));
         return;

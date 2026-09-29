@@ -8,7 +8,10 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  DestroyRef,
+  inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -26,6 +29,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { customerPdfDownloadName } from '../../../../shared/utils/pdf-download-name.util';
 
 export enum QuotationStatusEnum {
   Draft = 1,
@@ -57,6 +61,8 @@ export interface QuotationDTO {
   notes?: string | null;
   items: any[];
   policies?: Array<{ id?: number; value: string }>;
+  images?: Array<{ data: string; contentType: string; sortOrder: number }>;
+  imagesAtTop?: boolean;
 }
 
 @Component({
@@ -67,6 +73,7 @@ export interface QuotationDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuotationsFromCard implements OnInit, OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
   @Input() selectedQuotation: QuotationDTO | null = null;
   @Output() quotationSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
@@ -84,6 +91,13 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   selectedPackageIds = new Set<number>();
   selectedTourIds = new Set<number>();
   selectedHotelIds = new Set<number>();
+  selectedRoomIds = new Set<number>();
+  roomsByHotel = new Map<number, any[]>();
+  roomsLoading = new Set<number>();
+  roomsErrors = new Set<number>();
+  images: Array<{ data: string; contentType: string; sortOrder: number }> = [];
+  imagesAtTop = false;
+  imagesLoading = false;
   selectedFlightIds = new Set<number>();
   isLoading = false;
   optionsLoading = false;
@@ -98,7 +112,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.quotationForm = this.createForm();
     this.quotationForm.controls.travelEndDate.updateValueAndValidity({ emitEvent: false });
     this.quotationForm.controls.validUntil.updateValueAndValidity({ emitEvent: false });
-    this.quotationForm.controls.travelStartDate.valueChanges.subscribe(() => {
+    this.quotationForm.controls.travelStartDate.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.quotationForm.controls.travelEndDate.updateValueAndValidity({ emitEvent: false });
       this.quotationForm.controls.validUntil.updateValueAndValidity({ emitEvent: false });
       this.quotationForm.updateValueAndValidity({ emitEvent: false });
@@ -144,10 +158,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   get subTotal(): number {
-    return this.selectedPackages.reduce((sum, pkg) => sum + this.catalogTotal(pkg), 0)
-      + this.selectedTours.reduce((sum, tour) => sum + this.catalogTotal(tour), 0)
-      + this.selectedHotels.reduce((sum, hotel) => sum + this.hotelTotal(hotel), 0)
-      + this.selectedFlights.reduce((sum, flight) => sum + this.flightTotal(flight), 0);
+    return this.money(this.buildQuotationItems().reduce((sum, item) => sum + item.totalPrice, 0));
   }
 
   get totalCost(): number {
@@ -160,7 +171,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   get hasTravelItems(): boolean {
     return this.selectedPackageIds.size > 0
       || this.selectedTourIds.size > 0
-      || this.selectedHotelIds.size > 0
+      || this.selectedRoomIds.size > 0
       || this.selectedFlightIds.size > 0
       || this.transfersArray.length > 0;
   }
@@ -171,16 +182,18 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   get tax(): number {
     const discountedSubtotal = Math.max(0, this.subTotal - this.quotationForm.controls.discount.value);
-    return discountedSubtotal * this.quotationForm.controls.taxRate.value / 100;
+    return this.money(discountedSubtotal * this.quotationForm.controls.taxRate.value / 100);
   }
 
   get totalAmount(): number {
-    return Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax;
+    return this.money(Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax);
   }
 
   get canSave(): boolean {
     return !this.isLoading
       && !this.optionsLoading
+      && !this.imagesLoading
+      && !this.hotelSelectionInvalid
       && this.quotationForm.valid
       && this.hasTravelItems
       && this.quotationForm.controls.discount.value <= this.subTotal;
@@ -224,9 +237,107 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   toggleHotel(hotel: any, checked: boolean): void {
     const id = Number(hotel.id);
-    if (checked) this.selectedHotelIds.add(id);
-    else this.selectedHotelIds.delete(id);
+    if (checked) {
+      this.selectedHotelIds.add(id);
+      this.loadHotelRooms(id);
+    } else {
+      this.selectedHotelIds.delete(id);
+      this.hotelRooms(id).forEach(room => this.selectedRoomIds.delete(Number(room.id)));
+    }
   }
+
+  hotelRooms(id: number): any[] { return this.roomsByHotel.get(Number(id)) ?? []; }
+
+  loadHotelRooms(id: number): void {
+    if (this.roomsLoading.has(id) || this.roomsByHotel.has(id)) return;
+    this.roomsLoading.add(id);
+    this.roomsErrors.delete(id);
+    this.apiService.get(`HotelRooms/ByHotel/${id}`).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => { this.roomsLoading.delete(id); this.cdr.markForCheck(); }),
+    ).subscribe({
+      next: (response: any) => {
+        if (response?.isSuccess === false) { this.roomsErrors.add(id); return; }
+        this.roomsByHotel.set(id, this.rows(response, 'rooms'));
+      },
+      error: () => this.roomsErrors.add(id),
+    });
+  }
+
+  toggleRoom(room: any, checked: boolean): void {
+    if (checked) this.selectedRoomIds.add(Number(room.id));
+    else this.selectedRoomIds.delete(Number(room.id));
+  }
+
+  get hotelSelectionInvalid(): boolean {
+    return [...this.selectedHotelIds].some(id => this.roomsLoading.has(id) || this.roomsErrors.has(id)
+      || !this.hotelRooms(id).some(room => this.selectedRoomIds.has(Number(room.id)))
+      || this.hotelRooms(id).some(room => this.selectedRoomIds.has(Number(room.id)) && (room.isActive === false || this.roomRates(room) === null)));
+  }
+
+  // Group nights by rate, keeping each period's exact price instead of rounding an average.
+  roomRates(room: any): Array<{ quantity: number; price: number }> | null {
+    const start = this.quotationForm.controls.travelStartDate.value;
+    const end = this.quotationForm.controls.travelEndDate.value;
+    if (!start || !end || end <= start) return null;
+    const saved = this.selectedQuotation;
+    if (saved && saved.travelStartDate === start && saved.travelEndDate === end) {
+      const lines = saved.items.filter(item => Number(item.hotelRoomId) === Number(room.id));
+      if (lines.length) return lines.map(item => ({ quantity: Number(item.quantity), price: Number(item.pricePerItem ?? item.sellingPrice) }));
+    }
+    const periods = (room.roomPeriodPrices ?? []).filter((p: any) => p.isActive !== false);
+    const rates = new Map<number, number>();
+    for (let date = start, count = 0; date < end; date = this.addDays(date, 1), count++) {
+      if (count >= 3660) return null;
+      const period = periods.find((p: any) => String(p.startDate).slice(0, 10) <= date && String(p.endDate).slice(0, 10) >= date);
+      const raw = period?.price ?? (!periods.length ? room.sellingPrice : null);
+      if (raw == null || !Number.isFinite(Number(raw)) || Number(raw) < 0) return null;
+      const price = this.money(Number(raw));
+      rates.set(price, (rates.get(price) ?? 0) + 1);
+    }
+    return [...rates].map(([price, quantity]) => ({ price, quantity }));
+  }
+
+  roomTotal(room: any): number | null {
+    const rates = this.roomRates(room);
+    return rates ? this.money(rates.reduce((sum, rate) => sum + rate.quantity * rate.price, 0)) : null;
+  }
+
+  private money(value: number): number { return Math.round((value + Number.EPSILON) * 100) / 100; }
+
+  async selectImages(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    input.value = '';
+    if (!files.length || this.imagesLoading) return;
+    if (this.images.length + files.length > 5) { this.showToast('warning', 'quotationImagesLimit'); return; }
+    this.imagesLoading = true;
+    try {
+      const images = [];
+      for (const file of files) {
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) throw new Error();
+        const bitmap = await createImageBitmap(file);
+        try {
+          const scale = Math.min(1, 1200 / Math.max(bitmap.width, bitmap.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+          canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+          const context = canvas.getContext('2d');
+          if (!context) throw new Error();
+          context.fillStyle = '#ffffff';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+          const data = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
+          if (data.length > 2 * 1024 * 1024 * 4 / 3) throw new Error();
+          images.push({ data, contentType: 'image/jpeg', sortOrder: 0 });
+        } finally { bitmap.close(); }
+      }
+      if (!this.destroyRef.destroyed) this.images = [...this.images, ...images];
+    } catch { this.showToast('error', 'quotationImageInvalid'); }
+    finally { this.imagesLoading = false; this.cdr.markForCheck(); }
+  }
+
+  removeImage(index: number): void { this.images = this.images.filter((_, i) => i !== index); }
 
   isFlightSelected(id: number): boolean {
     return this.selectedFlightIds.has(Number(id));
@@ -297,7 +408,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   hotelTotal(hotel: any): number {
-    return this.hotelPrice(hotel) * this.hotelNights();
+    return this.hotelRooms(hotel.id).filter(room => this.selectedRoomIds.has(Number(room.id)))
+      .reduce((sum, room) => sum + (this.roomTotal(room) ?? 0), 0);
   }
 
   flightName(flight: any): string {
@@ -326,7 +438,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   itemName(item: any): string {
-    return item?.nameEng ?? item?.nameEng ?? item?.title ?? item?.name ?? '';
+    const arabic = this.translate.getCurrentLang?.() === 'ar';
+    return item?.name || (arabic ? item?.nameAr || item?.nameEng : item?.nameEng || item?.nameAr) || item?.title || '';
   }
 
   thumbnail(item: any): string {
@@ -367,7 +480,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: adultItem?.description || `${base.description} - Adults`,
         quantity: adults,
         costPrice: Number(adultItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(adultItem?.sellingPrice ?? this.packagePrice(item)),
+        sellingPrice: Number(adultItem?.pricePerItem ?? adultItem?.sellingPrice ?? this.packagePrice(item)),
         sortOrder: base.sortOrder,
       });
       if (children > 0) items.push({
@@ -376,7 +489,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: childItem?.description || `${base.description} - Children`,
         quantity: children,
         costPrice: Number(childItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(childItem?.sellingPrice ?? this.childPrice(item)),
+        sellingPrice: Number(childItem?.pricePerItem ?? childItem?.sellingPrice ?? this.childPrice(item)),
         sortOrder: sortOrder++,
       });
       if (infants > 0) items.push({
@@ -385,33 +498,28 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: infantItem?.description || `${base.description} - Infants`,
         quantity: infants,
         costPrice: Number(infantItem?.costPrice ?? base.costPrice),
-        sellingPrice: Number(infantItem?.sellingPrice ?? this.infantPrice(item)),
+        sellingPrice: Number(infantItem?.pricePerItem ?? infantItem?.sellingPrice ?? this.infantPrice(item)),
         sortOrder: sortOrder++,
       });
     };
     this.selectedPackages.forEach((item) => addCatalogItem(item, 1, 'packageId'));
     this.selectedTours.forEach((item) => addCatalogItem(item, 2, 'tourId'));
     this.selectedHotels.forEach((hotel) => {
-      const room = this.hotelRoom(hotel);
-      const hotelName = this.itemName(hotel);
-      const roomName = String(room?.name ?? room?.roomTypeName ?? '').trim();
-      const savedItem = this.savedCatalogItem(3, 'hotelId', hotel.id);
-      items.push({
-        ...this.savedLineDetails(savedItem),
-        itemType: 3,
-        description: savedItem?.description || [hotelName, roomName].filter(Boolean).join(' - '),
-        quantity: this.hotelNights(),
-        costPrice: Number(savedItem?.costPrice ?? room?.costPrice ?? hotel?.costPrice ?? 0),
-        sellingPrice: Number(savedItem?.sellingPrice ?? this.hotelPrice(hotel)),
-        discount: Number(savedItem?.discount ?? 0),
-        sortOrder: sortOrder++,
-        hotelId: Number(hotel.id),
-        serviceStartDate: this.quotationForm.controls.travelStartDate.value,
-        serviceEndDate: this.quotationForm.controls.travelEndDate.value,
-        roomType: (savedItem?.roomType ?? room?.roomTypeName ?? roomName) || null,
-        numberOfRooms: savedItem?.numberOfRooms ?? 1,
-        occupancy: savedItem?.occupancy ?? (room ? `${Number(room.maxAdults ?? 0)} adults, ${Number(room.maxChildren ?? 0)} children` : null),
-        mealPlan: savedItem?.mealPlan ?? room?.mealPlanName ?? null,
+      this.hotelRooms(hotel.id).filter(room => this.selectedRoomIds.has(Number(room.id))).forEach(room => {
+        for (const rate of this.roomRates(room) ?? []) items.push({
+          itemType: 3,
+          hotelId: Number(hotel.id),
+          hotelRoomId: Number(room.id),
+          description: `${this.itemName(hotel)} - ${this.itemName(room)}`,
+          quantity: rate.quantity,
+          sellingPrice: rate.price,
+          sortOrder: sortOrder++,
+          serviceStartDate: this.quotationForm.controls.travelStartDate.value,
+          serviceEndDate: this.quotationForm.controls.travelEndDate.value,
+          roomType: room.roomTypeName ?? this.itemName(room),
+          numberOfRooms: 1,
+          mealPlan: room.mealPlanName ?? null,
+        });
       });
     });
     this.selectedFlights.forEach((flight) => {
@@ -425,7 +533,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
           description: savedItem?.description || `${this.flightName(flight)} - ${audience[0].toUpperCase()}${audience.slice(1)}`,
           quantity,
           costPrice: Number(savedItem?.costPrice ?? flight.costPrice ?? flight.cost ?? 0),
-          sellingPrice: Number(savedItem?.sellingPrice ?? price),
+          sellingPrice: Number(savedItem?.pricePerItem ?? savedItem?.sellingPrice ?? price),
           discount: Number(savedItem?.discount ?? 0),
           sortOrder: sortOrder++,
           flightId: Number(flight.id),
@@ -474,7 +582,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         ...item,
         quantity,
         pricePerItem,
-        totalPrice: pricePerItem * quantity,
+        totalPrice: this.money(pricePerItem * quantity),
         ...(transfer ? { quotationTransfer: transfer } : {}),
       };
     });
@@ -537,10 +645,14 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return types[String(raw ?? item?.itemTypeName ?? '').toLowerCase()] ?? Number(raw);
   }
 
-  saveQuotation(): void {
-    if (this.isLoading) return;
+  saveQuotation(download = false): void {
+    if (this.isLoading || this.imagesLoading || this.optionsLoading) return;
     this.validationSubmitted = true;
     this.quotationForm.updateValueAndValidity();
+    if (this.hotelSelectionInvalid) {
+      this.showToast('warning', 'quotationSelectRooms');
+      return;
+    }
     if (this.quotationForm.controls.discount.value > this.subTotal) {
       this.quotationForm.controls.discount.markAsTouched();
       this.showToast('warning', 'discountExceedsSubtotal');
@@ -569,6 +681,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       totalCost: this.totalCost,
       validUntil: form.validUntil,
       notes: form.notes.trim() || null,
+      imagesAtTop: this.imagesAtTop,
+      images: this.images.map((image, sortOrder) => ({ ...image, sortOrder })),
       policies: form.policies.map((policy: any) => ({
         id: Number(policy.id) || 0,
         value: String(policy.value ?? '').trim(),
@@ -598,6 +712,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         return;
       }
       this.showToast('success', response?.message ?? 'quotationSaved');
+      if (download && response?.data?.id) this.downloadSavedPdf(response.data);
       this.resetForm(false);
       this.quotationSaved.emit();
     });
@@ -605,6 +720,22 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   cancelEdit(): void {
     this.resetForm(true);
+  }
+
+  private downloadSavedPdf(quote: any): void {
+    // Keep the request alive when the parent closes this form after saving.
+    this.apiService.getFile(`Quotations/${quote.id}/Pdf`).subscribe({
+      next: (blob: Blob) => {
+        if (!blob.size || !blob.type.includes('pdf')) { this.showToast('error', 'quotationPdfError'); return; }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = customerPdfDownloadName(quote.customerName, quote.quotationNo);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+      error: () => this.showToast('error', 'quotationPdfError'),
+    });
   }
 
   private loadOptions(): void {
@@ -634,6 +765,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private populateForm(quotation: QuotationDTO): void {
     this.validationSubmitted = false;
+    this.images = [...(quotation.images ?? [])];
+    this.imagesAtTop = quotation.imagesAtTop ?? false;
     this.quotationForm.patchValue({
       customerId: quotation.customerId ?? '',
       currencyId: quotation.currencyId ?? '',
@@ -665,6 +798,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       (items ?? []).filter((item) => item.hotelId ?? item.hotel?.id)
         .map((item) => Number(item.hotelId ?? item.hotel?.id)),
     );
+    this.selectedRoomIds = new Set((items ?? []).filter(item => item.hotelRoomId).map(item => Number(item.hotelRoomId)));
+    this.selectedHotelIds.forEach(id => this.loadHotelRooms(id));
     this.selectedFlightIds = new Set(
       (items ?? []).filter((item) => item.flightId ?? item.flight?.id)
         .map((item) => Number(item.flightId ?? item.flight?.id)),
@@ -691,6 +826,9 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.selectedPackageIds.clear();
     this.selectedTourIds.clear();
     this.selectedHotelIds.clear();
+    this.selectedRoomIds.clear();
+    this.images = [];
+    this.imagesAtTop = false;
     this.selectedFlightIds.clear();
     this.policiesArray.clear();
     this.transfersArray.clear();

@@ -1,9 +1,8 @@
 <footer
   class="footer relative border-t border-slate-200 bg-white text-slate-600 dark:border-slate-800  ">
   <div class="container relative">
-    <div class="grid grid-cols-1 gap-8 px-0 py-10 md:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-8 px-0 py-4 md:grid-cols-2 lg:grid-cols-4">
       <section>
-        <img [src]="logo" alt="Sea World Holidays" class="h-14 w-auto object-contain" />
         <p class="mt-4 max-w-sm leading-7 text-slate-500 ">{{ 'footerTravelDescription' | translate }}</p>
         <div class="mt-4 flex gap-2">
           <a href="mailto:Info@seaworldholidays.com" target="_blank" rel="noopener noreferrer"
@@ -44,13 +43,13 @@
             @for (payment of paymentMethods; track payment.name) {
               <span
                 role="img"
-                class="flex h-8 w-14 items-center justify-center overflow-hidden rounded-md border border-slate-100 bg-white px-1"
+                class="flex h-6 w-10 items-center justify-center overflow-hidden rounded-md border border-slate-100 bg-white px-1"
                 [attr.aria-label]="payment.name"
                 [attr.title]="payment.name">
                 <img
                   [src]="payment.logo"
                   alt=""
-                  class="max-h-6 max-w-12 object-contain transition duration-200 hover:opacity-80" />
+                  class="max-h-6 max-w-10 object-contain transition duration-200 hover:opacity-80" />
               </span>
             }
           </div>
