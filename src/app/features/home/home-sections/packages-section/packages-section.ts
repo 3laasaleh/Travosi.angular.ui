@@ -68,6 +68,16 @@ export class PackagesSection implements OnInit {
     return this.utilityService.hasDiscount(item);
   }
 
+  isSoldOut(item: PackageDTO): boolean {
+    return item.isSoldOut === true || (item.maxCapacity > 0 && item.seatsAvailable <= 0);
+  }
+
+  isExpired(item: PackageDTO): boolean {
+    if (item.isExpired === true) return true;
+    const start = String(item.dateFrom ?? '').slice(0, 10);
+    return Boolean(start && start < this.todayDate());
+  }
+
   destinationName(item: PackageDTO): string {
     return item.destinations[0]?.destinationName ?? '';
   }
@@ -78,5 +88,11 @@ export class PackagesSection implements OnInit {
 
   onImageError(event: Event): void {
     this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
+  }
+
+  private todayDate(): string {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60_000;
+    return new Date(now.getTime() - offset).toISOString().slice(0, 10);
   }
 }

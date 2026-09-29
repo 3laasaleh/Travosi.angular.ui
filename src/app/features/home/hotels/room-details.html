@@ -25,6 +25,13 @@
           class="mdi mdi-ruler-square me-1 text-primary"></i>{{ 'roomSize' | translate }}: {{ room.roomSize }} m²</span>
       }
       <div>
+        @if (hotel.starRating > 0) {
+          <p class="font-semibold text-amber-500" [attr.aria-label]="hotel.starRating + ' ' + ('stars' | translate)">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <i class="mdi" [class.mdi-star]="star <= hotel.starRating" [class.mdi-star-outline]="star > hotel.starRating"></i>
+            }
+          </p>
+        }
         <p class="text-sm font-semibold text-primary">{{ room.roomTypeName || ('room' | translate) }}</p>
         <h1 class="mt-1 text-3xl font-bold text-slate-950 md:text-4xl">{{ roomName }}</h1>
         <p class="mt-2 text-sm text-slate-600"><i class="mdi mdi-bed-king-outline me-1 text-primary"></i>{{ room.bedType

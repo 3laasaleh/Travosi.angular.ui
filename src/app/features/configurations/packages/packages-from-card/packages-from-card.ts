@@ -29,7 +29,7 @@ import {
   isQuarterHourTime,
 } from '../../shared/itinerary-validation.util';
 import { AdminService } from '../../admin.service';
-import { PackageBenefitsEditor, packageRoomGroup, packageTransportGroup } from '../package-benefits-editor/package-benefits-editor';
+import { PackageBenefitsEditor, packageRoomGroup, packageTransportationOverlapValidator, packageTransportGroup } from '../package-benefits-editor/package-benefits-editor';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 
 interface PackageImageUpload {
@@ -642,7 +642,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       includes: new FormArray<FormGroup>([]),
       excludes: new FormArray<FormGroup>([]),
       hotelRooms: new FormArray<FormGroup>([], [Validators.minLength(1), Validators.maxLength(3)]),
-      transportations: new FormArray<FormGroup>([]),
+      transportations: new FormArray<FormGroup>([], [packageTransportationOverlapValidator]),
     }, { validators: PackagesFromCard.packageDateRangeValidator });
   }
 

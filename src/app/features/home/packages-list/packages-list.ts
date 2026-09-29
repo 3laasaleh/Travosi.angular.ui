@@ -215,6 +215,21 @@ export class HomePackagesList implements OnInit {
     return this.utilityService.hasDiscount(item);
   }
 
+  isSoldOut(item: any): boolean {
+    if (item?.isSoldOut === true) return true;
+    const capacity = Number(item?.maxCapacity ?? 0);
+    return capacity > 0 && Number(item?.seatsAvailable ?? capacity) <= 0;
+  }
+
+  isExpired(item: any): boolean {
+    if (item?.isExpired === true) return true;
+    const start = String(item?.dateFrom ?? item?.startDate ?? '').slice(0, 10);
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60_000;
+    const today = new Date(now.getTime() - offset).toISOString().slice(0, 10);
+    return Boolean(start && start < today);
+  }
+
   imageItems(item: any): any[] {
     const images = Array.isArray(item?.images) ? item.images : [];
     if (images.length) return images;

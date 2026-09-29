@@ -25,6 +25,8 @@ export interface PackageDTO {
   maxCapacity: number;
   seatsBooked: number;
   seatsAvailable: number;
+  isSoldOut: boolean;
+  isExpired: boolean;
 
   isActive: boolean;
 
@@ -82,6 +84,10 @@ export interface PackageTransportationDTO {
   transportationType: string;
   transportationTypeEng: string;
   transportationTypeAr: string;
+  fromTime: string;
+  arrivalTime: string;
+  numberOfBags: number;
+  maxKgPerBag: number;
 }
 
 export interface PolicyDTO {

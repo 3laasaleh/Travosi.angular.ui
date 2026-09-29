@@ -69,6 +69,21 @@ export class HomePackagePage implements OnInit {
     return this.travelPackage?.name ?? '';
   }
 
+  get packageSoldOut(): boolean {
+    if (this.travelPackage?.isSoldOut === true) return true;
+    const capacity = Number(this.travelPackage?.maxCapacity ?? 0);
+    return capacity > 0 && Number(this.travelPackage?.seatsAvailable ?? capacity) <= 0;
+  }
+
+  get packageExpired(): boolean {
+    if (this.travelPackage?.isExpired === true) return true;
+    const start = String(this.travelPackage?.dateFrom ?? '').slice(0, 10);
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60_000;
+    const today = new Date(now.getTime() - offset).toISOString().slice(0, 10);
+    return Boolean(start && start < today);
+  }
+
   get description(): string {
     const arabic = this.translate.currentLang()?.toLowerCase().startsWith('ar');
     const fullDescription = this.travelPackage?.fullDescription ?? '';

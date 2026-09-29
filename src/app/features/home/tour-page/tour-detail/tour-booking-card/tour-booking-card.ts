@@ -60,6 +60,23 @@ export class TourBookingCard implements OnInit {
     return this.travelPackage != null;
   }
 
+  get packageSoldOut(): boolean {
+    if (!this.isPackage) return false;
+    if (this.product?.isSoldOut === true) return true;
+    return this.hasSeatLimit && this.seatsAvailable === 0;
+  }
+
+  get packageExpired(): boolean {
+    if (!this.isPackage) return false;
+    if (this.product?.isExpired === true) return true;
+    const start = this.toDateInput(this.product?.dateFrom ?? this.product?.startDate);
+    return Boolean(start && start < this.todayDate);
+  }
+
+  get packageUnavailable(): boolean {
+    return this.isPackage && (this.packageSoldOut || this.packageExpired || this.product?.isActive === false);
+  }
+
   get isOneDayTour(): boolean {
     return (
       !this.isPackage &&
@@ -278,7 +295,21 @@ export class TourBookingCard implements OnInit {
     return this.formatDisplayDate(this.maxTravelDate);
   }
 
+  get packageDateFrom(): string {
+    return this.formatDisplayDate(this.toDateInput(this.product?.dateFrom ?? this.product?.startDate));
+  }
+
+  get packageDateTo(): string {
+    return this.formatDisplayDate(this.toDateInput(this.product?.dateTo ?? this.product?.endDate));
+  }
+
   ngOnInit(): void {
+    if (this.isPackage) {
+      this.bookingForm.controls.dateFrom.clearValidators();
+      this.bookingForm.controls.dateTo.clearValidators();
+      this.bookingForm.controls.dateFrom.updateValueAndValidity({ emitEvent: false });
+      this.bookingForm.controls.dateTo.updateValueAndValidity({ emitEvent: false });
+    }
     this.setDefaultDates();
     this.applyCatalogSelection();
     this.destroyRef.onDestroy(() => this.hideBookingLoader());
@@ -296,6 +327,13 @@ export class TourBookingCard implements OnInit {
 
   checkAvailability(): void {
     if (this.isCheckingAvailability || this.isSubmitting) return;
+
+    if (this.packageUnavailable) {
+      this.availabilityStatus = 'unavailable';
+      this.availabilityConfirmed = false;
+      this.availabilityMessage = this.packageExpired ? this.translate.instant('packageExpired') : this.translate.instant('soldOut');
+      return;
+    }
 
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
@@ -383,10 +421,10 @@ export class TourBookingCard implements OnInit {
 
     const form = this.bookingForm.getRawValue();
     const selectedDateTo = this.isOneDayTour ? form.dateFrom : form.dateTo;
-    if (
+    if (!this.isPackage && (
       form.dateFrom < this.minTravelDate ||
       Boolean(this.maxTravelDate && selectedDateTo > this.maxTravelDate!)
-    ) {
+    )) {
       this.errorMessage = 'bookingDateOutsideAvailability';
       this.showToast('error', this.errorMessage);
       return;
@@ -511,14 +549,16 @@ export class TourBookingCard implements OnInit {
 
     const form = this.bookingForm.getRawValue();
     const dateTo = this.isOneDayTour ? form.dateFrom : form.dateTo;
+    const dateFromPayload = this.isPackage ? null : this.toApiDate(form.dateFrom);
+    const dateToPayload = this.isPackage ? null : this.toApiDate(dateTo);
     return {
       NumberOfTravelers: this.guests,
       SpecialRequests: form.specialRequests.trim() || null,
-      DateFrom: this.toApiDate(form.dateFrom),
-      DateTo: this.toApiDate(dateTo),
+      DateFrom: dateFromPayload,
+      DateTo: dateToPayload,
       TourId: this.isPackage ? null : productId,
       PackageId: this.isPackage ? productId : null,
-      TravelDate: this.toApiDate(form.dateFrom),
+      TravelDate: dateFromPayload,
       Adults: form.adults,
       Children: form.children,
       Infants: form.infants,
@@ -650,6 +690,8 @@ export class TourBookingCard implements OnInit {
       }
     }
 
+    if (this.isPackage) return;
+
     const dateFrom = this.toDateInput(selection['dateFrom']);
     const dateTo = this.isOneDayTour ? dateFrom : this.toDateInput(selection['dateTo']);
     const withinAvailability = (value: string) => Boolean(value) && value >= this.minTravelDate
@@ -665,6 +707,11 @@ export class TourBookingCard implements OnInit {
   }
 
   private setDefaultDates(): void {
+    if (this.isPackage) {
+      this.bookingForm.patchValue({ dateFrom: '', dateTo: '' }, { emitEvent: false });
+      this.cdr.markForCheck();
+      return;
+    }
    
     const dateFrom = this.minTravelDate;
     if (!dateFrom) return;
@@ -689,5 +736,9 @@ export class TourBookingCard implements OnInit {
       dateTo: dateTo || dateFrom,
     });
     this.cdr.markForCheck();
+  }
+
+  private get todayDate(): string {
+    return this.toDateInput(new Date());
   }
 }

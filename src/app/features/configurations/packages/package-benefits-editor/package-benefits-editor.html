@@ -1,5 +1,5 @@
 <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
-  <h3 class="text-lg font-bold">{{ 'packageHotelsRooms' | translate }}</h3>
+  <h3 class="text-lg font-bold">{{ 'packageHotelsRooms' | translate }} <span class="text-red-600">*</span></h3>
   <p class="mt-1 text-sm text-slate-500">{{ 'packageBenefitsHint' | translate }}</p>
   <p class="mt-2 text-xs font-semibold" [class.text-primary]="selectedHotelCount < maxHotels" [class.text-amber-700]="selectedHotelCount >= maxHotels">
     {{ 'packageHotelsSelectedCount' | translate: { count: selectedHotelCount, max: maxHotels } }}
@@ -65,13 +65,16 @@
       class="rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary disabled:opacity-50"
       (click)="addTransport()">{{ 'packageAddTransportation' | translate }}</button>
   </div>
+  @if (transportations.touched && transportations.hasError('transportationTimeOverlap')) {
+    <p class="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600" role="alert">{{ 'transportationTimesOverlap' | translate }}</p>
+  }
   @for (group of transportations.controls; track group; let index = $index) {
   <div [formGroup]="group" class="mt-4 rounded-xl border border-slate-200 p-4">
     <div class="mb-3 flex justify-between"><span class="font-semibold">{{ 'packageTransportation' | translate }} {{
         index + 1 }}</span><button type="button" class="text-rose-600" [attr.aria-label]="'delete' | translate"
         (click)="removeTransport(index)"><i class="mdi mdi-delete-outline"></i></button></div>
     <div class="grid gap-3 sm:grid-cols-2">@for (field of fields; track field.key) {
-      <label class="text-sm font-medium">{{ field.label | translate }}<input type="text" maxlength="200"
+      <label class="text-sm font-medium">{{ field.label | translate }} <span class="text-red-600">*</span><input type="text" maxlength="200" required
           [dir]="field.ar ? 'rtl' : 'ltr'" [formControlName]="field.key"
           class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         @if (group.get(field.key)?.touched && group.get(field.key)?.invalid) { <span
@@ -79,23 +82,26 @@
       }
     </div>
     <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <label class="text-sm font-medium">{{ 'departureTime' | translate }}
-        <input type="time" formControlName="fromTime" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
+      <label class="text-sm font-medium">{{ 'departureTime' | translate }} <span class="text-red-600">*</span>
+        <input type="time" formControlName="fromTime" required class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         @if (group.get('fromTime')?.touched && group.get('fromTime')?.invalid) { <span class="block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span> }
       </label>
-      <label class="text-sm font-medium">{{ 'arrivalTime' | translate }}
-        <input type="time" formControlName="arrivalTime" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
+      <label class="text-sm font-medium">{{ 'arrivalTime' | translate }} <span class="text-red-600">*</span>
+        <input type="time" formControlName="arrivalTime" required class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         @if (group.get('arrivalTime')?.touched && group.get('arrivalTime')?.invalid) { <span class="block text-xs text-red-600">{{ 'fieldRequired' | translate }}</span> }
       </label>
-      <label class="text-sm font-medium">{{ 'numberOfBags' | translate }}
-        <input type="number" min="0" max="100" step="1" formControlName="numberOfBags" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
+      <label class="text-sm font-medium">{{ 'numberOfBags' | translate }} <span class="text-red-600">*</span>
+        <input type="number" min="0" max="100" step="1" formControlName="numberOfBags" required class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         @if (group.get('numberOfBags')?.touched && group.get('numberOfBags')?.invalid) { <span class="block text-xs text-red-600">{{ 'packageBaggageCountInvalid' | translate }}</span> }
       </label>
-      <label class="text-sm font-medium">{{ 'maxKgPerBag' | translate }}
-        <input type="number" min="0" max="1000" step="0.01" formControlName="maxKgPerBag" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
+      <label class="text-sm font-medium">{{ 'maxKgPerBag' | translate }} <span class="text-red-600">*</span>
+        <input type="number" min="0" max="1000" step="0.01" formControlName="maxKgPerBag" required class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         @if (group.get('maxKgPerBag')?.touched && group.get('maxKgPerBag')?.invalid) { <span class="block text-xs text-red-600">{{ 'packageBaggageWeightInvalid' | translate }}</span> }
       </label>
     </div>
+    @if ((group.get('fromTime')?.touched || group.get('arrivalTime')?.touched) && group.hasError('transportationTimeRange')) {
+      <p class="mt-2 text-xs text-red-600">{{ 'transportArrivalAfterDeparture' | translate }}</p>
+    }
   </div>
   }
 </section>

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '../../../../core/services/apiservice.service';
@@ -29,7 +29,45 @@ export function packageTransportGroup(item: any = {}): FormGroup {
   group.addControl('arrivalTime', new FormControl(item.arrivalTime ?? '', Validators.required));
   group.addControl('numberOfBags', new FormControl(item.numberOfBags ?? 0, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern(/^\d+$/)]));
   group.addControl('maxKgPerBag', new FormControl(item.maxKgPerBag ?? 0, [Validators.required, Validators.min(0), Validators.max(1000)]));
+  group.addValidators(packageTransportationTimeRangeValidator);
+  group.updateValueAndValidity({ emitEvent: false });
   return group;
+}
+
+export function packageTransportationTimeRangeValidator(control: AbstractControl): ValidationErrors | null {
+  const from = timeMinutes(control.get('fromTime')?.value);
+  const arrival = timeMinutes(control.get('arrivalTime')?.value);
+  if (from === null || arrival === null) return null;
+  return arrival > from ? null : { transportationTimeRange: true };
+}
+
+export function packageTransportationOverlapValidator(control: AbstractControl): ValidationErrors | null {
+  if (!(control instanceof FormArray)) return null;
+  const intervals = control.controls
+    .map((row) => ({
+      from: timeMinutes(row.get('fromTime')?.value),
+      arrival: timeMinutes(row.get('arrivalTime')?.value),
+    }))
+    .filter((item): item is { from: number; arrival: number } =>
+      item.from !== null && item.arrival !== null && item.arrival > item.from)
+    .sort((left, right) => left.from - right.from);
+
+  for (let index = 1; index < intervals.length; index += 1) {
+    if (intervals[index].from < intervals[index - 1].arrival) {
+      return { transportationTimeOverlap: true };
+    }
+  }
+  return null;
+}
+
+function timeMinutes(value: unknown): number | null {
+  const match = /^(\d{2}):(\d{2})/.exec(String(value ?? '').trim());
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59
+    ? hours * 60 + minutes
+    : null;
 }
 
 @Component({
