@@ -189,11 +189,12 @@
       </div>
        @if (activeStep === 1) {
       <app-package-benefits-editor [rooms]="packageForm.controls.hotelRooms"
+        [tourIds]="packageForm.controls.tourIds"
         [transportations]="packageForm.controls.transportations"
         [destinationIds]="packageForm.controls.destinationIds.value"
         [startDate]="packageForm.controls.dateFrom.value" />
     }
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 py-8">
         <div>
           <label class="mb-2 block text-sm font-medium">{{ 'durationDays' | translate }} <span class="text-rose-600"
               aria-hidden="true">*</span></label><input formControlName="durationDays" type="text" appNumbersOnly
@@ -798,7 +799,7 @@
             <div>
               <label class="mb-1 block text-xs font-medium">
                 {{ 'englishValue' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-              </label><textarea formControlName="valueEng" rows="3" maxlength="2000"
+              </label><textarea formControlName="valueEng" rows="2" maxlength="2000"
                 class="w-full rounded-xl border bg-white px-3 py-2"></textarea>
               @if (itineraryDraft.controls['valueEng'].touched &&
               itineraryDraft.controls['valueEng'].hasError('required')) {
@@ -811,7 +812,7 @@
             <div>
               <label class="mb-1 block text-xs font-medium">{{ 'arabicValue' | translate }} <span class="text-rose-600"
                   aria-hidden="true">*</span></label>
-              <textarea formControlName="valueAr" dir="rtl" rows="3" maxlength="2000"
+              <textarea formControlName="valueAr" dir="rtl" rows="2" maxlength="2000"
                 class="w-full rounded-xl border bg-white px-3 py-2"></textarea>
               @if (itineraryDraft.controls['valueAr'].touched &&
               itineraryDraft.controls['valueAr'].hasError('required')) {
@@ -826,11 +827,11 @@
             </div>
             <div class="grid gap-3 md:grid-cols-2">
               <div><label class="mb-1 block text-xs font-medium">{{ 'englishNotes' | translate }}</label><textarea
-                  formControlName="notesEng" rows="3" maxlength="2000"
+                  formControlName="notesEng" rows="2" maxlength="2000"
                   [placeholder]="'itineraryNotesPlaceholder' | translate"
                   class="w-full rounded-xl border bg-white px-3 py-2"></textarea></div>
               <div><label class="mb-1 block text-xs font-medium">{{ 'arabicNotes' | translate }}</label><textarea
-                  formControlName="notesAr" dir="rtl" rows="3" maxlength="2000"
+                  formControlName="notesAr" dir="rtl" rows="2" maxlength="2000"
                   class="w-full rounded-xl border bg-white px-3 py-2"></textarea>@if
                 (itineraryDraft.controls['notesAr'].touched &&
                 itineraryDraft.controls['notesAr'].hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{

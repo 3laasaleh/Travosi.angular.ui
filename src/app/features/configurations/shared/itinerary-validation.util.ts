@@ -70,7 +70,6 @@ function readChildren(item: ItineraryScheduleItem): ItineraryScheduleItem[] {
 }
 
 function timeToMinutes(value: unknown): number | null {
-  if (!isQuarterHourTime(value)) return null;
   const [hours, minutes] = String(value).split(':').map(Number);
   return hours * 60 + minutes;
 }

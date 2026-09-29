@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { formatHomePrice } from '../../../home/home-price.util';
+import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
 
 export function packageRoomGroup(item: any): FormGroup {
   return new FormGroup({
@@ -27,8 +29,8 @@ export function packageTransportGroup(item: any = {}): FormGroup {
     group.addControl(field, new FormControl(item[field] ?? '', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]));
   group.addControl('fromTime', new FormControl(item.fromTime ?? '', Validators.required));
   group.addControl('arrivalTime', new FormControl(item.arrivalTime ?? '', Validators.required));
-  group.addControl('numberOfBags', new FormControl(item.numberOfBags ?? 0, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern(/^\d+$/)]));
-  group.addControl('maxKgPerBag', new FormControl(item.maxKgPerBag ?? 0, [Validators.required, Validators.min(0), Validators.max(1000)]));
+  group.addControl('numberOfBags', new FormControl(item.numberOfBags ?? 1, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern(/^\d+$/)]));
+  group.addControl('maxKgPerBag', new FormControl(item.maxKgPerBag ?? 1, [Validators.required, Validators.min(0), Validators.max(1000)]));
   group.addValidators(packageTransportationTimeRangeValidator);
   group.updateValueAndValidity({ emitEvent: false });
   return group;
@@ -72,30 +74,30 @@ function timeMinutes(value: unknown): number | null {
 
 @Component({
   selector: 'app-package-benefits-editor', standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe ,TimePicker],
   templateUrl: './package-benefits-editor.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PackageBenefitsEditor implements OnInit, OnChanges {
   readonly maxHotels = 3;
   @Input({ required: true }) rooms!: FormArray<FormGroup>;
+  @Input({ required: true }) tourIds: FormControl<number[]> | undefined;
   @Input({ required: true }) transportations!: FormArray<FormGroup>;
   @Input() destinationIds: readonly number[] = [];
   @Input() startDate = '';
   readonly hotels = signal<any[]>([]);
+  readonly tours = signal<any[]>([]);
   readonly loading = signal(false);
+  readonly toursLoading = signal(false);
+  readonly toursError = signal('');
+  readonly hotelMenuOpen = signal(false);
   readonly error = signal('');
-  readonly fields = [
-    { key: 'fromEng', label: 'packageFromEng', ar: false }, { key: 'fromAr', label: 'packageFromAr', ar: true },
-    { key: 'toEng', label: 'packageToEng', ar: false }, { key: 'toAr', label: 'packageToAr', ar: true },
-    { key: 'transportationTypeEng', label: 'packageTransportTypeEng', ar: false },
-    { key: 'transportationTypeAr', label: 'packageTransportTypeAr', ar: true },
-  ];
+ 
   private readonly api = inject(ApiService);
   private readonly currency = inject(CurrencyService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   private requestId = 0;
-  private loadedDestinationKey = '';
+  private loadedDestinationKey: string | null = null;
 
   ngOnInit(): void { this.loadHotelsForSelectedDestinations(); }
 
@@ -112,6 +114,13 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
 
   retry(): void { this.loadHotelsForSelectedDestinations(true); }
 
+  get selectedHotels(): any[] { return this.hotels().filter(hotel => this.hotelSelected(hotel)); }
+  get selectedHotelNames(): string { return this.selectedHotels.map(hotel => this.label(hotel)).join(', '); }
+  @HostListener('document:click') closeHotelMenu(): void { this.hotelMenuOpen.set(false); }
+  onHotelFocusOut(event: FocusEvent): void {
+    if (!(event.currentTarget as HTMLElement).contains(event.relatedTarget as Node | null)) this.closeHotelMenu();
+  }
+
   private get selectedDestinationIds(): number[] {
     return [...new Set((this.destinationIds ?? []).map(Number).filter((id) => Number.isInteger(id) && id > 0))]
       .sort((left, right) => left - right);
@@ -125,20 +134,27 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
     this.loadedDestinationKey = key;
     const request = ++this.requestId;
     this.hotels.set([]);
+    this.tours.set([]);
     this.error.set('');
+    this.toursError.set('');
+    this.closeHotelMenu();
 
     if (!destinationIds.length) {
       this.loading.set(false);
+      this.toursLoading.set(false);
       this.removeRoomsOutsideSelectedHotels(new Set());
+      this.tourIds?.setValue([]);
       return;
     }
 
     this.loading.set(true);
+    this.toursLoading.set(true);
     const query = destinationIds.map((id) => `destinationIds=${encodeURIComponent(String(id))}`).join('&');
+    // Hotel selection must remain usable even when a tour lookup fails or is slow.
     this.api.get(`Hotels/PackageBenefits?${query}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response: any) => {
         if (request !== this.requestId) return;
-        if (response?.isSuccess === false) { this.error.set('packageBenefitsLoadError'); this.loading.set(false); return; }
+        if (response?.isSuccess === false) { this.error.set('packageHotelsLoadError'); this.loading.set(false); return; }
         const data = response?.data ?? response;
         const rows = data?.data ?? data?.items ?? data;
         const hotels = Array.isArray(rows) ? rows : [];
@@ -148,9 +164,30 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
       },
       error: () => {
         if (request !== this.requestId) return;
-        this.error.set('packageBenefitsLoadError'); this.loading.set(false);
+        this.error.set('packageHotelsLoadError'); this.loading.set(false);
       },
     });
+    forkJoin(destinationIds.map(id => this.api.getUnauthntecated(`Tours/ByDestination/${id}`)))
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (responses: any[]) => {
+          if (request !== this.requestId) return;
+          this.toursLoading.set(false);
+          if (responses.some(response => response?.isSuccess === false)) { this.toursError.set('packageToursLoadError'); return; }
+          const tours: any[] = responses.flatMap(response => Array.isArray(response?.data ?? response) ? (response?.data ?? response) : [])
+            .filter((tour: any) => tour.isActive !== false);
+          this.tours.set([...new Map(tours.map(tour => [Number(tour.id), tour])).values()]);
+          const allowed = new Set(tours.map(tour => Number(tour.id)));
+          const control = this.tourIds;
+          if (control) {
+            const retained = control.value.filter(id => allowed.has(id));
+            if (retained.length !== control.value.length) { control.setValue(retained); control.markAsDirty(); }
+          }
+        },
+        error: () => {
+          if (request !== this.requestId) return;
+          this.toursError.set('packageToursLoadError'); this.toursLoading.set(false);
+        },
+      });
   }
 
   label(item: any, prefix = 'name'): string {
@@ -164,6 +201,28 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
     return rates.length === 1 ? Number(rates[0].price) : null;
   }
   money(value: number): string { return formatHomePrice(this.currency, value, { currencyCode: 'USD' }); }
+  tourSelected(tour: any): boolean { return this.tourIds?.value.includes(Number(tour.id)) ?? false; }
+  toggleTour(tour: any): void {
+    if (!this.tourIds) return;
+    const id = Number(tour.id);
+    this.tourIds.setValue(this.tourSelected(tour) ? this.tourIds.value.filter(value => value !== id) : [...this.tourIds.value, id]);
+    this.tourIds.markAsDirty();
+    this.tourIds.markAsTouched();
+  }
+  hotelSelected(hotel: any): boolean { return this.rooms.controls.some(row => Number(row.value.hotelId) === Number(hotel.id)); }
+  hotelNeedsRoom(hotel: any): boolean {
+    return this.rooms.controls.some(row => Number(row.value.hotelId) === Number(hotel.id) && !row.value.hotelRoomId);
+  }
+  toggleHotel(hotel: any): void {
+    const index = this.rooms.controls.findIndex(row => Number(row.value.hotelId) === Number(hotel.id));
+    if (index >= 0) this.rooms.removeAt(index);
+    else if (this.selectedHotelCount < this.maxHotels) this.rooms.push(packageRoomGroup({
+      hotelId: Number(hotel.id), hotelRoomId: null,
+      hotelNameEng: hotel.nameEng ?? hotel.name, hotelNameAr: hotel.nameAr ?? hotel.name,
+    }));
+    this.rooms.markAsDirty();
+    this.rooms.markAllAsTouched();
+  }
   selected(room: any): boolean { return this.rooms.controls.some(c => Number(c.value.hotelRoomId) === Number(room.id)); }
   canSelectRoom(hotel: any, room: any): boolean {
     if (this.selected(room)) return true;
@@ -176,7 +235,7 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
   }
   toggleRoom(hotel: any, room: any): void {
     const index = this.rooms.controls.findIndex(c => Number(c.value.hotelRoomId) === Number(room.id));
-    if (index >= 0) this.rooms.removeAt(index);
+    if (index >= 0) return;
     else {
       const hotelId = Number(hotel.id);
       const hotelRoomIndex = this.rooms.controls.findIndex(control => Number(control.value.hotelId) === hotelId);
@@ -201,7 +260,10 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
     }
     if (changed) this.rooms.markAsDirty();
   }
-  removeRoom(index: number): void { this.rooms.removeAt(index); this.rooms.markAsDirty(); }
+  removeRoom(index: number): void { 
+    this.rooms.removeAt(index);
+     this.rooms.markAsDirty(); 
+    }
   addTransport(): void { this.transportations.push(packageTransportGroup()); this.transportations.markAsDirty(); }
   removeTransport(index: number): void { this.transportations.removeAt(index); this.transportations.markAsDirty(); }
 }

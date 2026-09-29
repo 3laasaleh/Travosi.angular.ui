@@ -198,6 +198,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   get currentStepInvalid(): boolean {
+    debugger
     if (this.activeStep === 1) return this.detailsStepInvalid;
     if (this.activeStep === 2) return !this.currentPackageId || this.packageForm.controls.images.invalid;
     const itinerary = this.itineraryArray.getRawValue();
@@ -411,16 +412,28 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     const control = this.packageForm.controls.destinationIds;
     const values = [...control.value];
     const index = values.indexOf(id);
-    if (index >= 0) values.splice(index, 1); else values.push(id);
+    if (index >= 0) {
+      values.splice(index, 1);
+      this.resetHotelSelections();
+    } else values.push(id);
     control.setValue(values);
     control.markAsTouched();
     control.markAsDirty();
   }
 
   removeDestination(id: number): void {
+    if (!this.packageForm.controls.destinationIds.value.includes(id)) return;
+    this.resetHotelSelections();
     this.packageForm.controls.destinationIds.setValue(
       this.packageForm.controls.destinationIds.value.filter((value) => value !== id),
     );
+    this.packageForm.controls.destinationIds.markAsDirty();
+    this.packageForm.controls.destinationIds.markAsTouched();
+  }
+
+  private resetHotelSelections(): void {
+    this.packageForm.controls.hotelRooms.clear();
+    this.packageForm.controls.hotelRooms.markAsDirty();
   }
 
   isDestinationSelected(destination: any): boolean {
@@ -635,13 +648,14 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
         validators: [Validators.required, validDate()],
       }),
       destinationIds: new FormControl<number[]>([], { nonNullable: true, validators: [Validators.required] }),
+      tourIds: new FormControl<number[]>([], { nonNullable: true }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
       itinerary: new FormArray<FormGroup>([]),
       cancellationPolicies: new FormArray<FormGroup>([]),
       highlights: new FormArray<FormGroup>([]),
       includes: new FormArray<FormGroup>([]),
       excludes: new FormArray<FormGroup>([]),
-      hotelRooms: new FormArray<FormGroup>([], [Validators.minLength(1), Validators.maxLength(3)]),
+      hotelRooms: new FormArray<FormGroup>([], [Validators.required, Validators.minLength(1), Validators.maxLength(3)]),
       transportations: new FormArray<FormGroup>([], [packageTransportationOverlapValidator]),
     }, { validators: PackagesFromCard.packageDateRangeValidator });
   }
@@ -741,6 +755,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       ShowInRecomendedTourSection: value.showInRecomendedTourSection,
       DateFrom: `${value.dateFrom}T00:00:00`, DateTo: `${value.dateTo}T00:00:00`,
       Destinations: value.destinationIds.map((destinationId) => ({ DestinationId: destinationId })),
+      TourIds: value.tourIds,
       Images: [], Itinerary: [], IsActive: false,
     };
     if (id) payload.Id = id;
@@ -797,6 +812,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       dateFrom: this.toDateInput(item?.dateFrom ?? item?.DateFrom ?? item?.dateFromUtc ?? item?.DateFromUtc),
       dateTo: this.toDateInput(item?.dateTo ?? item?.DateTo ?? item?.dateToUtc ?? item?.DateToUtc),
       destinationIds,
+      tourIds: item?.tourIds ?? (item?.tours ?? []).map((tour: any) => Number(tour.id ?? tour.tourId)),
       images: this.imageUploads.map((image) => image.url),
       cancellationPolicies: [],
       highlights: [], includes: [], excludes: [],
@@ -823,7 +839,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     this.packageForm.reset({ nameEng: '', nameAr: '', routeName: '', descriptionEng: '', descriptionAr: '',  durationDays: 1, durationHours: 0,
       pricePerPerson: 0, pricePerChild: 0, pricePerInfant: 0, maxCapacity: 1, isFreeCancelation: false,
       showInRealtedTourSection: false, showInRecomendedTourSection: false, isActive: true,
-      dateFrom: this.tomorrow, dateTo: this.dayAfterTomorrow, destinationIds: [], images: [] });
+      dateFrom: this.tomorrow, dateTo: this.dayAfterTomorrow, destinationIds: [], tourIds: [], images: [] });
     this.itineraryArray.clear();
     this.setCancellationPolicies([]);
     this.setLocalizedListItems(this.highlightsArray, []);
