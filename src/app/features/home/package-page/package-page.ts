@@ -24,12 +24,11 @@ import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
-import { formatHomePrice } from '../home-price.util';
 
 @Component({
   selector: 'app-home-package-page',
   standalone: true,
-  imports: [Breadcrumbs, DecimalPipe,
+  imports: [Breadcrumbs, DecimalPipe, RouterLink,
     TranslatePipe,
     HomeNavbar,
     FooterOne,
@@ -59,7 +58,6 @@ export class HomePackagePage implements OnInit {
   selectedImageIndex = 0;
   imageViewerOpen = false;
   averageRating = 0;
-  benefitPrice(room: any): string { return formatHomePrice(this.currencyService, room.price, room); }
   benefitTime(value: unknown): string {
     const time = String(value ?? '').trim();
     return /^\d{2}:\d{2}/.test(time) ? time.slice(0, 5) : '-';
@@ -324,6 +322,15 @@ export class HomePackagePage implements OnInit {
     const nameAr = tour?.nameAr  ?? '';
     const nameEng = tour?.nameEng  ?? '';
     return arabic ? (title || nameAr || nameEng) : (title || nameEng || nameAr);
+  }
+
+  roomLink(room: any): string[] | null {
+    const hotelRouteName = String(room?.hotelRouteName ?? '').trim();
+    const roomRouteName = String(room?.roomRouteName ?? '').trim();
+    const language = this.translate.currentLang()?.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+    return hotelRouteName && roomRouteName
+      ? ['/', language, 'hotels', hotelRouteName, 'rooms', roomRouteName]
+      : null;
   }
 
   private loadPackage(routeName: string): void {

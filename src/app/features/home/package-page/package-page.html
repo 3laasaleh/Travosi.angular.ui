@@ -111,7 +111,11 @@
               @for (room of travelPackage.hotelRooms; track room.id) {
                 <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <h3 class="font-bold text-primary">{{ room.hotelName }}</h3>
-                  <p class="mt-1 font-semibold text-slate-800">{{ room.roomName }}</p>
+                  @if (roomLink(room); as link) {
+                    <a [routerLink]="link" class="mt-1 inline-block font-semibold text-primary hover:underline">{{ room.roomName }}</a>
+                  } @else {
+                    <p class="mt-1 font-semibold text-slate-800">{{ room.roomName }}</p>
+                  }
                   <p class="mt-2 text-sm text-slate-600">{{ room.quantity }} {{ 'rooms' | translate }}</p>
                   <p class="mt-2 text-xs text-slate-500">{{ 'packageCapacityPerRoom' | translate }}</p>
                   <div class="mt-1 flex flex-wrap gap-3 text-sm text-slate-700">
@@ -119,7 +123,6 @@
                     <span><i class="mdi mdi-human-child text-primary"></i> {{ room.children }} {{ 'children' | translate }}</span>
                     <span><i class="mdi mdi-baby-face-outline text-primary"></i> {{ room.infants }} {{ 'infants' | translate }}</span>
                   </div>
-                  <p class="mt-3 font-bold text-primary">{{ benefitPrice(room) }} <span class="text-xs font-normal text-slate-500">{{ 'packageRoomNightlyPrice' | translate }}</span></p>
                   <p class="mt-1 text-xs text-emerald-700">{{ 'packageBenefitIncluded' | translate }}</p>
                 </article>
               }
