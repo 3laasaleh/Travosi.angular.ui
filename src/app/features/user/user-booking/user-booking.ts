@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 import { AccountTab } from '../account-tab/account-tab';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 
@@ -11,11 +11,15 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
+import Swal from 'sweetalert2';
 
 interface ReviewEligibility {
   canReview: boolean;
   alreadyReviewed: boolean;
   message: string;
+  reviewId?: number;
+  reviewComment?: string;
+  reviewRating?: number;
 }
 
 interface UserBookingItem {
@@ -30,24 +34,26 @@ interface UserBookingItem {
   hotelRoomName?: string;
   hotelRouteName?: string;
   bookingType?: string;
+  specialRequests?: string | null;
+  statusNote?: string | null;
   createdDate: string;
   dateFrom?: string | null;
   dateTo?: string | null;
   numberOfTravelers: number;
+  roomCount?: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
   statusName: string;
   totalPrice: number;
   cancellationFeeAmount: number;
   reviewEligibility?: ReviewEligibility;
-  reviewComment?: string;
-  reviewRating?: number;
-  reviewError?: string;
-  isSavingReview?: boolean;
 }
 
 @Component({
   selector: 'app-user-booking',
   standalone: true,
-  imports: [Breadcrumbs, CommonModule,RouterLink, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
+  imports: [Breadcrumbs, CommonModule, FormsModule, HomeNavbar, AccountTab, FooterOne, TranslatePipe],
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './user-booking.html',
 })
@@ -58,6 +64,13 @@ export class UserBooking implements OnInit {
   page = 1;
   pageSize = 10;
   pageSizes = [10, 20, 50];
+  selectedBooking: UserBookingItem | null = null;
+  reviewBooking: UserBookingItem | null = null;
+  reviewModalMode: 'create' | 'edit' | null = null;
+  reviewDraft = { comment: '', rating: undefined as number | undefined };
+  reviewModalError = '';
+  isSavingReview = false;
+  isDeletingReview = false;
 
   constructor(
     private apiService: ApiService,
@@ -120,50 +133,148 @@ export class UserBooking implements OnInit {
   }
 
   canWriteReview(booking: UserBookingItem): boolean {
-    return booking.reviewEligibility?.canReview === true && !booking.isSavingReview;
+    return booking.reviewEligibility?.canReview === true;
   }
 
-  submitReview(booking: UserBookingItem): void {
-    const comment = booking.reviewComment?.trim() ?? '';
-    booking.reviewError = '';
+  canEditReview(booking: UserBookingItem): boolean {
+    return booking.reviewEligibility?.alreadyReviewed === true && Number(booking.reviewEligibility.reviewId) > 0;
+  }
+
+  serviceName(booking: UserBookingItem): string {
+    if (booking.hotelName) {
+      return booking.hotelRoomName ? `${booking.hotelName} · ${booking.hotelRoomName}` : booking.hotelName;
+    }
+    return booking.tourTitle ?? booking.packageName ?? '-';
+  }
+
+  serviceTypeKey(booking: UserBookingItem): string {
+    if (booking.hotelId || booking.bookingType?.toLowerCase() === 'hotel') return 'bookingTypeHotel';
+    if (booking.tourTitle || booking.tourId || booking.bookingType?.toLowerCase() === 'tour') return 'bookingTypeTour';
+    return 'bookingTypePackage';
+  }
+
+  openBookingDetails(booking: UserBookingItem): void {
+    this.selectedBooking = booking;
+  }
+
+  closeBookingDetails(): void {
+    this.selectedBooking = null;
+  }
+
+  openReviewModal(booking: UserBookingItem): void {
+    const eligibility = booking.reviewEligibility;
+    this.reviewBooking = booking;
+    this.reviewModalMode = eligibility?.alreadyReviewed ? 'edit' : 'create';
+    this.reviewDraft = {
+      comment: eligibility?.reviewComment ?? '',
+      rating: eligibility?.reviewRating,
+    };
+    this.reviewModalError = '';
+  }
+
+  closeReviewModal(): void {
+    if (this.isSavingReview || this.isDeletingReview) return;
+    this.reviewBooking = null;
+    this.reviewModalMode = null;
+    this.reviewModalError = '';
+  }
+
+  submitReview(): void {
+    const booking = this.reviewBooking;
+    if (!booking || !this.reviewModalMode || this.isSavingReview) return;
+    const comment = this.reviewDraft.comment.trim();
+    this.reviewModalError = '';
     if (!comment) {
-      booking.reviewError = 'reviewTextRequired';
+      this.reviewModalError = 'reviewTextRequired';
       this.cdr.markForCheck();
       return;
     }
     if (comment.length > 2000) {
-      booking.reviewError = 'reviewTextTooLong';
+      this.reviewModalError = 'reviewTextTooLong';
       this.cdr.markForCheck();
       return;
     }
-    if (!booking.reviewRating || booking.reviewRating < 1 || booking.reviewRating > 5) {
-      booking.reviewError = 'reviewRatingRequired';
+    if (!this.reviewDraft.rating || this.reviewDraft.rating < 1 || this.reviewDraft.rating > 5) {
+      this.reviewModalError = 'reviewRatingRequired';
       this.cdr.markForCheck();
       return;
     }
 
-    booking.isSavingReview = true;
-    this.apiService.post('Reviews', { bookingId: booking.id, comment, rating: booking.reviewRating }).pipe(
+    const reviewId = booking.reviewEligibility?.reviewId;
+    if (this.reviewModalMode === 'edit' && !reviewId) {
+      this.reviewModalError = 'reviewUnavailable';
+      return;
+    }
+    this.isSavingReview = true;
+    const request = this.reviewModalMode === 'edit'
+      ? this.apiService.put(`Reviews/${reviewId}`, { comment, rating: this.reviewDraft.rating })
+      : this.apiService.post('Reviews', { bookingId: booking.id, comment, rating: this.reviewDraft.rating });
+    request.pipe(
       finalize(() => {
-        booking.isSavingReview = false;
+        this.isSavingReview = false;
         this.cdr.markForCheck();
       }),
     ).subscribe({
       next: (response) => {
         if (response?.isSuccess === false) {
-          booking.reviewError = response.message || 'reviewSaveError';
+          this.reviewModalError = response.message || 'reviewSaveError';
           return;
         }
-        booking.reviewComment = '';
-        booking.reviewRating = undefined;
         booking.reviewEligibility = {
           canReview: false,
           alreadyReviewed: true,
           message: 'alreadyReviewedBooking',
+          reviewId: response?.data?.id ?? reviewId,
+          reviewComment: comment,
+          reviewRating: this.reviewDraft.rating,
         };
+        this.reviewBooking = null;
+        this.reviewModalMode = null;
       },
       error: (error) => {
-        booking.reviewError = error?.error?.message || 'reviewSaveError';
+        this.reviewModalError = error?.error?.message || 'reviewSaveError';
+      },
+    });
+  }
+
+  async deleteReview(): Promise<void> {
+    const booking = this.reviewBooking;
+    const reviewId = booking?.reviewEligibility?.reviewId;
+    if (!booking || !reviewId || this.isDeletingReview) return;
+    const confirmation = await Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('deleteReviewConfirmTitle'),
+      text: this.translate.instant('deleteReviewConfirmMessage'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('deleteReview'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#e11d48',
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.isDeletingReview = true;
+    this.reviewModalError = '';
+    this.apiService.delete('Reviews', reviewId).pipe(
+      finalize(() => {
+        this.isDeletingReview = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
+      next: (response) => {
+        if (response?.isSuccess === false) {
+          this.reviewModalError = response.message || 'reviewDeleteError';
+          return;
+        }
+        booking.reviewEligibility = {
+          canReview: true,
+          alreadyReviewed: false,
+          message: 'ReviewAllowed',
+        };
+        this.reviewBooking = null;
+        this.reviewModalMode = null;
+      },
+      error: (error) => {
+        this.reviewModalError = error?.error?.message || 'reviewDeleteError';
       },
     });
   }
