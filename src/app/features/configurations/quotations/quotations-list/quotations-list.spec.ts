@@ -1,6 +1,6 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { NEVER, of } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { QuotationStatusEnum } from '../quotations-from-card/quotations-from-card';
@@ -53,6 +53,35 @@ describe('QuotationsList status workflow', () => {
     expect(component.canChangeStatus(quotation)).toBe(false);
     expect(fire).not.toHaveBeenCalled();
     expect(api.patch).not.toHaveBeenCalled();
+  });
+
+  it('shows the backend list error instead of claiming the service is unavailable', () => {
+    const api = { get: vi.fn().mockReturnValue(of({ isSuccess: false, message: 'You cannot view these quotations.' })) };
+    const component = new QuotationsList(
+      api as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
+
+    component.loadQuotations();
+
+    expect(component.errorMessage).toBe('You cannot view these quotations.');
+    expect(component.quotations).toEqual([]);
+  });
+
+  it('shows the structured HTTP error returned by the API', () => {
+    const api = { get: vi.fn().mockReturnValue(throwError(() => ({ error: { errors: { Items: ['Select at least one item.'] } } }))) };
+    const component = new QuotationsList(
+      api as unknown as ApiService,
+      { markForCheck: vi.fn() } as unknown as ChangeDetectorRef,
+      { instant: (key: string) => key } as unknown as TranslateService,
+    );
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
+
+    component.loadQuotations();
+
+    expect(component.errorMessage).toBe('Select at least one item.');
   });
 
   it('downloads a draft quotation without changing its status', () => {

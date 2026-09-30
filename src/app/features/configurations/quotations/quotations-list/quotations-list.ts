@@ -84,6 +84,11 @@ export class QuotationsList implements OnInit, OnChanges {
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.errorMessage = this.apiMessage(response, 'quotationLoadError');
+        this.showToast('error', this.errorMessage);
+        return;
+      }
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.quotations ?? pageData;
       const allRows = Array.isArray(rows) ? rows : [];
@@ -235,11 +240,6 @@ export class QuotationsList implements OnInit, OnChanges {
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
-      if (response?.isSuccess === false) {
-        this.errorMessage = this.apiMessage(response, 'quotationLoadError');
-        this.showToast('error', this.errorMessage);
-        return;
-      }
       if (response?.isSuccess === false) {
         this.showToast('error', this.apiMessage(response, 'quotationStatusUpdateError'));
         return;

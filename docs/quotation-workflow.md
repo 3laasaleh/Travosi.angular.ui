@@ -16,4 +16,4 @@ Up to five photos can be attached above the selected services or below the total
 
 Use **Save & download PDF**, or download again from the quotation list. Filenames use the customer's name and today's date. If downloading fails after a successful save, retry from the list instead of creating a second quotation.
 
-The configured local API must be running for browser use (`https://localhost:44382`; SSR uses `http://localhost:54800`). Migration generation and automated tests do not start it or update the configured database.
+The configured local API must be running for browser use (`https://localhost:44382`; SSR uses `http://localhost:54800`). The backend `https` launch profile uses both addresses, so `dotnet run --project TravelAgency.API --launch-profile https` matches Angular without extra URL arguments. Migration generation and automated tests do not start it or update the configured database.
