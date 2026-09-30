@@ -1,5 +1,6 @@
 <form class="relative grid w-full min-w-0 gap-1 rounded-[20px] border border-slate-200 bg-primary-400 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto]" (submit)="submit($event)">
   @if (showSearchControls) {
+    @if (showDestinationControl) {
     <div #destinationControl class="relative min-w-0" (focusout)="closeOnFocusOut($event, 'destination')"
       (keydown.escape)="destinationMenuOpen.set(false); $event.stopPropagation()">
       <label [for]="inputId" class="sr-only">{{ 'search' | translate }}</label>
@@ -34,30 +35,40 @@
         </div>
       }
     </div>
+    }
 
     <label class="block min-w-0">
-      <span class="sr-only">{{ 'dateFrom' | translate }}</span>
+      <span class="sr-only">{{ dateFromLabel | translate }}</span>
       <app-date-picker
         [ngModel]="dateFrom"
         (ngModelChange)="dateFromChange.emit($event)"
         name="dateFrom"
+        [min]="dateFromMinimum"
         [autoSelectToday]="false"
-        [placeholder]="'dateFrom' | translate"
-        [ariaLabel]="'dateFrom' | translate"
+        [placeholder]="dateFromLabel | translate"
+        [ariaLabel]="dateFromLabel | translate"
         inputClass="h-12 rounded-lg border-0 font-medium shadow-sm focus:ring-primary" />
+      @if (dateValidationSubmitted && !dateFrom) {
+        <span class="mt-1 block rounded bg-white/90 px-2 py-1 text-xs text-red-600">{{ dateFromRequiredErrorLabel | translate }}</span>
+      } @else if (dateValidationSubmitted && dateFromMinimum && dateFrom < dateFromMinimum) {
+        <span class="mt-1 block rounded bg-white/90 px-2 py-1 text-xs text-red-600">{{ dateFromMinimumErrorLabel | translate }}</span>
+      }
     </label>
 
     <label class="block min-w-0">
-      <span class="sr-only">{{ 'dateTo' | translate }}</span>
+      <span class="sr-only">{{ dateToLabel | translate }}</span>
       <app-date-picker
         [ngModel]="dateTo"
         (ngModelChange)="dateToChange.emit($event)"
         name="dateTo"
-        [min]="dateFrom || null"
+        [min]="dateFrom || dateFromMinimum || null"
         [autoSelectToday]="false"
-        [placeholder]="'dateTo' | translate"
-        [ariaLabel]="'dateTo' | translate"
+        [placeholder]="dateToLabel | translate"
+        [ariaLabel]="dateToLabel | translate"
         inputClass="h-12 rounded-lg border-0 font-medium shadow-sm focus:ring-primary" />
+      @if (dateValidationSubmitted && !dateTo) {
+        <span class="mt-1 block rounded bg-white/90 px-2 py-1 text-xs text-red-600">{{ dateToRequiredErrorLabel | translate }}</span>
+      }
     </label>
 
     <div #guestControl class="relative min-w-0" (focusout)="closeOnFocusOut($event, 'guest')"
@@ -66,6 +77,7 @@
         [attr.aria-expanded]="guestMenuOpen()" [attr.aria-controls]="inputId + '-travelers'" (click)="guestMenuOpen.set(!guestMenuOpen())">
         <i class="mdi mdi-account-multiple-outline shrink-0 text-xl text-slate-600" aria-hidden="true"></i>
         <span class="min-w-0 flex-1 truncate font-medium">{{ travelers.adults }} {{ 'adults' | translate }} · {{ travelers.children }} {{ 'children' | translate }} · {{ travelers.infants }} {{ 'infants' | translate }}</span>
+        @if (showRoomCount) { <span class="shrink-0 text-xs font-medium">· {{ roomCount }} {{ 'rooms' | translate }}</span> }
         <i class="mdi shrink-0 text-slate-500" [class.mdi-chevron-up]="guestMenuOpen()" [class.mdi-chevron-down]="!guestMenuOpen()" aria-hidden="true"></i>
       </button>
       @if (guestMenuOpen()) {
@@ -87,6 +99,20 @@
               </span>
             </div>
           }
+          @if (showRoomCount) {
+            <div class="flex items-center justify-between gap-3 border-b border-slate-100 py-3">
+              <span class="text-sm font-semibold">{{ 'rooms' | translate }}</span>
+              <span class="flex shrink-0 items-center gap-3">
+                <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+                  [disabled]="roomCount <= 1" [attr.aria-label]="('decreaseByOne' | translate) + ': ' + ('rooms' | translate)"
+                  (click)="updateRoomCount(-1)"><i class="mdi mdi-minus" aria-hidden="true"></i></button>
+                <span class="min-w-5 text-center font-semibold" aria-live="polite">{{ roomCount }}</span>
+                <button type="button" class="grid size-8 place-items-center rounded-md border border-primary text-primary"
+                  [attr.aria-label]="('increaseByOne' | translate) + ': ' + ('rooms' | translate)"
+                  (click)="updateRoomCount(1)"><i class="mdi mdi-plus" aria-hidden="true"></i></button>
+              </span>
+            </div>
+          }
           <button type="button" class="mt-2 w-full rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/5"
             (click)="guestMenuOpen.set(false); guestTrigger.focus()">{{ 'done' | translate }}</button>
         </div>
@@ -95,9 +121,9 @@
 
       <button type="submit" [disabled]="loading" class="h-12 rounded-lg px-7 text-base font-bold  transition  bg-white text-primary-500  hover:bg-primary-900 hover:text-white disabled:cursor-wait disabled:opacity-60">
         @if (loading) { <i class="mdi mdi-loading mdi-spin me-1" aria-hidden="true"></i> }
-        {{ 'search' | translate }}
+        {{ (loading ? loadingLabel : submitLabel) | translate }}
       </button>
-      @if (query || dateFrom || dateTo || travelers.adults !== 1 || travelers.children || travelers.infants) {
+      @if (query || dateFrom || dateTo || travelers.adults !== 1 || travelers.children || travelers.infants || (showRoomCount && roomCount !== 1)) {
       <button type="button" [disabled]="loading" (click)="cleared.emit()" class="mt-2 justify-self-end text-sm font-semibold text-primary hover:underline disabled:opacity-60 lg:col-span-full">
         {{ 'clear' | translate }}
       </button>

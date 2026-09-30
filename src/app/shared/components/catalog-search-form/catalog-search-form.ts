@@ -19,8 +19,8 @@ export interface CatalogBookingSelection extends CatalogTravelers {
 }
 
 /**
- * Hotel-style search controls shared by the public catalogues.
- * Hotels can project their destination and guest selectors into the same form.
+ * Shared search controls for public catalogues, with optional destination and room selectors.
+ * Callers can project additional filters into the form when needed.
  */
 @Component({
   selector: 'app-catalog-search-form',
@@ -45,16 +45,29 @@ export class CatalogSearchForm implements OnInit {
   ] as const;
 
   @Input() showSearchControls = false;
+  @Input() showDestinationControl = true;
+  @Input() showRoomCount = false;
   @Input() inputId = 'catalog-search';
   @Input() query = '';
   @Input() dateFrom = '';
   @Input() dateTo = '';
+  @Input() dateFromLabel = 'dateFrom';
+  @Input() dateToLabel = 'dateTo';
+  @Input() dateFromMinimum: string | null = null;
+  @Input() dateFromMinimumErrorLabel = 'dateFromInvalid';
+  @Input() dateFromRequiredErrorLabel = 'dateFromRequired';
+  @Input() dateToRequiredErrorLabel = 'dateToRequired';
+  @Input() dateValidationSubmitted = false;
   @Input() suggestions: string[] = [];
   @Input() loading = false;
   @Input() dateRangeError = false;
   @Input() travelers: CatalogTravelers = { adults: 1, children: 0, infants: 0 };
+  @Input() roomCount = 1;
   @Input() searchPlaceholder = 'search';
+  @Input() submitLabel = 'search';
+  @Input() loadingLabel = 'searching';
   @Output() travelersChange = new EventEmitter<CatalogTravelers>();
+  @Output() roomCountChange = new EventEmitter<number>();
   @Output() queryChange = new EventEmitter<string>();
   @Output() dateFromChange = new EventEmitter<string>();
   @Output() dateToChange = new EventEmitter<string>();
@@ -62,7 +75,7 @@ export class CatalogSearchForm implements OnInit {
   @Output() submitted = new EventEmitter<void>();
 
   ngOnInit(): void {
-    if (!this.showSearchControls) return;
+    if (!this.showSearchControls || !this.showDestinationControl) return;
     this.api.getUnauthntecated('destinations?page=1&pageSize=500')
       .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
       .subscribe((response: any) => {
@@ -104,6 +117,11 @@ export class CatalogSearchForm implements OnInit {
   updateGuestCount(key: keyof CatalogTravelers, change: number): void {
     this.travelers = { ...this.travelers, [key]: Math.max(key === 'adults' ? 1 : 0, this.travelers[key] + change) };
     this.travelersChange.emit(this.travelers);
+  }
+
+  updateRoomCount(change: number): void {
+    this.roomCount = Math.max(1, this.roomCount + change);
+    this.roomCountChange.emit(this.roomCount);
   }
 
   submit(event: Event): void {

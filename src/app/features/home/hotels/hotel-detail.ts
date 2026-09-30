@@ -3,13 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
-  ElementRef,
-  HostListener,
   OnInit,
-  ViewChild,
   inject,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -23,7 +19,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
-import { DatePicker } from '../../../shared/components/date-picker/date-picker';
+import { CatalogSearchForm, CatalogTravelers } from '../../../shared/components/catalog-search-form/catalog-search-form';
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
 import { mdiIconClass } from '../../../shared/utils/mdi-icon.util';
@@ -36,20 +32,18 @@ import { HotelRoomCard } from './hotel-room-card/hotel-room-card';
   imports: [
     Breadcrumbs,
     DescriptionPreview,
-    DatePicker,
     FooterOne,
-    FormsModule,
     HomeNavbar,
     TranslatePipe,
     HotelRoomCard,
     ImageViewerModal,
     ProductReviews,
+    CatalogSearchForm,
   ],
   templateUrl: './hotel-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HotelDetail implements OnInit {
-  @ViewChild('guestControl') private guestControl?: ElementRef<HTMLElement>;
   readonly iconClass = mdiIconClass;
   hotel: any;
   loading = true;
@@ -66,7 +60,6 @@ export class HotelDetail implements OnInit {
   availabilitySearched = false;
   availabilityError = '';
   validationSubmitted = false;
-  guestMenuOpen = false;
   imageViewerOpen = false;
   selectedImageIndex = 0;
   private readonly seo = inject(SeoService);
@@ -99,6 +92,12 @@ export class HotelDetail implements OnInit {
   }
   get travelers(): number {
     return this.adults + this.children + this.infants;
+  }
+  get searchTravelers(): CatalogTravelers {
+    return { adults: this.adults, children: this.children, infants: this.infants };
+  }
+  get dateRangeError(): boolean {
+    return Boolean(this.checkInDate && this.checkOutDate && this.checkOutDate <= this.checkInDate);
   }
   get hasSearchedAvailability(): boolean {
     return this.availabilitySearched && !this.searching;
@@ -178,12 +177,6 @@ export class HotelDetail implements OnInit {
     return data?.hotel ?? data ?? null;
   }
 
-  @HostListener('document:click', ['$event'])
-  closeGuestMenuOnOutsideClick(event: MouseEvent): void {
-    if (!this.guestControl?.nativeElement.contains(event.target as Node))
-      this.guestMenuOpen = false;
-  }
-
   searchAvailability(): void {
     this.validationSubmitted = true;
     this.availabilityError = '';
@@ -201,7 +194,6 @@ export class HotelDetail implements OnInit {
       roomCount: String(this.roomCount),
     });
     this.childrenAges.forEach((age) => query.append('childrenAges', String(age)));
-    this.guestMenuOpen = false;
     this.availabilitySearched = false;
     this.availability.clear();
     this.searching = true;
@@ -335,15 +327,28 @@ export class HotelDetail implements OnInit {
     this.childrenAges = Array.from({ length: count }, (_, index) => this.childrenAges[index] ?? 6);
     this.availabilitySearched = false;
   }
-  updateGuestCount(type: 'adults' | 'children' | 'infants', amount: number): void {
-    const minimum = type === 'adults' ? 1 : 0;
-    this[type] = Math.max(minimum, Number(this[type] || 0) + amount);
-    if (type === 'children') this.onChildrenChange();
+  setRoomCount(value: number): void {
+    this.roomCount = Math.max(1, Number(value) || 1);
     this.availabilitySearched = false;
   }
-  updateRoomCount(amount: number): void {
-    this.roomCount = Math.max(1, Number(this.roomCount || 0) + amount);
+  updateTravelers(value: CatalogTravelers): void {
+    this.adults = value.adults;
+    this.children = value.children;
+    this.infants = value.infants;
+    this.onChildrenChange();
+  }
+  clearAvailabilitySearch(): void {
+    this.checkInDate = '';
+    this.checkOutDate = '';
+    this.adults = 1;
+    this.children = 0;
+    this.infants = 0;
+    this.childrenAges = [];
+    this.roomCount = 1;
+    this.availability.clear();
     this.availabilitySearched = false;
+    this.availabilityError = '';
+    this.validationSubmitted = false;
   }
   openImageViewer(index = 0): void {
     if (!this.images.length) return;
