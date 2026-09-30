@@ -27,6 +27,11 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/tours-list/tours-list').then((m) => m.HomeToursList),
   },
   {
+    path: 'nile-cruises/:routeName',
+    data: { nileCruisesOnly: true },
+    loadComponent: () => import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
+  },
+  {
     path: 'tours/:routeName',
     loadComponent: () => import('./features/home/tour-page/tour-page').then((m) => m.HomeTourPage),
   },

@@ -28,7 +28,8 @@ export class TourCard implements OnChanges {
   @Input() bookingSelection?: CatalogBookingSelection;
 
   get routeLink(): string[] {
-    return this.tour?.routeName ? ['/tours', this.tour.routeName] : ['/tours'];
+    const section = this.tour?.isNileCruise === true ? '/nile-cruises' : '/tours';
+    return this.tour?.routeName ? [section, this.tour.routeName] : [section];
   }
 
   get imageUrl(): string {

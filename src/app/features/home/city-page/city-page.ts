@@ -208,7 +208,9 @@ export class CityPage implements OnInit {
     return Array.isArray(rows) ? rows : [];
   }
 
-  onBookNowClick(routeName:string){
-    this.router.navigate([`/tours/${routeName}`]);
+  onBookNowClick(tour: any): void {
+    const section = tour?.isNileCruise === true ? 'nile-cruises' : 'tours';
+    const routeName = tour?.routeName;
+    if (routeName) this.router.navigate([`/${section}/${routeName}`]);
   }
 }

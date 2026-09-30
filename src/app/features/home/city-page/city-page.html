@@ -42,7 +42,7 @@
             <div class="grid gap-2 inline-flex">
               <span class="mt-1 block text-xs text-primary">{{ formattedTourPrice(tour) }}
               </span>
-              <button (click)="onBookNowClick(tour.routeName)"
+              <button (click)="onBookNowClick(tour)"
                 class="h-6 w-full flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-center text-sm font-semibold text-white duration-300 hover:bg-primary-700 ">
                 {{ 'bookNow'|translate }}
               </button>

@@ -19,6 +19,7 @@ interface DestinationTourNavigationDTO {
   id: number;
   routeName?: string | null;
   name: string;
+  isNileCruise?: boolean;
 }
 
 interface DestinationCityNavigationDTO {
@@ -63,6 +64,10 @@ export class DestinationsMenu {
   cities(destination: DestinationNavigationDTO): DestinationCityNavigationDTO[] { return destination.cities ?? []; }
   tours(city: DestinationCityNavigationDTO): DestinationTourNavigationDTO[] { return city.tours ?? []; }
   tourName(item: DestinationTourNavigationDTO): string { return item.name; }
+  tourRoute(item: DestinationTourNavigationDTO): string[] {
+    const section = item.isNileCruise ? '/nile-cruises' : '/tours';
+    return item.routeName ? [section, item.routeName] : [section];
+  }
   get isMobile(): boolean { return this.layout === 'mobile'; }
   get menuId(): string { return `destinations-mega-menu-${this.layout}`; }
   get selectedDestination(): DestinationNavigationDTO | null {

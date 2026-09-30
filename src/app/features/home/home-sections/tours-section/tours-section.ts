@@ -32,6 +32,7 @@ export interface TourHomeDTO {
   pricePerPerson?: number;
   pricePerChild?: number;
   pricePerInfant?: number;
+  isNileCruise?: boolean;
   discountedPricePerPerson?: number | null;
   activeDiscount?: { isCurrentlyActive: boolean; percentage: number } | null;
 }

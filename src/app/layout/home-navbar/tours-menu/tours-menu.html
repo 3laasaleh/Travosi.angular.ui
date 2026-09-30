@@ -22,7 +22,7 @@
           <ul class="space-y-1">
             @for (tour of tours; track tour.id) {
               <li class="overflow-hidden rounded-xl bg-white">
-                <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()"
+                <a [routerLink]="detailRoute(tour)" (click)="onNavigate()"
                   class="block min-w-0 px-3 py-3 text-sm font-semibold text-slate-800 transition hover:text-primary"
                   role="menuitem">
                   <span class="block truncate">{{ tourName(tour) }}</span>
@@ -49,7 +49,7 @@
             }
           } @else {
             @for (tour of tours; track tour.id) {
-              <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']" (click)="onNavigate()"
+              <a [routerLink]="detailRoute(tour)" (click)="onNavigate()"
                 class="block rounded-xl border border-transparent px-3 py-3 text-sm font-semibold text-slate-700 transition hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
                 role="menuitem">
                 <span class="block truncate">{{ tourName(tour) }}</span>

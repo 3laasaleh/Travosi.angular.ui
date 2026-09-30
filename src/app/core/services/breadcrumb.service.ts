@@ -21,6 +21,7 @@ interface SegmentDefinition {
 }
 
 const SEGMENTS: Record<string, SegmentDefinition> = {
+  'dinner-cruises': { en: 'Dinner Cruises', ar: 'رحلات العشاء النيلية', path: 'nile-cruises' },
   destinations: { en: 'Destinations', ar: 'الوجهات' },
   cities: { en: 'Destinations', ar: 'الوجهات', path: 'destinations' },
   tours: { en: 'Tours', ar: 'الجولات' },
@@ -117,14 +118,15 @@ export class BreadcrumbService {
       return items;
     }
 
-    const definition = SEGMENTS[section];
+    const breadcrumbSection = section === 'nile-cruises' && rest.length > 1 ? 'dinner-cruises' : section;
+    const definition = SEGMENTS[breadcrumbSection];
     if (definition?.parent) {
       const parent = SEGMENTS[definition.parent];
       items.push({ name: this.label(parent, definition.parent, language), path: `${root}/${definition.parent}` });
     }
     items.push({
-      name: this.label(definition, section, language),
-      path: `${root}/${definition?.path ?? section}`,
+      name: this.label(definition, breadcrumbSection, language),
+      path: `${root}/${definition?.path ?? breadcrumbSection}`,
     });
 
     const leaf = rest[rest.length - 1];

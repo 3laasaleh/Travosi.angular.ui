@@ -51,6 +51,11 @@ export class ToursMenu {
   get viewAllLabelKey(): string { return this.nileCruisesOnly ? 'viewAllNileCruises' : 'viewAllTours'; }
   get listRoute(): string { return this.nileCruisesOnly ? '/nile-cruises' : '/tours'; }
 
+  detailRoute(tour: any): string[] {
+    const section = this.nileCruisesOnly ? '/nile-cruises' : '/tours';
+    return tour?.routeName ? [section, tour.routeName] : [section];
+  }
+
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
@@ -94,7 +99,7 @@ export class ToursMenu {
 
   private loadTours(): void {
     this.isLoading = true;
-    const nileCruiseFilter = this.nileCruisesOnly ? '&isNileCruise=true' : '';
+    const nileCruiseFilter = `&isNileCruise=${this.nileCruisesOnly}`;
     this.apiService.getUnauthntecated(`Tours?page=1&pageSize=8${nileCruiseFilter}`).pipe(
       catchError(() => of(null)),
       finalize(() => {

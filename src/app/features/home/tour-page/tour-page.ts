@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
@@ -39,6 +39,7 @@ import { isExpiredTour } from '../list-search.util';
 })
 export class HomeTourPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly apiService = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -202,7 +203,23 @@ export class HomeTourPage implements OnInit {
       )
       .subscribe((tour) => {
         this.tour = tour;
-        if (!tour || isExpiredTour(tour)) {
+        if (!tour) {
+          this.tour = null;
+          this.errorMessage = 'tourNotFound';
+          this.seo.markNotFound('Tour not found');
+          return;
+        }
+        const isNileCruise = tour?.isNileCruise === true || tour?.IsNileCruise === true;
+        const isNileCruiseRoute = this.route.snapshot.data['nileCruisesOnly'] === true;
+        if (isNileCruise !== isNileCruiseRoute) {
+          const language = this.route.snapshot.pathFromRoot
+            .map((route) => route.paramMap.get('lang'))
+            .find((value): value is string => !!value) ?? 'en';
+          const section = isNileCruise ? 'nile-cruises' : 'tours';
+          void this.router.navigateByUrl(`/${language}/${section}/${encodeURIComponent(routeName)}`, { replaceUrl: true });
+          return;
+        }
+        if (isExpiredTour(tour)) {
           this.tour = null;
           this.errorMessage = 'tourNotFound';
           this.seo.markNotFound('Tour not found');

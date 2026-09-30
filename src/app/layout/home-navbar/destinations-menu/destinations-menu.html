@@ -88,7 +88,7 @@
                           <ul [attr.id]="menuId + '-city-tours-' + city.id" class="space-y-1 border-t border-slate-100 p-2 ps-4">
                             @for (tour of tours(city); track tour.id) {
                               <li>
-                                <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
+                                <a [routerLink]="tourRoute(tour)"
                                   class="block rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary"
                                   (click)="onNavigate()">
                                   {{ tourName(tour) }}
@@ -227,7 +227,7 @@
               <div class="grid max-h-[55vh] grid-cols-1 gap-1 overflow-y-auto pe-1 xl:grid-cols-2">
                 @if (selectedCity; as city) {
                   @for (tour of tours(city); track tour.id) {
-                    <a [routerLink]="tour.routeName ? ['/tours', tour.routeName] : ['/tours']"
+                    <a [routerLink]="tourRoute(tour)"
                       class="rounded-xl border border-transparent px-3 py-3 text-sm text-slate-600 transition hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
                       (click)="onNavigate()">
                       <span class="block line-clamp-2">{{ tourName(tour) }}</span>

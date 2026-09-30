@@ -8,7 +8,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { AuthService } from '../_services/auth.service';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import Swal from 'sweetalert2';
@@ -25,6 +25,7 @@ interface ReviewEligibility {
 interface UserBookingItem {
   id: number;
   bookingNo?: string;
+  tourId?: number;
   tourTitle?: string;
   tourRouteName?: string;
   packageName?: string;
@@ -77,6 +78,7 @@ export class UserBooking implements OnInit {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {

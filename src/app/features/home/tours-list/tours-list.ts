@@ -42,7 +42,7 @@ export class HomeToursList implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly translate = inject(TranslateService);
 
-  readonly pageSizeOptions = [10, 20, 50];
+  readonly pageSizeOptions = [10, 20, 50, 100];
   readonly heroImage = 'assets/images/bg/cta.jpg';
   readonly nileCruisesOnly = this.route.snapshot.data['nileCruisesOnly'] === true;
   readonly cityId = this.parsePositiveId(this.route.snapshot.queryParamMap.get('cityId'));
@@ -65,7 +65,7 @@ export class HomeToursList implements OnInit {
   private appliedDateTo = '';
   paginationInfo: PaginationInfo = {
     page: 1,
-    pageSize: 20,
+    pageSize: this.nileCruisesOnly ? 100 : 20,
     totalCount: 0,
     totalPages: 1,
   };
@@ -126,7 +126,7 @@ export class HomeToursList implements OnInit {
     if (this.appliedDateFrom) params.set('dateFrom', this.appliedDateFrom);
     if (this.appliedDateTo) params.set('dateTo', this.appliedDateTo);
     if (this.cityId) params.set('cityId', String(this.cityId));
-    if (this.nileCruisesOnly) params.set('isNileCruise', 'true');
+    params.set('isNileCruise', String(this.nileCruisesOnly));
 
     this.apiService
       .getUnauthntecated(`Tours?${params.toString()}`)
