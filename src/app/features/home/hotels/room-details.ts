@@ -270,10 +270,16 @@ export class RoomDetails implements OnInit {
         return;
       }
 
+      const booking = response?.data ?? response;
+      if (typeof booking?.bookingNo !== 'string' || !booking.bookingNo.trim()) {
+        this.handleBookingError('bookingCreateError');
+        return;
+      }
+
       this.guestBookingOpen = false;
       this.guestBookingForm.reset({ firstName: '', lastName: '', email: '', mobile: '' });
       this.availabilityStatus = null;
-      await this.showBookingConfirmation(response?.data ?? response);
+      await this.showBookingConfirmation(booking);
     });
   }
 
@@ -351,7 +357,7 @@ export class RoomDetails implements OnInit {
       icon: 'success',
       iconColor: '#00d492',
       title: this.translate.instant('bookingRequestReceived'),
-      text: `${this.translate.instant('bookingReference')}: ${booking?.bookingNo || booking?.id}\n${this.translate.instant(messageKey, { time: bookingTime })}`,
+      text: `${this.translate.instant('bookingReference')}: ${booking.bookingNo.trim()}\n${this.translate.instant(messageKey, { time: bookingTime })}`,
       confirmButtonText: this.translate.instant('ok'),
       confirmButtonColor: '#0891b2',
     });
@@ -380,11 +386,7 @@ export class RoomDetails implements OnInit {
     this.adults = readCount(query.get('adults'), 1);
     this.children = readCount(query.get('children'), 0);
     this.infants = readCount(query.get('infants'), 0);
-    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
-    this.childrenAges = Array.from({ length: this.children }, (_, index) => {
-      const age = Number(ages[index]);
-      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : Number.NaN;
-    });
+    this.childrenAges = Array.from({ length: this.children }, () => 6);
   }
 
   private roomRouteName(room: any): string {

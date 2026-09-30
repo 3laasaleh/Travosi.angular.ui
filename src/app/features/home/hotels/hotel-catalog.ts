@@ -91,7 +91,6 @@ export class HotelCatalog implements OnInit {
       adults: this.adults,
       children: this.children,
       infants: this.infants,
-      childrenAges: this.childrenAges,
     };
   }
   get suggestions(): Array<{ kind: 'destination' | 'hotel'; item: any }> {
@@ -218,12 +217,6 @@ export class HotelCatalog implements OnInit {
   }
   onRoomCountChange(value: number): void {
     this.roomCount = Math.max(1, Number(value) || 1);
-    this.invalidateAvailability();
-  }
-  onChildAgeChange(): void {
-    this.childrenAges = this.childrenAges.map((age) =>
-      Math.max(0, Math.min(17, Number.isInteger(Number(age)) ? Number(age) : 6)),
-    );
     this.invalidateAvailability();
   }
   applySearch(): void {
@@ -426,11 +419,6 @@ export class HotelCatalog implements OnInit {
     this.infants = this.nonNegativeInteger(query.get('infants'));
     this.roomCount = this.positiveInteger(query.get('rooms') ?? query.get('no_rooms'), 1);
     this.syncChildrenAges();
-    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
-    this.childrenAges = this.childrenAges.map((fallback, index) => {
-      const age = Number(ages[index]);
-      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : fallback;
-    });
     this.destinationQuery = query.get('destination') ?? query.get('query') ?? '';
     const destinationId = Number(query.get('destinationId'));
     this.selectedDestinationId = Number.isFinite(destinationId) && destinationId > 0 ? destinationId : null;

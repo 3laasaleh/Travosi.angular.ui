@@ -257,7 +257,6 @@ export class HotelDetail implements OnInit {
       adults: this.adults,
       children: this.children,
       infants: this.infants,
-      childrenAges: this.childrenAges,
     };
   }
 
@@ -333,7 +332,7 @@ export class HotelDetail implements OnInit {
   onChildrenChange(): void {
     const count = Math.max(0, Math.min(17, Number(this.children) || 0));
     this.children = count;
-    this.childrenAges = Array.from({ length: count }, (_, index) => this.childrenAges[index] ?? 0);
+    this.childrenAges = Array.from({ length: count }, (_, index) => this.childrenAges[index] ?? 6);
     this.availabilitySearched = false;
   }
   updateGuestCount(type: 'adults' | 'children' | 'infants', amount: number): void {
@@ -428,11 +427,6 @@ export class HotelDetail implements OnInit {
     this.infants = this.readCount(query.get('infants'), 0);
     this.roomCount = this.readCount(query.get('rooms'), 1);
     this.onChildrenChange();
-    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
-    this.childrenAges = this.childrenAges.map((fallback, index) => {
-      const age = Number(ages[index]);
-      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : fallback;
-    });
   }
   private readCount(value: string | null, minimum: number): number {
     const count = Number(value);

@@ -30,8 +30,8 @@ describe('RoomDetails booking', () => {
       getUnauthntecated: vi.fn().mockReturnValue(of({ data: hotel })),
       postUnauthenticated: vi.fn((url: string) => of(url === 'Bookings/CheckAvailability'
         ? { isSuccess: true, data: { isAvailable: true } }
-        : { isSuccess: true, data: { id: 7 } })),
-      post: vi.fn().mockReturnValue(of({ isSuccess: true, data: { id: 7 } })),
+        : { isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
+      post: vi.fn().mockReturnValue(of({ isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
     };
     auth = { getCurentUser: vi.fn().mockReturnValue(null), isTokenExpired: vi.fn().mockReturnValue(true) };
     await TestBed.configureTestingModule({
@@ -102,6 +102,9 @@ describe('RoomDetails booking', () => {
 
     expect(api.post).toHaveBeenCalledWith('Bookings', expect.objectContaining({
       HotelId: 10, HotelRoomId: 20, DateFrom: '2030-05-10', DateTo: '2030-05-14',
+    }));
+    expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
+      icon: 'success', text: expect.stringContaining('B-0000007'),
     }));
   });
 
