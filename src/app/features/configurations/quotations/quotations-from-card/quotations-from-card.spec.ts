@@ -17,6 +17,7 @@ describe('QuotationsFromCard', () => {
     get: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
     put: ReturnType<typeof vi.fn>;
+    getFile: ReturnType<typeof vi.fn>;
   };
 
   const flight = {
@@ -75,6 +76,7 @@ describe('QuotationsFromCard', () => {
       }),
       post: vi.fn().mockReturnValue(of({ isSuccess: true, message: 'Saved' })),
       put: vi.fn().mockReturnValue(of({ isSuccess: true, message: 'Updated' })),
+      getFile: vi.fn(),
     };
 
     TestBed.configureTestingModule({ providers: [{ provide: CurrencyService, useValue: {
@@ -377,6 +379,47 @@ describe('QuotationsFromCard', () => {
       icon: 'error',
       title: 'Server rejected quotation',
     }));
+  });
+
+  it('downloads the newly saved quote using its customer name', () => {
+    component.flights = [flight]; component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    apiService.post.mockReturnValue(of({ isSuccess: true, data: { id: 73, customerName: 'Mona Ali', quotationNo: 'QT-73' } }));
+    apiService.getFile.mockReturnValue(of(new Blob(['%PDF-test'], { type: 'application/pdf' })));
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function(this: HTMLAnchorElement) {
+      expect(this.download).toMatch(/^Mona-Ali-\d{4}-\d{2}-\d{2}\.pdf$/);
+      expect(this.href).toBe('blob:quote-test');
+    });
+    const original = URL.createObjectURL;
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:quote-test');
+    const revoke = URL.revokeObjectURL;
+    URL.revokeObjectURL = vi.fn();
+    vi.useFakeTimers();
+    try {
+      component.saveQuotation(true);
+      expect(apiService.getFile).toHaveBeenCalledWith('Quotations/73/Pdf');
+      expect(click).toHaveBeenCalledOnce();
+      vi.runAllTimers();
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:quote-test');
+    } finally {
+      URL.createObjectURL = original;
+      URL.revokeObjectURL = revoke;
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps the saved quote successful when only the PDF download fails', () => {
+    component.flights = [flight]; component.toggleFlight(flight, true);
+    fillRequiredFields(component);
+    apiService.post.mockReturnValue(of({ isSuccess: true, data: { id: 73 } }));
+    apiService.getFile.mockReturnValue(throwError(() => new Error('Download failed')));
+    const saved = vi.spyOn(component.quotationSaved, 'emit');
+
+    component.saveQuotation(true);
+
+    expect(apiService.post).toHaveBeenCalledOnce();
+    expect(saved).toHaveBeenCalledOnce();
+    expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({ title: 'quotationPdfError', icon: 'error' }));
   });
 
   it('hydrates selected flights, policies, and transfer times for editing', () => {

@@ -84,6 +84,7 @@ describe('CurrencyService', () => {
   });
 
   it('rounds EGP display values to a whole number', () => {
+    cookieValues['currency'] = 'EGP';
     localStorage.setItem(optionsCacheKey, JSON.stringify({
       cachedAt: Date.now(),
       value: [
@@ -98,6 +99,45 @@ describe('CurrencyService', () => {
     const service = TestBed.inject(CurrencyService);
 
     expect(service.formatPrice(2534.94, 'EGP')).toBe('2,535 EGP');
+  });
+
+  it('converts document prices independently of the public display currency', () => {
+    api.getUnauthntecated.mockReturnValue(of({ isSuccess: true, data: [
+      { id: 2, name: 'USD', sign: '$' }, { id: 1, name: 'Egyptian Pound', sign: 'EGP' },
+    ] }));
+    localStorage.setItem(rateCacheKey, JSON.stringify({
+      cachedAt: Date.now(), value: { fromCurrency: 'USD', toCurrency: 'EGP', rate: 50 },
+    }));
+    const service = TestBed.inject(CurrencyService);
+
+    expect(service.convertForDocument(100, 2, 1)).toBe(5000);
+    expect(service.convertForDocument(5000, 'EGP', 'USD')).toBe(100);
+    expect(service.currentCurrency().code).toBe('USD');
+    expect(cookieValues['currency']).toBeUndefined();
+  });
+
+  it('requires a usable exchange rate only for cross-currency document prices', () => {
+    api.getUnauthntecated.mockReturnValue(of({ isSuccess: true, data: [
+      { id: 2, name: 'USD', sign: '$' }, { id: 1, name: 'Egyptian Pound', sign: 'EGP' },
+    ] }));
+    const service = TestBed.inject(CurrencyService);
+
+    expect(service.convertForDocument(100, 2, 1)).toBeNull();
+    expect(service.convertForDocument(100, 1, 1)).toBe(100);
+    expect(service.convertForDocument(100, 2, 2)).toBe(100);
+  });
+
+  it('preserves two decimal places and the explicit currency on CRM documents', () => {
+    api.getUnauthntecated.mockReturnValue(of({ isSuccess: true, data: [
+      { id: 2, name: 'USD', sign: '$' }, { id: 1, name: 'Egyptian Pound', sign: 'EGP' },
+    ] }));
+    const service = TestBed.inject(CurrencyService);
+
+    expect(service.formatDocumentPrice(2534.94, 'EGP')).toBe(new Intl.NumberFormat('en-US', {
+      style: 'currency', currency: 'EGP', minimumFractionDigits: 2, maximumFractionDigits: 2,
+    }).format(2534.94));
+    expect(service.formatDocumentPrice(100, 'USD')).toBe('$100.00');
+    expect(service.currentCurrency().code).toBe('USD');
   });
 
   it('refreshes a structurally invalid cache instead of trusting its timestamp', () => {
