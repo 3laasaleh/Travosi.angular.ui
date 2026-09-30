@@ -124,7 +124,7 @@
         {{ (loading ? loadingLabel : submitLabel) | translate }}
       </button>
       @if (query || dateFrom || dateTo || travelers.adults !== 1 || travelers.children || travelers.infants || (showRoomCount && roomCount !== 1)) {
-      <button type="button" [disabled]="loading" (click)="cleared.emit()" class="mt-2 justify-self-end text-sm font-semibold text-primary hover:underline disabled:opacity-60 lg:col-span-full">
+      <button type="button" [disabled]="loading" (click)="cleared.emit()" class="mt-2 justify-self-end text-sm font-semibold text-white hover:underline disabled:opacity-60 lg:col-span-full">
         {{ 'clear' | translate }}
       </button>
       }

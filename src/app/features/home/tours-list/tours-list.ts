@@ -13,7 +13,10 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
-import { CatalogSearchForm, CatalogTravelers } from '../../../shared/components/catalog-search-form/catalog-search-form';
+import {
+  CatalogSearchForm,
+  CatalogTravelers,
+} from '../../../shared/components/catalog-search-form/catalog-search-form';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
@@ -33,7 +36,16 @@ interface PaginationInfo {
 @Component({
   selector: 'app-home-tours-list',
   standalone: true,
-  imports: [Breadcrumbs, FormsModule, TranslatePipe, HomeNavbar, FooterOne, PaginationOne, TourCard, CatalogSearchForm],
+  imports: [
+    Breadcrumbs,
+    FormsModule,
+    TranslatePipe,
+    HomeNavbar,
+    FooterOne,
+    PaginationOne,
+    TourCard,
+    CatalogSearchForm,
+  ],
   templateUrl: './tours-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -62,9 +74,9 @@ export class HomeToursList implements OnInit {
   get bookingSelection() {
     return { ...this.travelers(), dateFrom: this.dateFrom, dateTo: this.dateTo };
   }
-  private appliedSearchText = '';
-  private appliedDateFrom = '';
-  private appliedDateTo = '';
+  private appliedSearchText :string|null = null;
+  private appliedDateFrom :string|null = null;
+  private appliedDateTo :string|null= null;
   paginationInfo: PaginationInfo = {
     page: 1,
     pageSize: this.nileCruisesOnly ? 100 : 20,
@@ -76,8 +88,12 @@ export class HomeToursList implements OnInit {
     this.loadTours();
   }
 
-  get pageTitleKey(): string { return this.nileCruisesOnly ? 'nileCruises' : 'tours'; }
-  get emptyMessageKey(): string { return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound'; }
+  get pageTitleKey(): string {
+    return this.nileCruisesOnly ? 'nileCruises' : 'tours';
+  }
+  get emptyMessageKey(): string {
+    return this.nileCruisesOnly ? 'noNileCruisesFound' : 'noToursFound';
+  }
 
   get searchSuggestions(): string[] {
     const values = this.allTours.flatMap((tour) => [
@@ -150,16 +166,24 @@ export class HomeToursList implements OnInit {
         }
 
         const pageData = response?.data;
-        debugger
-        const rows = pageData?.data ;
-        this.allTours = Array.isArray(rows) ? rows : [];
-        this.tours = this.allTours;
+
+        this.allTours = Array.isArray(pageData?.data) ? pageData?.data : [];
+        if (this.appliedSearchText || (this.appliedDateFrom && this.appliedDateTo))
+          this.tours = this.allTours.filter(
+            (tour) =>
+              matchesSearchQuery(this.appliedSearchText ?? "", tour) &&
+              isWithinDateRange(this.appliedDateFrom ??"", this.appliedDateTo ?? "", tour),
+          );
+        else 
+          this.tours = this.allTours;
+
         this.updatePagination(pageData, this.tours.length);
       });
   }
 
   onPageChange(page: number): void {
-    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages) return;
+    if (page === this.paginationInfo.page || page < 1 || page > this.paginationInfo.totalPages)
+      return;
     this.paginationInfo.page = page;
     this.loadTours();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -177,7 +201,9 @@ export class HomeToursList implements OnInit {
     return tour?.title ?? tour?.name ?? '';
   }
 
-  private get isArabic(): boolean { return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar'); }
+  private get isArabic(): boolean {
+    return (this.translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
+  }
 
   destinationName(tour: any): string {
     return tour?.destinationName ?? tour?.destination?.title ?? tour?.destination?.name ?? '';
@@ -190,7 +216,10 @@ export class HomeToursList implements OnInit {
       page: Number(pageData?.page ?? this.paginationInfo.page),
       pageSize,
       totalCount,
-      totalPages: Math.max(1, Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize)))),
+      totalPages: Math.max(
+        1,
+        Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize))),
+      ),
     };
   }
 
@@ -198,5 +227,4 @@ export class HomeToursList implements OnInit {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 ? id : null;
   }
-
 }
