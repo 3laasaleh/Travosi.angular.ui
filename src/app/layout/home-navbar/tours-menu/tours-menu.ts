@@ -1,3 +1,4 @@
+import { datas } from './../../../data/data';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -108,9 +109,7 @@ export class ToursMenu {
       }),
     ).subscribe((response: any) => {
       if (response === null) return;
-      const pageData = response?.data ?? response;
-      const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
-      this.tours = Array.isArray(rows) ? rows.slice(0, 8) : [];
+      this.tours =   response?.data.data;
       this.loaded = true;
     });
   }

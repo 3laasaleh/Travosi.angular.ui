@@ -20,6 +20,8 @@ import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagi
 import { isExpiredTour, isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
+import { IGenericResponse } from '../../../core/models/genericReponse.model';
+import { PaginationModel } from '../../../core/models/pagination.model';
 
 interface PaginationInfo {
   page: number;
@@ -141,20 +143,17 @@ export class HomeToursList implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((response: any) => {
+      .subscribe((response: IGenericResponse<PaginationModel<any[]>>) => {
         if (response === null) {
           this.tours = [];
           return;
         }
 
-        const pageData = response?.data ?? response;
-        const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
+        const pageData = response?.data;
+        debugger
+        const rows = pageData?.data ;
         this.allTours = Array.isArray(rows) ? rows : [];
-        this.tours = this.allTours.filter((tour) =>
-          !isExpiredTour(tour)
-          && matchesSearchQuery(this.appliedSearchText, tour)
-          && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, tour),
-        );
+        this.tours = this.allTours;
         this.updatePagination(pageData, this.tours.length);
       });
   }
