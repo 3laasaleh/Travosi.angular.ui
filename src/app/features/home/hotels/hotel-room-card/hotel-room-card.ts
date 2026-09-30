@@ -27,6 +27,9 @@ export class HotelRoomCard {
   @Input() bookingChildren = 0;
   @Input() bookingInfants = 0;
   @Input() bookingChildrenAges: number[] = [];
+  @Input() bookingCheckIn = '';
+  @Input() bookingCheckOut = '';
+  @Input() bookingRoomCount = 1;
   @Output() editRequested = new EventEmitter<any>();
   _currencyService=inject(CurrencyService);
 
@@ -99,15 +102,16 @@ export class HotelRoomCard {
     return [this.isArabic ? '/ar/hotels' : '/en/hotels', this.hotelRouteName, 'rooms', roomRouteName];
   }
 
-  get roomDetailsBookingState(): Record<string, unknown> {
+  get roomDetailsBookingQueryParams(): Record<string, string | number | number[]> {
     const ages = Array.isArray(this.bookingChildrenAges) ? this.bookingChildrenAges : [];
     return {
-      hotelBooking: {
-        adults: Math.max(1, Number(this.bookingAdults) || 1),
-        children: Math.max(0, Number(this.bookingChildren) || 0),
-        infants: Math.max(0, Number(this.bookingInfants) || 0),
-        childrenAges: ages.map((age) => Number(age) || 0),
-      },
+      checkIn: this.bookingCheckIn,
+      checkOut: this.bookingCheckOut,
+      rooms: Math.max(1, Number(this.bookingRoomCount) || 1),
+      adults: Math.max(1, Number(this.bookingAdults) || 1),
+      children: Math.max(0, Number(this.bookingChildren) || 0),
+      infants: Math.max(0, Number(this.bookingInfants) || 0),
+      childrenAges: ages.map((age) => Number(age) || 0),
     };
   }
 

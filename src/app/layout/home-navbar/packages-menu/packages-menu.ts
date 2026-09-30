@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { isExpiredPackage } from '../../../features/home/list-search.util';
 
 @Component({
   selector: 'app-packages-menu',
@@ -95,7 +96,7 @@ export class PackagesMenu {
       if (response === null) return;
       const pageData = response?.data ?? response;
       const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
-      this.packages = Array.isArray(rows) ? rows.slice(0, 8) : [];
+      this.packages = Array.isArray(rows) ? rows.filter((item) => !isExpiredPackage(item)).slice(0, 8) : [];
       this.loaded = true;
     });
   }

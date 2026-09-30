@@ -14,6 +14,7 @@ import { UtilityService } from '../../../../core/services/utilityservice';
 import { PaginationModel } from '../../../../core/models/pagination.model';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { TourCard } from '../../../../shared/components/tour-card/tour-card';
+import { isExpiredTour } from '../../list-search.util';
 export interface TourHomeDTO {
   [key: string]: any;
   id: number;
@@ -81,7 +82,7 @@ export class ToursSection implements OnInit {
       )
       .subscribe((response: IGenericResponse<PaginationModel<TourHomeDTO>>) => {
         var res = response?.data;
-        this.tours = res?.data ?? [];
+        this.tours = (res?.data ?? []).filter((tour) => !isExpiredTour(tour));
         this.isLoading = false;
         this.cdr.markForCheck();
       });

@@ -28,6 +28,7 @@ import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
 import { PaginationModel } from '../../../core/models/pagination.model';
+import { isExpiredTour } from '../list-search.util';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -201,7 +202,8 @@ export class HomeTourPage implements OnInit {
       )
       .subscribe((tour) => {
         this.tour = tour;
-        if (!tour) {
+        if (!tour || isExpiredTour(tour)) {
+          this.tour = null;
           this.errorMessage = 'tourNotFound';
           this.seo.markNotFound('Tour not found');
           return;
@@ -241,7 +243,7 @@ export class HomeTourPage implements OnInit {
         const rows = response?.data?.data ?? response;
 
         this.relatedTours = (Array.isArray(rows) ? rows : [])
-          .filter((item) =>  Number(item?.id ) !== tourId)
+          .filter((item) => Number(item?.id) !== tourId && !isExpiredTour(item))
           .slice(0, 10);
         this.cdr.markForCheck();
       });

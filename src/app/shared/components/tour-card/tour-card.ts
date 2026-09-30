@@ -6,6 +6,7 @@ import { UtilityService } from '../../../core/services/utilityservice';
 import type { TourHomeDTO } from '../../../features/home/home-sections/tours-section/tours-section';
 import type { CatalogBookingSelection } from '../catalog-search-form/catalog-search-form';
 import { DescriptionPreview } from '../description-preview/description-preview';
+import { isSoldOut } from '../../../features/home/list-search.util';
 
 @Component({
   selector: 'app-tour-card',
@@ -58,6 +59,10 @@ export class TourCard implements OnChanges {
 
   get discountPercentage(): number {
     return this.utilityService.discountPercentage(this.tour);
+  }
+
+  get soldOut(): boolean {
+    return isSoldOut(this.tour);
   }
 
 

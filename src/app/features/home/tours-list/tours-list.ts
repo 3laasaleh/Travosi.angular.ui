@@ -17,7 +17,7 @@ import { CatalogSearchForm, CatalogTravelers } from '../../../shared/components/
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
-import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
+import { isExpiredTour, isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
@@ -151,10 +151,11 @@ export class HomeToursList implements OnInit {
         const rows = pageData?.data ?? pageData?.items ?? pageData?.tours ?? pageData;
         this.allTours = Array.isArray(rows) ? rows : [];
         this.tours = this.allTours.filter((tour) =>
-          matchesSearchQuery(this.appliedSearchText, tour)
+          !isExpiredTour(tour)
+          && matchesSearchQuery(this.appliedSearchText, tour)
           && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, tour),
         );
-        this.updatePagination(pageData, this.allTours.length);
+        this.updatePagination(pageData, this.tours.length);
       });
   }
 

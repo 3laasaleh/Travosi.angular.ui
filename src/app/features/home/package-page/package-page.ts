@@ -20,6 +20,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
+import { isExpiredPackage } from '../list-search.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
@@ -350,7 +351,8 @@ export class HomePackagePage implements OnInit {
       )
       .subscribe((travelPackage) => {
         this.travelPackage = travelPackage;
-        if (!travelPackage) {
+        if (!travelPackage || isExpiredPackage(travelPackage)) {
+          this.travelPackage = null;
           this.errorMessage = 'packageNotFound';
           this.seo.markNotFound('Package not found');
           return;

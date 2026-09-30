@@ -246,7 +246,19 @@ export class HotelDetail implements OnInit {
       hotelRouteName,
       'rooms',
       roomRouteName,
-    ]);
+    ], { queryParams: this.roomBookingQueryParams() });
+  }
+
+  private roomBookingQueryParams(): Record<string, string | number | number[]> {
+    return {
+      checkIn: this.checkInDate,
+      checkOut: this.checkOutDate,
+      rooms: this.roomCount,
+      adults: this.adults,
+      children: this.children,
+      infants: this.infants,
+      childrenAges: this.childrenAges,
+    };
   }
 
   async reserveRoom(room: any): Promise<void> {
@@ -416,6 +428,11 @@ export class HotelDetail implements OnInit {
     this.infants = this.readCount(query.get('infants'), 0);
     this.roomCount = this.readCount(query.get('rooms'), 1);
     this.onChildrenChange();
+    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
+    this.childrenAges = this.childrenAges.map((fallback, index) => {
+      const age = Number(ages[index]);
+      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : fallback;
+    });
   }
   private readCount(value: string | null, minimum: number): number {
     const count = Number(value);

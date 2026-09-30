@@ -9,6 +9,7 @@ import { UtilityService } from '../../../../core/services/utilityservice';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import { PackageDTO } from './package.model';
 import { DescriptionPreview } from '../../../../shared/components/description-preview/description-preview';
+import { isExpiredPackage, isSoldOut } from '../../list-search.util';
 
 
 @Component({
@@ -52,7 +53,7 @@ export class PackagesSection implements OnInit {
         return;
       }
       const data = response?.data?.data ?? [];
-      this.packages = data;
+      this.packages = data.filter((item) => !isExpiredPackage(item));
     });
   }
 
@@ -69,13 +70,11 @@ export class PackagesSection implements OnInit {
   }
 
   isSoldOut(item: PackageDTO): boolean {
-    return item.isSoldOut === true || (item.maxCapacity > 0 && item.seatsAvailable <= 0);
+    return isSoldOut(item);
   }
 
   isExpired(item: PackageDTO): boolean {
-    if (item.isExpired === true) return true;
-    const start = String(item.dateFrom ?? '').slice(0, 10);
-    return Boolean(start && start < this.todayDate());
+    return isExpiredPackage(item);
   }
 
   destinationName(item: PackageDTO): string {
@@ -90,9 +89,4 @@ export class PackagesSection implements OnInit {
     this.utilityService.onImageError(event, 'assets/images/bg/2.jpg');
   }
 
-  private todayDate(): string {
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60_000;
-    return new Date(now.getTime() - offset).toISOString().slice(0, 10);
-  }
 }

@@ -20,7 +20,7 @@ import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { formatHomePrice } from '../home-price.util';
-import { isWithinDateRange, matchesSearchQuery } from '../list-search.util';
+import { isExpiredPackage, isSoldOut, isWithinDateRange, matchesSearchQuery } from '../list-search.util';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 
@@ -149,11 +149,12 @@ export class HomePackagesList implements OnInit {
         const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
         this.allPackages = Array.isArray(rows) ? rows : [];
         this.packages = this.allPackages.filter((item) =>
-          matchesSearchQuery(this.appliedSearchText, item)
+          !isExpiredPackage(item)
+          && matchesSearchQuery(this.appliedSearchText, item)
           && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, item),
         );
 
-        const totalCount = Number(pageData?.totalCount ?? this.allPackages.length);
+        const totalCount = Number(pageData?.totalCount ?? this.packages.length);
         const pageSize = Number(pageData?.pageSize ?? this.paginationInfo.pageSize);
         this.paginationInfo = {
           page: Number(pageData?.page ?? this.paginationInfo.page),
@@ -216,18 +217,11 @@ export class HomePackagesList implements OnInit {
   }
 
   isSoldOut(item: any): boolean {
-    if (item?.isSoldOut === true) return true;
-    const capacity = Number(item?.maxCapacity ?? 0);
-    return capacity > 0 && Number(item?.seatsAvailable ?? capacity) <= 0;
+    return isSoldOut(item);
   }
 
   isExpired(item: any): boolean {
-    if (item?.isExpired === true) return true;
-    const start = String(item?.dateFrom ?? item?.startDate ?? '').slice(0, 10);
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60_000;
-    const today = new Date(now.getTime() - offset).toISOString().slice(0, 10);
-    return Boolean(start && start < today);
+    return isExpiredPackage(item);
   }
 
   imageItems(item: any): any[] {

@@ -85,7 +85,7 @@
     </section>
 
     <form #availabilityForm="ngForm"
-      class="grid gap-2 rounded-[20px] border border-slate-200 bg-amber-400 p-4 shadow-lg lg:grid-cols-[1fr_1fr_1.25fr_auto]"
+      class="grid gap-2 rounded-[20px] border border-slate-200 bg-primary-400 p-4 shadow-lg lg:grid-cols-[1fr_1fr_1.25fr_auto]"
       (ngSubmit)="searchAvailability()" novalidate>
       <div>
         <label class="sr-only" for="hotelCheckIn">{{ 'checkIn' | translate }}</label>
@@ -159,10 +159,11 @@
         }
       </div>
       <button type="submit" [disabled]="searching"
-        class="h-12 rounded-lg bg-primary px-7 font-bold text-white disabled:opacity-60">@if (searching) {
+        class="h-12 rounded-lg px-7 text-base font-bold transition bg-white text-primary-500 hover:bg-primary-900 hover:text-white disabled:cursor-wait disabled:opacity-60">
+        @if (searching) {
         <span class="inline-block h-4 w-24 animate-pulse rounded bg-white/50" aria-hidden="true"></span>
         <span class="sr-only">{{ 'loading' | translate }}</span>
-        } @else { {{ 'checkAvailability' | translate }} }</button>
+        } @else { {{ 'search' | translate }} }</button>
 
       @if (validationSubmitted && (adults < 1 || children < 0 || infants < 0 || roomCount < 1)) { <p
         class="text-sm text-red-700 lg:col-span-full">{{ 'hotelGuestCountsInvalid' | translate }}</p> }
@@ -186,8 +187,7 @@
 
     <div class="mt-8 flex">
       <section>
-        <h2 class="mb-4 text-2xl font-bold text-slate-950">{{ hasSearchedAvailability ? ('availableRooms' | translate) :
-          ('hotelRooms' | translate) }}</h2>
+        <h2 class="mb-4 text-2xl font-bold text-slate-950">{{ 'availableRooms' | translate }}</h2>
         @if (searching) {
         <div class="grid gap-5" aria-busy="true">
           @for (room of [1, 2, 3]; track room) {
@@ -197,12 +197,18 @@
           }
           <span class="sr-only">{{ 'loading' | translate }}</span>
         </div>
+        } @else if (!hasSearchedAvailability) {
+        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-600">
+          <i class="mdi mdi-calendar-search-outline text-4xl text-primary" aria-hidden="true"></i>
+          <p class="mt-3 font-semibold text-slate-800">{{ 'hotelAvailabilitySearchHint' | translate }}</p>
+        </div>
         } @else {
         <div class="grid gap-5">
-          @for (room of (hasSearchedAvailability ? availableRooms : hotel.rooms); track room.id) {
+          @for (room of availableRooms; track room.id) {
           <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <app-hotel-room-card [room]="room" [availability]="roomAvailability(room.id)" [hotelRouteName]="hotel.routeName" [isArabic]="isArabic"
-              [bookingAdults]="adults" [bookingChildren]="children" [bookingInfants]="infants" [bookingChildrenAges]="childrenAges" />
+              [bookingAdults]="adults" [bookingChildren]="children" [bookingInfants]="infants" [bookingChildrenAges]="childrenAges"
+              [bookingCheckIn]="checkInDate" [bookingCheckOut]="checkOutDate" [bookingRoomCount]="roomCount" />
             @if (hasSearchedAvailability && roomAvailability(room.id); as roomAvailability) {
             <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-4">
               <span class="text-sm font-medium text-emerald-700">{{ roomAvailability.availableQuantity }} {{
@@ -215,7 +221,7 @@
           </div>
           } @empty {
           <p class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">{{
-            hasSearchedAvailability ? ('noAvailableRoomsForSearch' | translate) : ('noRoomsFound' | translate) }}</p>
+            'noAvailableRoomsForSearch' | translate }}</p>
           }
         </div>
         }

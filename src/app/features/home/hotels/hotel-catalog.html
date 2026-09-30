@@ -229,7 +229,7 @@
 
               <div class="min-w-0 px-1 py-4 md:px-4 md:py-1">
                 <div class="flex flex-wrap items-center gap-2">
-                  <a class="text-xl font-bold leading-tight text-primary hover:underline" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]">{{ hotelName(hotel) }}</a>
+                  <a class="text-xl font-bold leading-tight text-primary hover:underline" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]" [queryParams]="hotelBookingQueryParams">{{ hotelName(hotel) }}</a>
                   <span class="inline-flex gap-0.5" [attr.aria-label]="hotel.starRating + ' ' + ('starRating' | translate)">
                     @for (_ of starRange(hotel); track $index) { <i class="mdi mdi-star text-sm text-amber-400" aria-hidden="true"></i> }
                   </span>
@@ -285,7 +285,7 @@
                   <p class="text-sm text-slate-500">{{ checkInDate && checkOutDate ? ('viewAvailableRooms' | translate) : ('chooseDatesForHotelPrice' | translate) }}</p>
                 }
 
-                <a class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]">
+                <a class="mt-4 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110" [routerLink]="[isArabic ? '/ar/hotels' : '/en/hotels', hotel.routeName]" [queryParams]="hotelBookingQueryParams">
                   {{ 'seeAvailability' | translate }}
                   <i class="mdi" [class.mdi-chevron-left]="isArabic" [class.mdi-chevron-right]="!isArabic" aria-hidden="true"></i>
                 </a>

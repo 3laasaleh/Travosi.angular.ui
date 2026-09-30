@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -24,7 +23,7 @@ import { formatHomePrice } from '../home-price.util';
 @Component({
   selector: 'app-room-details',
   standalone: true,
-  imports: [Breadcrumbs, DescriptionPreview, FooterOne, HomeNavbar, ImageViewerModal, ProductReviews, ReactiveFormsModule, TranslatePipe],
+  imports: [Breadcrumbs, DescriptionPreview, FooterOne, HomeNavbar, ImageViewerModal, ProductReviews, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './room-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,6 +40,13 @@ export class RoomDetails implements OnInit {
   error = '';
   imageViewerOpen = false;
   selectedImageIndex = 0;
+  checkInDate = '';
+  checkOutDate = '';
+  adults = 1;
+  children = 0;
+  infants = 0;
+  childrenAges: number[] = [];
+  roomCount = 1;
 
   guestBookingForm = new FormGroup({
     firstName: new FormControl('', {
@@ -62,7 +68,6 @@ export class RoomDetails implements OnInit {
   });
 
   private readonly route = inject(ActivatedRoute);
-  private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly currency = inject(CurrencyService);
@@ -139,7 +144,7 @@ export class RoomDetails implements OnInit {
     });
   }
 
-  reserve(): void {
+  checkAvailability(): void {
     if (this.booking || this.checkingAvailability || this.roomUnavailable || !this.hotel || !this.room) return;
 
     const payload = this.createBookingPayload();
@@ -173,13 +178,20 @@ export class RoomDetails implements OnInit {
         }
 
         this.availabilityStatus = 'available';
-        if (this.isLoggedIn) {
-          void this.confirmAndBook(payload);
-        } else {
-          this.guestBookingOpen = true;
-        }
         this.cdr.markForCheck();
       });
+  }
+
+  bookNow(): void {
+    if (this.booking || this.checkingAvailability || this.roomUnavailable) return;
+    if (this.availabilityStatus !== 'available') {
+      this.checkAvailability();
+      return;
+    }
+    if (!this.isLoggedIn) return;
+
+    const payload = this.createBookingPayload();
+    if (payload) this.submitBooking(payload, false);
   }
 
   goToSignIn(): void {
@@ -190,6 +202,13 @@ export class RoomDetails implements OnInit {
   closeGuestBookingModal(): void {
     if (this.booking) return;
     this.guestBookingOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  openGuestBookingModal(): void {
+    if (this.booking || this.availabilityStatus !== 'available') return;
+    this.guestBookingOpen = true;
+    this.error = '';
     this.cdr.markForCheck();
   }
 
@@ -260,13 +279,39 @@ export class RoomDetails implements OnInit {
 
   private createBookingPayload(): Record<string, unknown> | null {
     const hotelRoomId = Number(this.room?.id);
-    if (!Number.isInteger(hotelRoomId) || hotelRoomId <= 0) {
+    const hotelId = Number(this.hotel?.id);
+    if (!Number.isInteger(hotelRoomId) || hotelRoomId <= 0 || !Number.isInteger(hotelId) || hotelId <= 0) {
       this.error = 'bookingCreateError';
       return null;
     }
+    if (!this.hasValidStay()) {
+      this.error = 'hotelStayRequired';
+      return null;
+    }
     return {
+      HotelId: hotelId,
       HotelRoomId: hotelRoomId,
+      RoomCount: this.roomCount,
+      Adults: this.adults,
+      Children: this.children,
+      ChildrenAges: this.childrenAges,
+      Infants: this.infants,
+      NumberOfTravelers: this.adults + this.children + this.infants,
+      DateFrom: this.checkInDate,
+      DateTo: this.checkOutDate,
     };
+  }
+
+  private hasValidStay(): boolean {
+    const isDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
+    return isDate(this.checkInDate) && isDate(this.checkOutDate)
+      && this.checkInDate >= this.today && this.checkOutDate > this.checkInDate
+      && Number.isInteger(this.roomCount) && this.roomCount >= 1
+      && Number.isInteger(this.adults) && this.adults >= 1
+      && Number.isInteger(this.children) && this.children >= 0
+      && Number.isInteger(this.infants) && this.infants >= 0
+      && this.childrenAges.length === this.children
+      && this.childrenAges.every((age) => Number.isInteger(age) && age >= 0 && age <= 17);
   }
 
   private showAvailabilityError(message: unknown, unavailable = true): void {
@@ -325,11 +370,21 @@ export class RoomDetails implements OnInit {
 
   private applyQuery(): void {
     const query = this.route.snapshot.queryParamMap;
-    const state = this.location.getState() as { hotelBooking?: { adults?: unknown; children?: unknown; infants?: unknown; childrenAges?: unknown } };
-    const selection = state?.hotelBooking;
-    const stateAges = Array.isArray(selection?.childrenAges) ? selection.childrenAges.map((value) => String(value)) : [];
-    const rawAges = stateAges.length ? stateAges : query.getAll('childrenAges').flatMap((value) => value.split(','));
-   
+    this.checkInDate = query.get('checkIn') ?? '';
+    this.checkOutDate = query.get('checkOut') ?? '';
+    const readCount = (value: string | null, fallback: number): number => {
+      const parsed = Number(value);
+      return Number.isInteger(parsed) && parsed >= fallback ? parsed : fallback;
+    };
+    this.roomCount = readCount(query.get('rooms'), 1);
+    this.adults = readCount(query.get('adults'), 1);
+    this.children = readCount(query.get('children'), 0);
+    this.infants = readCount(query.get('infants'), 0);
+    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
+    this.childrenAges = Array.from({ length: this.children }, (_, index) => {
+      const age = Number(ages[index]);
+      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : Number.NaN;
+    });
   }
 
   private roomRouteName(room: any): string {

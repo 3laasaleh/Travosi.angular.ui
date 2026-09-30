@@ -83,6 +83,17 @@ export class HotelCatalog implements OnInit {
   get isArabic(): boolean {
     return this.language.currentLanguage() === 'ar';
   }
+  get hotelBookingQueryParams(): Record<string, string | number | number[]> {
+    return {
+      checkIn: this.checkInDate,
+      checkOut: this.checkOutDate,
+      rooms: this.roomCount,
+      adults: this.adults,
+      children: this.children,
+      infants: this.infants,
+      childrenAges: this.childrenAges,
+    };
+  }
   get suggestions(): Array<{ kind: 'destination' | 'hotel'; item: any }> {
     const query = this.destinationQuery.trim().toLocaleLowerCase();
     const destinations = (query
@@ -415,6 +426,11 @@ export class HotelCatalog implements OnInit {
     this.infants = this.nonNegativeInteger(query.get('infants'));
     this.roomCount = this.positiveInteger(query.get('rooms') ?? query.get('no_rooms'), 1);
     this.syncChildrenAges();
+    const ages = query.getAll('childrenAges').flatMap((value) => value.split(','));
+    this.childrenAges = this.childrenAges.map((fallback, index) => {
+      const age = Number(ages[index]);
+      return Number.isInteger(age) && age >= 0 && age <= 17 ? age : fallback;
+    });
     this.destinationQuery = query.get('destination') ?? query.get('query') ?? '';
     const destinationId = Number(query.get('destinationId'));
     this.selectedDestinationId = Number.isFinite(destinationId) && destinationId > 0 ? destinationId : null;
