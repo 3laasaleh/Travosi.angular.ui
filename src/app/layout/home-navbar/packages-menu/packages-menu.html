@@ -1,14 +1,20 @@
 <div [class.w-full]="isMobile" [class.relative]="!isMobile" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
-  <button
+  <div class="flex items-center border-b border-slate-200 lg:border-0">
+    <a routerLink="/packages" (click)="onNavigate()"
+      class="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-slate-50 hover:text-primary lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm lg:text-slate-600 lg:hover:bg-transparent">
+      <i class="mdi mdi-bag-suitcase-outline text-lg" aria-hidden="true"></i>{{ 'packages' | translate }}
+    </a>
+    <button
     type="button"
-    class="flex w-full items-center justify-between gap-1.5 border-b border-slate-200 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-slate-50 hover:text-primary lg:w-auto lg:border-0 lg:px-4 lg:py-2.5 lg:text-sm lg:text-slate-600 lg:hover:bg-transparent"
+    class="grid size-11 shrink-0 place-items-center text-slate-600 transition hover:bg-slate-50 hover:text-primary lg:size-9 lg:rounded-lg lg:hover:bg-primary/5"
+    [attr.aria-label]="'packages' | translate"
     aria-haspopup="menu"
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)"
   >
-    <span class="flex items-center gap-2"><i class="mdi mdi-bag-suitcase-outline text-lg" aria-hidden="true"></i>{{ 'packages' | translate }}</span>
     <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"></i>
-  </button>
+    </button>
+  </div>
 
   @if (menuOpen) {
     @if (isMobile) {
