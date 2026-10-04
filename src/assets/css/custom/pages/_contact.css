@@ -4,7 +4,7 @@
 
 /* Validation */
 .error {
-    @apply my-2 mx-0 hidden text-primary-600;
+    @apply my-2 mx-0 hidden text-primary;
 }
   
 #ajaxsuccess {
@@ -17,7 +17,7 @@
 }
 
 .error_message {
-    @apply bg-primary-600/5 text-primary-600;
+    @apply bg-primary-600/5 text-primary;
 }
 
 .contact-loader {
