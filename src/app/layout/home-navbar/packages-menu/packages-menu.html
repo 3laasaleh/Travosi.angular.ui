@@ -1,12 +1,12 @@
 <div [class.w-full]="isMobile" [class.relative]="!isMobile" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
-  <div class="flex items-center border-b border-slate-200 lg:border-0">
+  <div class="flex items-center border-b border-white/20 lg:border-0">
     <a routerLink="/packages" (click)="onNavigate()"
-      class="group flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm">
+      class="group flex min-w-0 flex-1 items-center gap-2 rounded-xl px-3 py-3 text-start font-semibold text-white transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 lg:flex-none lg:px-4 lg:py-2.5 lg:text-sm">
       <i class="mdi mdi-bag-suitcase-outline text-lg text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'packages' | translate }}
     </a>
     <button
     type="button"
-    class="group grid size-11 shrink-0 place-items-center rounded-lg text-slate-600 transition hover:bg-primary-50 hover:text-primary lg:size-9"
+    class="group grid size-11 shrink-0 place-items-center rounded-lg text-primary transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 lg:size-9"
     [attr.aria-label]="'packages' | translate"
     aria-haspopup="menu"
     [attr.aria-expanded]="menuOpen"

@@ -46,11 +46,13 @@ export class PackagesMenu {
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
+    this.cancelClose();
     this.menuOpen = !this.menuOpen;
     if (this.menuOpen) {
       this.opened.emit();
       if (!this.loaded && !this.isLoading) this.loadPackages();
     }
+    this.cdr.markForCheck();
   }
 
   openMenu(): void {
@@ -77,6 +79,7 @@ export class PackagesMenu {
   closeMenu(): void {
     this.cancelClose();
     this.menuOpen = false;
+    this.cdr.markForCheck();
   }
 
   onNavigate(): void {
