@@ -18,6 +18,7 @@ export class DestinationCitiesCarousel implements AfterViewInit, OnChanges, OnDe
   private readonly platformId = inject(PLATFORM_ID);
   private readonly utilityService = inject(UtilityService);
   @Input() cities: CityHomeDTO[] = [];
+  @Input() destinationRouteName = '';
   private swiper: Swiper | null = null;
   readonly instanceId = 'destination-cities-carousel';
 

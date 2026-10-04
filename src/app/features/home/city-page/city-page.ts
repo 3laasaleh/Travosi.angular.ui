@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { SeoService } from '../../../core/services/seo.service';
 import { UtilityService } from '../../../core/services/utilityservice';
@@ -35,6 +36,7 @@ export class CityPage implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currencyService = inject(CurrencyService);
+  private readonly breadcrumbs = inject(BreadcrumbService);
   private readonly seo = inject(SeoService);
   private readonly utilityService = inject(UtilityService);
   destinationId = 0;
@@ -48,11 +50,14 @@ export class CityPage implements OnInit {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        map((params) => params.get('routeName')?.trim() ?? ''),
-        distinctUntilChanged(),
+        map((params) => ({
+          routeName: params.get('routeName')?.trim() ?? '',
+          destinationRouteName: params.get('destinationRouteName')?.trim() ?? '',
+        })),
+        distinctUntilChanged((left, right) => left.routeName === right.routeName && left.destinationRouteName === right.destinationRouteName),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((routeName) => this.loadByRouteName(routeName));
+      .subscribe(({ routeName, destinationRouteName }) => this.loadByRouteName(routeName, destinationRouteName));
   }
 
   cityName(): string {
@@ -118,7 +123,7 @@ export class CityPage implements OnInit {
     return this.utilityService.isArabic(this.translate);
   }
 
-  private load(city: any, destinationId: number, cityId: number): void {
+  private load(city: any, destinationId: number, cityId: number, destinationRouteName: string): void {
     this.destinationId = destinationId;
     this.isLoading = true;
     this.errorMessage = '';
@@ -154,9 +159,20 @@ export class CityPage implements OnInit {
       )
       .subscribe((result) => {
         this.destination = this.entity(result.destination, 'destination');
+        this.setDestinationBreadcrumb();
         if (!this.city || Number(this.city.destinationId) !== destinationId) {
           this.errorMessage = 'cityNotFound';
           this.seo.markNotFound('City not found');
+          return;
+        }
+        const canonicalDestinationRouteName = String(this.destination?.routeName ?? this.destination?.RouteName ?? '').trim();
+        if (canonicalDestinationRouteName && destinationRouteName.toLowerCase() !== canonicalDestinationRouteName.toLowerCase()) {
+          const language = this.translate.currentLang()?.toLowerCase() === 'ar' ? 'ar' : 'en';
+          const cityRouteName = String(this.city?.routeName ?? this.route.snapshot.paramMap.get('routeName') ?? '').trim();
+          void this.router.navigateByUrl(
+            `/${language}/destinations/${encodeURIComponent(canonicalDestinationRouteName)}/cities/${encodeURIComponent(cityRouteName)}`,
+            { replaceUrl: true },
+          );
           return;
         }
         this.updateSeo(destinationId, cityId);
@@ -169,7 +185,7 @@ export class CityPage implements OnInit {
       });
   }
 
-  private loadByRouteName(routeName: string): void {
+  private loadByRouteName(routeName: string, destinationRouteName: string): void {
     if (!routeName) {
       this.errorMessage = 'cityNotFound';
       this.isLoading = false;
@@ -190,8 +206,22 @@ export class CityPage implements OnInit {
           this.cdr.markForCheck();
           return;
         }
-        this.load(city, destinationId, cityId);
+        this.load(city, destinationId, cityId, destinationRouteName);
       });
+  }
+
+  private setDestinationBreadcrumb(): void {
+    const name = String(this.destination?.title ?? this.destination?.name ?? '').trim();
+    if (!name) {
+      this.breadcrumbs.setCurrentParent(null);
+      return;
+    }
+    const language = this.translate.currentLang()?.toLowerCase() === 'ar' ? 'ar' : 'en';
+    const routeName = String(this.destination?.routeName ?? this.destination?.RouteName ?? '').trim();
+    this.breadcrumbs.setCurrentParent({
+      name,
+      path: routeName ? `/${language}/destinations/${encodeURIComponent(routeName)}` : `/${language}/destinations`,
+    });
   }
   private updateSeo(_destinationId: number, _cityId: number): void {
     const image = this.city?.coverImageUrl ?? this.city?.imageUrl ?? this.city?.images?.[0]

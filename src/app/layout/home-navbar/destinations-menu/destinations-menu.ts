@@ -63,6 +63,11 @@ export class DestinationsMenu {
   cityName(item: DestinationCityNavigationDTO): string { return item.name; }
   cities(destination: DestinationNavigationDTO): DestinationCityNavigationDTO[] { return destination.cities ?? []; }
   tours(city: DestinationCityNavigationDTO): DestinationTourNavigationDTO[] { return city.tours ?? []; }
+  cityRoute(destination: DestinationNavigationDTO, city: DestinationCityNavigationDTO): string[] {
+    return destination.routeName && city.routeName
+      ? ['/destinations', destination.routeName, 'cities', city.routeName]
+      : ['/destinations'];
+  }
   tourName(item: DestinationTourNavigationDTO): string { return item.name; }
   tourRoute(item: DestinationTourNavigationDTO): string[] {
     const section = item.isNileCruise ? '/nile-cruises' : '/tours';

@@ -68,7 +68,7 @@
                     @for (city of cities(destination); track city.id) {
                       <li class="rounded-lg bg-white">
                         <div class="flex items-center gap-2">
-                          <a [routerLink]="city.routeName ? ['/cities', city.routeName] : ['/destinations']"
+                          <a [routerLink]="cityRoute(destination, city)"
                             class="min-w-0 flex-1 px-3 py-2.5 text-sm text-slate-700 hover:text-primary"
                             (click)="onNavigate()">
                             <span class="block truncate">{{ cityName(city) }}</span>
@@ -191,7 +191,7 @@
                 @if (selectedDestination; as destination) {
                   @for (city of cities(destination); track city.id) {
                     <a
-                      [routerLink]="city.routeName ? ['/cities', city.routeName] : ['/destinations']"
+                      [routerLink]="cityRoute(destination, city)"
                       class="block w-full cursor-pointer rounded-xl border px-3 py-3 text-start text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                       [class.border-primary]="city.id === activeCityId"
                       [class.bg-primary-50]="city.id === activeCityId"

@@ -75,8 +75,10 @@ export class BreadcrumbService {
 
   /** Title of the currently displayed entity (tour, package, city, blog...) when it is known. */
   private readonly currentTitle = signal('');
+  /** Resolved parent entity for detail routes such as a city within a destination. */
+  private readonly currentParent = signal<BreadcrumbItem | null>(null);
 
-  readonly items = computed<BreadcrumbItem[]>(() => this.build(this.url(), this.currentTitle()));
+  readonly items = computed<BreadcrumbItem[]>(() => this.build(this.url(), this.currentTitle(), this.currentParent()));
   readonly isHome = computed(() => this.items().length <= 1);
 
   constructor() {
@@ -84,6 +86,7 @@ export class BreadcrumbService {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentTitle.set('');
+        this.currentParent.set(null);
         this.url.set(event.urlAfterRedirects);
       });
   }
@@ -93,7 +96,11 @@ export class BreadcrumbService {
     this.currentTitle.set(title.trim());
   }
 
-  private build(url: string, currentTitle: string): BreadcrumbItem[] {
+  setCurrentParent(crumb: BreadcrumbItem | null): void {
+    this.currentParent.set(crumb?.name.trim() ? { name: crumb.name.trim(), path: crumb.path } : null);
+  }
+
+  private build(url: string, currentTitle: string, currentParent: BreadcrumbItem | null): BreadcrumbItem[] {
     const path = this.normalize(url);
     const segments = path.split('/').filter(Boolean);
     const hasLanguagePrefix = segments[0] === 'en' || segments[0] === 'ar';
@@ -106,6 +113,17 @@ export class BreadcrumbService {
       { name: language === 'ar' ? 'الرئيسية' : 'Home', path: `${root}/home` },
     ];
     if (!section || section === 'home') return items;
+
+    // Canonical city URL: /destinations/:destinationRouteName/cities/:cityRouteName.
+    if (section === 'destinations' && rest[1] === 'cities' && rest[2]) {
+      items.push({ name: this.label(SEGMENTS['destinations'], 'destinations', language), path: `${root}/destinations` });
+      items.push(currentParent ?? {
+        name: this.humanize(rest[0]),
+        path: `${root}/destinations/${encodeURIComponent(rest[0])}`,
+      });
+      items.push({ name: currentTitle || this.humanize(rest[2]), path });
+      return items;
+    }
 
     // Keep the room collection level visible on room detail pages:
     // Home / Hotels / Hotel name / Rooms / Room name.

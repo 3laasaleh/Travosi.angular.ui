@@ -10,6 +10,11 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/destinations-list/destinations-list').then((m) => m.HomeDestinationsList),
   },
   {
+    path: 'destinations/:destinationRouteName/cities/:routeName',
+    loadComponent: () => import('./features/home/city-page/city-page').then((m) => m.CityPage),
+  },
+  {
+    // Legacy city links are accepted and canonicalized by CityPage.
     path: 'cities/:routeName',
     loadComponent: () => import('./features/home/city-page/city-page').then((m) => m.CityPage),
   },

@@ -8,6 +8,7 @@ import { DescriptionPreview } from '../description-preview/description-preview';
 export class DestinationCitiesGrid {
   private readonly utilityService = inject(UtilityService);
   @Input() destinationId!: number;
+  @Input() destinationRouteName = '';
   @Input() cities: CityHomeDTO[] = [];
   cityName(city: CityHomeDTO): string {
     return city.name ?? '';
