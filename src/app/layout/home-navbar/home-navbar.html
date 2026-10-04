@@ -18,7 +18,8 @@
       <!-- <app-tours-menu (navigated)="closeMenus()" /> -->
       <app-tours-menu [nileCruisesOnly]="true" (navigated)="closeMenus()" />
       <app-packages-menu (navigated)="closeMenus()" />
-      <a routerLink="/hotels" routerLinkActive="text-primary-700" (click)="closeMenus()" class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary-700"><i class="mdi mdi-bed-outline text-lg" aria-hidden="true"></i>{{ 'hotels' | translate }}</a>
+      <a routerLink="/hotels" routerLinkActive="text-primary" (click)="closeMenus()" class="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary">
+        <i class="mdi mdi-bed-outline text-lg text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'hotels' | translate }}</a>
     </nav>
 
     <div class="hidden h-8 w-px bg-slate-200 lg:block"></div>
@@ -26,7 +27,7 @@
     <div class="ms-auto flex items-center gap-2">
       <div class="relative hidden lg:block">
         <button type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary-700 hover:bg-primary-50 hover:text-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
           [disabled]="currencyService.isLoading() || currencyService.isRateLoading()"
           [attr.aria-label]="'currency' | translate" aria-haspopup="menu" [attr.aria-expanded]="currencyMenuOpen"
           (click)="toggleCurrencyMenu($event)">
@@ -70,7 +71,7 @@
       <!-- Desktop language switcher -->
       <div class="relative hidden lg:block">
         <button type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary-700 hover:bg-primary-50 hover:text-primary-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 "
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 "
           [disabled]="switchingLanguage !== null" [attr.aria-label]="'language' | translate" aria-haspopup="menu"
           [attr.aria-expanded]="languageMenuOpen" (click)="toggleLanguageMenu($event)">
           <i class="mdi mdi-web text-base leading-none"></i>
@@ -110,7 +111,7 @@
       <div class="relative hidden lg:block">
         @if (isLoggedIn) {
         <button type="button"
-          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 hover:text-primary-700 dark:hover:bg-slate-800"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
           [attr.aria-label]="'openAccountMenu' | translate" aria-haspopup="menu" [attr.aria-expanded]="accountMenuOpen"
           (click)="toggleAccountMenu($event)">
 
@@ -132,9 +133,9 @@
         @else {
         <div class="p-2">
           <a routerLink="/login" (click)="closeMenus()"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-primary-50 hover:text-primary-700"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary"
             role="menuitem">
-            <i data-feather="log-in" class="size-4"></i>
+            <i  class="mdi mdi-login text-lg text-primary transition-colors group-hover:text-amber-500"></i>
             {{ 'signin' | translate }}
           </a>
         </div>
@@ -178,7 +179,7 @@
       </div>
 
       <button type="button"
-        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:border-primary-700 hover:bg-primary-50 hover:text-primary-700 lg:hidden dark:border-slate-700"
+        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary lg:hidden dark:border-slate-700"
         [attr.aria-label]="'toggleHomeNavigation' | translate" [attr.aria-expanded]="mobileMenuOpen"
         (click)="toggleMobileMenu()">
         <i class="mdi text-xl leading-none" [class.mdi-menu]="!mobileMenuOpen" [class.mdi-close]="mobileMenuOpen"
@@ -213,7 +214,8 @@
           <app-packages-menu #mobilePackagesMenu layout="mobile"
             (opened)="openMobileCatalogMenu('packages')" (navigated)="closeMenus()" />
         </li>
-        <li><a routerLink="/hotels" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()" class="flex items-center gap-3 border-b border-slate-200 px-3 py-3 font-semibold text-slate-800 transition hover:bg-primary-50 hover:text-primary-700"><i class="mdi mdi-bed-outline text-xl" aria-hidden="true"></i>{{ 'hotels' | translate }}</a></li>
+        <li><a routerLink="/hotels" routerLinkActive="bg-primary-50 text-primary" (click)="closeMenus()" class="group flex items-center gap-3 border-b border-slate-200 px-3 py-3 font-semibold text-slate-800 transition hover:bg-primary-50 hover:text-primary">
+          <i class="mdi mdi-bed-outline text-xl text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'hotels' | translate }}</a></li>
       </ul>
 
       @if (canAccessConfigurations) {

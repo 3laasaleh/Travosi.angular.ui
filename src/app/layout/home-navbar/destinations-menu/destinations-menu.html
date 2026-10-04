@@ -1,19 +1,19 @@
 <div [ngClass]="isMobile ? 'w-full' : 'relative'" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
   <div class="flex items-center border-b border-slate-200 lg:border-0">
     <a routerLink="/destinations" (click)="onNavigate()"
-      class="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm lg:text-slate-700 lg:hover:bg-primary-50 lg:hover:text-primary-700">
-      <i class="mdi mdi-map-marker-outline text-lg" aria-hidden="true"></i>{{ 'destinations' | translate }}
+      class="group flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm">
+      <i class="mdi mdi-map-marker-outline text-lg text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'destinations' | translate }}
     </a>
     <button
     type="button"
-    class="grid size-11 shrink-0 place-items-center rounded-lg text-slate-600 transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 lg:size-9"
+    class="group grid size-11 shrink-0 place-items-center rounded-lg text-slate-600 transition hover:bg-primary-50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 lg:size-9"
 
     [attr.aria-label]="'destinations' | translate"
     aria-haspopup="true"
     [attr.aria-controls]="menuId"
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu($event)">
-    <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"
+    <i class="mdi text-base leading-none text-primary transition-colors group-hover:text-amber-500" [class.mdi-chevron-down]="!menuOpen" [class.mdi-chevron-up]="menuOpen"
       aria-hidden="true"></i>
     </button>
   </div>

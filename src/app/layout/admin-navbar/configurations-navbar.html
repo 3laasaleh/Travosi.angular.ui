@@ -11,7 +11,7 @@
     <div class="ms-auto flex min-w-0 items-center gap-1 sm:gap-2">
       <div class="relative hidden lg:block">
         <button type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary-700 hover:bg-primary-50 hover:text-primary-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700"
+          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700"
           [disabled]="switchingLanguage !== null"
           [attr.aria-label]="'language' | translate" aria-haspopup="menu" [attr.aria-expanded]="languageMenuOpen"
           (click)="toggleLanguageMenu($event)">
@@ -44,7 +44,7 @@
         <div class="relative">
           <button
             type="button"
-            class="relative flex size-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-primary-50 hover:text-primary-700 dark:hover:bg-slate-800"
+            class="relative flex size-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-primary-50 hover:text-primary dark:hover:bg-slate-800"
             [attr.aria-label]="'notifications' | translate"
             [attr.aria-expanded]="notificationsOpen"
             (click)="toggleNotifications($event)"
@@ -86,7 +86,7 @@
       <div class="relative hidden lg:block">
         <button
           type="button"
-          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 hover:text-primary-700 dark:hover:bg-slate-800"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
           [attr.aria-label]="'openAccountMenu' | translate"
           aria-haspopup="menu"
           [attr.aria-expanded]="accountMenuOpen"
@@ -130,7 +130,7 @@
 
       <button
         type="button"
-        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:border-primary-700 hover:bg-primary-50 hover:text-primary-700 lg:hidden dark:border-slate-700"
+        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary lg:hidden dark:border-slate-700"
         [attr.aria-label]="'toggleAdminNavigation' | translate"
         [attr.aria-expanded]="mobileMenuOpen"
         (click)="toggleMobileMenu()"
