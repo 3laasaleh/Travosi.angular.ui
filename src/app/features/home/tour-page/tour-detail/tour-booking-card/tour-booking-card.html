@@ -1,4 +1,5 @@
 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+  <div [class.opacity-50]="tourUnavailable" [class.pointer-events-none]="tourUnavailable">
   @if (hasDiscount) {
     <div class="mb-3 flex items-center justify-between gap-3 rounded-xl bg-emerald-50 px-3 py-2 text-emerald-700">
       <span class="inline-flex items-center gap-1 text-sm font-bold"><i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}</span>
@@ -27,6 +28,7 @@
   </div>
 
   <form class="mt-3" [formGroup]="bookingForm" (ngSubmit)="availabilityConfirmed ? bookNow() : checkAvailability()">
+    <fieldset [disabled]="tourUnavailable" class="m-0 min-w-0 border-0 p-0">
     @if (packageSoldOut) {
       <div class="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-bold text-rose-700" role="status">
         <i class="mdi mdi-account-cancel-outline text-lg"></i>{{ 'soldOut' | translate }}
@@ -234,7 +236,20 @@
         }
       </button>
     }
+    </fieldset>
   </form>
+  </div>
+  @if (tourExpired) {
+    <button type="button" disabled
+      class="mt-3 inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-red-600 px-4 text-center text-sm font-semibold text-white">
+      <i class="mdi mdi-calendar-remove-outline"></i><span>{{ 'expired' | translate }}</span>
+    </button>
+  } @else if (tourSoldOut) {
+    <button type="button" disabled
+      class="mt-3 inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 text-center text-sm font-semibold text-white">
+      <i class="mdi mdi-account-cancel-outline"></i><span>{{ 'soldOut' | translate }}</span>
+    </button>
+  }
 </div>
 
 @if (guestBookingOpen) {

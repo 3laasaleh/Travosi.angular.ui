@@ -93,6 +93,10 @@ export class HomeTourPage implements OnInit {
     return this.tour?.destinationName ?? '';
   }
 
+  get tourExpired(): boolean {
+    return isExpiredTour(this.tour);
+  }
+
   scrollRelatedTours(direction: -1 | 1): void {
     this.relatedToursTrack?.nativeElement.scrollBy({ left: direction * 320, behavior: 'smooth' });
   }
@@ -218,12 +222,6 @@ export class HomeTourPage implements OnInit {
             .find((value): value is string => !!value) ?? 'en';
           const section = isNileCruise ? 'nile-cruises' : 'tours';
           void this.router.navigateByUrl(`/${language}/${section}/${encodeURIComponent(routeName)}`, { replaceUrl: true });
-          return;
-        }
-        if (isExpiredTour(tour)) {
-          this.tour = null;
-          this.errorMessage = 'tourNotFound';
-          this.seo.markNotFound('Tour not found');
           return;
         }
         this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
