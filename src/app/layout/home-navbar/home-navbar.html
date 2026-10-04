@@ -1,11 +1,11 @@
-<header class="sticky top-0 z-110 border-b border-slate-800 bg-[#0f172a] text-white">
+<header class="sticky top-0 z-110 border-b border-slate-800 bg-[#004fa0] text-white">
   <div class="mx-auto flex h-16 max-w-[1600px] items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 lg:gap-6 lg:px-8">
     <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3"
       [attr.aria-label]="'homeLinkLabel' | translate">
       <img src="./assets/images/main-logo.png" class="h-12 w-auto shrink-0 sm:h-14"
         [alt]="'seaworldHolidaysLogo' | translate">
       <span class="sm:block">
-        <span class="block text-md font-bold leading-tight text-white">Sea World Holidays</span>
+        <span class="block text-md font-bold leading-tight text-white hover:text-amber-300">Sea World Holidays</span>
       </span>
     </a>
 
@@ -18,8 +18,10 @@
       <!-- <app-tours-menu (navigated)="closeMenus()" /> -->
       <app-tours-menu [nileCruisesOnly]="true" (navigated)="closeMenus()" />
       <app-packages-menu (navigated)="closeMenus()" />
-      <a routerLink="/hotels" routerLinkActive="text-white" (click)="closeMenus()" class="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:text-white">
-        <i class="mdi mdi-bed-outline text-lg text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'hotels' | translate }}</a>
+      <a routerLink="/hotels" routerLinkActive="text-white" (click)="closeMenus()"
+        class="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:text-white">
+        <i class="mdi mdi-bed-outline text-lg text-primary transition-colors group-hover:text-amber-300"
+          aria-hidden="true"></i>{{ 'hotels' | translate }}</a>
     </nav>
 
     <div class="hidden h-8 w-px bg-white/25 lg:block"></div>
@@ -36,11 +38,10 @@
           <i class="mdi mdi-loading mdi-spin text-base" aria-hidden="true"></i>
           }
           @else {
-          <span class="text-base font-bold leading-none group-hover:text-amber-500" aria-hidden="true">{{
+          <span class="text-base font-bold leading-none group-hover:text-amber-300" aria-hidden="true">{{
             currencyService.currentCurrency().symbol}}</span> }
           <span class="uppercase ">{{ currencyService.currentCurrency().code }}</span>
-          <i
-            class="mdi text-base leading-none" [class.mdi-chevron-down]="!currencyMenuOpen"
+          <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!currencyMenuOpen"
             [class.mdi-chevron-up]="currencyMenuOpen"></i>
         </button>
         @if (currencyMenuOpen) {
@@ -74,7 +75,7 @@
           class="group flex items-center gap-1.5 rounded-xl border border-white/30 px-3 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           [disabled]="switchingLanguage !== null" [attr.aria-label]="'language' | translate" aria-haspopup="menu"
           [attr.aria-expanded]="languageMenuOpen" (click)="toggleLanguageMenu($event)">
-          <i class="mdi mdi-web text-base leading-none group-hover:text-amber-500"></i>
+          <i class="mdi mdi-web text-base leading-none group-hover:text-amber-300"></i>
           <span class="uppercase">{{ currentLanguage }}</span>
           <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!languageMenuOpen"
             [class.mdi-chevron-up]="languageMenuOpen"></i>
@@ -111,7 +112,7 @@
       <div class="relative hidden lg:block">
         @if (isLoggedIn) {
         <button type="button"
-          class="flex items-center gap-3 rounded-2xl p-1.5 text-start text-white transition hover:bg-white/10 hover:text-white"
+          class="flex items-center gap-3 rounded-2xl  p-1.5 text-start text-white transition hover:bg-white/10  "
           [attr.aria-label]="'openAccountMenu' | translate" aria-haspopup="menu" [attr.aria-expanded]="accountMenuOpen"
           (click)="toggleAccountMenu($event)">
 
@@ -120,14 +121,13 @@
             class="size-9 rounded-full object-cover ring-2 ring-primary/15" />
           } @else {
           <span
-            class="flex size-9 items-center justify-center rounded-full bg-white/15 text-sm font-bold text-white">
+            class="flex size-9 items-center justify-center rounded-full bg-white/15 text-sm font-bold text-amber-300">
             {{ userInitials }}
           </span>
           }
-          <span class="hidden max-w-36 md:block">
-            <span class="block truncate text-sm font-semibold text-white">{{ userName }}</span>
-          </span>
-          <i data-feather="chevron-down" class="hidden size-4 text-white/70 md:block"></i>
+          <i class="mdi text-base leading-none" [class.mdi-chevron-down]="!accountMenuOpen"
+            [class.mdi-chevron-up]="accountMenuOpen"></i>
+
         </button>
         }
         @else {
@@ -135,7 +135,7 @@
           <a routerLink="/login" (click)="closeMenus()"
             class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:text-white"
             role="menuitem">
-            <i  class="mdi mdi-login text-lg text-white transition-colors group-hover:text-amber-500"></i>
+            <i class="mdi mdi-login text-lg text-white transition-colors group-hover:text-amber-300"></i>
             {{ 'signin' | translate }}
           </a>
         </div>
@@ -146,30 +146,43 @@
           class="absolute end-0 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700   z-[999]"
           role="menu">
           @if (isLoggedIn) {
-          <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
-            <p class="truncate text-sm font-semibold text-slate-900 ">{{ userName }}</p>
-            <p class="truncate text-xs text-slate-500 ">{{ userEmail }}</p>
+          <div class="flex flex-row ">
+            <div class="flex flex-col  justify-center px-4">
+              @if (profileImageUrl) {
+              <img [src]="profileImageUrl" [alt]="userName"
+                class="size-9 rounded-full object-cover ring-2 ring-primary/15" />
+              } @else {
+              <span
+                class="flex size-9 items-center justify-center rounded-full bg-[#004fa0] text-sm font-bold text-amber-300">
+                {{ userInitials }}
+              </span>
+              }
+            </div>
+            <div class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+
+              <p class="truncate text-sm font-semibold text-slate-900 ">{{ userName }}</p>
+              <p class="truncate text-xs text-slate-500 ">{{ userEmail }}</p>
+            </div>
           </div>
           <div class="p-2">
             @if (canAccessConfigurations) {
             <a routerLink="/configurations" routerLinkActive="bg-primary-50 text-primary"
               class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
               role="menuitem">
-              <i data-feather="settings" class="size-4"></i>
+                <i class="mdi mdi-cog text-base"></i>
               {{'Configurations'|translate}}</a>
-
             }
 
             <a routerLink="/user-booking" (click)="closeMenus()"
               class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-primary dark:hover:bg-slate-800"
               role="menuitem">
-              <i data-feather="user" class="size-4"></i>
+              <i class="mdi mdi-account text-base"></i>
               {{ 'myProfile' | translate }}
             </a>
             <button type="button" (click)="logout()"
               class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-primary-50 hover:text-primary dark:hover:bg-primary/10"
               role="menuitem">
-              <i data-feather="log-out" class="size-4"></i>
+              <i class="mdi mdi-logout text-base"></i>
               {{ 'signOut' | translate }}
             </button>
           </div>
@@ -190,7 +203,7 @@
 
   @if (mobileMenuOpen) {
   <nav
-    class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-white/20 bg-[#0f172a] px-4 py-4 text-white shadow-lg lg:hidden"
+    class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-white/20 bg-[#004fa0] px-4 py-4 text-white shadow-lg lg:hidden"
     [attr.aria-label]="'mobileNavigation' | translate">
     <div class="mx-auto max-w-[1600px]">
       <div class="mb-4 md:hidden">
@@ -211,11 +224,13 @@
             (opened)="openMobileCatalogMenu('nileCruises')" (navigated)="closeMenus()" />
         </li>
         <li (mouseenter)="openMobileCatalogMenu('packages')">
-          <app-packages-menu #mobilePackagesMenu layout="mobile"
-            (opened)="openMobileCatalogMenu('packages')" (navigated)="closeMenus()" />
+          <app-packages-menu #mobilePackagesMenu layout="mobile" (opened)="openMobileCatalogMenu('packages')"
+            (navigated)="closeMenus()" />
         </li>
-        <li><a routerLink="/hotels" routerLinkActive="bg-white/10 text-white" (click)="closeMenus()" class="group flex items-center gap-3 border-b border-white/20 px-3 py-3 font-semibold text-white transition hover:bg-white/10 hover:text-white">
-          <i class="mdi mdi-bed-outline text-xl text-primary transition-colors group-hover:text-amber-500" aria-hidden="true"></i>{{ 'hotels' | translate }}</a></li>
+        <li><a routerLink="/hotels" routerLinkActive="bg-white/10 text-white" (click)="closeMenus()"
+            class="group flex items-center gap-3 border-b border-white/20 px-3 py-3 font-semibold text-white transition hover:bg-white/10 hover:text-white">
+            <i class="mdi mdi-bed-outline text-xl text-primary transition-colors group-hover:text-amber-300"
+              aria-hidden="true"></i>{{ 'hotels' | translate }}</a></li>
       </ul>
 
       @if (canAccessConfigurations) {

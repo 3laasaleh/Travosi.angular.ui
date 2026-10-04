@@ -108,6 +108,7 @@ export class HomeTourPage implements OnInit {
         if (!routeName) {
           this.tour = null;
           this.isLoading = false;
+
           this.errorMessage = 'tourNotFound';
           this.seo.markNotFound('Tour not found');
           this.cdr.markForCheck();
