@@ -9,6 +9,7 @@
     "test": "ng test",
     "build:ssr": "ng build --configuration development",
     "serve:ssr:app-dev": "npm run build:ssr  && node dist/seeworld/server/server.mjs",
+    "serve:ssr:app-stage": "ng build --configuration stage && node dist/seeworld/server/server.mjs",
     "serve:ssr:app-prod": "ng build --configuration production && node dist/seeworld/server/server.mjs"
   },
   "private": true,

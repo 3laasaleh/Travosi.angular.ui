@@ -10,7 +10,7 @@ const serverConfig: ApplicationConfig = {
     provideServerRendering(withRoutes(serverRoutes)),
     {
       provide: API_BASE_URL,
-      useFactory: () => normalizeApiBaseUrl(process.env['API_BASE_URL'] || environment.serverBaseUrl),
+      useFactory: () => normalizeApiBaseUrl(process.env['API_BASE_URL'] || environment.baseUrl),
     },
     {
       provide: PUBLIC_BASE_URL,
