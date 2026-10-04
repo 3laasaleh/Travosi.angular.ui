@@ -3,9 +3,27 @@
 
 @if (isLoading) {
 <main class="container py-12 md:py-16" aria-busy="true" [attr.aria-label]="'loading' | translate">
-  <div class="mb-7 space-y-3"><div class="h-4 w-32 animate-pulse rounded-full bg-slate-200"></div><div class="h-12 w-3/4 animate-pulse rounded-full bg-slate-200"></div><div class="h-4 w-40 animate-pulse rounded-full bg-slate-200"></div></div>
+  <div class="mb-7 space-y-3">
+    <div class="h-4 w-32 animate-pulse rounded-full bg-slate-200"></div>
+    <div class="h-12 w-3/4 animate-pulse rounded-full bg-slate-200"></div>
+    <div class="h-4 w-40 animate-pulse rounded-full bg-slate-200"></div>
+  </div>
   <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-    <div class="space-y-8"><div class="aspect-[16/9] animate-pulse rounded-2xl bg-slate-200"></div><div class="grid grid-cols-2 gap-3 sm:grid-cols-3"><div class="col-span-2 h-24 animate-pulse rounded-2xl bg-slate-200 sm:col-span-1"></div><div class="h-24 animate-pulse rounded-2xl bg-slate-200"></div><div class="h-24 animate-pulse rounded-2xl bg-slate-200"></div></div><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="h-6 w-1/3 animate-pulse rounded-full bg-slate-200"></div><div class="mt-5 h-4 w-full animate-pulse rounded-full bg-slate-200"></div><div class="mt-3 h-4 w-11/12 animate-pulse rounded-full bg-slate-200"></div><div class="mt-3 h-4 w-3/4 animate-pulse rounded-full bg-slate-200"></div></div><div class="h-52 animate-pulse rounded-3xl bg-slate-200"></div></div>
+    <div class="space-y-8">
+      <div class="aspect-[16/9] animate-pulse rounded-2xl bg-slate-200"></div>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div class="col-span-2 h-24 animate-pulse rounded-2xl bg-slate-200 sm:col-span-1"></div>
+        <div class="h-24 animate-pulse rounded-2xl bg-slate-200"></div>
+        <div class="h-24 animate-pulse rounded-2xl bg-slate-200"></div>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="h-6 w-1/3 animate-pulse rounded-full bg-slate-200"></div>
+        <div class="mt-5 h-4 w-full animate-pulse rounded-full bg-slate-200"></div>
+        <div class="mt-3 h-4 w-11/12 animate-pulse rounded-full bg-slate-200"></div>
+        <div class="mt-3 h-4 w-3/4 animate-pulse rounded-full bg-slate-200"></div>
+      </div>
+      <div class="h-52 animate-pulse rounded-3xl bg-slate-200"></div>
+    </div>
     <aside class="h-[520px] animate-pulse rounded-3xl bg-slate-200 lg:sticky lg:top-24"></aside>
   </div>
 </main>
@@ -19,144 +37,228 @@
 <main class="py-4">
   <div class="container">
     <header class="mb-7">
-  
+
       <p class="mt-5 text-xs font-bold uppercase tracking-[0.24em] text-primary">{{ 'travelPackage' | translate }}</p>
       <h1 class="mt-2 max-w-5xl text-3xl font-bold leading-tight text-slate-950 md:text-5xl">{{ title }}</h1>
-      @if (packageSoldOut) { <span class="mt-3 inline-flex items-center gap-2 rounded-full bg-rose-600 px-4 py-2 text-sm font-bold text-white"><i class="mdi mdi-account-cancel-outline"></i>{{ 'soldOut' | translate }}</span> }
-      @else if (packageExpired) { <span class="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-bold text-white"><i class="mdi mdi-calendar-remove-outline"></i>{{ 'packageExpired' | translate }}</span> }
+      @if (packageSoldOut) { <span
+        class="mt-3 inline-flex items-center gap-2 rounded-full bg-rose-600 px-4 py-2 text-sm font-bold text-white"><i
+          class="mdi mdi-account-cancel-outline"></i>{{ 'soldOut' | translate }}</span> }
+      @else if (packageExpired) { <span
+        class="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-bold text-white"><i
+          class="mdi mdi-calendar-remove-outline"></i>{{ 'packageExpired' | translate }}</span> }
       @if (averageRating > 0) {
-        <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-bold text-primary"
-          [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
-          <span class="flex text-2xl leading-none text-amber-500" aria-hidden="true">
-            @for (star of [1, 2, 3, 4, 5]; track star) {
-              <i class="mdi" [class]="'mdi ' + ratingStarIcon(star)"></i>
-            }
-          </span>
-          <span>{{ averageRating }}/5</span>
-        </div>
+      <div
+        class="mt-3 inline-flex items-center gap-2 rounded-full bg-white border px-3 py-1.5 text-sm font-bold text-primary"
+        [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
+        <span class="flex text-2xl leading-none text-amber-500" aria-hidden="true">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+          <i class="mdi" [class]="'mdi ' + ratingStarIcon(star)"></i>
+          }
+        </span>
+     </div>
       }
-      @if (hasDiscount) { <span class="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700"><i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}</span> }
+      @if (hasDiscount) { <span
+        class="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700"><i
+          class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}</span> }
       @if (destinationName) {
-        <p class="mt-3 flex items-center gap-2 font-medium text-slate-500"><i class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}</p>
+      <p class="mt-3 flex items-center gap-2 font-medium text-slate-500"><i
+          class="mdi mdi-map-marker-outline text-xl text-primary"></i>{{ destinationName }}</p>
       }
     </header>
 
     <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div class="space-y-8">
         @if (images.length) {
-          <section class="relative overflow-hidden rounded-2xl bg-slate-100 md:grid md:h-[480px] md:grid-cols-[2fr_1.75fr] md:gap-2">
-            @if (hasDiscount) {
-              <span class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg">
-                <i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}
-              </span>
-            }
-            @if (averageRating > 0) {
-              <div class="absolute end-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-sm font-bold text-slate-800 shadow-lg backdrop-blur-sm"
-                [attr.aria-label]="('rating' | translate) + ': ' + averageRating + ' / 5'">
-                <span class="flex text-2xl leading-none text-amber-500" aria-hidden="true">
-                  @for (star of [1, 2, 3, 4, 5]; track star) {
-                    <i class="mdi" [class]="'mdi ' + ratingStarIcon(star)"></i>
-                  }
-                </span>
-                <span>{{ averageRating }}/5</span>
-              </div>
-            }
-            <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
-              <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" (error)="onImageError($event)" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
+        <section
+          class="relative overflow-hidden rounded-2xl bg-slate-100 md:grid md:h-[480px] md:grid-cols-[2fr_1.75fr] md:gap-2">
+          @if (hasDiscount) {
+          <span
+            class="absolute start-4 top-4 z-10 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-lg">
+            <i class="mdi mdi-sale-outline"></i>{{ 'discountOff' | translate:{ percentage: discountPercentage } }}
+          </span>
+          }
+
+          <button type="button" class="group relative block h-full w-full overflow-hidden" (click)="openImageViewer(0)">
+            <img [src]="imageUrl(images[0])" [alt]="imageAlt(images[0])" (error)="onImageError($event)"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] md:aspect-auto" />
+          </button>
+          @if (images.length > 1) {
+          <div class="hidden min-h-0 gap-2 md:grid" [class.grid-cols-2]="images.length > 3">
+            @for (image of images.slice(1, 5); track $index; let imageIndex = $index) {
+            <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
+              <img [src]="imageUrl(image)" [alt]="imageAlt(image)" (error)="onImageError($event)"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
             </button>
-            @if (images.length > 1) {
-              <div class="hidden min-h-0 gap-2 md:grid" [class.grid-cols-2]="images.length > 3">
-                @for (image of images.slice(1, 5); track $index; let imageIndex = $index) {
-                  <button type="button" class="group min-h-0 overflow-hidden" (click)="openImageViewer(imageIndex + 1)">
-                    <img [src]="imageUrl(image)" [alt]="imageAlt(image)" (error)="onImageError($event)" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                  </button>
-                }
-              </div>
             }
-            <button type="button" class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition hover:bg-slate-50" (click)="openImageViewer(0)">
-              <i class="mdi mdi-image-multiple-outline text-lg"></i>{{ images.length }} {{ 'photos' | translate }}
-            </button>
-          </section>
+          </div>
+          }
+          <button type="button"
+            class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition hover:bg-slate-50"
+            (click)="openImageViewer(0)">
+            <i class="mdi mdi-image-multiple-outline text-lg"></i>{{ images.length }} {{ 'photos' | translate }}
+          </button>
+        </section>
         } @else {
-          <section class="relative overflow-hidden rounded-2xl bg-slate-100 md:h-[480px]">
-            <img src="assets/images/bg/2.jpg" [alt]="title" class="h-full min-h-64 w-full object-cover" />
-            <span class="absolute bottom-4 start-4 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">{{ 'defaultImage' | translate }}</span>
-          </section>
+        <section class="relative overflow-hidden rounded-2xl bg-slate-100 md:h-[480px]">
+          <img src="assets/images/bg/2.jpg" [alt]="title" class="h-full min-h-64 w-full object-cover" />
+          <span class="absolute bottom-4 start-4 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">{{
+            'defaultImage' | translate }}</span>
+        </section>
         }
         <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div class="grid grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-3">
-            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-clock-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">
-              @if (durationDays > 0 || durationHours === 0) { {{ durationDays }} {{ 'days' | translate }} }
-              @if (durationHours > 0) { @if (durationDays > 0) { <span aria-hidden="true"> · </span> } {{ durationHours }} {{ 'hours' | translate }} }
-            </p></div></div>
-            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i class="mdi mdi-account-group-outline"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p></div></div>
-            <div class="flex items-center gap-3 p-4 sm:p-5"><span class="grid h-10 w-10 place-items-center rounded-xl bg-violet-50 text-xl text-violet-600 dark:bg-violet-500/10"><i class="mdi mdi-translate"></i></span><div><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'languages' | translate }}</p><p class="mt-1 text-sm font-bold text-slate-800">{{ languages }}</p></div></div>
+            <div class="flex items-center gap-3 p-4 sm:p-5"><span
+                class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i
+                  class="mdi mdi-clock-outline"></i></span>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'duration' | translate }}</p>
+                <p class="mt-1 text-sm font-bold text-slate-800">
+                  @if (durationDays > 0 || durationHours === 0) { {{ durationDays }} {{ 'days' | translate }} }
+                  @if (durationHours > 0) { @if (durationDays > 0) { <span aria-hidden="true"> · </span> } {{
+                  durationHours }} {{ 'hours' | translate }} }
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-4 sm:p-5"><span
+                class="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-xl text-primary"><i
+                  class="mdi mdi-account-group-outline"></i></span>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'groupSize' | translate }}
+                </p>
+                <p class="mt-1 text-sm font-bold text-slate-800">{{ groupSize }} {{ 'people' | translate }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-4 sm:p-5"><span
+                class="grid h-10 w-10 place-items-center rounded-xl bg-violet-50 text-xl text-violet-600 dark:bg-violet-500/10"><i
+                  class="mdi mdi-translate"></i></span>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ 'languages' | translate }}
+                </p>
+                <p class="mt-1 text-sm font-bold text-slate-800">{{ languages }}</p>
+              </div>
+            </div>
           </div>
         </section>
 
         @if (highlights.length) { <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-star-four-points-outline"></i></span><h2 class="text-xl font-bold text-slate-900">{{ 'packageHighlights' | translate }}</h2></div>
-          <ul class="mt-6 grid gap-3 sm:grid-cols-2">@for (highlight of highlights; track $index) { <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-sm leading-6 text-slate-700"><i class="mdi mdi-check-circle mt-0.5 shrink-0 text-lg text-primary"></i><span>{{ itemText(highlight) }}</span></li> }</ul>
+          <div class="flex items-center gap-3"><span
+              class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i
+                class="mdi mdi-star-four-points-outline"></i></span>
+            <h2 class="text-xl font-bold text-slate-900">{{ 'packageHighlights' | translate }}</h2>
+          </div>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2">@for (highlight of highlights; track $index) { <li
+              class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-sm leading-6 text-slate-700">
+              <i class="mdi mdi-check-circle mt-0.5 shrink-0 text-lg text-primary"></i><span>{{ itemText(highlight)
+                }}</span>
+            </li> }</ul>
         </section> }
         <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-text-box-outline"></i></span><div><p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'travelPackage' | translate }}</p><h2 class="mt-1 text-xl font-semibold text-slate-900">{{ 'packageOverview' | translate }}</h2></div></div>
+          <div class="flex items-center gap-3"><span
+              class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i
+                class="mdi mdi-text-box-outline"></i></span>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ 'travelPackage' | translate }}</p>
+              <h2 class="mt-1 text-xl font-semibold text-slate-900">{{ 'packageOverview' | translate }}</h2>
+            </div>
+          </div>
           <p class="mt-5 whitespace-pre-line leading-8 text-slate-600">
-            <app-description-preview [text]="description" /></p>
+            <app-description-preview [text]="description" />
+          </p>
         </section>
 
         @if (travelPackage.hotelRooms?.length) {
-          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="text-xl font-bold text-slate-900"><i class="mdi mdi-bed-outline me-2 text-primary"></i>{{ 'packageHotelsRooms' | translate }}</h2>
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-              @for (room of travelPackage.hotelRooms; track room.id) {
-                <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <h3 class="font-bold text-primary">{{ room.hotelName }}</h3>
-                  @if (roomLink(room); as link) {
-                    <a [routerLink]="link" class="mt-1 inline-block font-semibold text-primary hover:underline">{{ room.roomName }}</a>
-                  } @else {
-                    <p class="mt-1 font-semibold text-slate-800">{{ room.roomName }}</p>
-                  }
-                  <p class="mt-2 text-sm text-slate-600">{{ room.quantity }} {{ 'rooms' | translate }}</p>
-                  <p class="mt-2 text-xs text-slate-500">{{ 'packageCapacityPerRoom' | translate }}</p>
-                  <div class="mt-1 flex flex-wrap gap-3 text-sm text-slate-700">
-                    <span><i class="mdi mdi-account-outline text-primary"></i> {{ room.adults }} {{ 'adults' | translate }}</span>
-                    <span><i class="mdi mdi-human-child text-primary"></i> {{ room.children }} {{ 'children' | translate }}</span>
-                    <span><i class="mdi mdi-baby-face-outline text-primary"></i> {{ room.infants }} {{ 'infants' | translate }}</span>
-                  </div>
-                  <p class="mt-1 text-xs text-emerald-700">{{ 'packageBenefitIncluded' | translate }}</p>
-                </article>
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 class="text-xl font-bold text-slate-900"><i class="mdi mdi-bed-outline me-2 text-primary"></i>{{
+            'packageHotelsRooms' | translate }}</h2>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            @for (room of travelPackage.hotelRooms; track room.id) {
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex items-center gap-3">
+                <h3 class="font-bold text-primary">
+                  {{ room.hotelName }}
+                </h3>
+
+                @if (room.starRating > 0) {
+                <div class="inline-flex items-center gap-1"
+                  [attr.aria-label]="('rating' | translate) + ': ' + room.starRating + ' / 5'">
+
+                  <span class="flex items-center text-sm leading-none text-amber-500" aria-hidden="true">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <i class="mdi mdi-star"></i>
+                    }
+                  </span>
+                </div>
+                }
+              </div>
+              @if (roomLink(room); as link) {
+              <a [routerLink]="link" class="mt-1 inline-block font-semibold text-primary hover:underline">{{
+                room.roomName }}</a>
+              } @else {
+              <p class="mt-1 font-semibold text-slate-800">{{ room.roomName }}</p>
               }
-            </div>
-          </section>
+              <p class="mt-2 text-sm text-slate-600">{{ room.quantity }} {{ 'rooms' | translate }}</p>
+              <p class="mt-2 text-xs text-slate-500">{{ 'packageCapacityPerRoom' | translate }}</p>
+              <div class="mt-1 flex flex-wrap gap-3 text-sm text-slate-700">
+                <span><i class="mdi mdi-account-outline text-primary"></i> {{ room.adults }} {{ 'adults' | translate
+                  }}</span>
+                <span><i class="mdi mdi-human-child text-primary"></i> {{ room.children }} {{ 'children' | translate
+                  }}</span>
+                <span><i class="mdi mdi-baby-face-outline text-primary"></i> {{ room.infants }} {{ 'infants' | translate
+                  }}</span>
+              </div>
+              <p class="mt-1 text-xs text-emerald-700">{{ 'packageBenefitIncluded' | translate }}</p>
+            </article>
+            }
+          </div>
+        </section>
         }
         @if (travelPackage.transportations?.length) {
-          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="text-xl font-bold text-slate-900"><i class="mdi mdi-bus me-2 text-primary"></i>{{ 'packageTransportations' | translate }}</h2>
-            <ol class="mt-5 space-y-3">
-              @for (transport of travelPackage.transportations; track transport.id) {
-                <li class="rounded-xl border border-slate-200 p-4">
-                  <h3 class="font-semibold text-primary">{{ transport.transportationType }}</h3>
-                  <p class="mt-2 text-sm text-slate-700">{{ 'from' | translate }}: {{ transport.from }} <span class="font-semibold">({{ benefitTime(transport.fromTime) }})</span> <i class="mdi mdi-arrow-right mx-2 rtl:rotate-180" aria-hidden="true"></i> {{ 'to' | translate }}: {{ transport.to }} <span class="font-semibold">({{ benefitTime(transport.arrivalTime) }})</span></p>
-                  <p class="mt-2 text-xs text-slate-500"><i class="mdi mdi-bag-suitcase-outline me-1 text-primary"></i>{{ transport.numberOfBags }} {{ 'bags' | translate }} · {{ transport.maxKgPerBag | number: '1.0-2' }} {{ 'kgPerBag' | translate }}</p>
-                </li>
-              }
-            </ol>
-          </section>
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 class="text-xl font-bold text-slate-900"><i class="mdi mdi-bus me-2 text-primary"></i>{{
+            'packageTransportations' | translate }}</h2>
+          <ol class="mt-5 space-y-3">
+            @for (transport of travelPackage.transportations; track transport.id) {
+            <li class="rounded-xl border border-slate-200 p-4">
+              <h3 class="font-semibold text-primary">{{ transport.transportationType }}</h3>
+              <p class="mt-2 text-sm text-slate-700">{{ 'from' | translate }}: {{ transport.from }} <span
+                  class="font-semibold">({{ benefitTime(transport.fromTime) }})</span> <i
+                  class="mdi mdi-arrow-right mx-2 rtl:rotate-180" aria-hidden="true"></i> {{ 'to' | translate }}: {{
+                transport.to }} <span class="font-semibold">({{ benefitTime(transport.arrivalTime) }})</span></p>
+              <p class="mt-2 text-xs text-slate-500"><i class="mdi mdi-bag-suitcase-outline me-1 text-primary"></i>{{
+                transport.numberOfBags }} {{ 'bags' | translate }} · {{ transport.maxKgPerBag | number: '1.0-2' }} {{
+                'kgPerBag' | translate }}</p>
+            </li>
+            }
+          </ol>
+        </section>
         }
 
         <app-itinerary-timeline [items]="itinerary" />
 
 
-        @if (includedItems.length || excludedItems.length) { <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i class="mdi mdi-format-list-checks"></i></span><h2 class="text-xl font-bold text-slate-900">{{ 'whatsIncludedExcluded' | translate }}</h2></div>
+        @if (includedItems.length || excludedItems.length) { <section
+          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div class="flex items-center gap-3"><span
+              class="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-2xl text-primary"><i
+                class="mdi mdi-format-list-checks"></i></span>
+            <h2 class="text-xl font-bold text-slate-900">{{ 'whatsIncludedExcluded' | translate }}</h2>
+          </div>
           <div class="mt-6 grid gap-4 md:grid-cols-2">
             <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5">
-              <h3 class="flex items-center gap-2 font-bold text-slate-900"><i class="mdi mdi-check-circle text-emerald-500"></i>{{ 'included' | translate }}</h3>
-              <ul class="mt-4 space-y-3">@for (item of includedItems; track $index) { <li class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i class="mdi mdi-check mt-0.5 shrink-0 text-emerald-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourIncludesAdded' | translate }}</li> }</ul>
+              <h3 class="flex items-center gap-2 font-bold text-slate-900"><i
+                  class="mdi mdi-check-circle text-emerald-500"></i>{{ 'included' | translate }}</h3>
+              <ul class="mt-4 space-y-3">@for (item of includedItems; track $index) { <li
+                  class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i
+                    class="mdi mdi-check mt-0.5 shrink-0 text-emerald-600"></i><span>{{ itemText(item) }}</span></li> }
+                @empty { <li class="text-sm text-slate-400">{{ 'noTourIncludesAdded' | translate }}</li> }</ul>
             </div>
             <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-5">
-              <h3 class="flex items-center gap-2 font-bold text-slate-900"><i class="mdi mdi-close-circle text-rose-500"></i>{{ 'excluded' | translate }}</h3>
-              <ul class="mt-4 space-y-3">@for (item of excludedItems; track $index) { <li class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i class="mdi mdi-close mt-0.5 shrink-0 text-rose-600"></i><span>{{ itemText(item) }}</span></li> } @empty { <li class="text-sm text-slate-400">{{ 'noTourExcludesAdded' | translate }}</li> }</ul>
+              <h3 class="flex items-center gap-2 font-bold text-slate-900"><i
+                  class="mdi mdi-close-circle text-rose-500"></i>{{ 'excluded' | translate }}</h3>
+              <ul class="mt-4 space-y-3">@for (item of excludedItems; track $index) { <li
+                  class="flex items-start gap-3 text-sm leading-6 text-slate-700"><i
+                    class="mdi mdi-close mt-0.5 shrink-0 text-rose-600"></i><span>{{ itemText(item) }}</span></li> }
+                @empty { <li class="text-sm text-slate-400">{{ 'noTourExcludesAdded' | translate }}</li> }</ul>
             </div>
           </div>
         </section> }
@@ -165,7 +267,8 @@
           <h2 class="text-2xl font-semibold">{{ 'toursInPackage' | translate }}</h2>
           <div class="mt-5 grid gap-4 sm:grid-cols-2">@for (tour of tours; track tour.id ?? tour.tourId) {
             <app-tour-card [tour]="tour" [viewOnly]="true" [compact]="true" />
-          }</div>
+            }
+          </div>
         </section> }
 
         <app-product-reviews productType="package" [productId]="travelPackage?.id ?? travelPackage?.packageId"
@@ -224,12 +327,8 @@
 }
 
 @if (imageViewerOpen) {
-  <app-image-viewer-modal
-    [images]="resolvedImages"
-    [title]="title"
-    [(selectedIndex)]="selectedImageIndex"
-    (closed)="closeImageViewer()"
-  />
+<app-image-viewer-modal [images]="resolvedImages" [title]="title" [(selectedIndex)]="selectedImageIndex"
+  (closed)="closeImageViewer()" />
 }
 
 <app-footer-one />

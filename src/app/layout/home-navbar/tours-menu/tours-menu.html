@@ -1,12 +1,12 @@
 <div [class.w-full]="isMobile" [class.relative]="!isMobile" (mouseenter)="openMenu()" (mouseleave)="scheduleClose()">
   <div class="flex items-center border-b border-slate-200 lg:border-0">
     <a [routerLink]="listRoute" (click)="onNavigate()"
-      class="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-slate-50 hover:text-primary lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm lg:text-slate-600 lg:hover:bg-transparent">
+      class="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-start font-semibold text-slate-800 transition hover:bg-slate-50 hover:text-primary lg:flex-none lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-sm lg:text-white lg:hover:bg-white/10 lg:hover:text-white">
       <i class="mdi mdi-ferry text-lg" aria-hidden="true"></i>{{ menuLabelKey | translate }}
     </a>
     <button
     type="button"
-    class="grid size-11 shrink-0 place-items-center text-slate-600 transition hover:bg-slate-50 hover:text-primary lg:size-9 lg:rounded-lg lg:hover:bg-primary/5"
+    class="grid size-11 shrink-0 place-items-center text-slate-600 transition hover:bg-slate-50 hover:text-primary lg:size-9 lg:rounded-lg lg:text-white lg:hover:bg-white/10 lg:hover:text-white"
     [attr.aria-label]="menuLabelKey | translate"
     aria-haspopup="menu"
     [attr.aria-expanded]="menuOpen"

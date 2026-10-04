@@ -61,6 +61,7 @@ export interface PackageHotelRoomDTO {
   hotelName: string;
   hotelNameEng: string;
   hotelNameAr: string;
+  hotelStarRating?: number | null;
   roomName: string;
   roomNameEng: string;
   roomNameAr: string;
