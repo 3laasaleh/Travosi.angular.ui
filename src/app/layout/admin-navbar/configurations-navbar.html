@@ -1,9 +1,9 @@
-<header class="sticky top-0 z-110 border-b border-slate-800 bg-[#0f172a] text-white shadow-sm">
+<header class="sticky top-0 z-110 border-b border-indigo-700 bg-[var(--color-indigo-800)] text-white shadow-sm">
   <div class="mx-auto flex h-16 items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 lg:px-8">
     <a routerLink="/home" class="flex min-w-0 shrink-0 items-center gap-3" [attr.aria-label]="'homeLinkLabel' | translate">
       <img src="./assets/images/main-logo.png" class="h-10 w-auto shrink-0 sm:h-12" alt="Sea World Holidays">
       <span class="hidden sm:block">
-        <span class="block text-md font-bold leading-tight text-primary ">Sea World Holidays</span>
+        <span class="block text-md font-bold leading-tight text-white">Sea World Holidays</span>
       </span>
     </a>
 
@@ -11,7 +11,7 @@
     <div class="ms-auto flex min-w-0 items-center gap-1 sm:gap-2">
       <div class="relative hidden lg:block">
         <button type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 "
+          class="flex items-center gap-1.5 rounded-xl border border-white/30 px-3 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           [disabled]="switchingLanguage !== null"
           [attr.aria-label]="'language' | translate" aria-haspopup="menu" [attr.aria-expanded]="languageMenuOpen"
           (click)="toggleLanguageMenu($event)">
@@ -44,7 +44,7 @@
         <div class="relative">
           <button
             type="button"
-            class="relative flex size-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-primary  dark:hover:bg-slate-800"
+            class="relative flex size-10 items-center justify-center rounded-xl text-white/80 transition hover:bg-white/10 hover:text-white"
             [attr.aria-label]="'notifications' | translate"
             [attr.aria-expanded]="notificationsOpen"
             (click)="toggleNotifications($event)"
@@ -68,7 +68,7 @@
                       <i class="mdi mdi-bell-ring-outline"></i>
                     </span>
                     <span class="min-w-0">
-                      <span class="block truncate text-sm font-semibold text-slate-800 ">{{ task.title }}</span>
+                      <span class="block truncate text-sm font-semibold text-slate-800">{{ task.title }}</span>
                       <span class="line-clamp-2 text-xs text-slate-500 ">{{ task.message }}</span>
                       @if (task.createdDate) { <span class="mt-1 block text-[11px] text-slate-400">{{ task.createdDate | date: 'medium' }}</span> }
                     </span>
@@ -86,7 +86,7 @@
       <div class="relative hidden lg:block">
         <button
           type="button"
-          class="flex items-center gap-3 rounded-2xl p-1.5 text-start transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="flex items-center gap-3 rounded-2xl p-1.5 text-start text-white transition hover:bg-white/10"
           [attr.aria-label]="'openAccountMenu' | translate"
           aria-haspopup="menu"
           [attr.aria-expanded]="accountMenuOpen"
@@ -95,15 +95,15 @@
           @if (profileImageUrl) {
             <img [src]="profileImageUrl" [alt]="userName" class="size-9 rounded-full object-cover ring-2 ring-primary/15" />
           } @else {
-            <span class="flex size-9 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-primary dark:bg-primary/15">
+            <span class="flex size-9 items-center justify-center rounded-full bg-white/15 text-sm font-bold text-white">
               {{ userInitials }}
             </span>
           }
           <span class="hidden max-w-36 md:block">
-            <span class="block truncate text-sm font-semibold text-slate-800 ">{{ userName }}</span>
-            <span class="block truncate text-xs text-slate-500 ">{{ roleTranslationKey | translate }}</span>
+            <span class="block truncate text-sm font-semibold text-white">{{ userName }}</span>
+            <span class="block truncate text-xs text-white/70">{{ roleTranslationKey | translate }}</span>
           </span>
-          <i data-feather="chevron-down" class="hidden size-4 text-slate-400 md:block"></i>
+          <i data-feather="chevron-down" class="hidden size-4 text-white/70 md:block"></i>
         </button>
 
         @if (accountMenuOpen) {
@@ -130,7 +130,7 @@
 
       <button
         type="button"
-        class="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 lg:hidden dark:border-slate-700 "
+        class="flex size-10 items-center justify-center rounded-xl border border-white/30 text-white transition hover:bg-white/10 lg:hidden"
         [attr.aria-label]="'toggleAdminNavigation' | translate"
         [attr.aria-expanded]="mobileMenuOpen"
         (click)="toggleMobileMenu()"

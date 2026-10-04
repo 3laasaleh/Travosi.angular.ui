@@ -334,6 +334,11 @@ export class HomePackagePage implements OnInit {
       : null;
   }
 
+  hotelRating(room: any): number {
+    const rating = Number(room?.hotelStarRating ?? room?.hotelRating ?? room?.starRating ?? room?.hotel?.starRating ?? 0);
+    return Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0;
+  }
+
   private loadPackage(routeName: string): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -350,6 +355,7 @@ export class HomePackagePage implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((travelPackage) => {
+        debugger;
         this.travelPackage = travelPackage;
         if (!travelPackage || isExpiredPackage(travelPackage)) {
           this.travelPackage = null;
