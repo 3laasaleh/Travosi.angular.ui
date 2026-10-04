@@ -327,6 +327,8 @@
             </div>
             @if (tourForm.controls.startDate.touched && tourForm.controls.startDate.hasError('invalidDate')) {
             <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' | translate }}</p>
+            } @else if (tourForm.controls.startDate.touched && tourForm.hasError('startDateInPast')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'travelStartDatePast' | translate }}</p>
             }
           </div>
           <div class="xl:col-span-2">

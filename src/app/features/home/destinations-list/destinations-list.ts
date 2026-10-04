@@ -45,7 +45,7 @@ export class HomeDestinationsList implements OnInit {
   private readonly imageIndexMap = new Map<string, number>();
 
   destinations: any[] = [];
-  isLoading = false;
+  isLoading = true;
   errorMessage = '';
   paginationInfo: PaginationInfo = {
     page: 1,

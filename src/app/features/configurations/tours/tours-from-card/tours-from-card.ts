@@ -240,6 +240,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     return (
       controls.some((control) => control.invalid) ||
       !cancellationPoliciesValid ||
+      this.tourForm.hasError('startDateInPast') ||
       this.tourForm.hasError('invalidDateRange') ||
       this.tourForm.hasError('invalidTourDuration')
     );
@@ -1510,6 +1511,9 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private dateRangeValidator(control: AbstractControl): ValidationErrors | null {
     const startDate = control.get('startDate')?.value;
     const endDate = control.get('endDate')?.value;
+    if (startDate && startDate < this.today && this.minimumTourStartDate !== null) {
+      return { startDateInPast: true };
+    }
     if (!startDate || !endDate) return null;
     return new Date(endDate).getTime() > new Date(startDate).getTime()
       ? null
