@@ -708,7 +708,7 @@
   "forgotPasswordError": "Unable to send the password reset email. Please try again.",
   "searchDestinations": "Search destinations",
   "noMatchingDestinations": "No destinations match your search.",
-  "pricePerPerson": "Price per person",
+  "pricePerPerson": "Price per adult",
   "pricePerChild": "Price per child",
   "pricePerInfant": "Price per infant",
   "maxSeats": "Maximum seats",

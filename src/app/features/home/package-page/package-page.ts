@@ -20,7 +20,7 @@ import { ItineraryTimeline } from '../../../shared/components/itinerary-timeline
 import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/image-viewer-modal';
 import { TourBookingCard } from '../tour-page/tour-detail/tour-booking-card/tour-booking-card';
 import { ProductRatingSummary, ProductReviews } from '../../../shared/components/product-reviews/product-reviews';
-import { isExpiredPackage } from '../list-search.util';
+import { isExpiredPackage, isSoldOut } from '../list-search.util';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
@@ -69,18 +69,11 @@ export class HomePackagePage implements OnInit {
   }
 
   get packageSoldOut(): boolean {
-    if (this.travelPackage?.isSoldOut === true) return true;
-    const capacity = Number(this.travelPackage?.maxCapacity ?? 0);
-    return capacity > 0 && Number(this.travelPackage?.seatsAvailable ?? capacity) <= 0;
+    return isSoldOut(this.travelPackage);
   }
 
   get packageExpired(): boolean {
-    if (this.travelPackage?.isExpired === true) return true;
-    const start = String(this.travelPackage?.dateFrom ?? '').slice(0, 10);
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60_000;
-    const today = new Date(now.getTime() - offset).toISOString().slice(0, 10);
-    return Boolean(start && start < today);
+    return isExpiredPackage(this.travelPackage);
   }
 
   get description(): string {
@@ -357,7 +350,7 @@ export class HomePackagePage implements OnInit {
       .subscribe((travelPackage) => {
         ;
         this.travelPackage = travelPackage;
-        if (!travelPackage || isExpiredPackage(travelPackage)) {
+        if (!travelPackage) {
           this.travelPackage = null;
           this.errorMessage = 'packageNotFound';
           this.seo.markNotFound('Package not found');

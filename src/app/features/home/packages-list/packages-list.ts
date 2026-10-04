@@ -149,8 +149,7 @@ export class HomePackagesList implements OnInit {
         const rows = pageData?.data ?? pageData?.items ?? pageData?.packages ?? pageData;
         this.allPackages = Array.isArray(rows) ? rows : [];
         this.packages = this.allPackages.filter((item) =>
-          !isExpiredPackage(item)
-          && matchesSearchQuery(this.appliedSearchText, item)
+          matchesSearchQuery(this.appliedSearchText, item)
           && isWithinDateRange(this.appliedDateFrom, this.appliedDateTo, item),
         );
 

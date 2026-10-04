@@ -53,7 +53,7 @@ export class PackagesSection implements OnInit {
         return;
       }
       const data = response?.data?.data ?? [];
-      this.packages = data.filter((item) => !isExpiredPackage(item));
+      this.packages = data;
     });
   }
 

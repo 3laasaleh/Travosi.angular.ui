@@ -119,6 +119,17 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private citiesRequestSequence = 0;
   readonly today = this.localDate(new Date());
 
+  get minimumTourStartDate(): string | null {
+    const savedStartDate = this.toDateInput(
+      this.selectedTour?.startDate
+        ?? this.selectedTour?.StartDate
+        ?? this.selectedTour?.startDateUtc
+        ?? this.selectedTour?.dateFrom
+        ?? this.selectedTour?.DateFrom,
+    );
+    return this.selectedTour && savedStartDate && savedStartDate < this.today ? null : this.today;
+  }
+
   constructor(
     private adminService: AdminService,
     private cdr: ChangeDetectorRef,
@@ -972,8 +983,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       durationDays: Number(tour.durationDays ?? 0),
       durationHours: Number(tour.durationhours ?? 0),
       maxSeats: Number(tour.maxSeats),
-      startDate: this.toDateInput(tour.startDate),
-      endDate: this.toDateInput(tour.endDate),
+      startDate: this.toDateInput(tour.startDate ?? tour.StartDate ?? tour.startDateUtc ?? tour.dateFrom ?? tour.DateFrom),
+      endDate: this.toDateInput(tour.endDate ?? tour.EndDate ?? tour.endDateUtc ?? tour.dateTo ?? tour.DateTo),
       isFreeCancelation: tour.isFreeCancelation === true,
       isNileCruise: tour.isNileCruise === true,
       isOneDayTour: tour.isOneDayTour === true,

@@ -28,7 +28,7 @@ import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
 import { PaginationModel } from '../../../core/models/pagination.model';
-import { isExpiredTour } from '../list-search.util';
+import { isExpiredTour, isSoldOut } from '../list-search.util';
 
 @Component({
   selector: 'app-home-tour-page',
@@ -95,6 +95,10 @@ export class HomeTourPage implements OnInit {
 
   get tourExpired(): boolean {
     return isExpiredTour(this.tour);
+  }
+
+  get tourSoldOut(): boolean {
+    return isSoldOut(this.tour);
   }
 
   scrollRelatedTours(direction: -1 | 1): void {

@@ -30,7 +30,7 @@ import { CurrencyService } from '../../../../../core/services/currency.service';
 import { AuthService } from '../../../../user/_services/auth.service';
 import { DatePicker } from '../../../../../shared/components/date-picker/date-picker';
 import { formatHomePrice } from '../../../home-price.util';
-import { isExpiredTour, isSoldOut } from '../../../list-search.util';
+import { isExpiredPackage, isExpiredTour, isSoldOut } from '../../../list-search.util';
 
 @Component({
   selector: 'app-tour-booking-card',
@@ -62,16 +62,11 @@ export class TourBookingCard implements OnInit {
   }
 
   get packageSoldOut(): boolean {
-    if (!this.isPackage) return false;
-    if (this.product?.isSoldOut === true) return true;
-    return this.hasSeatLimit && this.seatsAvailable === 0;
+    return this.isPackage && isSoldOut(this.product);
   }
 
   get packageExpired(): boolean {
-    if (!this.isPackage) return false;
-    if (this.product?.isExpired === true) return true;
-    const start = this.toDateInput(this.product?.dateFrom ?? this.product?.startDate);
-    return Boolean(start && start < this.todayDate);
+    return this.isPackage && isExpiredPackage(this.product);
   }
 
   get packageUnavailable(): boolean {
@@ -88,6 +83,10 @@ export class TourBookingCard implements OnInit {
 
   get tourUnavailable(): boolean {
     return this.tourExpired || this.tourSoldOut;
+  }
+
+  get bookingUnavailable(): boolean {
+    return this.tourUnavailable || this.packageUnavailable;
   }
 
   get isOneDayTour(): boolean {
@@ -417,7 +416,7 @@ export class TourBookingCard implements OnInit {
   }
 
   bookNow(): void {
-    if (this.tourUnavailable) return;
+    if (this.bookingUnavailable) return;
     if (this.isSubmitting) return;
 
     if (this.bookingForm.invalid) {
@@ -464,7 +463,7 @@ export class TourBookingCard implements OnInit {
   }
 
   goToSignIn(): void {
-    if (this.tourUnavailable) return;
+    if (this.bookingUnavailable) return;
     this.navigateToAuth('/login');
   }
 
@@ -478,7 +477,7 @@ export class TourBookingCard implements OnInit {
   }
 
   openGuestBookingModal(): void {
-    if (this.tourUnavailable) return;
+    if (this.bookingUnavailable) return;
     this.guestBookingOpen = true;
     this.errorMessage = '';
     this.cdr.markForCheck();
@@ -491,7 +490,7 @@ export class TourBookingCard implements OnInit {
   }
 
   submitGuestBooking(): void {
-    if (this.tourUnavailable) return;
+    if (this.bookingUnavailable) return;
     if (this.isSubmitting) return;
 
     if (this.guestBookingForm.invalid) {

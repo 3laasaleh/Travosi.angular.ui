@@ -26,11 +26,34 @@ function nonNegativeNumber(value: unknown): number | null {
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
-/** Packages are unavailable once their departure date has passed. */
+function isExpiredHotelRoom(item: any): boolean {
+  const candidates = [item, item?.hotelRoom, item?.room, item?.hotelRoom?.room, item?.hotel];
+  const dateKeys = [
+    'dateTo', 'endDate', 'expiryDate', 'expirationDate', 'availableUntil', 'validTo',
+    'dateFrom', 'startDate', 'availableFrom', 'validFrom',
+  ];
+
+  return candidates.some((candidate) => {
+    if (!candidate) return false;
+    if (candidate.isExpired === true) return true;
+    const expiryDate = pickDateValue(candidate, dateKeys);
+    return Boolean(expiryDate && expiryDate < todayDate());
+  });
+}
+
+/** Packages are unavailable once their departure date or any included travel item has expired. */
 export function isExpiredPackage(item: any): boolean {
   if (item?.isExpired === true) return true;
   const departure = pickDateValue(item, ['dateFrom', 'startDate', 'travelStartDate', 'departureDate']);
-  return Boolean(departure && departure < todayDate());
+  if (departure && departure < todayDate()) return true;
+
+  const includedTours = [item?.tours, item?.packageTours, item?.includedTours]
+    .flatMap((items) => Array.isArray(items) ? items : []);
+  if (includedTours.some((tour) => isExpiredTour(tour) || isExpiredTour(tour?.tour))) return true;
+
+  const includedRooms = [item?.hotelRooms, item?.packageHotelRooms, item?.rooms, item?.includedHotelRooms]
+    .flatMap((items) => Array.isArray(items) ? items : []);
+  return includedRooms.some(isExpiredHotelRoom);
 }
 
 /** Tours are unavailable after their final travel date; a one-day tour may only have a start date. */

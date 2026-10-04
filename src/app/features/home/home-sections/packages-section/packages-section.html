@@ -35,8 +35,8 @@
               class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
       
             @if (hasDiscount(item)) { <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{ item.activeDiscount?.percentage }}%</span> }
-            @if (isSoldOut(item)) { <span class="absolute bottom-3 start-3 rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white shadow">{{ 'soldOut' | translate }}</span> }
-            @else if (isExpired(item)) { <span class="absolute bottom-3 start-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow">{{ 'packageExpired' | translate }}</span> }
+            @if (isExpired(item)) { <span class="absolute bottom-3 start-3 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white shadow">{{ 'packageExpired' | translate }}</span> }
+            @else if (isSoldOut(item)) { <span class="absolute bottom-3 start-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow">{{ 'soldOut' | translate }}</span> }
           </div>
           <div class="flex flex-1 flex-col p-4">
             <h3 class="line-clamp-2 text-lg font-semibold transition group-hover:text-primary">{{ item.name }}
@@ -51,11 +51,11 @@
                   @if (hasDiscount(item)) { <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice(item) }}</span> }
                   <strong class="text-lg text-primary">{{ formattedPrice(item) }}</strong>
                 </div>
-                <span class="inline-flex items-center justify-center rounded-lg px-4 py-1 text-center text-sm font-semibold text-white duration-300"
-                  [class.bg-primary-600]="!isSoldOut(item) && !isExpired(item)" [class.group-hover:bg-primary-700]="!isSoldOut(item) && !isExpired(item)"
-                  [class.bg-rose-600]="isSoldOut(item)" [class.bg-amber-500]="isExpired(item) && !isSoldOut(item)">
-                  {{ (isSoldOut(item) ? 'soldOut' : isExpired(item) ? 'packageExpired' : 'bookNow') | translate }}
-                </span>
+                @if (!isExpired(item) && !isSoldOut(item)) {
+                  <span class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-1 text-center text-sm font-semibold text-white duration-300 group-hover:bg-primary-700">
+                    {{ 'bookNow' | translate }}
+                  </span>
+                }
               </div>
             </div>
           </div>

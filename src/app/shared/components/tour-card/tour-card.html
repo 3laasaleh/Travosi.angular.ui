@@ -5,13 +5,12 @@
     class="h-14 w-16 shrink-0 rounded-lg object-cover" />
   <span class="min-w-0">
     <span class="line-clamp-2 text-sm font-semibold transition group-hover:text-primary">{{ tour?.name }}</span>
-    @if(!viewOnly){
-    @if (soldOut) {
-    <span class="mt-1 inline-flex rounded-full bg-rose-600 px-2 py-0.5 text-xs font-bold text-white">{{ 'soldOut' |
-      translate }}</span>
-    } @else {
+    @if (expired) {
+    <span class="mt-1 inline-flex rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">{{ 'expired' | translate }}</span>
+    } @else if (soldOut) {
+    <span class="mt-1 inline-flex rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">{{ 'soldOut' | translate }}</span>
+    } @else if (!viewOnly) {
     <span class="mt-1 block text-xs font-semibold text-primary">{{ formattedPrice }}</span>
-    }
     }
   </span>
 </a>
@@ -24,15 +23,18 @@
       <img [src]="imageUrl" [alt]="imageAlt" loading="lazy" (error)="onImageError($event)"
         class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105" />
 
-      @if(!viewOnly){
-      @if (hasDiscount) {
+      @if (expired) {
+      <span class="absolute bottom-3 start-3 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white shadow">
+        {{ 'expired' | translate }}
+      </span>
+      } @else if (soldOut) {
+      <span class="absolute bottom-3 start-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow">
+        {{ 'soldOut' | translate }}
+      </span>
+      }
+      @if (!viewOnly && hasDiscount) {
       <span class="absolute end-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow">-{{
         discountPercentage }}%</span>
-      }
-      @if (soldOut) {
-      <span class="absolute bottom-3 start-3 rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white shadow">{{
-        'soldOut' | translate }}</span>
-      }
       }
     </div>
     <div class="flex flex-1 flex-col p-4">
@@ -43,23 +45,21 @@
       </p>
       }
 
-      @if(!viewOnly){
+      @if (!viewOnly) {
       <div class="mt-auto pt-4">
         <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-          <div class="flex flex-col ">
-
+          <div class="flex flex-col">
             @if (hasDiscount) {
             <span class="ms-2 text-xs text-slate-400 line-through">{{ formattedOriginalPrice }}</span>
             }
             <strong class="text-lg text-primary">{{ formattedPrice }}</strong>
-
           </div>
+          @if (!expired && !soldOut) {
           <span
-            class="inline-flex items-center justify-center rounded-lg px-4 py-1 text-center text-sm font-semibold text-white duration-300"
-            [class.bg-primary-600]="!soldOut" [class.group-hover:bg-primary-700]="!soldOut"
-            [class.bg-rose-600]="soldOut">
-            {{ (soldOut ? 'soldOut' : 'bookNow') | translate }}
+            class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-1 text-center text-sm font-semibold text-white duration-300 group-hover:bg-primary-700">
+            {{ 'bookNow' | translate }}
           </span>
+          }
         </div>
       </div>
       }
