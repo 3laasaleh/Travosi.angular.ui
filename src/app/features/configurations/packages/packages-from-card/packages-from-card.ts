@@ -198,7 +198,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   get currentStepInvalid(): boolean {
-    debugger
+    
     if (this.activeStep === 1) return this.detailsStepInvalid;
     if (this.activeStep === 2) return !this.currentPackageId || this.packageForm.controls.images.invalid;
     const itinerary = this.itineraryArray.getRawValue();

@@ -355,7 +355,7 @@ export class HomePackagePage implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((travelPackage) => {
-        debugger;
+        ;
         this.travelPackage = travelPackage;
         if (!travelPackage || isExpiredPackage(travelPackage)) {
           this.travelPackage = null;
