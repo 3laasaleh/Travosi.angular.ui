@@ -26,6 +26,7 @@ export class TourCard implements OnChanges {
   @Input({ required: true }) tour: TourHomeDTO|null=null;
   @Input() compact = false;
   @Input() bookingSelection?: CatalogBookingSelection;
+  @Input() viewOnly = false;
 
   get routeLink(): string[] {
     const section = this.tour?.isNileCruise === true ? '/nile-cruises' : '/tours';
