@@ -1006,6 +1006,17 @@
   "footerCompanyLinks": "Company links",
   "waysYouCanPay": "Ways You Can Pay",
   "aboutUs": "About us",
+  "aboutUsContentEditor": "About Us content",
+  "aboutUsContentEditorHint": "Edit the English and Arabic text for every About Us section, then save all changes together.",
+  "aboutUsContentPreview": "Preview page",
+  "aboutUsContentEn": "English",
+  "aboutUsContentAr": "Arabic",
+  "aboutUsContentRequired": "Enter text in this language (up to 10,000 characters).",
+  "aboutUsContentLoadFailed": "Saved content could not be loaded. The original translations are shown.",
+  "aboutUsContentSaveFailed": "Could not save the content. Please try again.",
+  "aboutUsContentSaved": "About Us content saved for both languages.",
+  "aboutUsContentSaving": "Saving...",
+  "aboutUsContentSaveAll": "Save all changes",
   "contactUs": "Contact us",
   "newsletter": "Newsletter",
   "newsletterDescription": "Receive travel ideas, destination inspiration, and our latest holiday offers by email.",
@@ -1124,6 +1135,11 @@
     "commitment": {
       "title": "Our Commitment",
       "description": "Every traveler is unique, and every journey deserves special attention. At Sea World Holidays, we are committed to providing personalized service, expert travel advice, and carefully planned experiences that exceed expectations. From your first inquiry to your safe return home, we are with you every step of the way."
+    },
+    "team": {
+      "title": "Our Team",
+      "agentPosition": "Travel Agent",
+      "empty": "No agents found."
     },
     "closing": "Let Sea World Holidays turn your travel dreams into unforgettable adventures. Explore the world with confidence, comfort, and the assurance that every detail has been thoughtfully arranged by a team that truly cares about your journey."
   },

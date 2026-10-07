@@ -9,7 +9,7 @@
                         <i data-feather="users" class="size-6"></i>
                     </div>
                     <div class="flex-1">
-                        <span class="text-slate-400">{{ 'visitors' | translate }}</span>
+                        <span class="text-slate-400">{{ text('visitors', ('visitors' | translate)) }}</span>
                         <p class="text-xl font-bold"><span #visitorCount>{{ visitorTotal }}</span></p>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
                         <i data-feather="globe" class="size-6"></i>
                     </div>
                     <div class="flex-1">
-                        <span class="text-slate-400">{{ 'travelPackages' | translate }}</span>
+                        <span class="text-slate-400">{{ text('travelPackages', ('travelPackages' | translate)) }}</span>
                         <p class="text-xl font-bold flex"><span #packageCount>{{ packageTotal }}</span>+</p>
                     </div>
                 </div>
@@ -28,10 +28,10 @@
 
         <div class="md:col-span-7">
             <div class="lg:ms-8">
-                <p class="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-primary">{{ 'aboutseaworldHolidays' | translate }}</p>
-                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">{{ 'trustedTravelPartnerTitle' | translate }}</h3>
-                <p class="text-slate-400 max-w-xl mb-6">{{ 'trustedTravelPartnerDescription' | translate }}</p>
-                <a routerLink="/aboutus" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ 'learnMoreAboutUs' | translate }} <i class="mdi mdi-chevron-right align-middle ms-0.5 rtl:rotate-180"></i></a>
+                <p class="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-primary">{{ text('aboutseaworldHolidays', ('aboutseaworldHolidays' | translate)) }}</p>
+                <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">{{ text('trustedTravelPartnerTitle', ('trustedTravelPartnerTitle' | translate)) }}</h3>
+                <p class="text-slate-400 max-w-xl mb-6">{{ text('trustedTravelPartnerDescription', ('trustedTravelPartnerDescription' | translate)) }}</p>
+                <a routerLink="/aboutus" class="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-primary text-white rounded-md">{{ text('learnMoreAboutUs', ('learnMoreAboutUs' | translate)) }} <i class="mdi mdi-chevron-right align-middle ms-0.5 rtl:rotate-180"></i></a>
             </div>
         </div>
 

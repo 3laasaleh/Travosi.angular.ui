@@ -15,6 +15,7 @@ import { CountUp } from 'countup.js';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
+import { AboutUsText } from '../../../core/data/about-us-content';
 
 @Component({
   selector: 'app-agency-one',
@@ -28,6 +29,9 @@ export class AgencyOne implements AfterViewInit, OnChanges {
   map = 'assets/images/map-plane-big.png';
   @Input() visitorTotal = 4589;
   @Input() packageTotal = 50;
+  @Input() aboutContent: AboutUsText | null = null;
+
+  text(key: string, fallback: string): string { return this.aboutContent?.[key] || fallback; }
 
   @ViewChild('visitorCount') visitorCount!: ElementRef<HTMLElement>;
   @ViewChild('packageCount') packageCount!: ElementRef<HTMLElement>;

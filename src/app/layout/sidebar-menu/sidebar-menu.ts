@@ -18,7 +18,7 @@ export class SidebarMenu {
   activeMenu = '';
   collapsed = false;
 
-  readonly menuItems = CONFIGURATION_MENU_ITEMS;
+  readonly menuItems = CONFIGURATION_MENU_ITEMS.filter(item => !item.adminOnly || this.currentRole === 'Admin');
 
   toggleCollapsed(): void {
     this.collapsed = !this.collapsed;

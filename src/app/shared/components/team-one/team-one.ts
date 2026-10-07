@@ -18,6 +18,9 @@ export interface TeamMember {
 export class TeamOne {
   @Input() teamData: TeamMember[] = [];
   @Input() isLoading = false;
+  @Input() title = '';
+  @Input() agentPosition = '';
+  @Input() emptyMessage = '';
   private failedImageIds = new Set<number>();
 
   hasProfileImage(member: TeamMember): boolean {

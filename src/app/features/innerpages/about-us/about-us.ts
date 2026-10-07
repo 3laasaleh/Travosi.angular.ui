@@ -13,6 +13,9 @@ import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { AboutUsContentService } from '../../../core/services/about-us-content.service';
+import { AboutUsText } from '../../../core/data/about-us-content';
+import { LanguageService } from '../../../core/services/language.service';
 import { VisitorTrackingService } from '../../../core/services/visitor-tracking.service';
 import { environment } from '../../../../environments/environment';
 import { AgencyOne } from '../../../shared/components/agency-one/agency-one';
@@ -36,6 +39,8 @@ import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs'
 })
 export class AboutUs implements OnInit {
   private readonly apiService = inject(ApiService);
+  private readonly contentService = inject(AboutUsContentService);
+  private readonly language = inject(LanguageService);
   private readonly visitorTracking = inject(VisitorTrackingService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetector = inject(ChangeDetectorRef);
@@ -45,8 +50,17 @@ export class AboutUs implements OnInit {
   visitorTotal = 0;
   packageTotal = 0;
   isLoading = true;
+  content: AboutUsText = {};
 
   ngOnInit(): void {
+    this.contentService.load().pipe(
+      catchError(() => of({ en: {}, ar: {} })),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(content => {
+      this.content = content[this.language.currentLanguage()];
+      this.changeDetector.markForCheck();
+    });
+
     this.visitorTracking
       .track()
       .pipe(
@@ -81,6 +95,15 @@ export class AboutUs implements OnInit {
         );
         this.changeDetector.markForCheck();
       });
+  }
+
+  text(key: string, fallback: string): string {
+    return this.content[key] || fallback;
+  }
+
+  list(key: string, fallback: unknown): string[] {
+    const items = Array.isArray(fallback) ? fallback as string[] : [];
+    return items.map((item, index) => this.text(`${key}.${index}`, item));
   }
 
   private responseData(response: any): any {

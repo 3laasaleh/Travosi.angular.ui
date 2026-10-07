@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, ChangeDetectionStrategy, PLATFORM_ID, inject } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy, Input, PLATFORM_ID, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AboutUsText } from '../../../core/data/about-us-content';
 
 @Component({
   selector: 'app-users-one',
@@ -10,6 +11,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class UsersOne implements AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
+  @Input() aboutContent: AboutUsText | null = null;
+  text(key: string, fallback: string): string { return this.aboutContent?.[key] || fallback; }
   readonly travelPromises = [
     { icon: 'mdi-map-marker-path', title: 'personalizedTravelPlanning', description: 'personalizedTravelPlanningDescription' },
     { icon: 'mdi-headset', title: 'supportThroughoutJourney', description: 'supportThroughoutJourneyDescription' },

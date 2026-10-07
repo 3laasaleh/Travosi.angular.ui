@@ -1,6 +1,6 @@
 <div class="container relative">
     <div class="grid grid-cols-1 pb-6 text-center">
-        <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Our Team</h3>
+        <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">{{ title || ('aboutseaworld.team.title' | translate) }}</h3>
         <p class="text-slate-400 max-w-xl mx-auto"></p>
     </div>
 
@@ -34,12 +34,12 @@
 
                     <div class="content mt-3">
                         <a href="javascript:void(0)" class="text-lg font-semibold hover:text-primary duration-500">{{ item.name }}</a>
-                        <p class="text-slate-400">{{ item.position }}</p>
+                        <p class="text-slate-400">{{ agentPosition || item.position }}</p>
                     </div>
                 </div>
             </div>
         } @empty {
-            <p class="col-span-full py-8 text-center text-sm text-slate-500">{{ 'noAgentsFound' | translate }}</p>
+            <p class="col-span-full py-8 text-center text-sm text-slate-500">{{ emptyMessage || ('aboutseaworld.team.empty' | translate) }}</p>
         }
         }
     </div>

@@ -2,9 +2,11 @@ export interface ConfigurationMenuItem {
   label: string;
   path: string;
   icon: string;
+  adminOnly?: boolean;
 }
 
 export const CONFIGURATION_MENU_ITEMS: readonly ConfigurationMenuItem[] = [
+  { label: 'aboutUsContentEditor', path: '/configurations/about-us-content', icon: 'mdi-text-box-edit-outline', adminOnly: true },
   { label: 'destinations', path: '/configurations/destinations', icon: 'mdi-map-marker-outline' },
   { label: 'cities', path: '/configurations/cities', icon: 'mdi-city-variant-outline' },
   { label: 'tours', path: '/configurations/tours', icon: 'mdi-compass-outline' },

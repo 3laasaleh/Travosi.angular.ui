@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/gaurds/auth.guard';
 import { adminGuard } from './core/gaurds/admin.guard';
+import { adminOnlyGuard } from './core/gaurds/admin-only.guard';
 import { languageUrlGuard, languageUrlMatchGuard } from './core/gaurds/language-url.guard';
 
 const localizedCatalogueRoutes: Routes = [
@@ -84,6 +85,11 @@ const localizedApplicationRoutes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () => import('./features/configurations/configurations-page').then((m) => m.ConfigurationsPage),
     children: [
+      {
+        path: 'about-us-content',
+        canActivate: [adminOnlyGuard],
+        loadComponent: () => import('./features/configurations/about-us-content/about-us-content').then(m => m.AboutUsContentEditor),
+      },
       {
         path: 'destinations',
         canActivate: [adminGuard],
