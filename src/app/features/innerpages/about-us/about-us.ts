@@ -7,7 +7,6 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
@@ -26,7 +25,6 @@ import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs'
 @Component({
   selector: 'app-about-us',
   imports: [Breadcrumbs, 
-    RouterLink,
     TranslatePipe,
     HomeNavbar,
     AgencyOne,
