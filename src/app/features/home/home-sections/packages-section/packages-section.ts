@@ -37,7 +37,7 @@ export class PackagesSection implements OnInit {
     this.isLoading = true;
     this.hasError = false;
     this.apiService
-      .getUnauthntecated<IGenericResponse<PaginationModel<PackageDTO>>>('Packages?page=1&pageSize=8')
+      .getUnauthntecated<IGenericResponse<PaginationModel<PackageDTO>>>('Packages/Home')
       .pipe(
       catchError(() => {
         this.hasError = true;

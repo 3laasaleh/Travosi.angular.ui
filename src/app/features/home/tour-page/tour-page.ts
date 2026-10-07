@@ -256,11 +256,11 @@ export class HomeTourPage implements OnInit {
     const tourId = Number(tour?.id ?? tour?.tourId);
     if (!Number.isInteger(destinationId) || destinationId <= 0) return;
 
-    this.apiService.getUnauthntecated(`Tours/RelatedTours?page=1&pageSize=12&destinationId=${destinationId}`)
+    this.apiService.getUnauthntecated(`Tours/RelatedTours?destinationId=${destinationId}`)
       .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
       .subscribe((response:IGenericResponse<PaginationModel<TourHomeDTO>>) => {
         if (Number(this.tour?.id) !== tourId) return;
-        const rows = response?.data?.data ?? response;
+        const rows = response?.data?.data ??[];
 
         this.relatedTours = (Array.isArray(rows) ? rows : [])
           .filter((item) => Number(item?.id) !== tourId && !isExpiredTour(item))

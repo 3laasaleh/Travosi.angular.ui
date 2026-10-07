@@ -83,7 +83,8 @@ export class ToursSection implements OnInit {
       )
       .subscribe((response: IGenericResponse<PaginationModel<TourHomeDTO>>) => {
         var res = response?.data;
-        this.tours = (res?.data ?? []).filter((tour) => !isExpiredTour(tour));
+        // this.tours = (res?.data ?? []).filter((tour) => !isExpiredTour(tour));
+        this.tours = res?.data ;
         this.isLoading = false;
         this.cdr.markForCheck();
       });
