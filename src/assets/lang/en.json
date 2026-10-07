@@ -953,7 +953,7 @@
   "isOneDayTour": "One-day tour",
   "additionalHours": "additional hours",
   "oneDayHoursRequired": "A one-day tour must have at least one hour and uses zero duration days.",
-  "multiDayDurationRequired": "A multi-day tour must have at least one day; additional hours can be zero or more.",
+  "multiDayDurationRequired": "Enter a duration greater than zero; days and hours cannot both be zero.",
   "notes": "Notes",
   "englishNotes": "Notes (English)",
   "arabicNotes": "Notes (Arabic)",

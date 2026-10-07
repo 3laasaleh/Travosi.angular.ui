@@ -981,8 +981,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       pricePerChild: Number(tour.pricePerChild ?? 0),
       pricePerInfant: Number(tour.pricePerInfant ?? 0),
       currencyId: Number(tour.currencyId ?? this.defaultCurrencyId),
-      durationDays: Number(tour.durationDays ?? 0),
-      durationHours: Number(tour.durationhours ?? 0),
+      durationDays: Number(tour.durationDays ?? tour.DurationDays ?? 0),
+      durationHours: Number(tour.durationHours ?? tour.durationhours ?? tour.DurationHours ?? 0),
       maxSeats: Number(tour.maxSeats),
       startDate: this.toDateInput(tour.startDate ?? tour.StartDate ?? tour.startDateUtc ?? tour.dateFrom ?? tour.DateFrom),
       endDate: this.toDateInput(tour.endDate ?? tour.EndDate ?? tour.endDateUtc ?? tour.dateTo ?? tour.DateTo),
@@ -1124,11 +1124,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         }),
         durationDays: new FormControl(1, {
           nonNullable: true,
-          validators: [Validators.required, Validators.min(1)],
+          validators: [Validators.min(0)],
         }),
         durationHours: new FormControl(0, {
           nonNullable: true,
-          validators: [Validators.required, Validators.min(0)],
+          validators: [Validators.min(0)],
         }),
         maxSeats: new FormControl(20, {
           nonNullable: true,
@@ -1152,7 +1152,12 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         cancellationPolicies: new FormArray<FormGroup>([]),
         itinerary: new FormArray<FormGroup>([]),
       },
-      { validators: [this.dateRangeValidator, this.tourDurationValidator] },
+      {
+        validators: [
+          (control) => this.dateRangeValidator(control),
+          (control) => this.tourDurationValidator(control),
+        ],
+      },
     );
   }
 
@@ -1298,32 +1303,31 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ...(tourId ? { Id: tourId } : {}),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
-      RouteName: form.routeName.trim(),
-      DestinationId: Number(form.destinationId),
-      CityId: Number(form.cityId),
-      DescriptionEng: form.descriptionEng.trim(),
-      DescriptionAr: form.descriptionAr.trim(),
-      FullDescriptionEng: form.fullDescriptionEng.trim() || null,
-      FullDescriptionAr: form.fullDescriptionAr.trim() || null,
-      PricePerPerson: Number(form.pricePerPerson),
-      PricePerChild: Number(form.pricePerChild),
-      PricePerInfant: Number(form.pricePerInfant ?? 0),
-      CurrencyId: Number(form.currencyId),
-      DurationDays: Number(form.durationDays),
-      Durationhours: Number(form.durationHours),
-      MaxSeats: Number(form.maxSeats),
-      StartDate: this.toApiDate(form.startDate ?? ''),
-      EndDate: this.toApiDate(form.endDate ?? ''),
-      IsFreeCancelation: form.isFreeCancelation,
-      IsNileCruise: form.isNileCruise,
-      IsOneDayTour: form.isOneDayTour,
-      ShowInRealtedTourSection: form.showInRealtedTourSection,
-      ShowInRecomendedTourSection: form.showInRecomendedTourSection,
-      Highlights: this.toLocalizedListPayload(form.highlights),
-      Includes: this.toLocalizedListPayload(form.includes),
-      Excludes: this.toLocalizedListPayload(form.excludes),
-      CancellationPolicies: this.toLocalizedListPayload(form.cancellationPolicies),
-      IsActive: false,
+      routeName: form.routeName.trim(),
+      destinationId: Number(form.destinationId),
+      cityId: Number(form.cityId),
+      descriptionEng: form.descriptionEng.trim(),
+      descriptionAr: form.descriptionAr.trim(),
+      fullDescriptionEng: form.fullDescriptionEng.trim() || null,
+      fullDescriptionAr: form.fullDescriptionAr.trim() || null,
+      pricePerPerson: Number(form.pricePerPerson),
+      pricePerChild: Number(form.pricePerChild),
+      pricePerInfant: Number(form.pricePerInfant ?? 0),
+      durationDays: Number(form.durationDays),
+      durationhours: Number(form.durationHours),
+      maxSeats: Number(form.maxSeats),
+      startDate: this.toApiDate(form.startDate ?? ''),
+      endDate: this.toApiDate(form.endDate ?? ''),
+      isFreeCancelation: form.isFreeCancelation,
+      isNileCruise: form.isNileCruise,
+      isOneDayTour: form.isOneDayTour,
+      showInRealtedTourSection: form.showInRealtedTourSection,
+      showInRecomendedTourSection: form.showInRecomendedTourSection,
+      highlights: this.toLocalizedListPayload(form.highlights),
+      includes: this.toLocalizedListPayload(form.includes),
+      excludes: this.toLocalizedListPayload(form.excludes),
+      cancellationPolicies: this.toLocalizedListPayload(form.cancellationPolicies),
+      isActive: false,
     };
   }
 
@@ -1349,20 +1353,20 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private mapItineraryItem(item: any, orderNumber: number): Record<string, unknown> {
     const children = Array.isArray(item?.childs) ? item.childs : [];
     return {
-      Id: Number(item?.id) || 0,
-      OrderNumber: orderNumber,
-      ParentId: this.toOptionalId(item?.parentId),
-      IsChildNode: item?.isChildNode === true,
+      id: Number(item?.id) || 0,
+      orderNumber: orderNumber,
+      parentId: this.toOptionalId(item?.parentId),
+      isChildNode: item?.isChildNode === true,
       nameAr: String(item?.nameAr ?? '').trim(),
       nameEng: String(item?.nameEng ?? '').trim(),
-      ValueAr: String(item?.valueAr ?? '').trim(),
-      ValueEng: String(item?.valueEng ?? '').trim(),
-      NotesEng: String(item?.notesEng ?? '').trim(),
-      NotesAr: String(item?.notesAr ?? '').trim(),
-      ArrivalDate: String(item?.arrivalDate ?? '') || null,
-      StartTime: this.toApiTime(item?.startTime),
-      EndTime: this.toApiTime(item?.endTime),
-      Childs: children.map((child: any, index: number) => this.mapItineraryItem(child, index + 1)),
+      valueAr: String(item?.valueAr ?? '').trim(),
+      valueEng: String(item?.valueEng ?? '').trim(),
+      notesEng: String(item?.notesEng ?? '').trim(),
+      notesAr: String(item?.notesAr ?? '').trim(),
+      arrivalDate: String(item?.arrivalDate ?? '') || null,
+      startTime: this.toApiTime(item?.startTime),
+      endTime: this.toApiTime(item?.endTime),
+      childs: children.map((child: any, index: number) => this.mapItineraryItem(child, index + 1)),
     };
   }
 
@@ -1524,9 +1528,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const oneDay = control.get('isOneDayTour')?.value === true;
     const days = Number(control.get('durationDays')?.value);
     const hours = Number(control.get('durationHours')?.value);
-    const valid = oneDay
-      ? days === 0 && Number.isFinite(hours) && hours >= 1
-      : Number.isInteger(days) && days >= 1 && Number.isFinite(hours) && hours >= 0;
+    const validValues = Number.isInteger(days) && days >= 0
+      && Number.isInteger(hours) && hours >= 0;
+    const valid = validValues && (oneDay
+      ? days === 0 && hours > 0
+      : days > 0 || hours > 0);
     return valid ? null : { invalidTourDuration: true };
   }
 
@@ -1534,8 +1540,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const daysControl = this.tourForm.controls.durationDays;
     const hoursControl = this.tourForm.controls.durationHours;
     const oneDay = this.tourForm.controls.isOneDayTour.value;
-    daysControl.setValidators([Validators.required, Validators.min(oneDay ? 0 : 1)]);
-    hoursControl.setValidators([Validators.required, Validators.min(oneDay ? 1 : 0)]);
+    daysControl.setValidators([Validators.required, Validators.min(0)]);
+    hoursControl.setValidators([Validators.required, Validators.min(0)]);
     if (oneDay) {
       daysControl.disable({ emitEvent: false });
     } else {
