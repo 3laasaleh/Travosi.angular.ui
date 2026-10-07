@@ -22,6 +22,7 @@ export class SaveFeedbackService {
       toast: true,
       position: 'top-end',
       icon,
+      iconColor: icon === 'success' ? '#00d492' : undefined,
       titleText: this.translate.instant(message),
       showConfirmButton: false,
       timer: icon === 'success' ? 3000 : 6000,

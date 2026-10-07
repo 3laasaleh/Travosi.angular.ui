@@ -8,6 +8,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ABOUT_US_FIELDS, ABOUT_US_SECTIONS, AboutUsContent, AboutUsText, readAboutUsDefault } from '../../../core/data/about-us-content';
 import { AboutUsContentService } from '../../../core/services/about-us-content.service';
 import { LanguageService } from '../../../core/services/language.service';
+import { SaveFeedbackService } from '../shared/save-feedback.service';
 
 @Component({
   selector: 'app-about-us-content',
@@ -20,6 +21,7 @@ export class AboutUsContentEditor {
   private readonly contentService = inject(AboutUsContentService);
   private readonly http = inject(HttpClient);
   private readonly language = inject(LanguageService);
+  private readonly feedback = inject(SaveFeedbackService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -29,8 +31,6 @@ export class AboutUsContentEditor {
   saving = false;
   attempted = false;
   loadError = false;
-  saveError = false;
-  saved = false;
 
   constructor() {
     forkJoin({
@@ -62,8 +62,6 @@ export class AboutUsContentEditor {
 
   save(): void {
     this.attempted = true;
-    this.saved = false;
-    this.saveError = false;
     if (this.saving || this.loading || this.loadError || ABOUT_US_FIELDS.some(field =>
       !this.content.en[field.key]?.trim() || !this.content.ar[field.key]?.trim()
       || this.content.en[field.key].length > 10000 || this.content.ar[field.key].length > 10000)) {
@@ -80,8 +78,12 @@ export class AboutUsContentEditor {
       finalize(() => { this.saving = false; this.cdr.markForCheck(); }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: saved => { this.content = saved; this.saved = true; this.attempted = false; },
-      error: () => { this.saveError = true; },
+      next: saved => {
+        this.content = saved;
+        this.attempted = false;
+        this.feedback.show('success', 'aboutUsContentSaved');
+      },
+      error: () => this.feedback.show('error', 'aboutUsContentSaveFailed'),
     });
   }
 }
