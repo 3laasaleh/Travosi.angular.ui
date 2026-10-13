@@ -115,6 +115,20 @@ export class BreadcrumbService {
     ];
     if (!section || section === 'home') return items;
 
+    // Destination city collection: /destinations/:destinationRouteName/cities.
+    if (section === 'destinations' && rest[2] === 'cities' && !rest[3]) {
+      items.push({ name: this.label(SEGMENTS['destinations'], 'destinations', language), path: `${root}/destinations` });
+      items.push({
+        name: this.humanize(rest[1]),
+        path: `${root}/destinations/${encodeURIComponent(rest[1])}`,
+      });
+      items.push({
+        name: this.label(SEGMENTS['city-list'], 'city-list', language),
+        path: `${root}/destinations/${encodeURIComponent(rest[1])}/cities`,
+      });
+      return items;
+    }
+
     // Canonical city URL: /destinations/:destinationRouteName/cities/:cityRouteName.
     if (section === 'destinations' && rest[2] === 'cities' && rest[3]) {
       items.push({ name: this.label(SEGMENTS['destinations'], 'destinations', language), path: `${root}/destinations` });
@@ -124,7 +138,7 @@ export class BreadcrumbService {
       });
       items.push({
         name: this.label(SEGMENTS['city-list'], 'city-list', language),
-        path: `${root}/destinations/${encodeURIComponent(rest[1])}#cities`,
+        path: `${root}/destinations/${encodeURIComponent(rest[1])}/cities`,
       });
       items.push({ name: currentTitle || this.humanize(rest[3]), path });
       return items;

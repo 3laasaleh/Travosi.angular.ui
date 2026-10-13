@@ -68,6 +68,11 @@ export class DestinationsMenu {
       ? ['/destinations', destination.routeName, 'cities', city.routeName]
       : ['/destinations'];
   }
+  destinationCitiesRoute(destination: DestinationNavigationDTO): string[] {
+    return destination.routeName
+      ? ['/destinations', destination.routeName, 'cities']
+      : ['/destinations'];
+  }
   tourName(item: DestinationTourNavigationDTO): string { return item.name; }
   tourRoute(item: DestinationTourNavigationDTO): string[] {
     const section = item.isNileCruise ? '/nile-cruises' : '/tours';
@@ -183,7 +188,7 @@ export class DestinationsMenu {
   private loadHierarchy(): void {
     this.isLoading = true;
     this.loadFailed = false;
-    this.api.getUnauthntecated('Destinations/Navigation?takeDestinations=8&takeCities=10&takeTours=8').pipe(
+    this.api.getUnauthntecated('Destinations/Navigation?takeDestinations=8&takeCities=1000&takeTours=8').pipe(
       catchError(() => {
         this.loadFailed = true;
         return of(null);
@@ -201,8 +206,10 @@ export class DestinationsMenu {
 
   private ensureDesktopSelection(): void {
     if (this.isMobile || !this.destinations.length) return;
-
-
+    const destination = this.selectedDestination ?? this.destinations[0];
+    this.activeDestinationId = this.itemId(destination);
+    const city = this.selectedCity ?? this.cities(destination)[0] ?? null;
+    this.activeCityId = city ? this.itemId(city) : null;
   }
 
 

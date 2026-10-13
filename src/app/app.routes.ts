@@ -11,6 +11,11 @@ const localizedCatalogueRoutes: Routes = [
     loadComponent: () => import('./features/home/destinations-list/destinations-list').then((m) => m.HomeDestinationsList),
   },
   {
+    // The destination's city collection has its own clean URL and reuses the destination data page.
+    path: 'destinations/:routeName/cities',
+    loadComponent: () => import('./features/home/destination-detail/destination-detail').then((m) => m.HomeDestinationDetail),
+  },
+  {
     path: 'destinations/:destinationRouteName/cities/:routeName',
     loadComponent: () => import('./features/home/city-page/city-page').then((m) => m.CityPage),
   },

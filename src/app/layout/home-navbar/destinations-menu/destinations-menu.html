@@ -186,7 +186,13 @@
             </div>
 
             <div class="col-span-4 p-5">
-              <h3 class="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{{ 'cities' | translate }}</h3>
+              @if (selectedDestination; as destination) {
+                <a [routerLink]="destinationCitiesRoute(destination)"
+                  class="mb-3 inline-flex rounded px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400 transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  (click)="onNavigate()">{{ 'cities' | translate }}</a>
+              } @else {
+                <h3 class="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{{ 'cities' | translate }}</h3>
+              }
               <div class="max-h-[55vh] space-y-1 overflow-y-auto pe-1">
                 @if (selectedDestination; as destination) {
                   @for (city of cities(destination); track city.id) {
@@ -213,7 +219,9 @@
             </div>
 
             <div class="col-span-4 p-5 lg:col-span-5">
-              <h3 class="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{{ 'tours' | translate }}</h3>
+              <a routerLink="/tours" [queryParams]="selectedCity ? { cityId: selectedCity.id } : null"
+                class="mb-3 inline-flex rounded px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400 transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                (click)="onNavigate()">{{ 'tours' | translate }}</a>
               <div class="grid max-h-[55vh] grid-cols-1 gap-1 overflow-y-auto pe-1 xl:grid-cols-2">
                 @if (selectedCity; as city) {
                   @for (tour of tours(city); track tour.id) {

@@ -217,8 +217,16 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           .filter((city) => Number(city?.destinationId) === destinationId)
           .slice(0, 10);
         this.cdr.markForCheck();
+        if (this.route.snapshot.url.some((segment) => segment.path === 'cities')) {
+          this.scrollToCities();
+        }
         if (isPlatformBrowser(this.platformId)) setTimeout(() => this.initializeTourCarousel());
       });
+  }
+
+  private scrollToCities(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    setTimeout(() => document.getElementById('cities')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   private updateSeo(): void {
