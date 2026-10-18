@@ -12,7 +12,7 @@ import { DescriptionLinks, parseDescriptionLinks } from '../description-links/de
 })
 export class DescriptionPreview implements OnChanges {
   @Input() text: string | null | undefined = '';
-  @Input() limit = 300;
+  @Input() limit = 200;
   @Input() hideShowMoreBtn = false;
 
   expanded = false;
