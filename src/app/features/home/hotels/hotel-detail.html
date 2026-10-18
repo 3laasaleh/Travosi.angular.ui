@@ -30,7 +30,7 @@
   <section class="mx-auto max-w-7xl">
     <header class="mb-6">
    
-      <h1 class="mt-2 text-3xl font-bold text-slate-950 md:text-5xl">{{ hotelName() }}</h1>
+      <h1 class="mt-2 text-3xl font-bold text-slate-950 md:text-3xl">{{ hotelName() }}</h1>
          <p class="font-semibold text-amber-500" [attr.aria-label]="hotel.starRating + ' ' + ('stars' | translate)">
         @for (star of [1, 2, 3, 4, 5]; track star) { <i class="mdi" [class.mdi-star]="star <= hotel.starRating"
           [class.mdi-star-outline]="star > hotel.starRating"></i> }

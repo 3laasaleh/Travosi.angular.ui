@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, distinctUntilChanged, finalize, map, of } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { UtilityService } from '../../../core/services/utilityservice';
@@ -45,6 +45,7 @@ export class HomeTourPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo = inject(SeoService);
   private readonly utilityService = inject(UtilityService);
+  private readonly translate = inject(TranslateService);
 
   @ViewChild('relatedToursTrack') private relatedToursTrack?: ElementRef<HTMLElement>;
 
@@ -84,9 +85,12 @@ export class HomeTourPage implements OnInit {
   }
 
 
-  /** The brief description belongs below the gallery; the detail component keeps the full text. */
+  /** The brief description sits under the title; the detail component keeps the full text. */
   get shortDescription(): string {
-    return this.tour?.description ?? this.tour?.descriptionEng ?? this.tour?.descriptionAr ?? '';
+    const description = this.utilityService.isArabic(this.translate)
+      ? this.tour?.descriptionAr ?? this.tour?.description ?? this.tour?.descriptionEng
+      : this.tour?.descriptionEng ?? this.tour?.description ?? this.tour?.descriptionAr;
+    return String(description ?? '').trim();
   }
 
   get destinationName(): string {
@@ -102,7 +106,10 @@ export class HomeTourPage implements OnInit {
   }
 
   scrollRelatedTours(direction: -1 | 1): void {
-    this.relatedToursTrack?.nativeElement.scrollBy({ left: direction * 320, behavior: 'smooth' });
+    const track = this.relatedToursTrack?.nativeElement;
+    if (!track) return;
+    const cardWidth = track.firstElementChild?.getBoundingClientRect().width ?? 300;
+    track.scrollBy({ left: direction * (cardWidth + 20), behavior: 'smooth' });
   }
 
   ngOnInit(): void {
@@ -252,11 +259,10 @@ export class HomeTourPage implements OnInit {
   }
 
   private loadRelatedTours(tour: any): void {
-    const destinationId = Number(tour?.destinationId ?? tour?.destination?.id);
-    const tourId = Number(tour?.id ?? tour?.tourId);
-    if (!Number.isInteger(destinationId) || destinationId <= 0) return;
-
-    this.apiService.getUnauthntecated(`Tours/RelatedTours?destinationId=${destinationId}`)
+    const cityId = Number(tour?.cityId );
+    const tourId = Number(tour?.id);
+    if (!Number.isInteger(cityId) || cityId <= 0) return;
+    this.apiService.getUnauthntecated(`Tours/RelatedTours?cityId=${cityId}`)
       .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
       .subscribe((response:IGenericResponse<PaginationModel<TourHomeDTO>>) => {
         if (Number(this.tour?.id) !== tourId) return;

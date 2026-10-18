@@ -89,7 +89,10 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationShortDescription(): string {
-    return this.destination?.description ?? this.destination?.subDescription ?? this.destination?.fullDescription ?? '';
+    const description = this.isArabic
+      ? this.destination?.subDescriptionAr ?? this.destination?.subDescription ?? this.destination?.subDescriptionEng
+      : this.destination?.subDescriptionEng ?? this.destination?.subDescription ?? this.destination?.subDescriptionAr;
+    return String(description ?? '').trim();
   }
 
   destinationDescription(): string {
