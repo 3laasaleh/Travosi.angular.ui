@@ -11,7 +11,7 @@ import { authSessionInterceptor } from './core/interceptors/auth-session.interce
 import { languageInterceptor } from './core/interceptors/language.Interceptor';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
-import { API_BASE_URL, PUBLIC_BASE_URL, normalizeApiBaseUrl, normalizeBaseUrl } from './core/tokens/app-urls';
+import { API_BASE_URL, PUBLIC_BASE_URL, INDEXING_ENABLED, normalizeApiBaseUrl, normalizeBaseUrl } from './core/tokens/app-urls';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,6 +33,7 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: API_BASE_URL, useValue: normalizeApiBaseUrl(environment.baseUrl) },
     { provide: PUBLIC_BASE_URL, useValue: normalizeBaseUrl(environment.publicBaseUrl) },
+    { provide: INDEXING_ENABLED, useValue: environment.indexingEnabled },
     provideClientHydration(
       withHttpTransferCacheOptions({
         filter: (request) => request.method === 'GET' && !request.headers.has('Authorization'),

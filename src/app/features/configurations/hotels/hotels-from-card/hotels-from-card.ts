@@ -1,3 +1,4 @@
+import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -54,7 +55,7 @@ export interface HotelDTO {
 @Component({
   selector: 'app-hotels-from-card',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [SeoFields, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './hotels-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -182,6 +183,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       return;
     }
     const payload: any = {
+      ...seoValues(form),
       name: form.nameEng.trim(),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
@@ -287,6 +289,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
     this.persistedHotelId = hotel.id;
     this.validationSubmitted = false;
     this.hotelForm.patchValue({
+      ...seoValues(hotel),
       nameEng: hotel.nameEng ?? '',
       nameAr: hotel.nameAr ??  '',
       routeName: hotel.routeName ??'',
@@ -447,6 +450,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
 
   private createForm() {
     return new FormGroup({
+      ...createSeoControls(),
       // `nameEng` is the displayed/editable name; keep the legacy field only for API compatibility.
       name: new FormControl('', { nonNullable: true }),
       nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),

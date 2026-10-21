@@ -7,6 +7,8 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import { environment } from './environments/environment';
+import { mayIndexRequest, robotsContent } from './app/core/services/indexing-policy';
+import { normalizeSitemap } from './app/core/services/sitemap';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -20,34 +22,37 @@ const angularApp = new AngularNodeAppEngine({ allowedHosts });
 const publicBaseUrl = (process.env['PUBLIC_BASE_URL'] || environment.publicBaseUrl).replace(/\/+$/, '');
 const apiBaseUrl = process.env['API_BASE_URL'] || environment.baseUrl;
 const apiOrigin = new URL(apiBaseUrl).origin;
+const indexingEnabled = environment.indexingEnabled && process.env['SEO_INDEXING_ENABLED'] !== 'false';
+const emptySitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>';
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
-app.get('/robots.txt', (_req, res) => {
-  res.type('text/plain').send([
-    'User-agent: *',
-    'Allow: /',
-    'Disallow: /*/configurations/',
-    'Disallow: /*/account/',
-    'Disallow: /*/user-',
-    'Disallow: /*/login',
-    'Disallow: /*/signup',
-    '',
-    `Sitemap: ${publicBaseUrl}/sitemap.xml`,
-    '',
-  ].join('\n'));
+app.use((req, res, next) => {
+  res.locals['indexable'] = mayIndexRequest(indexingEnabled, publicBaseUrl, `${req.protocol}://${req.get('host')}${req.originalUrl}`);
+  if (!res.locals['indexable']) res.set('X-Robots-Tag', 'noindex, nofollow');
+  next();
 });
 
-app.get('/sitemap.xml', async (_req, res, next) => {
+app.get('/robots.txt', (_req, res) => {
+  res.type('text/plain').send(robotsContent(res.locals['indexable'], publicBaseUrl));
+});
+
+app.get('/sitemap.xml', async (_req, res) => {
+  if (!res.locals['indexable']) {
+    res.type('application/xml').send(emptySitemap);
+    return;
+  }
   try {
     const response = await fetch(`${apiOrigin}/sitemap.xml`, {
       headers: { Accept: 'application/xml' },
+      signal: AbortSignal.timeout(15000),
     });
+    if (!response.ok) throw new Error(`Sitemap upstream status ${response.status}`);
     const body = await response.text();
-    res.status(response.status).type('application/xml').send(body);
-  } catch (error) {
-    next(error);
+    res.type('application/xml').send(normalizeSitemap(body, publicBaseUrl));
+  } catch {
+    res.status(503).set('Retry-After', '300').type('application/xml').send(emptySitemap);
   }
 });
 

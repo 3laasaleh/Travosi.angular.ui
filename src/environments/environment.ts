@@ -1,4 +1,5 @@
 export const environment = {
+  indexingEnabled: false,
   partion: true,
   baseUrl: 'https://localhost:44382/api/',
   imageUrl: 'https://localhost:44382/images/',

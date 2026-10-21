@@ -1,7 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { LanguageService } from './language.service';
 
 export interface BreadcrumbItem {
@@ -78,18 +77,22 @@ export class BreadcrumbService {
   private readonly currentTitle = signal('');
   /** Resolved parent entity for detail routes such as a city within a destination. */
   private readonly currentParent = signal<BreadcrumbItem | null>(null);
+  /** True while a page is still loading the data needed for its complete breadcrumb trail. */
+  readonly isLoading = signal(false);
 
   readonly items = computed<BreadcrumbItem[]>(() => this.build(this.url(), this.currentTitle(), this.currentParent()));
   readonly isHome = computed(() => this.items().length <= 1);
 
   constructor() {
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
         this.currentTitle.set('');
         this.currentParent.set(null);
+        this.url.set(event.url);
+      } else if (event instanceof NavigationEnd) {
         this.url.set(event.urlAfterRedirects);
-      });
+      }
+    });
   }
 
   /** Lets the SEO service share the resolved page title so detail pages show a real last crumb. */
@@ -99,6 +102,10 @@ export class BreadcrumbService {
 
   setCurrentParent(crumb: BreadcrumbItem | null): void {
     this.currentParent.set(crumb?.name.trim() ? { name: crumb.name.trim(), path: crumb.path } : null);
+  }
+
+  setLoading(isLoading: boolean): void {
+    this.isLoading.set(isLoading);
   }
 
   private build(url: string, currentTitle: string, currentParent: BreadcrumbItem | null): BreadcrumbItem[] {

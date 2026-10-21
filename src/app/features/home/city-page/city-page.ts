@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, distinctUntilChanged, finalize, forkJoin, map, of } from 'rxjs';
+import { catchError, defer, distinctUntilChanged, EMPTY, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { ApiService } from '../../../core/services/apiservice.service';
 import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
 import { CurrencyService } from '../../../core/services/currency.service';
@@ -20,6 +20,8 @@ import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
+import { cityAreaIds, selectCityTours } from './city-tours';
+import { localizedEntityText } from '../../../core/services/entity-seo';
 
 @Component({
   selector: 'app-city-page',
@@ -55,9 +57,10 @@ export class CityPage implements OnInit {
           destinationRouteName: params.get('destinationRouteName')?.trim() ?? '',
         })),
         distinctUntilChanged((left, right) => left.routeName === right.routeName && left.destinationRouteName === right.destinationRouteName),
+        switchMap(({ routeName, destinationRouteName }) => this.loadByRouteName(routeName, destinationRouteName)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ routeName, destinationRouteName }) => this.loadByRouteName(routeName, destinationRouteName));
+      .subscribe();
   }
 
   cityName(): string {
@@ -65,11 +68,11 @@ export class CityPage implements OnInit {
   }
 
   cityNameHomeResolver(city: any): string {
-    return city?.name ?? '';
+    return localizedEntityText(city, this.isArabic ? 'ar' : 'en', 'name', 'title');
   }
 
   cityDescription(): string {
-    return this.city?.description ?? '';
+    return localizedEntityText(this.city, this.isArabic ? 'ar' : 'en', 'description');
   }
 
   destinationName(): string {
@@ -77,7 +80,7 @@ export class CityPage implements OnInit {
   }
 
   destinationTitleHomeResolver(destination: any): string {
-    return destination?.title ?? destination?.name ?? '';
+    return localizedEntityText(destination, this.isArabic ? 'ar' : 'en', 'name', 'title');
   }
   cityImage(): string {
     return this.imageUrl(
@@ -123,95 +126,76 @@ export class CityPage implements OnInit {
     return this.utilityService.isArabic(this.translate);
   }
 
-  private load(city: any, destinationId: number, cityId: number, destinationRouteName: string): void {
-    this.destinationId = destinationId;
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.city = city;
-    this.destination = null;
-    this.tours = [];
-    this.recommendedTours = [];
-    if (!destinationId || !cityId) {
-      this.errorMessage = 'cityNotFound';
-      this.seo.markNotFound('City not found');
-      this.isLoading = false;
-      return;
-    }
-    forkJoin({
-      destination: this.api
-        .getUnauthntecated(`Destinations/${destinationId}`)
-        .pipe(catchError(() => of(null))),
-      tours: this.api
-        .getUnauthntecated(
-          `Tours?page=1&pageSize=10&cityId=${cityId}`,
-        )
-        .pipe(catchError(() => of(null))),
-      recommended: this.api
-        .getUnauthntecated(`Tours/RecommendedTours?page=1&pageSize=5&destinationId=${destinationId}`)
-        .pipe(catchError(() => of(null))),
-    })
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+  private loadByRouteName(routeName: string, destinationRouteName: string) {
+    return defer(() => {
+      this.breadcrumbs.setLoading(true);
+      this.isLoading = true;
+      this.errorMessage = '';
+      this.city = null;
+      this.destination = null;
+      this.tours = [];
+      this.recommendedTours = [];
+      if (!routeName) {
+        this.showLoadError(404);
+        return EMPTY;
+      }
+      return this.api.getUnauthntecated(`Cities/by-route/${encodeURIComponent(routeName)}`).pipe(
+        switchMap((response) => {
+          const city = this.entity(response, 'city');
+          if (!city || !Number(city.id) || !Number(city.destinationId)) {
+            this.showLoadError(response?.statusCode === 404 ? 404 : 503);
+            return EMPTY;
+          }
+          this.city = city;
+          this.destinationId = Number(city.destinationId);
+          return forkJoin({
+            destination: this.api.getUnauthntecated(`Destinations/${this.destinationId}`).pipe(catchError(() => of(null))),
+            tours: forkJoin(cityAreaIds(city).map(id => this.api
+              .getUnauthntecated(`Tours?page=1&pageSize=20&cityId=${id}`)
+              .pipe(catchError(() => of(null))))),
+          });
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((result) => {
-        this.destination = this.entity(result.destination, 'destination');
-        this.setDestinationBreadcrumb();
-        if (!this.city || Number(this.city.destinationId) !== destinationId) {
-          this.errorMessage = 'cityNotFound';
-          this.seo.markNotFound('City not found');
-          return;
-        }
-        const canonicalDestinationRouteName = String(this.destination?.routeName ?? this.destination?.RouteName ?? '').trim();
-        if (canonicalDestinationRouteName && destinationRouteName.toLowerCase() !== canonicalDestinationRouteName.toLowerCase()) {
-          const language = this.translate.currentLang()?.toLowerCase() === 'ar' ? 'ar' : 'en';
-          const cityRouteName = String(this.city?.routeName ?? this.route.snapshot.paramMap.get('routeName') ?? '').trim();
-          void this.router.navigateByUrl(
-            `/${language}/destinations/${encodeURIComponent(canonicalDestinationRouteName)}/cities/${encodeURIComponent(cityRouteName)}`,
-            { replaceUrl: true },
-          );
-          return;
-        }
-        this.updateSeo(destinationId, cityId);
-        this.tours = this.collection(result.tours, 'tours')
-          .filter((tour) => Number(tour?.cityId) === cityId)
-          .slice(0, 10);
-        this.recommendedTours = this.collection(result.recommended, 'tours')
-          .filter((tour) => Number(tour?.cityId) !== cityId)
-          .slice(0, 5);
-      });
+        map((result) => {
+          this.destination = this.entity(result.destination, 'destination');
+          if (!this.destination) {
+            this.showLoadError(503);
+            return;
+          }
+          this.setDestinationBreadcrumb();
+          const canonicalDestinationRouteName = String(this.destination?.routeName ?? this.destination?.RouteName ?? '').trim();
+          if (canonicalDestinationRouteName && destinationRouteName.toLowerCase() !== canonicalDestinationRouteName.toLowerCase()) {
+            const cityRouteName = String(this.city?.routeName ?? routeName).trim();
+            void this.router.navigateByUrl(
+              `/${this.isArabic ? 'ar' : 'en'}/destinations/${encodeURIComponent(canonicalDestinationRouteName)}/cities/${encodeURIComponent(cityRouteName)}`,
+              { replaceUrl: true },
+            );
+            return;
+          }
+          this.updateSeo();
+          const relevant = selectCityTours(result.tours.flatMap(response => this.collection(response, 'tours')), this.city);
+          this.tours = relevant.slice(0, 10);
+          this.recommendedTours = relevant.slice(10, 15);
+        }),
+        catchError((error) => {
+          this.showLoadError(error?.status === 404 ? 404 : 503);
+          return EMPTY;
+        }),
+      );
+    }).pipe(finalize(() => {
+      this.isLoading = false;
+      this.breadcrumbs.setLoading(false);
+      this.cdr.markForCheck();
+    }));
   }
 
-  private loadByRouteName(routeName: string, destinationRouteName: string): void {
-    if (!routeName) {
-      this.errorMessage = 'cityNotFound';
-      this.isLoading = false;
-      this.seo.markNotFound('City not found');
-      return;
-    }
-    this.isLoading = true;
-    this.api.getUnauthntecated(`Cities/by-route/${encodeURIComponent(routeName)}`)
-      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
-      .subscribe((response) => {
-        const city = this.entity(response, 'city');
-        const destinationId = Number(city?.destinationId);
-        const cityId = Number(city?.id);
-        if (!city || !destinationId || !cityId) {
-          this.errorMessage = 'cityNotFound';
-          this.isLoading = false;
-          this.seo.markNotFound('City not found');
-          this.cdr.markForCheck();
-          return;
-        }
-        this.load(city, destinationId, cityId, destinationRouteName);
-      });
+  private showLoadError(status: number): void {
+    this.errorMessage = status === 404 ? 'cityNotFound' : 'contentTemporarilyUnavailable';
+    if (status === 404) this.seo.markNotFound(this.isArabic ? 'المدينة غير موجودة' : 'City not found');
+    else this.seo.markUnavailable();
   }
 
   private setDestinationBreadcrumb(): void {
-    const name = String(this.destination?.title ?? this.destination?.name ?? '').trim();
+    const name = this.destinationName();
     if (!name) {
       this.breadcrumbs.setCurrentParent(null);
       return;
@@ -223,7 +207,7 @@ export class CityPage implements OnInit {
       path: routeName ? `/${language}/destinations/${encodeURIComponent(routeName)}` : `/${language}/destinations`,
     });
   }
-  private updateSeo(_destinationId: number, _cityId: number): void {
+  private updateSeo(): void {
     const image = this.city?.coverImageUrl ?? this.city?.imageUrl ?? this.city?.images?.[0]
       ?? this.destination?.coverImageUrl ?? this.destination?.imageUrl ?? this.destination?.images?.[0];
     this.seo.updateFrom(this.city, { image, imageUrl: this.cityImage(), schemaType: 'City' });
@@ -238,9 +222,9 @@ export class CityPage implements OnInit {
     return Array.isArray(rows) ? rows : [];
   }
 
-  onBookNowClick(tour: any): void {
+  tourRouteLink(tour: any): string[] {
     const section = tour?.isNileCruise === true ? 'nile-cruises' : 'tours';
     const routeName = tour?.routeName;
-    if (routeName) this.router.navigate([`/${section}/${routeName}`]);
+    return [`/${this.isArabic ? 'ar' : 'en'}/${section}`, ...(routeName ? [routeName] : [])];
   }
 }

@@ -22,6 +22,7 @@ export class Breadcrumbs {
   readonly bare = input(false, { transform: (value: boolean | string) => value !== false && value !== 'false' });
 
   readonly items = this.breadcrumbs.items;
+  readonly isLoading = this.breadcrumbs.isLoading;
   readonly isVisible = computed(() => this.items().length > 1);
   readonly onDark = computed(() => this.theme() === 'dark');
 }

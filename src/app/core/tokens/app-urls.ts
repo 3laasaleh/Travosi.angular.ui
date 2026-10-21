@@ -2,6 +2,10 @@ import { InjectionToken } from '@angular/core';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 export const PUBLIC_BASE_URL = new InjectionToken<string>('PUBLIC_BASE_URL');
+export const INDEXING_ENABLED = new InjectionToken<boolean>('INDEXING_ENABLED', {
+  providedIn: 'root',
+  factory: () => false,
+});
 
 export function normalizeBaseUrl(value: string): string {
   return value.trim().replace(/\/+$/, '');

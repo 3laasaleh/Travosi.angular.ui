@@ -1,3 +1,4 @@
+import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import { IGenericResponse } from '../../../../core/models/genericReponse.model';
 import {
   ChangeDetectionStrategy,
@@ -54,7 +55,7 @@ export interface DestinationDTO {
 @Component({
   selector: 'app-destinations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
+  imports: [SeoFields, ReactiveFormsModule, FormsModule, TranslatePipe],
   templateUrl: './destinations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -111,6 +112,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       return;
     }
     const payload = new FormData();
+    appendSeoFields(payload, form);
     if (this.selectedDestination?.id) payload.append('Id', this.selectedDestination?.id.toString());
 
     payload.append('nameEng', form.nameEng.trim());
@@ -273,6 +275,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       }))
       .filter((image: DestinationImageUpload) => !!image.url);
     this.destinationForm.setValue({
+      ...seoValues(destination),
       nameEng: destination.nameEng  ?? '',
       nameAr: destination.nameAr ?? '',
       routeName: destination.routeName ?? '',
@@ -334,6 +337,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
+      ...createSeoControls(),
       nameEng: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],

@@ -1,0 +1,414 @@
+[
+  {
+    "name": "ar",
+    "requestedUrl": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo",
+    "url": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo",
+    "status": 200,
+    "headers": {
+      "content-encoding": "br",
+      "content-type": "text/html;charset=UTF-8",
+      "date": "Tue, 20 Oct 2026 11:33:11 GMT",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "Accept-Encoding",
+      "x-powered-by": "ASP.NET"
+    },
+    "title": "القاهرة | Sea World Holidays",
+    "description": "اكتشف رحلات القاهرة وجولاتها السياحية، من أهرامات الجيزة وخان الخليلي إلى معالم القاهرة التاريخية وتجارب النيل. استكشف الأنشطة المتاحة وخطط لزيارتك.",
+    "canonical": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo",
+    "alternates": [
+      {
+        "language": "en",
+        "href": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo"
+      },
+      {
+        "language": "ar",
+        "href": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo"
+      },
+      {
+        "language": "x-default",
+        "href": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo"
+      }
+    ],
+    "robots": "index, follow, max-image-preview:large",
+    "googlebot": "index, follow, max-image-preview:large",
+    "lang": "ar",
+    "dir": "rtl",
+    "h1": [],
+    "jsonLd": [
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "TravelAgency",
+            "@id": "https://seaworld-stage.premiumasp.net/#organization",
+            "name": "Sea World Holidays",
+            "legalName": "Sea World Holidays",
+            "url": "https://seaworld-stage.premiumasp.net",
+            "description": "من باقات العطلات المخصصة إلى الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات، نهتم بالتفاصيل لتسافر بثقة.",
+            "logo": {
+              "@type": "ImageObject",
+              "@id": "https://seaworld-stage.premiumasp.net/#logo",
+              "url": "https://seaworld-stage.premiumasp.net/assets/images/main-logo.png",
+              "caption": "Sea World Holidays"
+            },
+            "image": {
+              "@id": "https://seaworld-stage.premiumasp.net/#logo"
+            },
+            "email": "Info@seaworldholidays.com",
+            "telephone": "+201155011300",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "الهرم، برج الرحاب، 7 شارع المريوطية، أبراج السعد، أعلى بنك مصر، الدور الأول.",
+              "addressLocality": "Giza",
+              "addressRegion": "Giza Governorate",
+              "addressCountry": "EG"
+            },
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "telephone": "+201155011300",
+                "email": "Info@seaworldholidays.com",
+                "availableLanguage": [
+                  "en",
+                  "ar"
+                ],
+                "areaServed": "EG"
+              }
+            ],
+            "sameAs": [
+              "https://www.facebook.com/seaworldholidays1/",
+              "https://www.instagram.com/seaworldholidays1/",
+              "https://wa.me/201155011300"
+            ],
+            "paymentAccepted": "Mastercard, Visa, PayPal, InstaPay, Cash",
+            "currenciesAccepted": "EGP, USD, EUR",
+            "knowsLanguage": [
+              "en",
+              "ar"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://seaworld-stage.premiumasp.net/#website",
+            "name": "Sea World Holidays",
+            "url": "https://seaworld-stage.premiumasp.net",
+            "description": "من باقات العطلات المخصصة إلى الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات، نهتم بالتفاصيل لتسافر بثقة.",
+            "publisher": {
+              "@id": "https://seaworld-stage.premiumasp.net/#organization"
+            },
+            "inLanguage": [
+              "en",
+              "ar"
+            ]
+          }
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "City",
+            "@id": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo#page",
+            "url": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo",
+            "name": "القاهرة",
+            "description": "اكتشف رحلات القاهرة وجولاتها السياحية، من أهرامات الجيزة وخان الخليلي إلى معالم القاهرة التاريخية وتجارب النيل. استكشف الأنشطة المتاحة وخطط لزيارتك.",
+            "inLanguage": "ar",
+            "isPartOf": {
+              "@id": "https://seaworld-stage.premiumasp.net/#website"
+            },
+            "image": "https://seeworld.premiumasp.net/images/cities/1/alex-kotomanov-987Ds8mF3JM-unsplash.webp",
+            "address": {
+              "@type": "PostalAddress",
+              "addressCountry": "EG",
+              "addressLocality": "القاهرة"
+            },
+            "touristType": "سياح"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "الرئيسية",
+                "item": "https://seaworld-stage.premiumasp.net/ar/home"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "الوجهات",
+                "item": "https://seaworld-stage.premiumasp.net/ar/destinations"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Egypt Tours",
+                "item": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "المدن",
+                "item": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities"
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "القاهرة",
+                "item": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "mainText": [
+      "استكشف المدينةالقاهرةاستعرض أفضل التجارب في هذه المدينة واكتشف المزيد من الجولات القريبة.المزيد من جولات الوجهة رحلة وادي الملوك في الاقصر 30$ احجز الآن رحلة معابد أبو سمبل من أسوان 45$ احجز الآن رحلة جزيرة أورانج باي والسنوركلينج في الغردقة 50$ احجز الآن رحلة سفاري صحراوية بالدراجة الرباعية حول الأهرامات 40$ احجز الآن شرم: سوبر سفاري بمركبة طرق وعرة، وركوب جمال، وتأمل... 70$ احجز الآن اكتشف رحلات القاهرة وجولاتها السياحية، من أهرامات الجيزة وخان الخليلي إلى معالم القاهرة التاريخية وتجارب النيل. استكشف الأنشطة المتاحة وخطط لزيارتك. أفضل الجولاتأفضل الجولات في القاهرة ssssss 5 / 10 منتهي الصلاحية جولات القاهرة والرحلات اليومية اكتشف جولات القاهرة والرحلات اليومية لزيارة الأهر… 30$رحله العشاء النيلية بالقاهرة استمتع بأمسية ساحرة على متن مركب عائم في نهر الني… 40$ احجز الآن جولة قلعة صلاح الدين والحسين وشارع المعز مع عشاء نايل كروز استمتع برحلة سياحية مميزة في قلب القاهرة تجمع بين… 40$ احجز الآن جولة المتحف المصري الكبير ومتحف الحضارة والمتحف المصري بالتحرير استمتع برحلة ثقافية وتاريخية مميزة لاكتشاف ثلاثة… 30$ احجز الآن جولة معالم القاهرة وخان الخليلي والحسين ومولات التسوق استمتع بجولة سياحية مميزة لمدة 8 ساعات لاكتشاف أج… 30$ احجز الآن"
+    ],
+    "placeholderCount": 1,
+    "tourLinks": [
+      {
+        "href": "/tours/cairo-day-tour",
+        "text": "منتهي الصلاحية جولات القاهرة والرحلات اليومية اكتشف جولات القاهرة والرحلات اليومية لزيارة الأهر… 30$"
+      },
+      {
+        "href": "/tours/al-muizz-nile-dinner-cruise",
+        "text": "جولة قلعة صلاح الدين والحسين وشارع المعز مع عشاء نايل كروز استمتع برحلة سياحية مميزة في قلب القاهرة تجمع بين… 40$ احجز الآن"
+      },
+      {
+        "href": "/tours/museums-private-tour",
+        "text": "جولة المتحف المصري الكبير ومتحف الحضارة والمتحف المصري بالتحرير استمتع برحلة ثقافية وتاريخية مميزة لاكتشاف ثلاثة… 30$ احجز الآن"
+      },
+      {
+        "href": "/tours/cairo-city-tour-khan-el-khalili-shopping",
+        "text": "جولة معالم القاهرة وخان الخليلي والحسين ومولات التسوق استمتع بجولة سياحية مميزة لمدة 8 ساعات لاكتشاف أج… 30$ احجز الآن"
+      }
+    ],
+    "breadcrumb": "الرئيسية الوجهات Egypt Tours المدن القاهرة"
+  },
+  {
+    "name": "en",
+    "requestedUrl": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo",
+    "url": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo",
+    "status": 200,
+    "headers": {
+      "content-encoding": "br",
+      "content-type": "text/html;charset=UTF-8",
+      "date": "Tue, 20 Oct 2026 11:33:11 GMT",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "Accept-Encoding",
+      "x-powered-by": "ASP.NET"
+    },
+    "title": "Cairo | Sea World Holidays",
+    "description": "Explore Cairo tours, the Giza Pyramids, historic districts, and Nile experiences. Discover activities and find a tour that fits your travel plans.",
+    "canonical": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo",
+    "alternates": [
+      {
+        "language": "en",
+        "href": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo"
+      },
+      {
+        "language": "ar",
+        "href": "https://seaworld-stage.premiumasp.net/ar/destinations/egypt-tours/cities/cairo"
+      },
+      {
+        "language": "x-default",
+        "href": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo"
+      }
+    ],
+    "robots": "index, follow, max-image-preview:large",
+    "googlebot": "index, follow, max-image-preview:large",
+    "lang": "en",
+    "dir": "ltr",
+    "h1": [],
+    "jsonLd": [
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "TravelAgency",
+            "@id": "https://seaworld-stage.premiumasp.net/#organization",
+            "name": "Sea World Holidays",
+            "legalName": "Sea World Holidays",
+            "url": "https://seaworld-stage.premiumasp.net",
+            "description": "From tailored holiday packages to flights, hotels, tours, transfers, and visa assistance, we take care of the details so you can travel with confidence.",
+            "logo": {
+              "@type": "ImageObject",
+              "@id": "https://seaworld-stage.premiumasp.net/#logo",
+              "url": "https://seaworld-stage.premiumasp.net/assets/images/main-logo.png",
+              "caption": "Sea World Holidays"
+            },
+            "image": {
+              "@id": "https://seaworld-stage.premiumasp.net/#logo"
+            },
+            "email": "Info@seaworldholidays.com",
+            "telephone": "+201155011300",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor.",
+              "addressLocality": "Giza",
+              "addressRegion": "Giza Governorate",
+              "addressCountry": "EG"
+            },
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "telephone": "+201155011300",
+                "email": "Info@seaworldholidays.com",
+                "availableLanguage": [
+                  "en",
+                  "ar"
+                ],
+                "areaServed": "EG"
+              }
+            ],
+            "sameAs": [
+              "https://www.facebook.com/seaworldholidays1/",
+              "https://www.instagram.com/seaworldholidays1/",
+              "https://wa.me/201155011300"
+            ],
+            "paymentAccepted": "Mastercard, Visa, PayPal, InstaPay, Cash",
+            "currenciesAccepted": "EGP, USD, EUR",
+            "knowsLanguage": [
+              "en",
+              "ar"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://seaworld-stage.premiumasp.net/#website",
+            "name": "Sea World Holidays",
+            "url": "https://seaworld-stage.premiumasp.net",
+            "description": "From tailored holiday packages to flights, hotels, tours, transfers, and visa assistance, we take care of the details so you can travel with confidence.",
+            "publisher": {
+              "@id": "https://seaworld-stage.premiumasp.net/#organization"
+            },
+            "inLanguage": [
+              "en",
+              "ar"
+            ]
+          }
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "City",
+            "@id": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo#page",
+            "url": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo",
+            "name": "Cairo",
+            "description": "Explore Cairo tours, the Giza Pyramids, historic districts, and Nile experiences. Discover activities and find a tour that fits your travel plans.",
+            "inLanguage": "en",
+            "isPartOf": {
+              "@id": "https://seaworld-stage.premiumasp.net/#website"
+            },
+            "image": "https://seeworld.premiumasp.net/images/cities/1/alex-kotomanov-987Ds8mF3JM-unsplash.webp",
+            "address": {
+              "@type": "PostalAddress",
+              "addressCountry": "EG",
+              "addressLocality": "Cairo"
+            },
+            "touristType": "Leisure travellers"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://seaworld-stage.premiumasp.net/en/home"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Destinations",
+                "item": "https://seaworld-stage.premiumasp.net/en/destinations"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Egypt Tours",
+                "item": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Cities",
+                "item": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities"
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "Cairo",
+                "item": "https://seaworld-stage.premiumasp.net/en/destinations/egypt-tours/cities/cairo"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "mainText": [
+      "Explore cityCairoBrowse the best experiences in this city and discover more tours nearby.More destination tours Valley of the Kings Tour in Luxor 30$ Book now Abu Simbel Day Trip from Aswan 45$ Book now Hurghada Orange Bay Island & Snorkeling Boat Trip 50$ Book now Desert Safari by Quad Bike Around the Pyramids 40$ Book now Sharm: Super Safari Quad, Camel Ride, Stargazing &... 70$ Book now Explore Cairo tours, the Giza Pyramids, historic districts, and Nile experiences. Discover activities and find a tour that fits your travel plans. Top toursTop tours in Cairo ssssss 5 / 10 Expired Cairo day tours Explore Cairo on a day tour covering the Pyramids… 30$Nile dinner cruise Cairo Enjoy a magical evening aboard a Nile dinner crui… 40$ Book now Saladin Citadel, Al-Hussein & Al-Muizz Street with Nile Dinner Cruise Discover the beauty of Cairo on an unforgettable… 40$ Book now Grand Egyptian Museum, National Museum of Egyptian Civilization & Egyptian Museum Private Tour Enjoy an unforgettable cultural journey exploring… 30$ Book now Cairo City Tour, Khan El Khalili, Al-Hussein & Shopping Malls Enjoy an exciting 8-hour city tour exploring Cair… 30$ Book now"
+    ],
+    "placeholderCount": 1,
+    "tourLinks": [
+      {
+        "href": "/tours/cairo-day-tour",
+        "text": "Expired Cairo day tours Explore Cairo on a day tour covering the Pyramids… 30$"
+      },
+      {
+        "href": "/tours/al-muizz-nile-dinner-cruise",
+        "text": "Saladin Citadel, Al-Hussein & Al-Muizz Street with Nile Dinner Cruise Discover the beauty of Cairo on an unforgettable… 40$ Book now"
+      },
+      {
+        "href": "/tours/museums-private-tour",
+        "text": "Grand Egyptian Museum, National Museum of Egyptian Civilization & Egyptian Museum Private Tour Enjoy an unforgettable cultural journey exploring… 30$ Book now"
+      },
+      {
+        "href": "/tours/cairo-city-tour-khan-el-khalili-shopping",
+        "text": "Cairo City Tour, Khan El Khalili, Al-Hussein & Shopping Malls Enjoy an exciting 8-hour city tour exploring Cair… 30$ Book now"
+      }
+    ],
+    "breadcrumb": "Home Destinations Egypt Tours Cities Cairo"
+  },
+  {
+    "name": "robots",
+    "requestedUrl": "https://seaworld-stage.premiumasp.net/robots.txt",
+    "url": "https://seaworld-stage.premiumasp.net/robots.txt",
+    "status": 200,
+    "headers": {
+      "content-encoding": "br",
+      "content-type": "text/plain; charset=utf-8",
+      "date": "Tue, 20 Oct 2026 11:33:11 GMT",
+      "etag": "W/\"c0-hdnyBu/T3G56den+dVbBHvwXJCw\"",
+      "keep-alive": "timeout=5",
+      "transfer-encoding": "chunked",
+      "vary": "Accept-Encoding",
+      "x-powered-by": "ASP.NET"
+    },
+    "bodyPreview": "User-agent: *\nAllow: /\nDisallow: /*/configurations/\nDisallow: /*/account/\nDisallow: /*/user-\nDisallow: /*/login\nDisallow: /*/signup\n\nSitemap: https://seaworld-stage.premiumasp.net/sitemap.xml\n"
+  },
+  {
+    "name": "sitemap",
+    "requestedUrl": "https://seaworld-stage.premiumasp.net/sitemap.xml",
+    "url": "https://seaworld-stage.premiumasp.net/sitemap.xml",
+    "status": 200,
+    "headers": {
+      "content-length": "30579",
+      "content-type": "application/xml; charset=utf-8",
+      "date": "Tue, 20 Oct 2026 11:33:11 GMT",
+      "etag": "W/\"7773-OMpVbKjJ36652MImemmej6ENnWQ\"",
+      "keep-alive": "timeout=5",
+      "x-powered-by": "ASP.NET"
+    },
+    "bodyPreview": "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://seaworldholidays.com/en/home</loc></url><url><loc>https://seaworldholidays.com/en/destinations</loc></url><url><loc>https://seaworldholidays.com/en/tours</loc></url><url><loc>https://seaworldholidays.com/en/nile-cruises</loc></url><url><loc>https://seaworldholidays.com/en/packages</loc></url><url><loc>https://seaworldholidays.com/en/hotels</loc></url><url><loc>https://seaworldholidays.com/en/blogs</loc></url><url><loc>https://seaworldholidays.com/en/aboutus</loc></url><url><loc>https://seaworldholidays.com/en/contact</loc></url><url><loc>https://seaworldholidays.com/en/terms</loc></url><url><loc>https://seaworldholidays.com/en/privacy</loc></url><url><loc>https://seaworldholidays.com/en/destinations/egypt-tours</loc></url><url><loc>https://seaworldholidays.com/en/destinations/france</loc></url><url><loc>https://seaworldholidays.com/en/destinations/spain</loc></url><url><loc>https://seaworldholidays.com/en/destinations/turkiye</loc></url><url><loc>https://seaworldholidays.com/en/destinations/thailand</loc></url><url><loc>https://seaworldholidays.com/en/destinations/indonesia</loc></url><url><loc>https://seaworldholidays.com/en/destinations/maldives</loc></url><url><loc>https://seaworldholidays.com/en/destinations/malaysia</loc></url><url><loc>https://seaworldholidays.com/en/destinations/turkey</loc></url><url><loc>https://seaworldholidays.com/en/destinations/lebanon</loc></url><url><loc>https://seawo"
+  }
+]

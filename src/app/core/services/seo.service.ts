@@ -1,12 +1,13 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, REQUEST, RESPONSE_INIT, effect, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { COMPANY_PROFILE } from '../data/company-profile';
-import { PUBLIC_BASE_URL } from '../tokens/app-urls';
+import { INDEXING_ENABLED, PUBLIC_BASE_URL } from '../tokens/app-urls';
 import { BreadcrumbService } from './breadcrumb.service';
 import { LanguageService } from './language.service';
+import { resolveEntitySeo } from './entity-seo';
+import { mayIndexRequest } from './indexing-policy';
 
 export type SeoSchemaType =
   | 'WebPage'
@@ -27,6 +28,7 @@ export interface SeoPageOptions {
 }
 
 interface LocalizedSeoPage {
+  name: Record<'en' | 'ar', string>;
   title: Record<'en' | 'ar', string>;
   description: Record<'en' | 'ar', string>;
   imageUrl?: string;
@@ -52,49 +54,42 @@ export class SeoService {
   private readonly request = inject(REQUEST, { optional: true });
   private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
   private readonly publicBaseUrl = inject(PUBLIC_BASE_URL);
+  private readonly indexingEnabled = inject(INDEXING_ENABLED);
   private lastPage: LocalizedSeoPage | null = null;
+  private pendingPath: string | null = null;
+  private lastPagePath: string | null = null;
+  private failurePath: string | null = null;
   private siteStructuredDataLanguage: 'en' | 'ar' | null = null;
 
   constructor() {
     this.applyRouteDefaults(this.router.url);
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => this.applyRouteDefaults(event.urlAfterRedirects));
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.pendingPath = this.normalizePath(event.url);
+        this.lastPage = null;
+        this.failurePath = null;
+      } else if (event instanceof NavigationEnd) {
+        this.pendingPath = null;
+        // Transfer-cache responses can publish their SEO before NavigationEnd.
+        if (this.lastPage && this.lastPagePath === this.normalizePath(event.urlAfterRedirects)) {
+          this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
+        } else if (this.failurePath !== this.normalizePath(event.urlAfterRedirects)) {
+          this.applyRouteDefaults(event.urlAfterRedirects);
+        }
+      }
+    });
 
     effect(() => {
-      const currentLanguage = this.language.currentLanguage();
-      if (this.lastPage) this.applyLocalizedPageSeo(this.lastPage, currentLanguage);
+      this.language.currentLanguage();
+      if (this.lastPage) this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
     });
   }
 
   /** Builds language-specific SEO from both bilingual source fields and localized API fields. */
   updateFrom(entity: any, options: SeoPageOptions = {}): void {
-    const currentLanguage = this.languageFromUrl();
-    const otherLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
-    const headerData = Array.isArray(entity?.headerData) ? entity.headerData : [];
-    const headerDescription = (language: 'en' | 'ar') => headerData
-      .map((item: any) => this.textValue(
-        item,
-        language === 'ar' ? 'descriptionAr' : 'descriptionEng',
-        language === 'ar' ? 'DescriptionAr' : 'DescriptionEng',
-        'description', 'Description',
-      ) ?? '')
-      .filter(Boolean)
-      .join(' ');
-    const localizedTitle = (language: 'en' | 'ar') => this.textValue(
-      entity,
-      language === 'ar' ? 'nameAr' : 'nameEng',
-      language === 'ar' ? 'NameAr' : 'NameEng',
-      'name', 'Name',
-    );
-    const localizedDescription = (language: 'en' | 'ar') => this.textValue(
-      entity,
-      language === 'ar' ? 'descriptionAr' : 'descriptionEng',
-      language === 'ar' ? 'DescriptionAr' : 'DescriptionEng',
-      language === 'ar' ? 'summaryAr' : 'summaryEng',
-      language === 'ar' ? 'SummaryAr' : 'SummaryEng',
-      'description', 'Description', 'summary', 'Summary', 'content', 'Content',
-    ) ?? headerDescription(language);
+    const schemaType = options.schemaType ?? 'WebPage';
+    const english = resolveEntitySeo(entity, 'en', schemaType, options.fallbackTitle, options.fallbackDescription);
+    const arabic = resolveEntitySeo(entity, 'ar', schemaType, options.fallbackTitle, options.fallbackDescription);
     const image =
       options.image ??
       entity?.coverImage ??
@@ -103,27 +98,39 @@ export class SeoService {
       entity?.images?.[0] ?? entity?.Images?.[0];
 
     const page: LocalizedSeoPage = {
-      title: {
-        en: localizedTitle('en') ?? localizedTitle(currentLanguage) ?? localizedTitle(otherLanguage) ?? options.fallbackTitle ?? '',
-        ar: localizedTitle('ar') ?? localizedTitle(currentLanguage) ?? localizedTitle(otherLanguage) ?? options.fallbackTitle ?? '',
-      },
-      description: {
-        en: localizedDescription('en') || localizedDescription(currentLanguage) || localizedDescription(otherLanguage) || options.fallbackDescription || '',
-        ar: localizedDescription('ar') || localizedDescription(currentLanguage) || localizedDescription(otherLanguage) || options.fallbackDescription || '',
-      },
+      name: { en: english.name, ar: arabic.name },
+      title: { en: english.title, ar: arabic.title },
+      description: { en: english.description, ar: arabic.description },
       imageUrl: this.absoluteUrl(options.imageUrl ?? this.imageUrl(image)),
       imageAlt: this.imageAlt(image),
-      schemaType: options.schemaType ?? 'WebPage',
+      schemaType,
       entity,
     };
 
     this.lastPage = page;
+    this.lastPagePath = this.currentPath();
     this.applyLocalizedPageSeo(page, this.languageFromUrl());
   }
 
   markNotFound(message = 'Page not found'): void {
+    this.markFailure(message, 404);
+  }
+
+  markUnavailable(): void {
+    this.markFailure(this.languageFromUrl() === 'ar' ? 'المحتوى غير متاح مؤقتًا' : 'Content temporarily unavailable', 503);
+  }
+
+  private markFailure(message: string, status: number): void {
     this.lastPage = null;
-    if (this.responseInit) this.responseInit.status = 404;
+    this.failurePath = this.currentPath();
+    if (this.responseInit) {
+      this.responseInit.status = status;
+      if (status === 503) {
+        const headers = new Headers(this.responseInit.headers);
+        headers.set('Retry-After', '300');
+        this.responseInit.headers = headers;
+      }
+    }
     this.applyDocumentLanguage(this.languageFromUrl());
     this.titleService.setTitle(`${message} | ${SITE_NAME}`);
     this.updateName('robots', 'noindex, nofollow');
@@ -158,9 +165,10 @@ export class SeoService {
     const description = page.description[language] || page.description[alternative];
 
     this.applyDocumentLanguage(language);
-    // Detail pages know their entity name, so the last breadcrumb can show it instead of the slug.
-    this.breadcrumbService.setCurrentTitle(title);
-    this.setPage(title, description, page.imageUrl, page.imageAlt, page.schemaType, page.entity);
+    // SEO headlines may be longer than the entity name shown in navigation and structured data.
+    const name = page.name[language] || page.name[alternative];
+    this.breadcrumbService.setCurrentTitle(name);
+    this.setPage(title, description, page.imageUrl, page.imageAlt, page.schemaType, page.entity, name);
   }
 
   private setPage(
@@ -170,16 +178,20 @@ export class SeoService {
     imageAlt: string | undefined,
     schemaType: SeoSchemaType,
     entity?: Record<string, unknown>,
+    entityName?: string,
   ): void {
-    const resolvedTitle = title.trim();
+    const resolvedTitle = this.plainText(title);
     const resolvedDescription = this.cleanDescription(description);
     const canonicalUrl = this.canonicalUrl();
     const language = this.languageFromUrl();
 
     this.titleService.setTitle(this.brandedTitle(resolvedTitle));
     this.updateOrRemoveName('description', resolvedDescription);
-    this.updateName('robots', 'index, follow, max-image-preview:large');
-    this.updateName('googlebot', 'index, follow, max-image-preview:large');
+    const requestUrl = this.request?.url ?? this.document.defaultView?.location.href;
+    const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)
+      ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
+    this.updateName('robots', robots);
+    this.updateName('googlebot', robots);
     this.updateProperty('og:site_name', SITE_NAME);
     this.updateOrRemoveProperty('og:title', resolvedTitle);
     this.updateOrRemoveProperty('og:description', resolvedDescription);
@@ -205,7 +217,7 @@ export class SeoService {
       this.updateOrRemoveName('twitter:image:alt', '');
     }
 
-    this.setPageStructuredData(resolvedTitle, resolvedDescription, imageUrl, schemaType, entity);
+    this.setPageStructuredData(resolvedTitle, resolvedDescription, imageUrl, schemaType, entity, entityName);
   }
 
   private applyRouteDefaults(url: string): void {
@@ -255,11 +267,12 @@ export class SeoService {
     imageUrl: string | undefined,
     type: SeoSchemaType,
     entity?: Record<string, unknown>,
+    entityName?: string,
   ): void {
     const canonicalUrl = this.canonicalUrl();
     const language = this.languageFromUrl();
     const page: Record<string, unknown> = {
-      '@type': type,
+      '@type': 'WebPage',
       '@id': `${canonicalUrl}#page`,
       url: canonicalUrl,
       name: title,
@@ -268,56 +281,71 @@ export class SeoService {
       isPartOf: { '@id': `${this.publicBaseUrl}/#website` },
     };
     if (imageUrl) page['image'] = imageUrl;
+    const graph: Record<string, unknown>[] = [page];
+    const subject: Record<string, unknown> = type === 'WebPage' ? page : {
+      '@type': type,
+      '@id': `${canonicalUrl}#entity`,
+      url: canonicalUrl,
+      name: entityName || title,
+      description,
+      ...(imageUrl ? { image: imageUrl } : {}),
+      mainEntityOfPage: { '@id': `${canonicalUrl}#page` },
+    };
+    if (subject !== page) {
+      page['mainEntity'] = { '@id': `${canonicalUrl}#entity` };
+      graph.push(subject);
+    }
 
     if (type === 'BlogPosting') {
-      page['headline'] = title;
-      page['mainEntityOfPage'] = { '@id': `${canonicalUrl}#page` };
-      page['publisher'] = { '@id': `${this.publicBaseUrl}/#organization` };
-      page['author'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      subject['headline'] = entityName || title;
+      subject['inLanguage'] = language;
+      subject['publisher'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      subject['author'] = { '@id': `${this.publicBaseUrl}/#organization` };
       const published = this.dateValue(entity, 'publishedAt', 'PublishedAt');
       const modified = this.dateValue(entity, 'modifiedAt', 'ModifiedAt', 'updatedAt', 'UpdatedAt');
-      if (published) page['datePublished'] = published;
-      if (modified) page['dateModified'] = modified;
+      if (published) subject['datePublished'] = published;
+      if (modified) subject['dateModified'] = modified;
     }
 
     if (type === 'TouristTrip') {
-      page['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
+      subject['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
       const offer = this.offer(entity, canonicalUrl);
-      if (offer) page['offers'] = offer;
+      if (offer) subject['offers'] = offer;
       const duration = this.durationInDays(entity);
-      if (duration) page['itinerary'] = { '@type': 'ItemList', numberOfItems: duration };
+      if (duration) subject['itinerary'] = { '@type': 'ItemList', numberOfItems: duration };
     }
 
     if (type === 'City' || type === 'TouristDestination' || type === 'Place') {
-      page['address'] = {
+      const country = this.textValue(entity, 'countryCode', 'CountryCode', 'countryName', 'CountryName');
+      subject['address'] = {
         '@type': 'PostalAddress',
-        addressCountry: COMPANY_PROFILE.address.country,
-        addressLocality: title,
+        ...(country ? { addressCountry: country } : {}),
+        addressLocality: entityName || title,
       };
-      page['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
+      if (type === 'TouristDestination') subject['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
     }
 
     if (type === 'Hotel') {
-      page['address'] = {
+      const country = this.textValue(entity, 'countryCode', 'CountryCode', 'countryName', 'CountryName');
+      subject['address'] = {
         '@type': 'PostalAddress',
-        addressCountry: COMPANY_PROFILE.address.country,
+        ...(country ? { addressCountry: country } : {}),
         addressLocality: this.textValue(
           entity,
           language === 'ar' ? 'cityNameAr' : 'cityNameEng',
           language === 'ar' ? 'CityNameAr' : 'CityNameEng',
           'destinationName', 'DestinationName',
-        ) ?? title,
+        ) ?? entityName ?? title,
       };
-      page['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
       const starRating = this.numberValue(entity, 'starRating', 'StarRating');
-      if (starRating) page['starRating'] = { '@type': 'Rating', ratingValue: starRating, bestRating: 5 };
+      if (starRating) subject['starRating'] = { '@type': 'Rating', ratingValue: starRating, bestRating: 5 };
       const telephone = this.textValue(entity, 'phoneNumber', 'PhoneNumber');
       const email = this.textValue(entity, 'email', 'Email');
-      if (telephone) page['telephone'] = telephone;
-      if (email) page['email'] = email;
+      if (telephone) subject['telephone'] = telephone;
+      if (email) subject['email'] = email;
       const amenities = this.arrayValue(entity, 'amenities', 'Amenities');
       if (amenities.length) {
-        page['amenityFeature'] = amenities.map((amenity) => ({
+        subject['amenityFeature'] = amenities.map((amenity) => ({
           '@type': 'LocationFeatureSpecification',
           name: this.textValue(
             amenity,
@@ -334,23 +362,22 @@ export class SeoService {
       const hotelName = this.textValue(entity, 'hotelName', 'HotelName');
       const hotelUrl = this.textValue(entity, 'hotelUrl', 'HotelUrl');
       if (hotelName) {
-        page['containedInPlace'] = {
+        subject['containedInPlace'] = {
           '@type': 'Hotel',
           name: hotelName,
           ...(hotelUrl ? { url: this.absoluteUrl(hotelUrl) } : {}),
         };
       }
       const occupancy = this.numberValue(entity, 'maxTotalOccupancy', 'MaxTotalOccupancy');
-      if (occupancy) page['occupancy'] = { '@type': 'QuantitativeValue', maxValue: occupancy };
+      if (occupancy) subject['occupancy'] = { '@type': 'QuantitativeValue', maxValue: occupancy };
       const roomSize = this.numberValue(entity, 'roomSize', 'RoomSize');
-      if (roomSize) page['floorSize'] = { '@type': 'QuantitativeValue', value: roomSize, unitCode: 'MTK' };
+      if (roomSize) subject['floorSize'] = { '@type': 'QuantitativeValue', value: roomSize, unitCode: 'MTK' };
       const bed = this.textValue(entity, 'bedType', 'BedType');
-      if (bed) page['bed'] = bed;
+      if (bed) subject['bed'] = bed;
       const offer = this.offer(entity, canonicalUrl);
-      if (offer) page['offers'] = offer;
+      if (offer) subject['offers'] = offer;
     }
 
-    const graph: Record<string, unknown>[] = [page];
     const breadcrumbs = this.breadcrumbService.items();
     if (breadcrumbs.length > 1) {
       graph.push({
@@ -495,6 +522,7 @@ export class SeoService {
   }
 
   private currentPath(): string {
+    if (this.pendingPath) return this.pendingPath;
     const routerPath = this.normalizePath(this.router.url);
     if (routerPath !== '/') return routerPath;
     if (this.request) return this.normalizePath(new URL(this.request.url).pathname);
@@ -525,7 +553,17 @@ export class SeoService {
 
 
   private cleanDescription(value: string): string {
-    return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
+    const text = this.plainText(value);
+    if (text.length <= 160) return text;
+    const shortened = text.slice(0, 157);
+    return `${shortened.slice(0, shortened.lastIndexOf(' ') > 100 ? shortened.lastIndexOf(' ') : 157)}…`;
+  }
+
+  private plainText(value: string): string {
+    const element = this.document.createElement('div');
+    element.innerHTML = value.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+      .replace(/<[^>]*>/g, ' ');
+    return (element.textContent ?? '').replace(/\s+/g, ' ').trim();
   }
 
   private brandedTitle(value: string): string {

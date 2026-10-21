@@ -1,7 +1,3 @@
 User-agent: *
-Allow: /
-Disallow: /*/configurations/
-Disallow: /*/account/
-Disallow: /*/user-
-Disallow: /*/login
-Disallow: /*/signup
+# Safe fallback for static hosting. The SSR server serves environment-specific rules.
+Disallow: /

@@ -65,6 +65,7 @@
   </nav>
 
   <form class="configuration-form" [formGroup]="tourForm" (ngSubmit)="saveCurrentStep()">
+    @if (activeStep === 1) { <app-seo-fields [form]="tourForm" /> }
     @if (validationSubmitted && currentStepInvalid && activeStep !== 3) { <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p> }
     @if (activeStep === 1) {
     <section class="space-y-5">

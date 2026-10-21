@@ -1,3 +1,4 @@
+import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -54,7 +55,7 @@ interface BlogHeaderDataValue {
 @Component({
   selector: 'app-blogs-form-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
+  imports: [SeoFields, ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
   templateUrl: './blogs-form-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -79,6 +80,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   };
 
   form = new FormGroup({
+    ...createSeoControls(),
     nameEng: new FormControl('', {
       nonNullable: true,
       validators: [
@@ -185,6 +187,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       }))
       .filter((image: BlogImageUpload) => !!image.url);
     this.form.reset({
+      ...seoValues(blog),
       nameEng: blog?.nameEng ?? blog?.nameEng,
       nameAr: blog?.nameAr ?? blog?.nameAr,
       routeName: blog?.routeName ?? blog?.RouteName,
@@ -342,6 +345,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       return;
     }
     const data = new FormData();
+    appendSeoFields(data, value);
     const blogId = this.selectedBlog?.id ?? this.selectedBlog?.Id;
     if (blogId) data.append('Id', String(blogId));
 

@@ -7,6 +7,7 @@ import type { TourHomeDTO } from '../../../features/home/home-sections/tours-sec
 import type { CatalogBookingSelection } from '../catalog-search-form/catalog-search-form';
 import { DescriptionPreview } from '../description-preview/description-preview';
 import { isExpiredTour, isSoldOut } from '../../../features/home/list-search.util';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-tour-card',
@@ -22,6 +23,7 @@ export class TourCard implements OnChanges {
   }
   private readonly currencyService = inject(CurrencyService);
   private readonly utilityService = inject(UtilityService);
+  private readonly language = inject(LanguageService);
 
   @Input({ required: true }) tour: TourHomeDTO|null=null;
   @Input() compact = false;
@@ -29,7 +31,7 @@ export class TourCard implements OnChanges {
   @Input() viewOnly = false;
 
   get routeLink(): string[] {
-    const section = this.tour?.isNileCruise === true ? '/nile-cruises' : '/tours';
+    const section = `/${this.language.currentLanguage()}/${this.tour?.isNileCruise === true ? 'nile-cruises' : 'tours'}`;
     return this.tour?.routeName ? [section, this.tour.routeName] : [section];
   }
 
