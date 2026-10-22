@@ -11,13 +11,13 @@ import { mayIndexRequest } from './indexing-policy';
 
 export type SeoSchemaType =
   | 'WebPage'
-  | 'TouristTrip'
-  | 'TouristDestination'
-  | 'Place'
+  | 'Tour'
+  | 'Destination'
   | 'City'
+  | 'Package'
   | 'Hotel'
   | 'HotelRoom'
-  | 'BlogPosting';
+  | 'Blog';
 
 export interface SeoPageOptions {
   imageUrl?: string;
@@ -62,26 +62,12 @@ export class SeoService {
   private siteStructuredDataLanguage: 'en' | 'ar' | null = null;
 
   constructor() {
-    this.applyRouteDefaults(this.router.url);
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.pendingPath = this.normalizePath(event.url);
-        this.lastPage = null;
-        this.failurePath = null;
-      } else if (event instanceof NavigationEnd) {
-        this.pendingPath = null;
-        // Transfer-cache responses can publish their SEO before NavigationEnd.
-        if (this.lastPage && this.lastPagePath === this.normalizePath(event.urlAfterRedirects)) {
-          this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
-        } else if (this.failurePath !== this.normalizePath(event.urlAfterRedirects)) {
-          this.applyRouteDefaults(event.urlAfterRedirects);
-        }
-      }
-    });
+ 
 
     effect(() => {
       this.language.currentLanguage();
-      if (this.lastPage) this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
+      if (this.lastPage) 
+        this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
     });
   }
 
@@ -96,7 +82,7 @@ export class SeoService {
       entity?.coverImageUrl ??
       entity?.imageUrl ??
       entity?.images?.[0] ?? entity?.Images?.[0];
-
+debugger
     const page: LocalizedSeoPage = {
       name: { en: english.name, ar: arabic.name },
       title: { en: english.title, ar: arabic.title },
@@ -112,9 +98,7 @@ export class SeoService {
     this.applyLocalizedPageSeo(page, this.languageFromUrl());
   }
 
-  markNotFound(message = 'Page not found'): void {
-    this.markFailure(message, 404);
-  }
+
 
   markUnavailable(): void {
     this.markFailure(this.languageFromUrl() === 'ar' ? 'المحتوى غير متاح مؤقتًا' : 'Content temporarily unavailable', 503);
@@ -195,7 +179,7 @@ export class SeoService {
     this.updateProperty('og:site_name', SITE_NAME);
     this.updateOrRemoveProperty('og:title', resolvedTitle);
     this.updateOrRemoveProperty('og:description', resolvedDescription);
-    this.updateProperty('og:type', schemaType === 'BlogPosting' ? 'article' : 'website');
+    this.updateProperty('og:type', schemaType === 'Blog' ? 'article' : 'website');
     this.updateProperty('og:locale', language === 'ar' ? 'ar_EG' : 'en_US');
     this.updateProperty('og:locale:alternate', language === 'ar' ? 'en_US' : 'ar_EG');
     this.updateProperty('og:url', canonicalUrl);
@@ -252,6 +236,7 @@ export class SeoService {
       blogs: ['Travel Blog | Sea World Holidays', 'مدونة السفر | سي وورلد هوليدايز'],
     };
     const pageTitle = titles[section ?? 'home'] ?? titles['home'];
+    debugger;
     this.setPage(
       language === 'ar' ? pageTitle[1] : pageTitle[0],
       DEFAULT_DESCRIPTION[language],
@@ -296,7 +281,7 @@ export class SeoService {
       graph.push(subject);
     }
 
-    if (type === 'BlogPosting') {
+    if (type === 'Blog') {
       subject['headline'] = entityName || title;
       subject['inLanguage'] = language;
       subject['publisher'] = { '@id': `${this.publicBaseUrl}/#organization` };
@@ -307,7 +292,7 @@ export class SeoService {
       if (modified) subject['dateModified'] = modified;
     }
 
-    if (type === 'TouristTrip') {
+    if (type === 'Tour') {
       subject['provider'] = { '@id': `${this.publicBaseUrl}/#organization` };
       const offer = this.offer(entity, canonicalUrl);
       if (offer) subject['offers'] = offer;
@@ -315,14 +300,14 @@ export class SeoService {
       if (duration) subject['itinerary'] = { '@type': 'ItemList', numberOfItems: duration };
     }
 
-    if (type === 'City' || type === 'TouristDestination' || type === 'Place') {
+    if (type === 'City' || type === 'Destination') {
       const country = this.textValue(entity, 'countryCode', 'CountryCode', 'countryName', 'CountryName');
       subject['address'] = {
         '@type': 'PostalAddress',
         ...(country ? { addressCountry: country } : {}),
         addressLocality: entityName || title,
       };
-      if (type === 'TouristDestination') subject['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
+      if (type === 'Destination') subject['touristType'] = language === 'ar' ? 'سياح' : 'Leisure travellers';
     }
 
     if (type === 'Hotel') {

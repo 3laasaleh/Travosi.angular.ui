@@ -928,7 +928,6 @@
   "fieldRequired": "This field is required.",
   "maximumCharacters": "Maximum {{count}} characters.",
   "seoMetadata": "Search engine metadata",
-  "seoOptionalHint": "Optional. Leave blank to use this page’s name and description.",
   "seoMetadataHint": "Used by Google and social sharing. Keep each title specific and each description useful.",
   "seonameEnglish": "SEO title (English)",
   "seonameArabic": "SEO title (Arabic)",

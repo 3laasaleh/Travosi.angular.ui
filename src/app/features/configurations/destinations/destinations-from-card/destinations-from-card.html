@@ -7,7 +7,6 @@
   <h2 class="mb-4 text-xl font-semibold">{{ (selectedDestination ? 'editDestination' : 'addDestination') | translate }}
   </h2>
   <form class="configuration-form space-y-4" [formGroup]="destinationForm" (ngSubmit)="saveDestination()">
-    <app-seo-fields [form]="destinationForm" />
     @if (validationSubmitted && destinationForm.invalid) {
     <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">{{ 'pleaseCorrectFormErrors' | translate }}</p>
     }

@@ -113,7 +113,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           this.cities = [];
           this.isLoading = false;
           this.errorMessage = 'destinationNotFound';
-          this.seo.markNotFound('Destination not found');
           this.cdr.markForCheck();
           return;
         }
@@ -199,7 +198,6 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
         this.destination = destination;
         if (!destination) {
           this.errorMessage = 'destinationNotFound';
-          this.seo.markNotFound('Destination not found');
           return;
         }
 
@@ -233,7 +231,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateSeo(): void {
-    this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristDestination' });
+    this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Destination' });
   }
 
   private initializeTourCarousel(): void {

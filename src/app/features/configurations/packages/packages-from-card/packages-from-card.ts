@@ -1,4 +1,3 @@
-import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -51,7 +50,7 @@ type PackageFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-packages-from-card',
   standalone: true,
-  imports: [SeoFields, ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker, PackageBenefitsEditor],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker, PackageBenefitsEditor],
   templateUrl: './packages-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -166,7 +165,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   get detailsStepInvalid(): boolean {
     const controls = this.packageForm.controls;
     const requiredControls = [
-      controls.seoTitleEng, controls.seoTitleAr, controls.seoDescriptionEng, controls.seoDescriptionAr,
       controls.nameEng,
       controls.nameAr,
       controls.routeName,
@@ -626,7 +624,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      ...createSeoControls(),
     nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), Validators.pattern(/^[A-Za-z].*$/)] }),
       nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
       routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
@@ -729,7 +726,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private buildDetailsPayload(id: number | null): any {
     const value = this.packageForm.getRawValue();
     const payload: any = {
-      ...seoValues(value),
       NameEng: value.nameEng.trim(), NameAr: value.nameAr.trim(),
       RouteName: value.routeName.trim().toLowerCase(),
       DescriptionEng: value.descriptionEng.trim(), DescriptionAr: value.descriptionAr.trim(),
@@ -802,7 +798,6 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       .sort((a: any, b: any) => Number(a.displayOrder) - Number(b.displayOrder))
       .map((destination: any) => Number(destination.destinationId ?? destination.id)).filter(Number.isFinite);
     this.packageForm.patchValue({
-      ...seoValues(item),
       nameEng: item?.nameEng ?? '', nameAr: item?.nameAr ?? '',
       routeName: item?.routeName ?? item?.nameEng ?? '',
       descriptionEng: item?.descriptionEng ?? item?.description ?? '', descriptionAr: item?.descriptionAr ?? '',

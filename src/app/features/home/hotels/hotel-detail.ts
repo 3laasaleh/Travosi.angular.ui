@@ -129,7 +129,6 @@ export class HotelDetail implements OnInit {
         if (!routeName) {
           this.hotel = null;
           this.loading = false;
-          this.seo.markNotFound('Hotel not found');
           this.cdr.markForCheck();
           return;
         }
@@ -158,7 +157,6 @@ export class HotelDetail implements OnInit {
       .subscribe((hotel) => {
         this.hotel = hotel;
         if (!hotel) {
-          this.seo.markNotFound('Hotel not found');
           return;
         }
 

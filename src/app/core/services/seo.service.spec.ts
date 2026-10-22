@@ -7,13 +7,15 @@ import { INDEXING_ENABLED, PUBLIC_BASE_URL } from '../tokens/app-urls';
 import { BreadcrumbService } from './breadcrumb.service';
 import { LanguageService } from './language.service';
 import { SeoSchemaType, SeoService } from './seo.service';
+import { environment } from '../../../environments/environment';
 
-const origin = 'https://seaworld-prod.premiumasp.net';
+const origin = environment.baseUrl;
 const cases: [string, SeoSchemaType][] = [
-  ['destinations/egypt-tours', 'TouristDestination'],
+  ['destinations/egypt-tours', 'Destination'],
   ['destinations/egypt-tours/cities/cairo', 'City'],
-  ['tours/cairo-day-tour', 'TouristTrip'],
-  ['packages/egypt-week', 'TouristTrip'],
+  ['tours/cairo-day-tour', 'Tour'],
+  ['nile-cruises/cairo-dinner-cruise', 'Tour'],
+  ['packages/egypt-week', 'Tour'],
   ['hotels/cairo-hotel', 'Hotel'],
   ['blogs/cairo-guide', 'BlogPosting'],
 ];
@@ -37,10 +39,8 @@ function setup(language: 'ar' | 'en' = 'ar', path = cases[1][0], staging = false
 
 const entity = {
   nameEng: 'Cairo', nameAr: 'القاهرة',
-  seoTitleEng: 'Explore Cairo tours', seoTitleAr: 'اكتشف جولات القاهرة',
-  seoDescriptionEng: 'Plan your Cairo visit with our local tours.',
-  seoDescriptionAr: 'خطط لزيارة القاهرة واكتشف الجولات المحلية المتاحة.',
   descriptionEng: 'Display description', descriptionAr: 'وصف الصفحة',
+  summaryEng: 'Legacy English summary', summaryAr: 'ملخص عربي قديم',
 };
 
 describe('shared entity SEO', () => {
@@ -51,8 +51,8 @@ describe('shared entity SEO', () => {
       it(`uses the ${language} database fields for ${path}`, () => {
         const { seo, doc, crumbs } = setup(language, path);
         seo.updateFrom(entity, { schemaType: type, imageUrl: 'https://images.example/cairo.jpg' });
-        const title = language === 'ar' ? entity.seoTitleAr : entity.seoTitleEng;
-        const description = language === 'ar' ? entity.seoDescriptionAr : entity.seoDescriptionEng;
+        const title = language === 'ar' ? entity.nameAr : entity.nameEng;
+        const description = language === 'ar' ? entity.descriptionAr : entity.descriptionEng;
         expect(doc.title).toBe(`${title} | Sea World Holidays`);
         expect(doc.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(description);
         expect(doc.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe(title);
@@ -78,7 +78,7 @@ describe('shared entity SEO', () => {
     crumbs.setCurrentParent({ name: 'مصر', path: '/ar/destinations/egypt-tours' });
     seo.updateFrom(entity, { schemaType: 'City' });
     events.next(new NavigationEnd(1, router.url, router.url));
-    expect(doc.title).toContain(entity.seoTitleAr);
+    expect(doc.title).toContain(entity.nameAr);
     expect(crumbs.items()[2].name).toBe('مصر');
     expect(doc.querySelector('#page-structured-data')?.textContent).toContain('مصر');
   });
@@ -88,7 +88,7 @@ describe('shared entity SEO', () => {
     seo.updateFrom(entity, { schemaType: 'City' });
     router.url = '/ar/hotels/new-hotel?tracking=1';
     events.next(new NavigationStart(2, router.url));
-    seo.updateFrom({ nameAr: 'فندق جديد', seoTitleAr: ' ', descriptionAr: '<p>إقامة &amp; راحة</p>' }, { schemaType: 'Hotel' });
+    seo.updateFrom({ nameAr: 'فندق جديد', descriptionAr: '<p>إقامة &amp; راحة</p>' }, { schemaType: 'Hotel' });
     events.next(new NavigationEnd(2, router.url, router.url));
     expect(doc.title).toBe('فندق جديد | Sea World Holidays');
     expect(doc.querySelector('meta[name="description"]')?.getAttribute('content')).toBe('إقامة & راحة');

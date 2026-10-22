@@ -123,9 +123,7 @@ export class HomeTourPage implements OnInit {
         if (!routeName) {
           this.tour = null;
           this.isLoading = false;
-
           this.errorMessage = 'tourNotFound';
-          this.seo.markNotFound('Tour not found');
           this.cdr.markForCheck();
           return;
         }
@@ -222,7 +220,6 @@ export class HomeTourPage implements OnInit {
         if (!tour) {
           this.tour = null;
           this.errorMessage = 'tourNotFound';
-          this.seo.markNotFound('Tour not found');
           return;
         }
         const isNileCruise = tour?.isNileCruise === true || tour?.IsNileCruise === true;
@@ -235,7 +232,7 @@ export class HomeTourPage implements OnInit {
           void this.router.navigateByUrl(`/${language}/${section}/${encodeURIComponent(routeName)}`, { replaceUrl: true });
           return;
         }
-        this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
+        this.seo.updateFrom(tour, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Tour' });
         this.loadRelatedTours(tour);
       });
   }

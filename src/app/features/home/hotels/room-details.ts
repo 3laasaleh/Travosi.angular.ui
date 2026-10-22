@@ -106,7 +106,8 @@ export class RoomDetails implements OnInit {
 
   loadRoom(routeName: string, roomRouteName: string): void {
     if (!routeName || !roomRouteName) {
-      this.hotel = null; this.room = null; this.loading = false; this.seo.markNotFound('Hotel room not found'); this.cdr.markForCheck(); return;
+      this.hotel = null; this.room = null; this.loading = false;
+        this.cdr.markForCheck(); return;
     }
     this.loading = true;
     this.error = '';
@@ -126,7 +127,7 @@ export class RoomDetails implements OnInit {
       const room = hotel?.rooms?.find((item: any) => this.roomRouteName(item) === roomRouteName.toLocaleLowerCase()) ?? null;
       this.hotel = hotel;
       this.room = room;
-      if (!hotel || !room) { this.seo.markNotFound('Hotel room not found'); return; }
+ 
       this.seo.updateFrom(
         {
           ...room,

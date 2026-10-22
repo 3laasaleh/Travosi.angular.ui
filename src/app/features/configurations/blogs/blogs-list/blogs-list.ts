@@ -240,8 +240,8 @@ export class BlogsList implements OnInit, OnChanges {
     return blog?.nameAr ?? blog?.nameAr ?? '';
   }
 
-  summaryEng(blog: any): string {
-    return blog?.summaryEng ?? blog?.SummaryEng ?? '';
+  DescriptionEng(blog: any): string {
+    return blog?.descriptionEng ?? blog?.DescriptionEng ?? blog?.summaryEng ?? blog?.SummaryEng ?? '';
   }
 
   publishedAt(blog: any): string | undefined {

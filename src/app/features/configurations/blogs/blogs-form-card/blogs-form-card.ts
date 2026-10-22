@@ -1,4 +1,3 @@
-import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -55,7 +54,7 @@ interface BlogHeaderDataValue {
 @Component({
   selector: 'app-blogs-form-card',
   standalone: true,
-  imports: [SeoFields, ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
   templateUrl: './blogs-form-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -80,7 +79,6 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   };
 
   form = new FormGroup({
-    ...createSeoControls(),
     nameEng: new FormControl('', {
       nonNullable: true,
       validators: [
@@ -101,11 +99,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
         Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/),
       ],
     }),
-    summaryEng: new FormControl('', {
+    DescriptionEng: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500)],
     }),
-    summaryAr: new FormControl('', {
+    DescriptionAr: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(500), arabicTextValidator()],
     }),
@@ -187,12 +185,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       }))
       .filter((image: BlogImageUpload) => !!image.url);
     this.form.reset({
-      ...seoValues(blog),
       nameEng: blog?.nameEng ?? blog?.nameEng,
       nameAr: blog?.nameAr ?? blog?.nameAr,
       routeName: blog?.routeName ?? blog?.RouteName,
-      summaryEng: blog?.summaryEng ?? blog?.SummaryEng,
-      summaryAr: blog?.summaryAr ?? blog?.SummaryAr,
+      DescriptionEng: blog?.descriptionEng ?? blog?.DescriptionEng ?? blog?.summaryEng ?? blog?.SummaryEng,
+      DescriptionAr: blog?.descriptionAr ?? blog?.DescriptionAr ?? blog?.summaryAr ?? blog?.SummaryAr,
       publishedAt: originalDate || (blog ? '' : this.today),
     });
     this.setHeaderData(
@@ -345,15 +342,14 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       return;
     }
     const data = new FormData();
-    appendSeoFields(data, value);
     const blogId = this.selectedBlog?.id ?? this.selectedBlog?.Id;
     if (blogId) data.append('Id', String(blogId));
 
     data.append('nameEng', value.nameEng.trim());
     data.append('nameAr', value.nameAr.trim());
     data.append('RouteName', value.routeName.trim().toLowerCase());
-    data.append('SummaryEng', value.summaryEng.trim());
-    data.append('SummaryAr', value.summaryAr.trim());
+    data.append('DescriptionEng', value.DescriptionEng.trim());
+    data.append('DescriptionAr', value.DescriptionAr.trim());
     const headerData = this.headerData.getRawValue() as BlogHeaderDataValue[];
     headerData.forEach((section, index) => {
       data.append(`HeaderData[${index}].HeaderType`, String(section.headerType));

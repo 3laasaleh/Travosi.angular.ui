@@ -190,8 +190,7 @@ export class CityPage implements OnInit {
 
   private showLoadError(status: number): void {
     this.errorMessage = status === 404 ? 'cityNotFound' : 'contentTemporarilyUnavailable';
-    if (status === 404) this.seo.markNotFound(this.isArabic ? 'المدينة غير موجودة' : 'City not found');
-    else this.seo.markUnavailable();
+
   }
 
   private setDestinationBreadcrumb(): void {

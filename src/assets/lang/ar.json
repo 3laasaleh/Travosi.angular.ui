@@ -946,7 +946,6 @@
   "fieldRequired": "هذا الحقل مطلوب.",
   "maximumCharacters": "يجب ألا يتجاوز النص {{count}} حرفًا.",
   "seoMetadata": "بيانات محركات البحث",
-  "seoOptionalHint": "اختياري. اترك الحقول فارغة لاستخدام اسم الصفحة ووصفها.",
   "seoMetadataHint": "تُستخدم في نتائج Google والمشاركة الاجتماعية. اجعل العنوان محددًا والوصف مفيدًا.",
   "seonameEnglish": "عنوان SEO بالإنجليزية",
   "seonameArabic": "عنوان SEO بالعربية",

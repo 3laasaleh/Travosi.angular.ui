@@ -9,7 +9,6 @@
   }
 
   <form class="configuration-form space-y-4" [formGroup]="form" (ngSubmit)="save()">
-    <app-seo-fields [form]="form" />
     @if (validationSubmitted && form.invalid) { <p
       class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{{ 'pleaseCorrectFormErrors' |
       translate }}</p> }
@@ -57,22 +56,22 @@
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         {{ 'englishSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <textarea formControlName="summaryEng" maxlength="500" rows="1"
+        <textarea formControlName="DescriptionEng" maxlength="500" rows="1"
           class="mt-1 w-full rounded-xl border p-2"
-          [class.border-red-500]="form.controls.summaryEng.touched && form.controls.summaryEng.invalid"></textarea>
-        @if (form.controls.summaryEng.touched && form.controls.summaryEng.hasError('maxlength')) {
+          [class.border-red-500]="form.controls.DescriptionEng.touched && form.controls.DescriptionEng.invalid"></textarea>
+        @if (form.controls.DescriptionEng.touched && form.controls.DescriptionEng.hasError('maxlength')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
         }
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <textarea formControlName="summaryAr" maxlength="500" rows="1" dir="rtl"
+        <textarea formControlName="DescriptionAr" maxlength="500" rows="1" dir="rtl"
           class="mt-1 w-full rounded-xl border p-2"
-          [class.border-red-500]="form.controls.summaryAr.touched && form.controls.summaryAr.invalid"></textarea>
-        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('maxlength')) {
+          [class.border-red-500]="form.controls.DescriptionAr.touched && form.controls.DescriptionAr.invalid"></textarea>
+        @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('maxlength')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
         }
-        @if (form.controls.summaryAr.touched && form.controls.summaryAr.hasError('arabicText')) { <span
+        @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('arabicText')) { <span
           class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
     </div>

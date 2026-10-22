@@ -49,7 +49,6 @@ export class BlogDetail implements OnInit {
     if (!routeName) {
       this.errorMessage = 'Blog not found.';
       this.isLoading = false;
-      this.seo.markNotFound('Blog not found');
       return;
     }
     this.api
@@ -67,7 +66,6 @@ export class BlogDetail implements OnInit {
       .subscribe((response) => {
         if (response?.isSuccess === false || response?.IsSuccess === false || !response) {
           this.errorMessage = response?.message || response?.Message || 'Blog not found.';
-          this.seo.markNotFound('Blog not found');
           return;
         }
         this.blog = response.data ?? response.Data ?? response;
@@ -77,7 +75,7 @@ export class BlogDetail implements OnInit {
         this.seo.updateFrom(this.blog, {
           image: this.imageSources[0],
           imageUrl: this.images[0],
-          schemaType: 'BlogPosting',
+          schemaType: 'Blog',
         });
       });
   }
@@ -89,7 +87,7 @@ export class BlogDetail implements OnInit {
 
   }
   get summary(): string {
-    return this.blog?.summary ?? '';
+    return this.blog?.description ?? this.blog?.Description ?? this.blog?.summary ?? this.blog?.Summary ?? '';
   }
   get content(): string {
     return this.headerData.length ? '' : this.localizedRawContent;

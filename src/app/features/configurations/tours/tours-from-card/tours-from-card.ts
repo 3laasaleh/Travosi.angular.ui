@@ -1,4 +1,3 @@
-import { SeoFields, createSeoControls, seoValues, appendSeoFields } from '../../shared/seo-fields';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -62,7 +61,7 @@ type TourFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-tours-from-card',
   standalone: true,
-  imports: [SeoFields, ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker],
   templateUrl: './tours-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -216,8 +215,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   get detailsStepInvalid(): boolean {
     const controls: AbstractControl[] = [
-      this.tourForm.controls.seoTitleEng, this.tourForm.controls.seoTitleAr,
-      this.tourForm.controls.seoDescriptionEng, this.tourForm.controls.seoDescriptionAr,
       this.tourForm.controls.nameEng,
       this.tourForm.controls.nameAr,
       this.tourForm.controls.routeName,
@@ -971,7 +968,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       this.imageUploads[0].isCover = true;
     }
     this.tourForm.patchValue({
-      ...seoValues(tour),
       nameEng: tour.nameEng ?? '',
       nameAr: tour.nameAr ?? '',
       routeName: tour.routeName ?? tour.nameEng ?? '',
@@ -1068,7 +1064,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private createForm() {
     return new FormGroup(
       {
-      ...createSeoControls(),
         nameEng: new FormControl('', {
           nonNullable: true,
           validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
@@ -1305,7 +1300,6 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   private buildTourDetailsPayload(tourId: number | null): Record<string, unknown> {
     const form = this.tourForm.getRawValue();
     return {
-      ...seoValues(form),
       ...(tourId ? { Id: tourId } : {}),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),

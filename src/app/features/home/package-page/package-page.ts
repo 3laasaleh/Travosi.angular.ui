@@ -209,7 +209,6 @@ export class HomePackagePage implements OnInit {
         if (!routeName) {
           this.isLoading = false;
           this.errorMessage = 'packageNotFound';
-          this.seo.markNotFound('Package not found');
           this.cdr.markForCheck();
           return;
         }
@@ -353,7 +352,6 @@ export class HomePackagePage implements OnInit {
         if (!travelPackage) {
           this.travelPackage = null;
           this.errorMessage = 'packageNotFound';
-          this.seo.markNotFound('Package not found');
           return;
         }
         this.updateSeo();
@@ -361,7 +359,7 @@ export class HomePackagePage implements OnInit {
   }
 
   private updateSeo(): void {
-    this.seo.updateFrom(this.travelPackage, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'TouristTrip' });
+    this.seo.updateFrom(this.travelPackage, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Package' });
   }
 
   private packageRequest(routeName: string): Observable<any> {

@@ -15,6 +15,5 @@ export class NotFound implements OnInit {
   private readonly seo = inject(SeoService);
 
   ngOnInit(): void {
-    this.seo.markNotFound();
   }
 }
