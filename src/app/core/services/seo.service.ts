@@ -82,7 +82,6 @@ export class SeoService {
       entity?.coverImageUrl ??
       entity?.imageUrl ??
       entity?.images?.[0] ?? entity?.Images?.[0];
-debugger
     const page: LocalizedSeoPage = {
       name: { en: english.name, ar: arabic.name },
       title: { en: english.title, ar: arabic.title },
@@ -236,7 +235,6 @@ debugger
       blogs: ['Travel Blog | Sea World Holidays', 'مدونة السفر | سي وورلد هوليدايز'],
     };
     const pageTitle = titles[section ?? 'home'] ?? titles['home'];
-    debugger;
     this.setPage(
       language === 'ar' ? pageTitle[1] : pageTitle[0],
       DEFAULT_DESCRIPTION[language],
