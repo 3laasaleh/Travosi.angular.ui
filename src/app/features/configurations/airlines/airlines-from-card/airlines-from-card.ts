@@ -22,7 +22,8 @@ import {
 
 export interface AirlineDTO {
   id: number;
-  name?: string;
+  nameEng?: string;
+  nameAr?: string;
   code?: string;
   logoUrl?: string;
   isActive?: boolean;
@@ -66,7 +67,8 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['selectedAirline']) return;
-    if (this.selectedAirline) this.populateForm(this.selectedAirline);
+    if (this.selectedAirline) 
+      this.populateForm(this.selectedAirline);
     else this.resetForm(false);
   }
 
@@ -83,7 +85,8 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
     }
     const form = this.airlineForm.getRawValue();
     const payload: any = {
-      name: form.name.trim(),
+      nameEng: form.nameEng.trim(),
+      nameAr: form.nameAr.trim(),
       code: form.code.trim().toUpperCase(),
     };
     if (this.selectedAirline?.id) payload.id = this.selectedAirline.id;
@@ -212,7 +215,8 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
       ? { url: logoUrl, name: this.translate.instant('airlineLogo'), existing: true }
       : null;
     this.airlineForm.setValue({
-      name: airline.name ?? '',
+      nameEng: airline.nameEng ?? '',
+      nameAr: airline.nameAr ?? '',
       code: airline.code ?? '',
       logo: logoUrl,
     });
@@ -223,7 +227,7 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
     this.revokeNewLogoUrl();
     this.logoUpload = null;
     this.imageValidationMessage = '';
-    this.airlineForm.reset({ name: '', code: '', logo: '' });
+    this.airlineForm.reset({ nameEng: '', nameAr: '', code: '', logo: '' });
     if (emitCancel) this.editCancelled.emit();
   }
 
@@ -254,7 +258,8 @@ export class AirlinesFromCard implements OnChanges, OnDestroy {
 
   private createForm() {
     return new FormGroup({
-      name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      nameEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/\S/)] }),
+      nameAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/\S/)] }),
       code: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(/^[A-Za-z0-9]{2,3}$/)],

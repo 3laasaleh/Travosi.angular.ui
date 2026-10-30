@@ -55,6 +55,7 @@ export interface QuotationDTO {
   discount: number;
   taxRate: number;
   tax: number;
+  adminFees?: number | null;
   totalAmount: number;
   totalCost: number;
   status: QuotationStatusEnum;
@@ -65,6 +66,9 @@ export interface QuotationDTO {
   images?: Array<{ data: string; contentType: string; sortOrder: number }>;
   imagesAtTop?: boolean;
 }
+
+type QuotationAudience = 'adults' | 'children' | 'infants';
+type QuotationPriceSet = Record<QuotationAudience, number> & { currencyId: number };
 
 @Component({
   selector: 'app-quotations-from-card',
@@ -90,6 +94,11 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   tours: any[] = [];
   hotels: any[] = [];
   flights: any[] = [];
+  destinations: any[] = [];
+  cities: any[] = [];
+  citiesLoading = false;
+  readonly destinationFilter = new FormControl<number | null>(null);
+  readonly cityFilter = new FormControl<number | null>({ value: null, disabled: true });
   selectedPackageIds = new Set<number>();
   selectedTourIds = new Set<number>();
   selectedHotelIds = new Set<number>();
@@ -101,6 +110,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   imagesAtTop = false;
   imagesLoading = false;
   selectedFlightIds = new Set<number>();
+  private readonly quotationPrices = new Map<string, QuotationPriceSet>();
   isLoading = false;
   optionsLoading = false;
   optionsLoadError = false;
@@ -210,7 +220,66 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   get totalAmount(): number {
-    return this.money(Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax);
+    return this.money(Math.max(0, this.subTotal - this.quotationForm.controls.discount.value) + this.tax + this.adminFees);
+  }
+
+  get adminFees(): number { return Number(this.quotationForm.controls.adminFees.value ?? 0); }
+
+  get filteredPackages(): any[] {
+    return this.filterCatalog(this.packages, this.selectedPackageIds, item => this.packageMatchesFilters(item));
+  }
+
+  get filteredTours(): any[] {
+    return this.filterCatalog(this.tours, this.selectedTourIds, item => this.entityMatchesFilters(item));
+  }
+
+  get filteredHotels(): any[] {
+    return this.filterCatalog(this.hotels, this.selectedHotelIds, item => this.entityMatchesFilters(item));
+  }
+
+  get filteredFlights(): any[] {
+    return this.filterCatalog(this.flights, this.selectedFlightIds, item => this.flightMatchesFilters(item));
+  }
+
+  onDestinationFilterChange(value: unknown): void {
+    const destinationId = Number(value);
+    this.cityFilter.reset(null, { emitEvent: false });
+    this.cities = [];
+    if (!Number.isInteger(destinationId) || destinationId <= 0) {
+      this.destinationFilter.setValue(null, { emitEvent: false });
+      this.cityFilter.disable({ emitEvent: false });
+      return;
+    }
+
+    this.destinationFilter.setValue(destinationId, { emitEvent: false });
+    this.cityFilter.disable({ emitEvent: false });
+    this.citiesLoading = true;
+    this.apiService.get(`Cities/GetAll?destinationId=${destinationId}&page=1&pageSize=500`).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => {
+        if (Number(this.destinationFilter.value) === destinationId) this.citiesLoading = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe({
+      next: (response: any) => {
+        if (Number(this.destinationFilter.value) !== destinationId) return;
+        this.cities = this.rows(response, 'cities');
+        this.cityFilter.enable({ emitEvent: false });
+      },
+      error: () => {
+        if (Number(this.destinationFilter.value) !== destinationId) return;
+        this.cityFilter.enable({ emitEvent: false });
+        this.showToast('error', 'citiesLoadError');
+      },
+    });
+  }
+
+  clearCatalogFilters(): void {
+    this.destinationFilter.setValue(null, { emitEvent: false });
+    this.cityFilter.reset(null, { emitEvent: false });
+    this.cityFilter.disable({ emitEvent: false });
+    this.cities = [];
+    this.citiesLoading = false;
   }
 
   get canSave(): boolean {
@@ -391,10 +460,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     return this.quotedPrice(item.pricePerInfant ?? 0, item.currencyId ?? 2);
   }
 
-  catalogTotal(item: any): number {
-    return this.packagePrice(item) * this.quotationForm.controls.adults.value
-      + this.childPrice(item) * this.quotationForm.controls.children.value
-      + this.infantPrice(item) * this.quotationForm.controls.infants.value;
+  catalogTotal(itemType: 1 | 2, item: any): number {
+    return this.quotationServiceTotal(itemType, item);
   }
 
   flightAdultPrice(flight: any): number {
@@ -410,10 +477,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   flightTotal(flight: any): number {
-    const form = this.quotationForm.controls;
-    return this.flightAdultPrice(flight) * form.adults.value
-      + this.flightChildPrice(flight) * form.children.value
-      + this.flightInfantPrice(flight) * form.infants.value;
+    return this.quotationServiceTotal(4, flight);
   }
 
   hotelNights(): number {
@@ -426,7 +490,47 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   hotelTotal(hotel: any): number {
     return this.hotelRooms(hotel.id).filter(room => this.selectedRoomIds.has(Number(room.id)))
-      .reduce((sum, room) => sum + (this.roomTotal(room) ?? 0), 0);
+      .reduce((sum, room) => sum + this.quotationServiceTotal(3, room), 0);
+  }
+
+  quotationPrice(itemType: number, item: any, audience: QuotationAudience): number {
+    const override = this.currentPriceSet(itemType, item);
+    if (override) return override[audience];
+
+    const saved = this.savedAudienceItem(itemType, item, audience);
+    if (saved) return this.savedPrice(saved, 0);
+
+    if (itemType === 3) {
+      if (audience !== 'adults') return 0;
+      return this.money((this.roomTotal(item) ?? 0) / Math.max(1, Number(this.quotationForm.controls.adults.value) || 1));
+    }
+    if (itemType === 4) {
+      return audience === 'adults' ? this.flightAdultPrice(item)
+        : audience === 'children' ? this.flightChildPrice(item) : this.flightInfantPrice(item);
+    }
+    return audience === 'adults' ? this.packagePrice(item)
+      : audience === 'children' ? this.childPrice(item) : this.infantPrice(item);
+  }
+
+  setQuotationPrice(itemType: number, item: any, audience: QuotationAudience, rawValue: unknown): void {
+    const current = this.priceSet(itemType, item);
+    const text = String(rawValue ?? '').trim();
+    current[audience] = text === '' ? Number.NaN : Number(text);
+    this.quotationPrices.set(this.priceKey(itemType, item), current);
+  }
+
+  quotationPriceInvalid(itemType: number, item: any, audience: QuotationAudience): boolean {
+    const value = this.quotationPrice(itemType, item, audience);
+    return !Number.isFinite(value) || value < 0;
+  }
+
+  quotationServiceTotal(itemType: number, item: any): number {
+    const form = this.quotationForm.controls;
+    return this.money(
+      this.quotationPrice(itemType, item, 'adults') * Number(form.adults.value)
+      + this.quotationPrice(itemType, item, 'children') * Number(form.children.value)
+      + this.quotationPrice(itemType, item, 'infants') * Number(form.infants.value),
+    );
   }
 
   flightName(flight: any): string {
@@ -497,7 +601,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: adultItem?.description || `${base.description} - Adults`,
         quantity: adults,
         costPrice: Number(adultItem?.costPrice ?? base.costPrice),
-        sellingPrice: this.savedPrice(adultItem, this.packagePrice(item)),
+        sellingPrice: this.quotationPrice(itemType, item, 'adults'),
+        travelerType: 1,
         sortOrder: base.sortOrder,
       });
       if (children > 0) items.push({
@@ -506,7 +611,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: childItem?.description || `${base.description} - Children`,
         quantity: children,
         costPrice: Number(childItem?.costPrice ?? base.costPrice),
-        sellingPrice: this.savedPrice(childItem, this.childPrice(item)),
+        sellingPrice: this.quotationPrice(itemType, item, 'children'),
+        travelerType: 2,
         sortOrder: sortOrder++,
       });
       if (infants > 0) items.push({
@@ -515,7 +621,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: infantItem?.description || `${base.description} - Infants`,
         quantity: infants,
         costPrice: Number(infantItem?.costPrice ?? base.costPrice),
-        sellingPrice: this.savedPrice(infantItem, this.infantPrice(item)),
+        sellingPrice: this.quotationPrice(itemType, item, 'infants'),
+        travelerType: 3,
         sortOrder: sortOrder++,
       });
     };
@@ -523,20 +630,47 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.selectedTours.forEach((item) => addCatalogItem(item, 2, 'tourId'));
     this.selectedHotels.forEach((hotel) => {
       this.hotelRooms(hotel.id).filter(room => this.selectedRoomIds.has(Number(room.id))).forEach(room => {
-        for (const rate of this.roomRates(room) ?? []) items.push({
-          itemType: 3,
-          hotelId: Number(hotel.id),
-          hotelRoomId: Number(room.id),
-          description: `${this.itemName(hotel)} - ${this.itemName(room)}`,
-          quantity: rate.quantity,
-          sellingPrice: rate.price,
-          sortOrder: sortOrder++,
-          serviceStartDate: this.quotationForm.controls.travelStartDate.value,
-          serviceEndDate: this.quotationForm.controls.travelEndDate.value,
-          roomType: room.roomTypeName ?? this.itemName(room),
-          numberOfRooms: 1,
-          mealPlan: room.mealPlanName ?? null,
-        });
+        if (!this.usesHotelPassengerPrices(room)) {
+          for (const rate of this.roomRates(room) ?? []) items.push({
+            itemType: 3,
+            hotelId: Number(hotel.id),
+            hotelRoomId: Number(room.id),
+            description: `${this.itemName(hotel)} - ${this.itemName(room)}`,
+            quantity: rate.quantity,
+            sellingPrice: rate.price,
+            sortOrder: sortOrder++,
+            serviceStartDate: this.quotationForm.controls.travelStartDate.value,
+            serviceEndDate: this.quotationForm.controls.travelEndDate.value,
+            roomType: room.roomTypeName ?? this.itemName(room),
+            numberOfRooms: 1,
+            mealPlan: room.mealPlanName ?? null,
+          });
+          return;
+        }
+        const addHotelLine = (audience: QuotationAudience, quantity: number, travelerType: number) => {
+          if (quantity <= 0) return;
+          const savedItem = this.savedAudienceItem(3, room, audience);
+          items.push({
+            ...this.savedLineDetails(savedItem),
+            itemType: 3,
+            hotelId: Number(hotel.id),
+            hotelRoomId: Number(room.id),
+            description: savedItem?.description || `${this.itemName(hotel)} - ${this.itemName(room)} - ${audience[0].toUpperCase()}${audience.slice(1)}`,
+            quantity,
+            sellingPrice: this.quotationPrice(3, room, audience),
+            travelerType,
+            sortOrder: sortOrder++,
+            serviceStartDate: this.quotationForm.controls.travelStartDate.value,
+            serviceEndDate: this.quotationForm.controls.travelEndDate.value,
+            roomType: room.roomTypeName ?? this.itemName(room),
+            numberOfRooms: 1,
+            mealPlan: room.mealPlanName ?? null,
+          });
+        };
+        const form = this.quotationForm.controls;
+        addHotelLine('adults', Number(form.adults.value), 1);
+        addHotelLine('children', Number(form.children.value), 2);
+        addHotelLine('infants', Number(form.infants.value), 3);
       });
     });
     this.selectedFlights.forEach((flight) => {
@@ -550,16 +684,17 @@ export class QuotationsFromCard implements OnInit, OnChanges {
           description: savedItem?.description || `${this.flightName(flight)} - ${audience[0].toUpperCase()}${audience.slice(1)}`,
           quantity,
           costPrice: Number(savedItem?.costPrice ?? flight.costPrice ?? flight.cost ?? 0),
-          sellingPrice: this.savedPrice(savedItem, price),
+          sellingPrice: price,
+          travelerType: audience === 'adults' ? 1 : audience === 'children' ? 2 : 3,
           discount: Number(savedItem?.discount ?? 0),
           sortOrder: sortOrder++,
           flightId: Number(flight.id),
         });
       };
       const form = this.quotationForm.controls;
-      addFlightLine('adults', form.adults.value, this.flightAdultPrice(flight));
-      addFlightLine('children', form.children.value, this.flightChildPrice(flight));
-      addFlightLine('infants', form.infants.value, this.flightInfantPrice(flight));
+      addFlightLine('adults', form.adults.value, this.quotationPrice(4, flight, 'adults'));
+      addFlightLine('children', form.children.value, this.quotationPrice(4, flight, 'children'));
+      addFlightLine('infants', form.infants.value, this.quotationPrice(4, flight, 'infants'));
     });
     this.transfersArray.getRawValue().forEach((transfer: any) => {
       const from = String(transfer.from ?? '').trim();
@@ -571,7 +706,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
         description: `${from} - ${to}`,
         quantity: 1,
         costPrice: 0,
-        sellingPrice: 0,
+        sellingPrice: Number(transfer.price ?? 0),
         discount: 0,
         sortOrder: sortOrder++,
         from,
@@ -610,11 +745,65 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       this.itemTypeNumber(item) === itemType && Number(item?.[reference]) === Number(id));
     if (!audience) return candidates[0];
 
+    const travelerType = audience === 'adults' ? 1 : audience === 'children' ? 2 : 3;
+    const typed = candidates.find((item: any) => Number(item?.travelerType) === travelerType);
+    if (typed) return typed;
     const marker = audience === 'adults'
       ? /\badult(s)?\b/i
       : audience === 'children' ? /\bchild(ren)?\b/i : /\binfant(s)?\b/i;
     return candidates.find((item: any) => marker.test(String(item?.description ?? '')))
       ?? (audience === 'adults' ? candidates[0] : undefined);
+  }
+
+  private savedAudienceItem(itemType: number, item: any, audience: QuotationAudience): any | undefined {
+    if (itemType === 1) return this.savedCatalogItem(1, 'packageId', item.id, audience);
+    if (itemType === 2) return this.savedCatalogItem(2, 'tourId', item.id, audience);
+    if (itemType === 4) return this.savedCatalogItem(4, 'flightId', item.id, audience);
+
+    const candidates = (this.selectedQuotation?.items ?? []).filter((line: any) =>
+      this.itemTypeNumber(line) === 3 && Number(line?.hotelRoomId) === Number(item?.id));
+    const travelerType = audience === 'adults' ? 1 : audience === 'children' ? 2 : 3;
+    const typed = candidates.find((line: any) => Number(line?.travelerType) === travelerType);
+    if (typed) return typed;
+    const marker = audience === 'adults' ? /\badult(s)?\b/i
+      : audience === 'children' ? /\bchild(ren)?\b/i : /\binfant(s)?\b/i;
+    return candidates.find((line: any) => marker.test(String(line?.description ?? '')));
+  }
+
+  private usesHotelPassengerPrices(room: any): boolean {
+    if (this.quotationPrices.has(this.priceKey(3, room))) return true;
+    return (this.selectedQuotation?.items ?? []).some((line: any) =>
+      this.itemTypeNumber(line) === 3
+      && Number(line?.hotelRoomId) === Number(room?.id)
+      && (line?.travelerType != null || /\b(adult(s)?|child(ren)?|infant(s)?)\b/i.test(String(line?.description ?? ''))));
+  }
+
+  private priceKey(itemType: number, item: any): string { return `${itemType}:${Number(item?.id)}`; }
+
+  private currentPriceSet(itemType: number, item: any): QuotationPriceSet | undefined {
+    const key = this.priceKey(itemType, item);
+    const prices = this.quotationPrices.get(key);
+    if (!prices) return undefined;
+    const currencyId = Number(this.quotationForm.controls.currencyId.value);
+    if (prices.currencyId === currencyId) return prices;
+    const convert = (value: number) => this.currencyService.convertForDocument(value, prices.currencyId, currencyId) ?? Number.NaN;
+    const converted: QuotationPriceSet = {
+      adults: convert(prices.adults),
+      children: convert(prices.children),
+      infants: convert(prices.infants),
+      currencyId,
+    };
+    this.quotationPrices.set(key, converted);
+    return converted;
+  }
+
+  private priceSet(itemType: number, item: any): QuotationPriceSet {
+    return this.currentPriceSet(itemType, item) ?? {
+      adults: this.quotationPrice(itemType, item, 'adults'),
+      children: this.quotationPrice(itemType, item, 'children'),
+      infants: this.quotationPrice(itemType, item, 'infants'),
+      currencyId: Number(this.quotationForm.controls.currencyId.value),
+    };
   }
 
   private savedItemById(id: unknown): any | undefined {
@@ -702,6 +891,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       discount: Number(form.discount ?? 0),
       taxRate: Number(form.taxRate ?? 0),
       tax: this.tax,
+      adminFees: form.adminFees == null || form.adminFees === '' ? null : Number(form.adminFees),
       totalAmount: this.totalAmount,
       totalCost: this.totalCost,
       validUntil: form.validUntil,
@@ -774,17 +964,19 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       tours: this.apiService.get('Tours/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       hotels: this.apiService.get('Hotels?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
       flights: this.apiService.get('Flights/GetAll?page=1&pageSize=100').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
+      destinations: this.apiService.get('Destinations/GetAll?page=1&pageSize=500').pipe(catchError(() => { this.optionsLoadError = true; return of([]); })),
     }).pipe(takeUntilDestroyed(this.destroyRef), finalize(() => {
       this.optionsLoading = false;
       if (this.optionsLoadError) this.showToast('error', 'quotationOptionsLoadError');
       this.cdr.markForCheck();
-    })).subscribe(({ customers, packages, tours, hotels, flights }) => {
-      if ([customers, packages, tours, hotels, flights].some((response: any) => response?.isSuccess === false)) this.optionsLoadError = true;
+    })).subscribe(({ customers, packages, tours, hotels, flights, destinations }) => {
+      if ([customers, packages, tours, hotels, flights, destinations].some((response: any) => response?.isSuccess === false)) this.optionsLoadError = true;
       this.customers = this.rows(customers, 'customers');
       this.packages = this.rows(packages, 'packages');
       this.tours = this.rows(tours, 'tours');
       this.hotels = this.rows(hotels, 'hotels');
       this.flights = this.rows(flights, 'flights');
+      this.destinations = this.rows(destinations, 'destinations');
       if (this.selectedQuotation) this.selectCatalogItems(this.selectedQuotation.items);
     });
   }
@@ -801,6 +993,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private populateForm(quotation: QuotationDTO): void {
     this.validationSubmitted = false;
+    this.quotationPrices.clear();
     this.images = [...(quotation.images ?? [])];
     this.imagesAtTop = quotation.imagesAtTop ?? false;
     this.quotationForm.patchValue({
@@ -813,6 +1006,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       infants: quotation.infants ?? 0,
       discount: quotation.discount ?? 0,
       taxRate: quotation.taxRate ?? 0,
+      adminFees: quotation.adminFees ?? null,
       validUntil: quotation.validUntil ?? '',
       notes: quotation.notes ?? '',
     });
@@ -866,6 +1060,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     this.images = [];
     this.imagesAtTop = false;
     this.selectedFlightIds.clear();
+    this.quotationPrices.clear();
     this.policiesArray.clear();
     this.transfersArray.clear();
     this.quotationForm.reset({
@@ -878,6 +1073,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       infants: 0,
       discount: 0,
       taxRate: 0,
+      adminFees: null,
       validUntil: this.defaultValidUntil,
       notes: '',
     });
@@ -888,6 +1084,57 @@ export class QuotationsFromCard implements OnInit, OnChanges {
     const payload = response?.data ?? response;
     const rows = payload?.data ?? payload?.items ?? payload?.[key] ?? payload;
     return Array.isArray(rows) ? rows : [];
+  }
+
+  private filterCatalog(items: any[], selectedIds: Set<number>, matches: (item: any) => boolean): any[] {
+    if (!this.destinationFilter.value) return items;
+    return items.filter(item => selectedIds.has(Number(item.id)) || matches(item));
+  }
+
+  private entityMatchesFilters(item: any): boolean {
+    const destinationId = Number(this.destinationFilter.value);
+    const cityId = Number(this.cityFilter.value);
+    if (Number(item?.destinationId ?? item?.destination?.id) !== destinationId) return false;
+    return !cityId || Number(item?.cityId ?? item?.city?.id) === cityId;
+  }
+
+  private packageMatchesFilters(item: any): boolean {
+    const destinationId = Number(this.destinationFilter.value);
+    const cityId = Number(this.cityFilter.value);
+    const destinationIds = [item?.destinationId, ...(item?.destinations ?? []).map((value: any) => value?.destinationId ?? value?.id)]
+      .map(Number).filter(Number.isFinite);
+    if (!destinationIds.includes(destinationId)) return false;
+    if (!cityId) return true;
+    const related = [...(item?.tours ?? []), ...(item?.hotelRooms ?? []).map((value: any) => value?.hotel ?? value)];
+    return related.some(value => Number(value?.cityId ?? value?.city?.id) === cityId)
+      || this.textMatchesLocation(item, this.selectedCity());
+  }
+
+  private flightMatchesFilters(item: any): boolean {
+    const city = this.selectedCity();
+    if (city) return this.textMatchesLocation(item, city);
+    const destination = this.destinations.find(value => Number(value?.id ?? value?.destinationId) === Number(this.destinationFilter.value));
+    if (this.textMatchesLocation(item, destination)) return true;
+    return this.cities.some(value => this.textMatchesLocation(item, value));
+  }
+
+  private selectedCity(): any | null {
+    return this.cities.find(value => Number(value?.id ?? value?.cityId) === Number(this.cityFilter.value)) ?? null;
+  }
+
+  private textMatchesLocation(item: any, location: any): boolean {
+    if (!location) return false;
+    const route = this.normalizeText([
+      item?.departureAirport, item?.departureAirportName, item?.arrivalAirport, item?.arrivalAirportName,
+      item?.descEn, item?.descAr, item?.name, item?.nameEng, item?.nameAr,
+    ].filter(Boolean).join(' '));
+    const names = [location?.name, location?.nameEng, location?.nameAr, location?.routeName]
+      .map((value: unknown) => this.normalizeText(value)).filter(Boolean);
+    return names.some((name: string) => route.includes(name));
+  }
+
+  private normalizeText(value: unknown): string {
+    return String(value ?? '').normalize('NFKD').toLocaleLowerCase().replace(/[\u064B-\u065F\u0670]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   }
 
   private createPolicyGroup(policy: { id?: number; value?: string } = {}): FormGroup {
@@ -923,6 +1170,10 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       arrivalTime: new FormControl(this.toInputTime(transfer?.arrivalTime) || defaults.arrivalTime, {
         nonNullable: true,
         validators: [Validators.required],
+      }),
+      price: new FormControl(Number(transfer?.pricePerItem ?? transfer?.sellingPrice ?? transfer?.quotationTransfer?.price ?? 0), {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0)],
       }),
     }, { validators: this.transferScheduleValidator });
   }
@@ -960,6 +1211,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       infants: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), this.integerValidator] }),
       discount: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
       taxRate: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.max(100)] }),
+      adminFees: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
       validUntil: new FormControl(this.defaultValidUntil, { nonNullable: true, validators: [Validators.required, this.validDateValidator, this.validUntilValidator] }),
       notes: new FormControl('', { nonNullable: true }),
       policies: new FormArray<FormGroup>([]),

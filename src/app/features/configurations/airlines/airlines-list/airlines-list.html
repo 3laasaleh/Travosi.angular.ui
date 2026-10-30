@@ -38,7 +38,8 @@
       <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
         <tr>
           <th class="px-4 py-3">{{ 'logo' | translate }}</th>
-          <th class="px-4 py-3">{{ 'airlineName' | translate }}</th>
+          <th class="px-4 py-3">{{ 'nameEnglish' | translate }}</th>
+          <th class="px-4 py-3">{{ 'nameArabic' | translate }}</th>
           <th class="px-4 py-3">{{ 'airlineCode' | translate }}</th>
           <th class="px-4 py-3">{{ 'status' | translate }}</th>
           <th class="px-4 py-3">{{ 'actions' | translate }}</th>
@@ -50,7 +51,8 @@
             @if (logoUrl(item); as logo) { <img [src]="logo" [alt]="item.name" class="h-12 w-20 rounded-lg object-contain" /> }
             @else { <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100"><i class="mdi mdi-image-off-outline"></i></div> }
           </td>
-          <td class="px-4 py-3 font-semibold">{{ item.name }}</td>
+          <td class="px-4 py-3 font-semibold">{{ item.nameEng }}</td>
+          <td class="px-4 py-3 font-semibold">{{ item.nameAr }}</td>
           <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ item.code }}</span></td>
           <td class="px-4 py-3"><button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false" [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate" class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60" [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false" (click)="toggleAirlineStatus(item)">@if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white"></i> } @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }</button></td>
           <td class="px-4 py-3">

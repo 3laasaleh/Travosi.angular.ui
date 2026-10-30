@@ -58,6 +58,7 @@ export class TasksFromCard implements OnInit, OnChanges {
     { value: 1, labelKey: 'priorityLow' }, { value: 2, labelKey: 'priorityMedium' },
     { value: 3, labelKey: 'priorityHigh' }, { value: 4, labelKey: 'priorityUrgent' },
   ];
+  readonly today = new Date().toISOString();
 
   constructor(
     private apiService: ApiService,

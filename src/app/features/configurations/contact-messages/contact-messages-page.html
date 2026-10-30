@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <div class="mb-6 flex flex-wrap gap-2">
+    <div class="mb-6 flex flex-wrap justify-center gap-2">
       @for (filter of readFilters; track filter) {
         <button type="button" class="rounded-full border px-4 py-1.5 text-sm font-semibold transition" [class.border-primary]="readFilter === filter" [class.bg-primary]="readFilter === filter" [class.text-white]="readFilter === filter" [class.border-slate-300]="readFilter !== filter" [class.text-slate-600]="readFilter !== filter" (click)="setReadFilter(filter)">{{ ('contactMessagesFilter_' + filter) | translate }}</button>
       }
