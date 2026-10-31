@@ -15,6 +15,7 @@ import { environment } from '../../../../../environments/environment';
 import Swal from 'sweetalert2';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../../admin.service';
+import { RichTextPlainTextPipe } from '../../../../shared/pipes/rich-text-plain-text.pipe';
 
 interface PaginationInfoDTO {
   page: number;
@@ -26,7 +27,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-configurations-tours-list',
   standalone: true,
-  imports: [TranslatePipe, PaginationOne],
+  imports: [TranslatePipe, PaginationOne, RichTextPlainTextPipe],
   templateUrl: './tours-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

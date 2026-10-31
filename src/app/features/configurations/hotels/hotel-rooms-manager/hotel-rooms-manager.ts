@@ -33,6 +33,7 @@ import { arabicTextValidator } from '../../../../core/validators/arabic-text.val
 import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
 import { SaveFeedbackService } from '../../shared/save-feedback.service';
 import { HotelRoomCard } from '../../../home/hotels/hotel-room-card/hotel-room-card';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 
 interface FacilityGroup {
   id: number;
@@ -43,7 +44,7 @@ interface FacilityGroup {
 @Component({
   selector: 'app-hotel-rooms-manager',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, TranslatePipe, HotelRoomCard, DatePicker],
+  imports: [FormsModule, ReactiveFormsModule, TranslatePipe, HotelRoomCard, DatePicker, RichTextEditor],
   templateUrl: './hotel-rooms-manager.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

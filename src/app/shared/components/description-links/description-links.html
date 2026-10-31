@@ -1,7 +1,1 @@
-@for (part of parts; track $index) {
-  @if (part.href) {
-    <a [href]="part.href" target="_blank" rel="noopener noreferrer" class="font-medium text-primary underline underline-offset-4 hover:opacity-80">{{ part.text }}</a>
-  } @else {
-    {{ part.text }}
-  }
-}
+<app-rich-text-content [content]="text" />

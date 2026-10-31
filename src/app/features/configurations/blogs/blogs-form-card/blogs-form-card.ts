@@ -24,6 +24,7 @@ import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
 import {
@@ -54,7 +55,7 @@ interface BlogHeaderDataValue {
 @Component({
   selector: 'app-blogs-form-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, DatePicker, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePicker, RichTextEditor, TranslatePipe],
   templateUrl: './blogs-form-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

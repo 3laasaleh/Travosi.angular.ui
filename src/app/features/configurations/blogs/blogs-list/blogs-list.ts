@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { PaginationOne } from '../../../../shared/components/listing/tour-grid/pagination-one/pagination-one';
 import { AdminService } from '../../admin.service';
+import { RichTextPlainTextPipe } from '../../../../shared/pipes/rich-text-plain-text.pipe';
 
 interface PaginationInfoDTO {
   page: number;
@@ -30,7 +31,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-blogs-list',
   standalone: true,
-  imports: [DatePipe, PaginationOne, TranslatePipe],
+  imports: [DatePipe, PaginationOne, RichTextPlainTextPipe, TranslatePipe],
   templateUrl: './blogs-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

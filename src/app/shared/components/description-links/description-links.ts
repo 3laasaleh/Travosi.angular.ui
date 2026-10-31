@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { RichTextContent } from '../rich-text-content/rich-text-content';
 
 export interface DescriptionPart {
   text: string;
@@ -9,6 +10,7 @@ export interface DescriptionPart {
 @Component({
   selector: 'app-description-links',
   standalone: true,
+  imports: [RichTextContent],
   templateUrl: './description-links.html',
   styles: [':host { display: contents; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,

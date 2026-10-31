@@ -56,9 +56,7 @@
 
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span class="text-red-600">*</span></label>
-      <textarea formControlName="descriptionEng" rows="4" maxlength="4000"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-      <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+      <app-rich-text-editor formControlName="descriptionEng" />
       @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
       }
@@ -67,9 +65,7 @@
     </div>
     <div>
       <label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span></label>
-      <textarea formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-      <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+      <app-rich-text-editor formControlName="descriptionAr" direction="rtl" />
       @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('required')) {
       <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
       }

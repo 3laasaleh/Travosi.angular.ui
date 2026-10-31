@@ -67,12 +67,10 @@
           <label class="text-sm">{{ 'infants' | translate }}<input formControlName="maxInfants" type="number" min="0"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxInfants.touched && roomForm.controls.maxInfants.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'infantsCannotBeNegative' | translate }}</span> }</label>
         </div>
-        <label class="mt-3 block text-sm">{{ 'englishDescription' | translate }}<textarea
-            formControlName="descriptionEng" rows="1"
-            class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2"></textarea></label>
-        <label class="mt-3 block text-sm">{{ 'arabicDescription' | translate }}<textarea
-            formControlName="descriptionAr" rows="1"
-            class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-right"></textarea></label>
+        <div class="mt-3"><label class="mb-1 block text-sm">{{ 'englishDescription' | translate }}</label>
+          <app-rich-text-editor formControlName="descriptionEng" minHeight="7rem" /></div>
+        <div class="mt-3"><label class="mb-1 block text-sm">{{ 'arabicDescription' | translate }}</label>
+          <app-rich-text-editor formControlName="descriptionAr" direction="rtl" minHeight="7rem" /></div>
         <div class="mt-3 flex flex-wrap gap-5 text-sm"><label class="flex items-center gap-2">
             <input formControlName="smokingAllowed" type="checkbox" />{{ 'smokingAllowed' | translate }}</label><label
             class="flex items-center gap-2"><input formControlName="hasBalcony" type="checkbox" />{{ 'hasBalcony' |

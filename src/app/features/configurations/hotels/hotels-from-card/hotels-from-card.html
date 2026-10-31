@@ -58,13 +58,11 @@
        </div>
      <div class="grid gap-4 md:grid-cols-2">
     <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span
-          class="text-red-600">*</span></label><textarea formControlName="descriptionEng" rows="4" maxlength="4000"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>@if
+          class="text-red-600">*</span></label><app-rich-text-editor formControlName="descriptionEng" />@if
       (hotelForm.controls.descriptionEng.touched && hotelForm.controls.descriptionEng.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }</div>
     <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span
-          class="text-red-600">*</span></label><textarea formControlName="descriptionAr" rows="4" maxlength="4000"
-        class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>@if
+          class="text-red-600">*</span></label><app-rich-text-editor formControlName="descriptionAr" direction="rtl" />@if
       (hotelForm.controls.descriptionAr.touched && hotelForm.controls.descriptionAr.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ hotelForm.controls.descriptionAr.hasError('arabicText') ?
         ('arabicNameInvalid' | translate) : ('descriptionRequired' | translate) }}</p> }</div>

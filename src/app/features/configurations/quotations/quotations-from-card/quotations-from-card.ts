@@ -69,6 +69,13 @@ export interface QuotationDTO {
 
 type QuotationAudience = 'adults' | 'children' | 'infants';
 type QuotationPriceSet = Record<QuotationAudience, number> & { currencyId: number };
+type QuotationCatalogType = 'package' | 'tour' | 'hotel' | 'room';
+
+interface QuotationDetailField {
+  key: string;
+  label: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-quotations-from-card',
@@ -115,6 +122,11 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   optionsLoading = false;
   optionsLoadError = false;
   validationSubmitted = false;
+  detailItem: any | null = null;
+  detailParent: any | null = null;
+  detailType: QuotationCatalogType | null = null;
+  detailFields: QuotationDetailField[] = [];
+  detailImages: string[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -137,6 +149,249 @@ export class QuotationsFromCard implements OnInit, OnChanges {
   }
 
   formatPrice(value: unknown): string { return this.currencyService.formatDocumentPrice(value, this.quotationForm.controls.currencyId.value); }
+
+  openCatalogDetails(type: QuotationCatalogType, item: any, parent: any | null = null): void {
+    this.detailType = type;
+    this.detailItem = item;
+    this.detailParent = parent;
+    this.detailFields = this.catalogDetailFields(type, item);
+    this.detailImages = this.catalogImages(item);
+  }
+
+  closeCatalogDetails(): void {
+    this.detailItem = null;
+    this.detailParent = null;
+    this.detailType = null;
+    this.detailFields = [];
+    this.detailImages = [];
+  }
+
+  detailTitle(): string {
+    return this.itemName(this.detailItem);
+  }
+
+  detailTypeLabel(): string {
+    if (!this.detailType) return 'viewDetails';
+    const type = this.detailType[0].toUpperCase() + this.detailType.slice(1);
+    return `quotation${type}Details`;
+  }
+
+  detailFieldLabel(key: string): string {
+    const translated = this.translate.instant(key);
+    if (translated !== key) return translated;
+    return key.split('.').map(part => part
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, character => character.toUpperCase())).join(' / ');
+  }
+
+  private catalogDetailFields(type: QuotationCatalogType, item: any): QuotationDetailField[] {
+    const fields: QuotationDetailField[] = [];
+    const add = (labelKey: string, value: unknown): void => {
+      if (value === null || value === undefined || value === '') return;
+      fields.push({
+        key: `${labelKey}-${fields.length}`,
+        label: this.detailFieldLabel(labelKey),
+        value: typeof value === 'boolean'
+          ? this.translate.instant(value ? 'yes' : 'no')
+          : String(value),
+      });
+    };
+
+    add('nameEnglish', item?.nameEng ?? item?.name);
+    add('nameArabic', item?.nameAr);
+    add('englishDescription', item?.fullDescriptionEng ?? item?.descriptionEng ?? item?.description);
+    add('arabicDescription', item?.fullDescriptionAr ?? item?.descriptionAr);
+
+    if (type === 'package' || type === 'tour') {
+      const duration = this.durationText(item);
+      add('duration', duration);
+      add('destination', this.destinationText(item));
+      add('dateFrom', item?.dateFrom ?? item?.startDate);
+      add('dateTo', item?.dateTo ?? item?.endDate);
+      add(type === 'package' ? 'maxCapacity' : 'maxSeats', item?.maxCapacity ?? item?.maxSeats);
+      add('pricePerPerson', this.formatPrice(this.packagePrice(item)));
+      add('pricePerChild', this.formatPrice(this.childPrice(item)));
+      add('pricePerInfant', this.formatPrice(this.infantPrice(item)));
+      add('freeCancellation', item?.isFreeCancelation);
+      add('highlights', this.localizedList(item?.highlights));
+      add('includes', this.localizedList(item?.includes));
+      add('excludes', this.localizedList(item?.excludes));
+      add('cancellationPolicies', this.localizedList(item?.cancellationPolicies));
+      add('itinerary', this.itineraryText(item?.itinerary ?? item?.itineraries));
+      if (type === 'package') add('transportations', this.transportationText(item?.transportations));
+    } else if (type === 'hotel') {
+      add('starRating', item?.starRating);
+      add('destination', this.destinationText(item));
+      add('address', item?.addressEng ?? item?.address);
+      add('addressArabic', item?.addressAr);
+      add('distanceFromDowntown', item?.distanceFromDowntownKm);
+      add('phone', item?.phoneNumber ?? item?.phone);
+      add('email', item?.email);
+      add('website', item?.website);
+      add('googleMapsUrl', item?.googleMapsUrl);
+      add('freeAirportTaxi', item?.hasFreeAirportTaxi);
+      add('freeCancellation', item?.isFreeCancelation);
+      add('hotelFacilities', this.namedList(item?.amenities ?? item?.facilities));
+      add('cancellationPolicies', this.localizedList(
+        item?.cancellationPolicies ?? this.hotelPolicies(item),
+      ));
+    } else {
+      add('roomType', this.roomTypeName(item));
+      add('mealPlan', this.namedValue(item?.mealPlanName ?? item?.mealPlanDetails ?? item?.mealPlan));
+      add('roomSize', item?.roomSize == null ? null : `${item.roomSize} m²`);
+      add('bedTypeEnglish', item?.bedTypeEng ?? item?.bedType);
+      add('bedTypeArabic', item?.bedTypeAr);
+      add('bedSize', item?.bedSize);
+      add('availableRoomsCount', item?.avilableRoomsCount ?? item?.availableRoomsCount);
+      add('adults', item?.maxAdults);
+      add('children', item?.maxChildren);
+      add('infants', item?.maxInfants);
+      add('maxTotalOccupancy', item?.maxTotalOccupancy);
+      add('hasBalcony', item?.hasBalcony);
+      add('smokingAllowed', item?.smokingAllowed);
+      add('roomFacilities', this.namedList(item?.amenities ?? item?.facilities));
+      add('childrenPolicies', this.localizedList(item?.childrenPolicies));
+      add('roomRates', this.roomRateText(item));
+      const total = this.roomTotal(item);
+      if (total !== null) add('totalPrice', this.formatPrice(total));
+    }
+
+    return fields;
+  }
+
+  private durationText(item: any): string | null {
+    const days = Number(item?.durationDays ?? item?.duration ?? 0);
+    const hours = Number(item?.durationHours ?? 0);
+    const parts: string[] = [];
+    if (days) parts.push(`${days} ${this.translate.instant('days')}`);
+    if (hours) parts.push(`${hours} ${this.translate.instant('hours')}`);
+    return parts.length ? parts.join(' ') : null;
+  }
+
+  private destinationText(item: any): string | null {
+    const destinations = Array.isArray(item?.destinations) ? item.destinations : [];
+    const names = destinations.map((destination: any) => this.namedValue(
+      destination?.destination ?? destination?.destinationName ?? destination,
+    )).filter(Boolean);
+    const destination = this.namedValue(item?.destination);
+    if (destination) names.push(destination);
+    if (item?.destinationName && !names.includes(String(item.destinationName))) names.push(String(item.destinationName));
+    return names.length ? [...new Set(names)].join(', ') : null;
+  }
+
+  private namedValue(value: any): string | null {
+    if (typeof value === 'string') return value || null;
+    if (!value || typeof value !== 'object') return null;
+    const localized = this.translate.getCurrentLang?.() === 'ar'
+      ? value.nameAr ?? value.nameEng ?? value.name ?? value.title
+      : value.nameEng ?? value.nameAr ?? value.name ?? value.title;
+    return typeof localized === 'string' ? localized : null;
+  }
+
+  private namedList(value: any): string | null {
+    if (!Array.isArray(value)) return null;
+    const names = value.map(item => this.namedValue(item)).filter(Boolean);
+    return names.length ? [...new Set(names)].join(', ') : null;
+  }
+
+  private localizedList(value: any): string | null {
+    if (!Array.isArray(value)) return typeof value === 'string' ? value : null;
+    const entries = value.map((item: any) => {
+      if (typeof item === 'string') return item;
+      if (!item || typeof item !== 'object') return '';
+      const english = item.valueEng ?? item.nameEng ?? item.value ?? item.name ?? '';
+      const arabic = item.valueAr ?? item.nameAr ?? '';
+      return [english, arabic].filter(Boolean).filter((entry, index, list) => list.indexOf(entry) === index).join(' / ');
+    }).filter(Boolean);
+    return entries.length ? entries.join('\n') : null;
+  }
+
+  private itineraryText(value: any): string | null {
+    if (!Array.isArray(value)) return null;
+    const lines: string[] = [];
+    const addItems = (items: any[], depth: number): void => {
+      items.forEach(item => {
+        const title = [item?.nameEng ?? item?.title, item?.nameAr]
+          .filter(Boolean).filter((entry, index, list) => list.indexOf(entry) === index).join(' / ');
+        const description = [item?.valueEng ?? item?.value, item?.valueAr]
+          .filter(Boolean).filter((entry, index, list) => list.indexOf(entry) === index).join(' / ');
+        const notes = [item?.notesEng, item?.notesAr]
+          .filter(Boolean).filter((entry, index, list) => list.indexOf(entry) === index).join(' / ');
+        const timing = [item?.arrivalDate, item?.startTime, item?.endTime].filter(Boolean).join(' · ');
+        const content = [title, description, notes, timing].filter(Boolean).join(' — ');
+        if (content) lines.push(`${'  '.repeat(depth)}• ${content}`);
+        const children = item?.childs ?? item?.children ?? item?.childItineraries;
+        if (Array.isArray(children)) addItems(children, depth + 1);
+      });
+    };
+    addItems(value, 0);
+    return lines.length ? lines.join('\n') : null;
+  }
+
+  private transportationText(value: any): string | null {
+    if (!Array.isArray(value)) return null;
+    const lines = value.map((item: any) => {
+      const from = item?.fromEng ?? item?.fromAr ?? item?.from ?? '';
+      const to = item?.toEng ?? item?.toAr ?? item?.to ?? '';
+      const type = item?.transportationTypeEng ?? item?.transportationTypeAr ?? item?.transportationType ?? '';
+      const timing = [item?.fromTime, item?.arrivalTime].filter(Boolean).join(' – ');
+      const baggage = item?.numberOfBags ? `${item.numberOfBags} × ${item.maxKgPerBag ?? 0} kg` : '';
+      return [type, [from, to].filter(Boolean).join(' → '), timing, baggage].filter(Boolean).join(' · ');
+    }).filter(Boolean);
+    return lines.length ? lines.join('\n') : null;
+  }
+
+  private hotelPolicies(hotel: any): any[] {
+    const english = String(hotel?.cancellationPolicyEng ?? hotel?.policiesEng ?? '').split(';');
+    const arabic = String(hotel?.cancellationPolicyAr ?? hotel?.policiesAr ?? '').split(';');
+    return english.map((value, index) => ({
+      valueEng: value.trim(),
+      valueAr: arabic[index]?.trim() ?? '',
+    })).filter(policy => policy.valueEng || policy.valueAr);
+  }
+
+  private roomTypeName(room: any): string | null {
+    const roomType = room?.roomTypeName ?? room?.roomType?.nameEng ?? room?.roomType?.nameAr;
+    if (typeof roomType === 'string' && roomType) return roomType;
+    const typeLabels = ['', 'singleRoom', 'doubleRoom', 'twinRoom', 'tripleRoom', 'familyRoom', 'suiteRoom', 'juniorSuiteRoom', 'deluxeRoom'];
+    const index = Number(room?.roomType);
+    return Number.isInteger(index) && index > 0 && index < typeLabels.length
+      ? this.translate.instant(typeLabels[index])
+      : null;
+  }
+
+  private roomRateText(room: any): string | null {
+    const rates = this.roomRates(room);
+    if (rates?.length) {
+      return rates.map(rate => `${rate.quantity} ${this.translate.instant('nights')}: ${this.formatPrice(rate.price)}`).join('\n');
+    }
+    const periods = (room?.roomPeriodPrices ?? []).filter((period: any) => period?.isActive !== false);
+    const entries = periods.map((period: any) => {
+      const start = period?.startDate ? String(period.startDate).slice(0, 10) : '';
+      const end = period?.endDate ? String(period.endDate).slice(0, 10) : '';
+      return [start && end ? `${start} – ${end}` : start || end, period?.price == null ? '' : this.formatPrice(this.quotedPrice(period.price, room?.currencyId ?? 2))]
+        .filter(Boolean).join(': ');
+    }).filter(Boolean);
+    return entries.length ? entries.join('\n') : null;
+  }
+
+  private catalogImages(item: any): string[] {
+    const images = Array.isArray(item?.images) ? item.images : [];
+    const urls: string[] = [];
+    images.forEach((image: any) => {
+      const url = typeof image === 'string' ? image : image?.imageUrl ?? image?.url ?? image?.path;
+      if (typeof url === 'string' && url) urls.push(url);
+    });
+    const cover = item?.coverImageUrl ?? item?.imageUrl;
+    if (typeof cover === 'string' && cover) urls.unshift(cover);
+    return [...new Set(urls)].map(url => this.catalogImageUrl(url));
+  }
+
+  private catalogImageUrl(url: string): string {
+    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '').replace(/^images\//i, '')}`;
+  }
 
   private quotedPrice(value: unknown, source: unknown = 2): number {
     return this.currencyService.convertForDocument(value, source, this.quotationForm.controls.currencyId.value) ?? Number.NaN;

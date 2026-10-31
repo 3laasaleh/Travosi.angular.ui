@@ -24,7 +24,7 @@
             "outputPath": "dist/seeworld",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["feather-icons", "tiny-slider"],
+            "allowedCommonJsDependencies": ["feather-icons", "tiny-slider", "quill-delta"],
             "inlineStyleLanguage": "scss",
             "assets": [
               {
@@ -38,6 +38,7 @@
               }
             ],
             "styles": [
+              "node_modules/quill/dist/quill.snow.css",
               "node_modules/tiny-slider/dist/tiny-slider.css",
               "node_modules/swiper/swiper-bundle.min.css",
               "src/assets/libs/@mdi/font/css/materialdesignicons.min.css",

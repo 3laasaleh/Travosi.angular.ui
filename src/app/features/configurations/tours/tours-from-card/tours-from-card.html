@@ -382,9 +382,7 @@
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'englishDescription' | translate
-              }}</label><textarea formControlName="descriptionEng" rows="3" maxlength="4000"
-              class="w-full rounded-2xl border px-3 py-2"></textarea>
-            <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+              }}</label><app-rich-text-editor formControlName="descriptionEng" />
             @if (
             tourForm.controls.descriptionEng.touched &&
             tourForm.controls.descriptionEng.hasError('required')
@@ -395,9 +393,7 @@
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'arabicDescription' | translate
-              }}</label><textarea formControlName="descriptionAr" rows="3" maxlength="4000" dir="rtl"
-              class="w-full rounded-2xl border px-3 py-2"></textarea>
-            <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+              }}</label><app-rich-text-editor formControlName="descriptionAr" direction="rtl" />
             @if (
             tourForm.controls.descriptionAr.touched &&
             tourForm.controls.descriptionAr.hasError('required')
@@ -411,15 +407,11 @@
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'englishFullDescription' | translate }}
-            </label><textarea formControlName="fullDescriptionEng" rows="4" maxlength="8000"
-              class="w-full rounded-2xl border px-3 py-2"></textarea>
-            <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+            </label><app-rich-text-editor formControlName="fullDescriptionEng" minHeight="11rem" />
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'arabicFullDescription' | translate }}
-            </label><textarea formControlName="fullDescriptionAr" rows="4" maxlength="8000" dir="rtl"
-              class="w-full rounded-2xl border px-3 py-2"></textarea>
-            <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+            </label><app-rich-text-editor formControlName="fullDescriptionAr" direction="rtl" minHeight="11rem" />
             @if (tourForm.controls.fullDescriptionAr.touched &&
             tourForm.controls.fullDescriptionAr.hasError('arabicText'))
             {

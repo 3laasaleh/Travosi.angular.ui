@@ -43,10 +43,8 @@
         (destinationForm.controls.subDescriptionAr.touched &&
         destinationForm.controls.subDescriptionAr.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameInvalid' | translate }}</p> }</div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span class="text-red-600">*</span></label><textarea
-          formControlName="descriptionEng" rows="4" maxlength="4000"
-          class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-        <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'englishDescription' | translate }} <span class="text-red-600">*</span></label>
+        <app-rich-text-editor formControlName="descriptionEng" />
         @if (destinationForm.controls.descriptionEng.touched &&
         destinationForm.controls.descriptionEng.hasError('required')) {
         <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
@@ -55,10 +53,8 @@
         destinationForm.controls.descriptionEng.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{
           'maximumCharacters' | translate:{ count: 4000 } }}</p> }
       </div>
-      <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span></label><textarea
-          formControlName="descriptionAr" rows="4" maxlength="4000" dir="rtl"
-          class="w-full rounded-2xl border border-slate-300 px-3 py-2"></textarea>
-        <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+      <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span></label>
+        <app-rich-text-editor formControlName="descriptionAr" direction="rtl" />
         @if (destinationForm.controls.descriptionAr.touched &&
         destinationForm.controls.descriptionAr.hasError('required')) {
         <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>

@@ -17,6 +17,7 @@ import { ImageViewerModal } from '../../../../shared/components/image-viewer-mod
 import { SeoService } from '../../../../core/services/seo.service';
 import { DescriptionLinks } from '../../../../shared/components/description-links/description-links';
 import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
+import { RichTextContent } from '../../../../shared/components/rich-text-content/rich-text-content';
 
 @Component({
   selector: 'app-blog-detail',
@@ -28,6 +29,7 @@ import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrum
     FooterOne,
     ImageViewerModal,
     DescriptionLinks,
+    RichTextContent,
   ],
   templateUrl: './blog-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

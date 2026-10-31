@@ -111,6 +111,75 @@ describe('QuotationsFromCard', () => {
     expect(component.thumbnail(flight)).toMatch(/\/images\/airlines\/sea-world-air\.webp$/);
   });
 
+  it('shows customer-facing package details without exposing identifiers or selecting it', () => {
+    const pkg = {
+      id: 11,
+      nameEng: 'Dubai package',
+      descriptionEng: 'A complete Dubai holiday.',
+      durationDays: 5,
+      pricePerPerson: 200,
+      highlights: [{ id: 99, valueEng: 'Desert safari', valueAr: 'رحلة سفاري' }],
+      isActive: true,
+      images: [{ imageUrl: '/images/packages/dubai.webp', altTextEng: 'Dubai' }],
+    };
+
+    component.openCatalogDetails('package', pkg);
+
+    expect(component.detailItem).toBe(pkg);
+    const fields = Object.fromEntries(component.detailFields.map(field => [field.label, field.value]));
+    expect(fields).toEqual(expect.objectContaining({
+      nameEnglish: 'Dubai package',
+      englishDescription: 'A complete Dubai holiday.',
+      duration: '5 days',
+      pricePerPerson: '200',
+      highlights: 'Desert safari / رحلة سفاري',
+    }));
+    expect(component.detailFields.some(field => /(^|[./])id$/i.test(field.key))).toBe(false);
+    expect(component.detailImages).toHaveLength(1);
+    expect(component.isPackageSelected(pkg.id)).toBe(false);
+
+    component.closeCatalogDetails();
+    expect(component.detailItem).toBeNull();
+    expect(component.detailFields).toEqual([]);
+  });
+
+  it('shows room type, occupancy and rates without displaying API IDs', () => {
+    const room = {
+      id: 301,
+      nameEng: 'Deluxe room',
+      descriptionEng: 'A spacious room.',
+      roomType: 6,
+      mealPlan: 9,
+      roomSize: 34,
+      maxAdults: 2,
+      maxChildren: 1,
+      amenities: [44, 45],
+      roomPeriodPrices: [{
+        id: 71,
+        startDate: '2030-05-10',
+        endDate: '2030-05-14',
+        price: 150,
+        hotelRoomId: 301,
+        isActive: true,
+      }],
+    };
+
+    component.openCatalogDetails('room', room, hotel);
+
+    const fields = Object.fromEntries(component.detailFields.map(field => [field.label, field.value]));
+    expect(fields).toEqual(expect.objectContaining({
+      nameEnglish: 'Deluxe room',
+      englishDescription: 'A spacious room.',
+      roomType: 'suiteRoom',
+      roomSize: '34 m²',
+      adults: '2',
+      roomRates: expect.stringContaining('150'),
+    }));
+    expect(Object.values(fields)).not.toContain('301');
+    expect(Object.values(fields)).not.toContain('44');
+    expect(Object.values(fields)).not.toContain('45');
+  });
+
   it('loads all hotel rooms and saves only the explicitly selected room', () => {
     component.hotels = [hotel];
     component.toggleHotel(hotel, true);

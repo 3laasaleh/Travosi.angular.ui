@@ -23,6 +23,7 @@ import { HotelRoomsManager } from '../hotel-rooms-manager/hotel-rooms-manager';
 import { mdiIconClass } from '../../../../shared/utils/mdi-icon.util';
 import { SaveFeedbackService } from '../../shared/save-feedback.service';
 import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 
 interface HotelImageUpload { id?: number; file?: File; url: string; altEng: string; altAr: string; existing: boolean; }
 
@@ -54,7 +55,7 @@ export interface HotelDTO {
 @Component({
   selector: 'app-hotels-from-card',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [FormsModule, ReactiveFormsModule, RichTextEditor, TranslatePipe],
   templateUrl: './hotels-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

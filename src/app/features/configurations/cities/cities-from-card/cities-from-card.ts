@@ -18,6 +18,7 @@ import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 
 interface CityImageUpload {
   id?: number;
@@ -57,7 +58,7 @@ export interface CityDTO {
 @Component({
   selector: 'app-cities-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, RichTextEditor, TranslatePipe],
   templateUrl: './cities-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

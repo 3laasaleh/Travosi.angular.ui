@@ -22,6 +22,7 @@ import {
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 
 interface DestinationImageUpload {
   id?: number;
@@ -54,7 +55,7 @@ export interface DestinationDTO {
 @Component({
   selector: 'app-destinations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, RichTextEditor, TranslatePipe],
   templateUrl: './destinations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

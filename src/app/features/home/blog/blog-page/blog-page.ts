@@ -8,8 +8,9 @@ import { UtilityService } from '../../../../core/services/utilityservice';
 import { FooterOne } from '../../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../../layout/home-navbar/home-navbar';
 import { Breadcrumbs } from '../../../../shared/components/breadcrumbs/breadcrumbs';
+import { RichTextPlainTextPipe } from '../../../../shared/pipes/rich-text-plain-text.pipe';
 
-@Component({ selector: 'app-blog-page', standalone: true, imports: [Breadcrumbs, RouterLink, DatePipe, HomeNavbar, FooterOne], templateUrl: './blog-page.html', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-blog-page', standalone: true, imports: [Breadcrumbs, RouterLink, DatePipe, HomeNavbar, FooterOne, RichTextPlainTextPipe], templateUrl: './blog-page.html', changeDetection: ChangeDetectionStrategy.OnPush })
 export class BlogPage implements OnInit {
   private readonly api = inject(ApiService);
   private readonly cdr = inject(ChangeDetectorRef);

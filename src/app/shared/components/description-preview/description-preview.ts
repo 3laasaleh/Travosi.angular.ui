@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DescriptionLinks, parseDescriptionLinks } from '../description-links/description-links';
+import { richTextPlainText } from '../rich-text-content/rich-text-content';
 
 @Component({
   selector: 'app-description-preview',
@@ -22,7 +23,8 @@ export class DescriptionPreview implements OnChanges {
 
   ngOnChanges(): void {
     this.expanded = false;
-    const parts = parseDescriptionLinks(this.text);
+    const plainText = richTextPlainText(this.text);
+    const parts = parseDescriptionLinks(plainText);
     this.normalizedText = parts.map((part) => part.text).join('');
     const limit = Math.max(1, Number(this.limit) || 300);
     this.hasMore = this.normalizedText.length > limit;
