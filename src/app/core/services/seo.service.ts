@@ -560,9 +560,8 @@ export class SeoService {
 
   private cleanDescription(value: string): string {
     const text = this.plainText(value);
-    if (text.length <= 160) return text;
-    const shortened = text.slice(0, 157);
-    return `${shortened.slice(0, shortened.lastIndexOf(' ') > 100 ? shortened.lastIndexOf(' ') : 157)}…`;
+    return text;
+  
   }
 
   private plainText(value: string): string {
