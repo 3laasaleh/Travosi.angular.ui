@@ -131,10 +131,10 @@ export class SeoService {
     this.updateOrRemoveName('description', '');
     this.updateOrRemoveProperty('og:title', '');
     this.updateOrRemoveProperty('og:description', '');
-    this.updateOrRemoveProperty('og:image', '');
+    this.updateOrRemoveProperty('og:image', 'https://seaworldholidays.com/assets/images/main-logo.png');
     this.updateOrRemoveName('twitter:title', '');
     this.updateOrRemoveName('twitter:description', '');
-    this.updateOrRemoveName('twitter:image', '');
+    this.updateOrRemoveName('twitter:image', 'https://seaworldholidays.com/assets/images/main-logo.png');
     this.setCanonical(this.canonicalUrl());
     this.removePageStructuredData();
   }
@@ -217,10 +217,10 @@ export class SeoService {
       this.updateOrRemoveProperty('og:image:alt', imageAlt ?? '');
       this.updateOrRemoveName('twitter:image:alt', imageAlt ?? '');
     } else {
-      this.updateOrRemoveProperty('og:image', '');
-      this.updateOrRemoveName('twitter:image', '');
-      this.updateOrRemoveProperty('og:image:alt', '');
-      this.updateOrRemoveName('twitter:image:alt', '');
+      this.updateOrRemoveProperty('og:image', 'https://seaworldholidays.com/assets/images/main-logo.png');
+      this.updateOrRemoveName('twitter:image', 'https://seaworldholidays.com/assets/images/main-logo.png');
+      this.updateOrRemoveProperty('og:image:alt', 'Sea World Holidays logo');
+      this.updateOrRemoveName('twitter:image:alt', 'Sea World Holidays logo');
     }
 
     this.setPageStructuredData(resolvedTitle, resolvedDescription, imageUrl, schemaType, entity, entityName);

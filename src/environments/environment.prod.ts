@@ -1,10 +1,10 @@
-const publicHost = 'seaworld-prod.premiumasp.net';
+const publicHost = 'seaworldholidays.com';
 
 export const environment = {
   indexingEnabled: true,
   partion: true,
-  baseUrl: 'https://seaworldholidays.com/api/',
-  imageUrl: 'https://seaworldholidays.com/images/',
+  baseUrl: 'https://seeworld-api-prod.premiumasp.net/api/',
+  imageUrl: 'https://seeworld-api-prod.premiumasp.net/images/',
   publicBaseUrl: `https://${publicHost}`,
   ssrAllowedHosts: `localhost,127.0.0.1,seaworldholidays.com,www.seaworldholidays.com,${publicHost}`,
 };
