@@ -14,6 +14,7 @@ export function localizedEntityText(entity: any, language: SeoLanguage, ...field
 export function resolveEntitySeo(entity: any, language: SeoLanguage, _schemaType: string,
   fallbackTitle = '', fallbackDescription = '') {
   const name = localizedEntityText(entity, language, 'name', 'title') || fallbackTitle;
+  const metaTitle = localizedEntityText(entity, language, 'metaTitle');
   const description = localizedEntityText(entity, language, 'description', 'summary') || fallbackDescription;
-  return { name, title: name, description };
+  return { name, title: metaTitle || name, description, hasMetaTitle: !!metaTitle };
 }

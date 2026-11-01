@@ -30,6 +30,7 @@ export interface SeoPageOptions {
 interface LocalizedSeoPage {
   name: Record<'en' | 'ar', string>;
   title: Record<'en' | 'ar', string>;
+  hasMetaTitle: Record<'en' | 'ar', boolean>;
   description: Record<'en' | 'ar', string>;
   imageUrl?: string;
   imageAlt?: string;
@@ -85,6 +86,7 @@ export class SeoService {
     const page: LocalizedSeoPage = {
       name: { en: english.name, ar: arabic.name },
       title: { en: english.title, ar: arabic.title },
+      hasMetaTitle: { en: english.hasMetaTitle, ar: arabic.hasMetaTitle },
       description: { en: english.description, ar: arabic.description },
       imageUrl: this.absoluteUrl(options.imageUrl ?? this.imageUrl(image)),
       imageAlt: this.imageAlt(image),
@@ -101,6 +103,14 @@ export class SeoService {
 
   markUnavailable(): void {
     this.markFailure(this.languageFromUrl() === 'ar' ? 'المحتوى غير متاح مؤقتًا' : 'Content temporarily unavailable', 503);
+  }
+
+  markNotFound(message?: string): void {
+     
+    this.markFailure(
+      message || (this.languageFromUrl() === 'ar' ? 'المحتوى غير موجود' : 'Content not found'),
+      404,
+    );
   }
 
   private markFailure(message: string, status: number): void {
@@ -145,6 +155,10 @@ export class SeoService {
   private applyLocalizedPageSeo(page: LocalizedSeoPage, language: 'en' | 'ar'): void {
     const alternative = language === 'ar' ? 'en' : 'ar';
     const title = page.title[language] || page.title[alternative];
+     
+    const hasMetaTitle = page.title[language]
+      ? page.hasMetaTitle[language]
+      : page.hasMetaTitle[alternative];
     const description = page.description[language] || page.description[alternative];
 
     this.applyDocumentLanguage(language);
@@ -167,8 +181,7 @@ export class SeoService {
     const resolvedDescription = this.cleanDescription(description);
     const canonicalUrl = this.canonicalUrl();
     const language = this.languageFromUrl();
-
-    this.titleService.setTitle(this.brandedTitle(resolvedTitle));
+    this.titleService.setTitle(resolvedTitle);
     this.updateOrRemoveName('description', resolvedDescription);
     const requestUrl = this.request?.url ?? this.document.defaultView?.location.href;
     const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)

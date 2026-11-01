@@ -6,6 +6,8 @@ export interface PackageDTO {
   name: string;
   nameEng: string;
   nameAr: string;
+  metaTitleEng: string;
+  metaTitleAr: string;
 
   routeName: string;
 

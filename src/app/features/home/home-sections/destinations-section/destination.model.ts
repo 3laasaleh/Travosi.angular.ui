@@ -8,6 +8,8 @@ export interface DestinationHomeDTO {
   id: number;
   routeName?: string | null;
   name: string;
+  metaTitleEng?: string | null;
+  metaTitleAr?: string | null;
   subDescription?: string | null;
   description?: string | null;
   isActive: boolean;

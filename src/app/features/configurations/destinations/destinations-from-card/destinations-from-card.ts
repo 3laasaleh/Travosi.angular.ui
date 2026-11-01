@@ -44,6 +44,8 @@ export interface DestinationDTO {
   id: number;
   nameEng: string;
   nameAr: string;
+  metaTitleEng: string;
+  metaTitleAr: string;
   subDescriptionEng?: string;
   subDescriptionAr?: string;
   descriptionEng?: string;
@@ -116,6 +118,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
     payload.append('nameEng', form.nameEng.trim());
     payload.append('nameAr', form.nameAr.trim());
+    payload.append('MetaTitleEng', form.metaTitleEng.trim());
+    payload.append('MetaTitleAr', form.metaTitleAr.trim());
     payload.append('RouteName', form.routeName.trim().toLowerCase());
     payload.append('SubDescriptionEng', form.subDescriptionEng.trim());
     payload.append('SubDescriptionAr', form.subDescriptionAr.trim());
@@ -276,6 +280,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.setValue({
       nameEng: destination.nameEng  ?? '',
       nameAr: destination.nameAr ?? '',
+      metaTitleEng: destination.metaTitleEng ?? '',
+      metaTitleAr: destination.metaTitleAr ?? '',
       routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
       subDescriptionAr: destination.subDescriptionAr ?? '',
@@ -296,6 +302,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     this.destinationForm.reset({
       nameEng: '',
       nameAr: '',
+      metaTitleEng: '',
+      metaTitleAr: '',
       routeName: '',
       subDescriptionEng: '',
       subDescriptionAr: '',
@@ -337,11 +345,19 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
     return new FormGroup({
       nameEng: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^[A-Za-z].*$/)],
+        validators: [Validators.required, Validators.maxLength(150), Validators.pattern(/^[A-Za-z].*$/)],
       }),
       nameAr: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, arabicTextValidator()],
+        validators: [Validators.required, Validators.maxLength(150), arabicTextValidator()],
+      }),
+      metaTitleEng: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(200)],
+      }),
+      metaTitleAr: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
       }),
       routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
       subDescriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),

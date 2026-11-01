@@ -218,6 +218,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     const controls: AbstractControl[] = [
       this.tourForm.controls.nameEng,
       this.tourForm.controls.nameAr,
+      this.tourForm.controls.metaTitleEng,
+      this.tourForm.controls.metaTitleAr,
       this.tourForm.controls.routeName,
       this.tourForm.controls.descriptionEng,
       this.tourForm.controls.descriptionAr,
@@ -971,6 +973,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.tourForm.patchValue({
       nameEng: tour.nameEng ?? '',
       nameAr: tour.nameAr ?? '',
+      metaTitleEng: tour.metaTitleEng ?? '',
+      metaTitleAr: tour.metaTitleAr ?? '',
       routeName: tour.routeName ?? tour.nameEng ?? '',
       destinationId: tour.destinationId ?? '',
       cityId: tour.cityId ?? '',
@@ -1024,6 +1028,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     this.tourForm.reset({
       nameEng: '',
       nameAr: '',
+      metaTitleEng: '',
+      metaTitleAr: '',
       routeName: '',
       destinationId: '',
       cityId: '',
@@ -1072,6 +1078,14 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         nameAr: new FormControl('', {
           nonNullable: true,
           validators: [Validators.required, arabicTextValidator()],
+        }),
+        metaTitleEng: new FormControl('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.maxLength(200)],
+        }),
+        metaTitleAr: new FormControl('', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
         }),
         routeName: new FormControl('', {
           nonNullable: true,
@@ -1304,6 +1318,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       ...(tourId ? { Id: tourId } : {}),
       nameEng: form.nameEng.trim(),
       nameAr: form.nameAr.trim(),
+      metaTitleEng: form.metaTitleEng.trim(),
+      metaTitleAr: form.metaTitleAr.trim(),
       routeName: form.routeName.trim(),
       destinationId: Number(form.destinationId),
       cityId: Number(form.cityId),

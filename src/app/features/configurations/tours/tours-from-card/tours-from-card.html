@@ -112,12 +112,35 @@
           </div>
 
           <div class="xl:col-span-2">
+            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'englishMetaTitle' | translate }}</label>
+            <input formControlName="metaTitleEng" type="text" maxlength="200"
+              class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.metaTitleEng.touched && tourForm.controls.metaTitleEng.hasError('required')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'englishMetaTitleRequired' | translate }}</p>
+            } @else if (tourForm.controls.metaTitleEng.touched && tourForm.controls.metaTitleEng.hasError('maxlength')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+            }
+          </div>
+          <div class="xl:col-span-2">
+            <label class="required-field-label mb-2 block text-sm font-medium">{{ 'arabicMetaTitle' | translate }}</label>
+            <input formControlName="metaTitleAr" type="text" maxlength="200" dir="rtl"
+              class="w-full rounded-2xl border px-3 py-2" />
+            @if (tourForm.controls.metaTitleAr.touched && tourForm.controls.metaTitleAr.hasError('required')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicMetaTitleRequired' | translate }}</p>
+            } @else if (tourForm.controls.metaTitleAr.touched && tourForm.controls.metaTitleAr.hasError('arabicText')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'arabicMustContainLetter' | translate }}</p>
+            } @else if (tourForm.controls.metaTitleAr.touched && tourForm.controls.metaTitleAr.hasError('maxlength')) {
+            <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+            }
+          </div>
+
+          <div class="xl:col-span-2">
             <label class="required-field-label mb-2 block text-sm font-medium">
               {{ 'routeName' | translate }}
             </label>
             <input
               formControlName="routeName"
-              maxlength="180"
+              maxlength="100"
               placeholder="tours/routeName"
               class="w-full rounded-2xl border px-3 py-2"
             />

@@ -12,6 +12,7 @@ import feather from 'feather-icons';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../core/services/apiservice.service';
+import { truncateImageFileName } from '../../configurations/shared/image-upload.util';
 import { AuthService } from '../_services/auth.service';
 
 @Component({
@@ -108,7 +109,8 @@ export class AccountTab implements AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
 
     const payload = new FormData();
-    payload.append('image', file, file.name);
+    const uploadFile = truncateImageFileName(file);
+    payload.append('image', uploadFile, uploadFile.name);
     this.apiService.post('Users/ProfileImage', payload).pipe(
       catchError((error) => {
         this.showToast('error', error?.error?.message || 'profileImageUploadError');

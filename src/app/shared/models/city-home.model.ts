@@ -6,6 +6,8 @@ export interface CityHomeDTO {
   id: number;
   routeName?: string | null;
   name?: string | null;
+  metaTitleEng?: string | null;
+  metaTitleAr?: string | null;
   description?: string | null;
   destinationId?: number | null;
   destinationName?: string | null;

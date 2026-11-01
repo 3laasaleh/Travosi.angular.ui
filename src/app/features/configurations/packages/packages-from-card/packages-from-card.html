@@ -107,6 +107,32 @@
       </div>
       <div class="grid gap-4 md:grid-cols-2">
         <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'englishMetaTitle' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label>
+          <input formControlName="metaTitleEng" maxlength="200"
+            class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+          @if (packageForm.controls.metaTitleEng.touched && packageForm.controls.metaTitleEng.hasError('required')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'englishMetaTitleRequired' | translate }}</p>
+          } @else if (packageForm.controls.metaTitleEng.touched && packageForm.controls.metaTitleEng.hasError('maxlength')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+          }
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium">{{ 'arabicMetaTitle' | translate }} <span class="text-rose-600"
+              aria-hidden="true">*</span></label>
+          <input formControlName="metaTitleAr" maxlength="200" dir="rtl"
+            class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+          @if (packageForm.controls.metaTitleAr.touched && packageForm.controls.metaTitleAr.hasError('required')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'arabicMetaTitleRequired' | translate }}</p>
+          } @else if (packageForm.controls.metaTitleAr.touched && packageForm.controls.metaTitleAr.hasError('arabicText')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'arabicMustContainLetter' | translate }}</p>
+          } @else if (packageForm.controls.metaTitleAr.touched && packageForm.controls.metaTitleAr.hasError('maxlength')) {
+          <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+          }
+        </div>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
           <label class="mb-2 block text-sm font-medium">{{ 'routeName' | translate }} <span class="text-rose-600"
               aria-hidden="true">*</span></label>
           <input formControlName="routeName" maxlength="100" placeholder="packages/route-name"

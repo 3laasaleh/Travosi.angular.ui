@@ -19,6 +19,8 @@ describe('ToursFromCard validation', () => {
 
     component.tourForm.patchValue({
       nameEng: 'Cairo Highlights',
+      metaTitleEng: 'Cairo Highlights Tour',
+      metaTitleAr: '\u062c\u0648\u0644\u0629 \u0645\u0639\u0627\u0644\u0645 \u0627\u0644\u0642\u0627\u0647\u0631\u0629',
       routeName: 'cairo-highlights',
 
       descriptionEng: 'Explore the most important Cairo landmarks.',

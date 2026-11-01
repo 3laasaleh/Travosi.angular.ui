@@ -13,12 +13,34 @@ export class ImageUploadValidationError extends Error {
   }
 }
 
+const MAX_IMAGE_FILE_NAME_LENGTH = 30;
+
+export function truncateImageFileName(file: File): File {
+  const nameParts = Array.from(file.name);
+  if (nameParts.length <= MAX_IMAGE_FILE_NAME_LENGTH) return file;
+
+  const extensionIndex = file.name.lastIndexOf('.');
+  const extension = extensionIndex > 0 ? Array.from(file.name.slice(extensionIndex)) : [];
+  const truncatedName = extension.length < MAX_IMAGE_FILE_NAME_LENGTH
+    ? [
+      ...nameParts.slice(0, MAX_IMAGE_FILE_NAME_LENGTH - extension.length),
+      ...extension,
+    ].join('')
+    : nameParts.slice(0, MAX_IMAGE_FILE_NAME_LENGTH).join('');
+
+  return new File([file], truncatedName, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+}
+
 export function normalizeImageUpload(
   file: File,
   constraints: ImageUploadConstraints,
 ): Promise<File> {
   return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
+    const uploadFile = truncateImageFileName(file);
+    const url = URL.createObjectURL(uploadFile);
     const image = new Image();
 
     image.onload = () => {
@@ -45,7 +67,7 @@ export function normalizeImageUpload(
       }
 
       if (width <= constraints.maxWidth && height <= constraints.maxHeight) {
-        resolve(file);
+        resolve(uploadFile);
         return;
       }
 
@@ -71,9 +93,11 @@ export function normalizeImageUpload(
           }
 
           resolve(
-            new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), {
-              type: 'image/webp',
-            }),
+            truncateImageFileName(
+              new File([blob], uploadFile.name.replace(/\.[^.]+$/, '.webp'), {
+                type: 'image/webp',
+              }),
+            ),
           );
         },
         'image/webp',

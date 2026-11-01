@@ -22,6 +22,8 @@ describe('PackagesFromCard validation', () => {
 
     component.packageForm.patchValue({
       nameEng: 'Cairo Discovery',
+      metaTitleEng: 'Cairo Discovery Package',
+      metaTitleAr: '\u0628\u0627\u0642\u0629 \u0627\u0643\u062a\u0634\u0627\u0641 \u0627\u0644\u0642\u0627\u0647\u0631\u0629',
       routeName: 'cairo-discovery',
       nameAr: 'اكتشاف القاهرة',
       descriptionEng: 'A complete Cairo travel package.',

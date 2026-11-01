@@ -12,14 +12,14 @@
     }
     <div class="grid gap-4 md:grid-cols-2">
       <div><label class="mb-2 block text-sm font-medium">{{ 'englishName' | translate }} <span class="text-red-600">*</span></label><input
-          formControlName="nameEng" type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
+          formControlName="nameEng" type="text" maxlength="150" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
         (destinationForm.get('nameEng')?.touched && destinationForm.get('nameEng')?.hasError('required')) { <p
           class="mt-1 text-xs text-red-600">{{ 'englishNameRequired' | translate }}</p> }@if
         (destinationForm.get('nameEng')?.touched && destinationForm.get('nameEng')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 150 } }}</p> }@if
         (destinationForm.get('nameEng')?.touched && destinationForm.get('nameEng')?.hasError('pattern')) { <p
           class="mt-1 text-xs text-red-600">{{ 'englishNameInvalid' | translate }}</p> }</div>
       <div><label class="mb-2 block text-sm font-medium">{{ 'arabicName' | translate }} <span class="text-red-600">*</span></label><input
-          formControlName="nameAr" type="text" dir="rtl"
+          formControlName="nameAr" type="text" maxlength="150" dir="rtl"
           class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if (destinationForm.get('nameAr')?.touched &&
         destinationForm.get('nameAr')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameRequired' | translate }}</p> }@if (destinationForm.get('nameAr')?.touched &&
@@ -27,8 +27,32 @@
         destinationForm.get('nameAr')?.hasError('arabicText')) { <p class="mt-1 text-xs text-red-600">{{
           'arabicNameInvalid' | translate }}</p> }</div>
     </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'englishMetaTitle' | translate }} <span class="text-red-600">*</span></label>
+        <input formControlName="metaTitleEng" type="text" maxlength="200"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (destinationForm.controls.metaTitleEng.touched && destinationForm.controls.metaTitleEng.hasError('required')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'englishMetaTitleRequired' | translate }}</p>
+        } @else if (destinationForm.controls.metaTitleEng.touched && destinationForm.controls.metaTitleEng.hasError('maxlength')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-medium">{{ 'arabicMetaTitle' | translate }} <span class="text-red-600">*</span></label>
+        <input formControlName="metaTitleAr" type="text" maxlength="200" dir="rtl"
+          class="w-full rounded-2xl border border-slate-300 px-3 py-2" />
+        @if (destinationForm.controls.metaTitleAr.touched && destinationForm.controls.metaTitleAr.hasError('required')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'arabicMetaTitleRequired' | translate }}</p>
+        } @else if (destinationForm.controls.metaTitleAr.touched && destinationForm.controls.metaTitleAr.hasError('arabicText')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'arabicMustContainLetter' | translate }}</p>
+        } @else if (destinationForm.controls.metaTitleAr.touched && destinationForm.controls.metaTitleAr.hasError('maxlength')) {
+        <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</p>
+        }
+      </div>
+    </div>
     <div><label class="mb-2 block text-sm font-medium">{{ 'routeName' | translate }} <span class="text-red-600">*</span></label><input formControlName="routeName"
-        maxlength="180" placeholder="destinations/routeName" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
+        maxlength="100" placeholder="destinations/routeName" class="w-full rounded-2xl border border-slate-300 px-3 py-2" />@if
         (destinationForm.controls.routeName.touched && destinationForm.controls.routeName.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ 'routeNameInvalid' | translate }}</p> }</div>
     <div class="grid gap-4 md:grid-cols-2">

@@ -200,7 +200,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
           this.errorMessage = 'destinationNotFound';
           return;
         }
-
+debugger
         this.updateSeo();
         const destinationId = Number(destination.id ?? destination.destinationId);
 
@@ -231,6 +231,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateSeo(): void {
+    debugger
     this.seo.updateFrom(this.destination, { image: this.images[0], imageUrl: this.resolvedImages[0], schemaType: 'Destination' });
   }
 

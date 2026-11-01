@@ -22,6 +22,8 @@ export interface TourHomeDTO {
   coverImageUrl: string | null;
   images: TourImageDTO[];
   name: string;
+  metaTitleEng?: string | null;
+  metaTitleAr?: string | null;
   destinationId: number;
   destinationName: string;
   cityId?: number | null;

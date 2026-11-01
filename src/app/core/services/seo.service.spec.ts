@@ -17,7 +17,7 @@ const cases: [string, SeoSchemaType][] = [
   ['nile-cruises/cairo-dinner-cruise', 'Tour'],
   ['packages/egypt-week', 'Tour'],
   ['hotels/cairo-hotel', 'Hotel'],
-  ['blogs/cairo-guide', 'BlogPosting'],
+  ['blogs/cairo-guide', 'Blog'],
 ];
 
 function setup(language: 'ar' | 'en' = 'ar', path = cases[1][0], staging = false) {
@@ -71,6 +71,21 @@ describe('shared entity SEO', () => {
       });
     }
   }
+
+  it('uses a custom localized meta title exactly while retaining the entity name elsewhere', () => {
+    const { seo, doc, crumbs } = setup('en', 'tours/cairo-day-tour');
+    seo.updateFrom({
+      ...entity,
+      metaTitleEng: 'Hello this is me',
+      metaTitleAr: '\u0647\u0630\u0627 \u0647\u0648 \u0627\u0644\u0639\u0646\u0648\u0627\u0646',
+    }, { schemaType: 'Tour' });
+
+    expect(doc.title).toBe('Hello this is me');
+    expect(doc.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe('Hello this is me');
+    expect(crumbs.items().at(-1)?.name).toBe(entity.nameEng);
+    const graph = JSON.parse(doc.querySelector('#page-structured-data')!.textContent!)['@graph'];
+    expect(graph.find((item: any) => item['@type'] === 'Tour').name).toBe(entity.nameEng);
+  });
 
   it('keeps entity metadata and parent labels published before NavigationEnd', () => {
     const { seo, doc, router, events, crumbs } = setup();
