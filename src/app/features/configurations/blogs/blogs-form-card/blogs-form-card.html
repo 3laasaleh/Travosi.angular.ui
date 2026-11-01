@@ -39,6 +39,31 @@
       </label>
     </div>
 
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="text-sm font-medium">
+        {{ 'englishMetaTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
+        <input formControlName="metaTitleEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2"
+          [class.border-red-500]="form.controls.metaTitleEng.touched && form.controls.metaTitleEng.invalid" />
+        @if (form.controls.metaTitleEng.touched && form.controls.metaTitleEng.hasError('required')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'englishMetaTitleRequired' | translate }}</span>
+        } @else if (form.controls.metaTitleEng.touched && form.controls.metaTitleEng.hasError('maxlength')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        }
+      </label>
+      <label class="text-sm font-medium">
+        {{ 'arabicMetaTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
+        <input formControlName="metaTitleAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2"
+          [class.border-red-500]="form.controls.metaTitleAr.touched && form.controls.metaTitleAr.invalid" />
+        @if (form.controls.metaTitleAr.touched && form.controls.metaTitleAr.hasError('required')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'arabicMetaTitleRequired' | translate }}</span>
+        } @else if (form.controls.metaTitleAr.touched && form.controls.metaTitleAr.hasError('arabicText')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'arabicMustContainLetter' | translate }}</span>
+        } @else if (form.controls.metaTitleAr.touched && form.controls.metaTitleAr.hasError('maxlength')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
+        }
+      </label>
+    </div>
+
     <label class="block text-sm font-medium">
       {{ 'routeName' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
       <input formControlName="routeName" maxlength="100" placeholder="blog-route-name"

@@ -34,15 +34,15 @@
         <tbody>
           @for (message of messages; track message.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50" [class.font-semibold]="!message.isRead">
-              <td class="px-4 py-3">{{ message.firstName }} {{ message.lastName }}</td>
+              <td class="px-4 py-3 justify-center">{{ message.firstName }} {{ message.lastName }}</td>
               <td class="px-4 py-3" dir="ltr"><a class="text-primary" [href]="'tel:' + message.contactNumber">{{ message.contactNumber }}</a></td>
               <td class="px-4 py-3" dir="ltr"><a class="text-primary" [href]="'mailto:' + message.email">{{ message.email }}</a></td>
               <td class="max-w-md whitespace-pre-line px-4 py-3 font-normal">{{ message.question }}</td>
               <td class="px-4 py-3 font-normal text-slate-500">{{ message.submittedAtUtc | date: 'yyyy-MM-dd HH:mm' }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 justify-center">
                 <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class.bg-amber-50]="!message.isRead" [class.text-amber-600]="!message.isRead" [class.bg-emerald-50]="message.isRead" [class.text-emerald-600]="message.isRead">{{ (message.isRead ? 'read' : 'unread') | translate }}</span>
               </td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 justify-center">
                 <div class="flex gap-2">
                   @if (!message.isRead) {
                     <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-emerald-300 text-emerald-600 transition hover:border-emerald-500 hover:bg-emerald-500 hover:text-white disabled:opacity-60" [disabled]="updatingId !== null" [attr.aria-label]="'markAsRead' | translate" [attr.title]="'markAsRead' | translate" (click)="markAsRead(message)">

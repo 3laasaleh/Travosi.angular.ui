@@ -92,6 +92,14 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
     }),
+    metaTitleEng: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(200)],
+    }),
+    metaTitleAr: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()],
+    }),
     routeName: new FormControl('', {
       nonNullable: true,
       validators: [
@@ -188,6 +196,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.form.reset({
       nameEng: blog?.nameEng ?? blog?.nameEng,
       nameAr: blog?.nameAr ?? blog?.nameAr,
+      metaTitleEng: blog?.metaTitleEng ?? blog?.MetaTitleEng ?? '',
+      metaTitleAr: blog?.metaTitleAr ?? blog?.MetaTitleAr ?? '',
       routeName: blog?.routeName ?? blog?.RouteName,
       DescriptionEng: blog?.descriptionEng ?? blog?.DescriptionEng ?? blog?.summaryEng ?? blog?.SummaryEng,
       DescriptionAr: blog?.descriptionAr ?? blog?.DescriptionAr ?? blog?.summaryAr ?? blog?.SummaryAr,
@@ -348,6 +358,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
     data.append('nameEng', value.nameEng.trim());
     data.append('nameAr', value.nameAr.trim());
+    data.append('MetaTitleEng', value.metaTitleEng.trim());
+    data.append('MetaTitleAr', value.metaTitleAr.trim());
     data.append('RouteName', value.routeName.trim().toLowerCase());
     data.append('DescriptionEng', value.DescriptionEng.trim());
     data.append('DescriptionAr', value.DescriptionAr.trim());

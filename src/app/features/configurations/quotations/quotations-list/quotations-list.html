@@ -50,11 +50,11 @@
       <tbody>
         @for (item of quotations; track item.id) { <tr class="border-t border-slate-200 hover:bg-slate-50">
           <td class="px-4 py-3 font-semibold">{{ item.quotationNo }}</td>
-          <td class="px-4 py-3">{{ item.customerName ?? item.customer?.firstName + ' ' + item.customer?.lastName }}</td>
-          <td class="px-4 py-3">{{ item.travelStartDate }} — {{ item.travelEndDate }}</td>
-          <td class="px-4 py-3">{{ item.totalPrice }}</td>
-          <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ statusKey(item) | translate }}</span></td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">{{ item.customerName ?? item.customer?.firstName + ' ' + item.customer?.lastName }}</td>
+          <td class="px-4 py-3 justify-center">{{ item.travelStartDate }} — {{ item.travelEndDate }}</td>
+          <td class="px-4 py-3 justify-center">{{ item.totalPrice }}</td>
+          <td class="px-4 py-3 justify-center"><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ statusKey(item) | translate }}</span></td>
+          <td class="px-4 py-3 justify-center">
             <div class="flex gap-2">
               @if (canEdit(item)) {
                 <button type="button" class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white" [attr.title]="'edit' | translate" (click)="editQuotation(item)"><i class="mdi mdi-pencil-outline"></i></button>

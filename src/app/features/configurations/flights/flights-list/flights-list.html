@@ -56,23 +56,23 @@
       </thead>
       <tbody>
         @for (item of flights; track item.id) { <tr class="border-t border-slate-200 hover:bg-slate-50">
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">
             @if (airlineLogoUrl(item); as logo) { <img [src]="logo" [alt]="item.airlineName ?? item.flightNumber" class="h-12 w-16 rounded-lg object-contain" /> }
             @else { <div class="grid h-12 w-16 place-items-center rounded-lg bg-slate-100"><i class="mdi mdi-image-off-outline"></i></div> }
           </td>
           <td class="px-4 py-3 font-semibold">{{ item.flightNumber }}</td>
-          <td class="px-4 py-3">{{ item.airlineName ?? item.airline?.name }}</td>
-          <td class="px-4 py-3">{{ item.departureAirport}} <i class="mdi mdi-arrow-right"></i>
+          <td class="px-4 py-3 justify-center">{{ item.airlineName ?? item.airline?.name }}</td>
+          <td class="px-4 py-3 justify-center">{{ item.departureAirport}} <i class="mdi mdi-arrow-right"></i>
              {{ item.arrivalAirport  }}</td>
-          <td class="px-4 py-3">{{ item.arrivalDate | date: 'mediumDate' }}</td>
+          <td class="px-4 py-3 justify-center">{{ item.arrivalDate | date: 'mediumDate' }}</td>
           <td class="px-4 py-3 text-xs">
             <div>{{ 'adults' | translate }}: {{ item.pricePerPerson }} {{currencyService.currentCurrency().symbol}}</div>
             <div>{{ 'children' | translate }}: {{ item.pricePerChild }} {{currencyService.currentCurrency().symbol}}</div>
             <div>{{ 'infants' | translate }}: {{ item.pricePerInfant }} {{currencyService.currentCurrency().symbol}}</div>
           </td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">
             <span class="rounded-full bg-primary-400 px-2 py-0.5 text-xs text-slate-50 font-semibold">{{ flightClassKey(item.flightClass) | translate }}</span></td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">
             <button type="button" role="switch" [disabled]="statusUpdatingId !== null || deletingId !== null"
               [attr.aria-checked]="item.isActive !== false" [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate"
               class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
@@ -85,7 +85,7 @@
                { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }
             </button>
           </td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">
             <div class="flex gap-2">
         @if (item.isActive === false) {
               <button type="button" [disabled]="deletingId !== null || statusUpdatingId !== null" class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50" (click)="editRequested.emit(item)">

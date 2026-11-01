@@ -55,7 +55,7 @@
         <tbody>
           @for (item of tours; track item.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50">
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 justify-center">
                 @if (getImages(item)[0]; as image) {
                   <img [src]="imageUrl(image)" [alt]="item.nameEng" class="h-12 w-20 rounded-lg object-cover" />
                 } @else {
@@ -64,9 +64,9 @@
               </td>
               <td class="px-4 py-3 font-semibold">{{ item.nameEng }}<p class="text-xs font-normal text-slate-500">{{ destinationName(item) }}</p></td>
               <td class="px-4 py-3" dir="rtl">{{ item.nameAr }}</td>
-              <td class="px-4 py-3">{{ tourDuration(item) }}</td>
+              <td class="px-4 py-3 justify-center">{{ tourDuration(item) }}</td>
               <td class="px-4 py-3 font-semibold text-primary">{{ tourPrice(item) }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 justify-center">
                 <button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false"
                   [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate"
                   class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
@@ -80,7 +80,7 @@
                   }
                 </button>
               </td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 justify-center">
                 <div class="flex gap-2">
                   <button type="button"
                     class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white cursor-pointer"

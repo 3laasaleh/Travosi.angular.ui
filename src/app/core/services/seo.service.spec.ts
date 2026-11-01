@@ -73,18 +73,18 @@ describe('shared entity SEO', () => {
   }
 
   it('uses a custom localized meta title exactly while retaining the entity name elsewhere', () => {
-    const { seo, doc, crumbs } = setup('en', 'tours/cairo-day-tour');
+    const { seo, doc, crumbs } = setup('en', 'blogs/cairo-guide');
     seo.updateFrom({
       ...entity,
       metaTitleEng: 'Hello this is me',
       metaTitleAr: '\u0647\u0630\u0627 \u0647\u0648 \u0627\u0644\u0639\u0646\u0648\u0627\u0646',
-    }, { schemaType: 'Tour' });
+    }, { schemaType: 'Blog' });
 
     expect(doc.title).toBe('Hello this is me');
     expect(doc.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe('Hello this is me');
     expect(crumbs.items().at(-1)?.name).toBe(entity.nameEng);
     const graph = JSON.parse(doc.querySelector('#page-structured-data')!.textContent!)['@graph'];
-    expect(graph.find((item: any) => item['@type'] === 'Tour').name).toBe(entity.nameEng);
+    expect(graph.find((item: any) => item['@type'] === 'Blog').name).toBe(entity.nameEng);
   });
 
   it('keeps entity metadata and parent labels published before NavigationEnd', () => {

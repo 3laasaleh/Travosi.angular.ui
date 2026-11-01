@@ -47,15 +47,15 @@
       </thead>
       <tbody>
         @for (item of airlines; track item.id) { <tr class="border-t border-slate-200 hover:bg-slate-50">
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center">
             @if (logoUrl(item); as logo) { <img [src]="logo" [alt]="item.name" class="h-12 w-20 rounded-lg object-contain" /> }
             @else { <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100"><i class="mdi mdi-image-off-outline"></i></div> }
           </td>
           <td class="px-4 py-3 font-semibold">{{ item.nameEng }}</td>
           <td class="px-4 py-3 font-semibold">{{ item.nameAr }}</td>
-          <td class="px-4 py-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ item.code }}</span></td>
-          <td class="px-4 py-3"><button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false" [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate" class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60" [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false" (click)="toggleAirlineStatus(item)">@if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white"></i> } @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }</button></td>
-          <td class="px-4 py-3">
+          <td class="px-4 py-3 justify-center"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold">{{ item.code }}</span></td>
+          <td class="px-4 py-3 justify-center"><button type="button" role="switch" [disabled]="statusUpdatingId !== null" [attr.aria-checked]="item.isActive !== false" [attr.aria-label]="(item.isActive === false ? 'activate' : 'deactivate') | translate" class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60" [class.bg-emerald-500]="item.isActive !== false" [class.bg-slate-300]="item.isActive === false" (click)="toggleAirlineStatus(item)">@if (statusUpdatingId === item.id) { <i class="mdi mdi-loading mdi-spin mx-auto text-sm text-white"></i> } @else { <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform" [class.translate-x-6]="item.isActive !== false" [class.translate-x-1]="item.isActive === false"></span> }</button></td>
+          <td class="px-4 py-3 justify-center">
             <div class="flex gap-2">
               @if (item.isActive === false) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-amber-300 text-amber-600 transition-colors duration-200 hover:border-amber-500 hover:bg-amber-500 hover:text-white cursor-pointer" (click)="editRequested.emit(item)"><i class="mdi mdi-pencil-outline"></i></button> }
               @if (item.isActive === false) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-rose-300 text-rose-600 hover:bg-rose-600 hover:text-white" (click)="deleteAirline(item)"><i class="mdi mdi-delete-outline"></i></button> }

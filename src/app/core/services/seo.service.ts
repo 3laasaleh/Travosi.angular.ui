@@ -165,7 +165,16 @@ export class SeoService {
     // SEO headlines may be longer than the entity name shown in navigation and structured data.
     const name = page.name[language] || page.name[alternative];
     this.breadcrumbService.setCurrentTitle(name);
-    this.setPage(title, description, page.imageUrl, page.imageAlt, page.schemaType, page.entity, name);
+    this.setPage(
+      title,
+      description,
+      page.imageUrl,
+      page.imageAlt,
+      page.schemaType,
+      page.entity,
+      name,
+      hasMetaTitle,
+    );
   }
 
   private setPage(
@@ -176,12 +185,13 @@ export class SeoService {
     schemaType: SeoSchemaType,
     entity?: Record<string, unknown>,
     entityName?: string,
+    useExactTitle = false,
   ): void {
     const resolvedTitle = this.plainText(title);
     const resolvedDescription = this.cleanDescription(description);
     const canonicalUrl = this.canonicalUrl();
     const language = this.languageFromUrl();
-    this.titleService.setTitle(resolvedTitle);
+    this.titleService.setTitle(useExactTitle ? resolvedTitle : this.brandedTitle(resolvedTitle));
     this.updateOrRemoveName('description', resolvedDescription);
     const requestUrl = this.request?.url ?? this.document.defaultView?.location.href;
     const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)
