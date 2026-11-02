@@ -336,6 +336,7 @@
   "addTask": "Add task",
   "taskTitle": "Task title",
   "taskTitleRequired": "Task title is required.",
+  "taskDueDatePast": "The due date must be today or a future date.",
   "assignedAgent": "Assigned agent",
   "selectAgent": "Select an agent",
   "agentRequired": "Agent is required.",

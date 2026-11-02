@@ -571,7 +571,7 @@ export class Invoices implements OnInit {
   private configureItemValidators(row: InvoiceItemGroup): void {
     const transfer = this.isTransfer(row);
     row.controls.serviceId.setValidators(transfer ? [] : [Validators.required, Validators.min(1)]);
-    row.controls.description.setValidators(transfer ? [] : [Validators.required, Validators.maxLength(500)]);
+    row.controls.description.setValidators(transfer ? [] : [Validators.required, Validators.maxLength(1000)]);
     row.controls.from.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
     row.controls.to.setValidators(transfer ? [Validators.required, Validators.maxLength(250)] : []);
     row.controls.transferDate.setValidators(transfer ? [Validators.required] : []);

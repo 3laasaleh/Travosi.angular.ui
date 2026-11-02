@@ -323,8 +323,8 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
       metaTitleEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
       metaTitleAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200), arabicTextValidator()] }),
       routeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)] }),
-      descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000)] }),
-      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()] }),
+      descriptionEng: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      descriptionAr: new FormControl('', { nonNullable: true, validators: [Validators.required, arabicTextValidator()] }),
       destinationId: new FormControl<number | null>(null, { validators: [Validators.required] }),
       images: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
     });

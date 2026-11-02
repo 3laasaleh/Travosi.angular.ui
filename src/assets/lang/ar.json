@@ -351,6 +351,7 @@
   "addTask": "إضافة مهمة",
   "taskTitle": "عنوان المهمة",
   "taskTitleRequired": "عنوان المهمة مطلوب.",
+  "taskDueDatePast": "يجب أن يكون تاريخ الاستحقاق اليوم أو في تاريخ لاحق.",
   "assignedAgent": "الوكيل المكلف",
   "selectAgent": "اختر وكيلاً",
   "agentRequired": "الوكيل مطلوب.",

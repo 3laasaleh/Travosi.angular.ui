@@ -30,6 +30,8 @@
         <app-date-picker  [min]="today" formControlName="dueDate" id="task-due-date" [ariaLabel]="'dueDate' | translate"
           inputClass="rounded-2xl border border-slate-300 px-3 py-2 pe-11" />@if (taskForm.controls.dueDate.touched &&
         taskForm.controls.dueDate.hasError('invalidDate')) { <p class="mt-1 text-xs text-red-600">{{ 'invalidDate' |
+          translate }}</p> } @else if (taskForm.controls.dueDate.touched &&
+        taskForm.controls.dueDate.hasError('pastDate')) { <p class="mt-1 text-xs text-red-600">{{ 'taskDueDatePast' |
           translate }}</p> }
       </div>
     </div>

@@ -41,6 +41,7 @@ export class TasksFromCard implements OnInit, OnChanges {
   @Output() taskSaved = new EventEmitter<void>();
   @Output() editCancelled = new EventEmitter<void>();
 
+  readonly today = this.toLocalDate(new Date());
   taskForm = this.createForm();
   agents: any[] = [];
   isLoading = false;
@@ -58,8 +59,6 @@ export class TasksFromCard implements OnInit, OnChanges {
     { value: 1, labelKey: 'priorityLow' }, { value: 2, labelKey: 'priorityMedium' },
     { value: 3, labelKey: 'priorityHigh' }, { value: 4, labelKey: 'priorityUrgent' },
   ];
-  readonly today = new Date().toISOString();
-
   constructor(
     private apiService: ApiService,
     private cdr: ChangeDetectorRef,
@@ -187,10 +186,24 @@ export class TasksFromCard implements OnInit, OnChanges {
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       description: new FormControl('', { nonNullable: true }),
       agentId: new FormControl<string | null>(null, { validators: [Validators.required] }),
-      dueDate: new FormControl('', { nonNullable: true, validators: [validDate()] }),
+      dueDate: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          validDate(),
+          control => !control.value || String(control.value) >= this.today ? null : { pastDate: true },
+        ],
+      }),
       status: new FormControl(TaskStatusEnum.Pending, { nonNullable: true, validators: [Validators.required] }),
       taskType: new FormControl(7, { nonNullable: true, validators: [Validators.required] }),
       priority: new FormControl(2, { nonNullable: true, validators: [Validators.required] }),
     });
+  }
+
+  private toLocalDate(date: Date): string {
+    return [
+      date.getFullYear().toString().padStart(4, '0'),
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ].join('-');
   }
 }

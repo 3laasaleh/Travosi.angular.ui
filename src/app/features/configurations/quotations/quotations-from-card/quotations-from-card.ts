@@ -1397,7 +1397,7 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       id: new FormControl(Number(policy.id) || 0, { nonNullable: true }),
       value: new FormControl(String(policy.value ?? ''), {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(500)],
+        validators: [Validators.required, Validators.maxLength(1000)],
       }),
     });
   }

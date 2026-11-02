@@ -110,11 +110,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }),
     DescriptionEng: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(500)],
+      validators: [Validators.maxLength(1000)],
     }),
     DescriptionAr: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(500), arabicTextValidator()],
+      validators: [Validators.maxLength(1000), arabicTextValidator()],
     }),
     headerData: new FormArray<FormGroup>([]),
     publishedAt: new FormControl(this.today, {
@@ -459,11 +459,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       }),
       descriptionEng: new FormControl(String(value.descriptionEng ?? ''), {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(4000)],
+        validators: [Validators.required],
       }),
       descriptionAr: new FormControl(String(value.descriptionAr ?? ''), {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(4000), arabicTextValidator()],
+        validators: [Validators.required, arabicTextValidator()],
       }),
     });
   }

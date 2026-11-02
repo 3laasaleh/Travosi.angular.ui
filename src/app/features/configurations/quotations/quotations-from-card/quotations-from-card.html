@@ -20,12 +20,16 @@
     <div class="grid gap-4 md:grid-cols-2">
       <div>
         <label class="required-field-label mb-2 block text-sm font-medium">{{ 'customer' | translate }}</label>
-        <select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
-          <option value="">{{ 'selectCustomer' | translate }}</option>
-          @for (customer of customers; track customer.id) {
-            <option [ngValue]="customer.id">{{ customer.firstName }} {{ customer.lastName }}{{ customer.companyName ? ' — ' + customer.companyName : '' }}</option>
-          }
-        </select>
+        @if (optionsLoading) {
+          <div class="h-10 w-full animate-pulse rounded-2xl bg-slate-200" role="status" [attr.aria-label]="'loading' | translate"></div>
+        } @else {
+          <select formControlName="customerId" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
+            <option value="">{{ 'selectCustomer' | translate }}</option>
+            @for (customer of customers; track customer.id) {
+              <option [ngValue]="customer.id">{{ customer.firstName }} {{ customer.lastName }}{{ customer.companyName ? ' — ' + customer.companyName : '' }}</option>
+            }
+          </select>
+        }
         @if (quotationForm.controls.customerId.touched && quotationForm.controls.customerId.invalid) {
           <p class="mt-1 text-xs text-red-600">{{ 'customerRequired' | translate }}</p>
         }
