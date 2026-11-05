@@ -29,6 +29,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { RichTextContent } from '../../../../shared/components/rich-text-content/rich-text-content';
 import { customerPdfDownloadName } from '../../../../shared/utils/pdf-download-name.util';
 import { CurrencyService } from '../../../../core/services/currency.service';
 
@@ -69,18 +70,19 @@ export interface QuotationDTO {
 
 type QuotationAudience = 'adults' | 'children' | 'infants';
 type QuotationPriceSet = Record<QuotationAudience, number> & { currencyId: number };
-type QuotationCatalogType = 'package' | 'tour' | 'hotel' | 'room';
+type QuotationCatalogType = 'package' | 'tour' | 'hotel' | 'room' | 'destination';
 
 interface QuotationDetailField {
   key: string;
   label: string;
   value: string;
+  richText?: boolean;
 }
 
 @Component({
   selector: 'app-quotations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, TranslatePipe, DatePicker, TimePicker],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, TranslatePipe, DatePicker, TimePicker, RichTextContent],
   templateUrl: './quotations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -187,11 +189,12 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   private catalogDetailFields(type: QuotationCatalogType, item: any): QuotationDetailField[] {
     const fields: QuotationDetailField[] = [];
-    const add = (labelKey: string, value: unknown): void => {
+    const add = (labelKey: string, value: unknown, richText = false): void => {
       if (value === null || value === undefined || value === '') return;
       fields.push({
         key: `${labelKey}-${fields.length}`,
         label: this.detailFieldLabel(labelKey),
+        richText,
         value: typeof value === 'boolean'
           ? this.translate.instant(value ? 'yes' : 'no')
           : String(value),
@@ -200,8 +203,8 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
     add('nameEnglish', item?.nameEng ?? item?.name);
     add('nameArabic', item?.nameAr);
-    add('englishDescription', item?.fullDescriptionEng ?? item?.descriptionEng ?? item?.description);
-    add('arabicDescription', item?.fullDescriptionAr ?? item?.descriptionAr);
+    add('englishDescription', item?.fullDescriptionEng ?? item?.descriptionEng ?? item?.description, true);
+    add('arabicDescription', item?.fullDescriptionAr ?? item?.descriptionAr, true);
 
     if (type === 'package' || type === 'tour') {
       const duration = this.durationText(item);
@@ -236,6 +239,11 @@ export class QuotationsFromCard implements OnInit, OnChanges {
       add('cancellationPolicies', this.localizedList(
         item?.cancellationPolicies ?? this.hotelPolicies(item),
       ));
+    } else if (type === 'destination') {
+      add('shortDescriptionEnglish', item?.subDescriptionEng ?? item?.subDescription, true);
+      add('shortDescriptionArabic', item?.subDescriptionAr, true);
+      add('metaTitleEnglish', item?.metaTitleEng);
+      add('metaTitleArabic', item?.metaTitleAr);
     } else {
       add('roomType', this.roomTypeName(item));
       add('mealPlan', this.namedValue(item?.mealPlanName ?? item?.mealPlanDetails ?? item?.mealPlan));
@@ -494,6 +502,12 @@ export class QuotationsFromCard implements OnInit, OnChanges {
 
   get filteredFlights(): any[] {
     return this.filterCatalog(this.flights, this.selectedFlightIds, item => this.flightMatchesFilters(item));
+  }
+
+  get selectedDestinationForDetails(): any | null {
+    const destinationId = Number(this.destinationFilter.value);
+    if (!Number.isInteger(destinationId) || destinationId <= 0) return null;
+    return this.destinations.find(destination => Number(destination.id ?? destination.destinationId) === destinationId) ?? null;
   }
 
   onDestinationFilterChange(value: unknown): void {

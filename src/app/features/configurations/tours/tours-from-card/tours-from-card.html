@@ -416,7 +416,7 @@
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'arabicDescription' | translate
-              }}</label><app-rich-text-editor formControlName="descriptionAr" direction="rtl" />
+              }}</label><app-rich-text-editor formControlName="descriptionAr" />
             @if (
             tourForm.controls.descriptionAr.touched &&
             tourForm.controls.descriptionAr.hasError('required')
@@ -434,7 +434,7 @@
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium">{{ 'arabicFullDescription' | translate }}
-            </label><app-rich-text-editor formControlName="fullDescriptionAr" direction="rtl" minHeight="11rem" />
+            </label><app-rich-text-editor formControlName="fullDescriptionAr" minHeight="11rem" />
             @if (tourForm.controls.fullDescriptionAr.touched &&
             tourForm.controls.fullDescriptionAr.hasError('arabicText'))
             {

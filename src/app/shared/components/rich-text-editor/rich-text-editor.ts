@@ -20,8 +20,7 @@ import { QuillEditorComponent } from 'ngx-quill';
       [modules]="modules"
       [placeholder]="placeholder"
       [styles]="{ minHeight: minHeight }"
-      [attr.dir]="direction"
-      (onBlur)="markTouched()"
+        (onBlur)="markTouched()"
     />
   `,
   providers: [

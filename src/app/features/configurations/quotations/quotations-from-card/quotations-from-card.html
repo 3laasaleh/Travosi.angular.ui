@@ -130,12 +130,19 @@
         <div class="mb-5 grid gap-3 rounded-xl bg-slate-50 p-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end">
           <div>
             <label class="mb-2 block text-sm font-medium" for="quotation-destination-filter">{{ 'destination' | translate }}</label>
-            <select id="quotation-destination-filter" [formControl]="destinationFilter" (change)="onDestinationFilterChange($any($event.target).value)" class="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2">
-              <option [ngValue]="null">{{ 'selectDestination' | translate }}</option>
-              @for (destination of destinations; track destination.id || destination.destinationId) {
-                <option [value]="destination.id || destination.destinationId">{{ itemName(destination) }}</option>
+            <div class="flex items-center gap-2">
+              <select id="quotation-destination-filter" [formControl]="destinationFilter" (change)="onDestinationFilterChange($any($event.target).value)" class="min-w-0 flex-1 rounded-2xl border border-slate-300 bg-white px-3 py-2">
+                <option [ngValue]="null">{{ 'selectDestination' | translate }}</option>
+                @for (destination of destinations; track destination.id || destination.destinationId) {
+                  <option [value]="destination.id || destination.destinationId">{{ itemName(destination) }}</option>
+                }
+              </select>
+              @if (selectedDestinationForDetails; as destination) {
+                <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-primary/40 text-primary transition hover:bg-primary hover:text-white"
+                  [attr.aria-label]="'viewDetails' | translate" [attr.title]="'viewDetails' | translate"
+                  (click)="openCatalogDetails('destination', destination)"><i class="mdi mdi-eye-outline" aria-hidden="true"></i></button>
               }
-            </select>
+            </div>
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium" for="quotation-city-filter">{{ 'city' | translate }}</label>
@@ -552,9 +559,9 @@
         }
         <dl class="mt-5 grid gap-3 sm:grid-cols-2">
           @for (field of detailFields; track field.key) {
-            <div class="min-w-0 rounded-xl bg-slate-50 p-3">
+            <div class="min-w-0 rounded-xl bg-slate-50 p-3" [class.catalog-detail-rich]="field.richText">
               <dt class="text-xs font-semibold text-slate-500">{{ field.label }}</dt>
-              <dd class="mt-1 whitespace-pre-line break-words text-sm text-slate-800">{{ field.value }}</dd>
+              <dd class="mt-1 break-words text-sm text-slate-800"><app-rich-text-content [content]="field.value" /></dd>
             </div>
           }
         </dl>

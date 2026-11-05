@@ -78,7 +78,7 @@
           'maximumCharacters' | translate:{ count: 4000 } }}</p> }
       </div>
       <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span class="text-red-600">*</span></label>
-        <app-rich-text-editor formControlName="descriptionAr" direction="rtl" />
+        <app-rich-text-editor formControlName="descriptionAr" />
         @if (destinationForm.controls.descriptionAr.touched &&
         destinationForm.controls.descriptionAr.hasError('required')) {
         <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>

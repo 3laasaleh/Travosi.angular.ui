@@ -62,7 +62,7 @@
       (hotelForm.controls.descriptionEng.touched && hotelForm.controls.descriptionEng.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }</div>
     <div><label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span
-          class="text-red-600">*</span></label><app-rich-text-editor formControlName="descriptionAr" direction="rtl" />@if
+          class="text-red-600">*</span></label><app-rich-text-editor formControlName="descriptionAr" />@if
       (hotelForm.controls.descriptionAr.touched && hotelForm.controls.descriptionAr.invalid) { <p
         class="mt-1 text-xs text-red-600">{{ hotelForm.controls.descriptionAr.hasError('arabicText') ?
         ('arabicNameInvalid' | translate) : ('descriptionRequired' | translate) }}</p> }</div>
