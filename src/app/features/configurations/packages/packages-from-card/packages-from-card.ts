@@ -19,6 +19,7 @@ import { environment } from '../../../../../environments/environment';
 import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.directive';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 import { orderItineraryItems } from '../../../../shared/utils/itinerary-order.util';
 import { validDate } from '../../../../core/services/custom.validators';
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
@@ -50,7 +51,7 @@ type PackageFormStep = 1 | 2 | 3;
 @Component({
   selector: 'app-packages-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker, PackageBenefitsEditor],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe, NumbersOnlyDirective, DatePicker, TimePicker, RichTextEditor, PackageBenefitsEditor],
   templateUrl: './packages-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

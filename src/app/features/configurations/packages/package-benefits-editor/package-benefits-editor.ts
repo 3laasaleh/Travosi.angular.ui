@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,6 +8,8 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { formatHomePrice } from '../../../home/home-price.util';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
+import { RichTextContent } from '../../../../shared/components/rich-text-content/rich-text-content';
+import { environment } from '../../../../../environments/environment';
 
 export function packageRoomGroup(item: any): FormGroup {
   return new FormGroup({
@@ -74,7 +77,7 @@ function timeMinutes(value: unknown): number | null {
 
 @Component({
   selector: 'app-package-benefits-editor', standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe ,TimePicker],
+  imports: [ReactiveFormsModule, DatePipe, TranslatePipe, TimePicker, RichTextContent],
   templateUrl: './package-benefits-editor.html', changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PackageBenefitsEditor implements OnInit, OnChanges {
@@ -91,6 +94,7 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
   readonly toursError = signal('');
   readonly hotelMenuOpen = signal(false);
   readonly error = signal('');
+  readonly tourDetails = signal<any | null>(null);
  
   private readonly api = inject(ApiService);
   private readonly currency = inject(CurrencyService);
@@ -208,6 +212,70 @@ export class PackageBenefitsEditor implements OnInit, OnChanges {
     this.tourIds.setValue(this.tourSelected(tour) ? this.tourIds.value.filter(value => value !== id) : [...this.tourIds.value, id]);
     this.tourIds.markAsDirty();
     this.tourIds.markAsTouched();
+  }
+
+  openTourDetails(tour: any): void { this.tourDetails.set(tour); }
+  closeTourDetails(): void { this.tourDetails.set(null); }
+
+  tourDescription(tour: any, arabic = false): string | null {
+    const value = arabic
+      ? tour?.fullDescriptionAr ?? tour?.descriptionAr
+      : tour?.fullDescriptionEng ?? tour?.descriptionEng ?? tour?.description;
+    return typeof value === 'string' && value.trim() ? value : null;
+  }
+
+  tourDetailList(value: any): string | null {
+    if (!Array.isArray(value)) return typeof value === 'string' && value.trim() ? value : null;
+    const entries = value.map((item: any) => {
+      if (typeof item === 'string') return item.trim();
+      if (!item || typeof item !== 'object') return '';
+      const arabic = this.translate.currentLang()?.startsWith('ar');
+      return String(arabic
+        ? item.valueAr ?? item.nameAr ?? item.value ?? item.name ?? item.titleAr ?? item.title ?? ''
+        : item.valueEng ?? item.nameEng ?? item.value ?? item.name ?? item.titleEng ?? item.title ?? '').trim();
+    }).filter(Boolean);
+    return entries.length ? [...new Set(entries)].join('\n') : null;
+  }
+
+  tourDestinations(tour: any): string | null {
+    const entries = (Array.isArray(tour?.destinations) ? tour.destinations : [tour?.destination, tour?.destinationName])
+      .map((item: any) => typeof item === 'string'
+        ? item
+        : this.label(item) || item?.destinationName || item?.name)
+      .filter(Boolean);
+    return entries.length ? [...new Set(entries)].join(', ') : null;
+  }
+
+  tourItineraryText(tour: any): string | null {
+    const items = Array.isArray(tour?.itinerary ?? tour?.itineraries) ? (tour.itinerary ?? tour.itineraries) : [];
+    const lines = items.map((item: any, index: number) => {
+      const title = item?.nameEng ?? item?.titleEng ?? item?.title ?? item?.nameAr ?? '';
+      const description = item?.valueEng ?? item?.descriptionEng ?? item?.description ?? item?.valueAr ?? '';
+      const timing = [item?.arrivalDate, item?.startTime, item?.endTime].filter(Boolean).join(' · ');
+      return [title || `Step ${index + 1}`, description, timing].filter(Boolean).join(' — ');
+    }).filter(Boolean);
+    return lines.length ? lines.join('\n') : null;
+  }
+
+  tourDuration(tour: any): string | null {
+    const days = Number(tour?.durationDays ?? tour?.duration ?? 0);
+    const hours = Number(tour?.durationHours ?? tour?.durationhours ?? 0);
+    const values = [days > 0 ? `${days} ${this.translate.instant('days')}` : '', hours > 0 ? `${hours} ${this.translate.instant('hours')}` : ''].filter(Boolean);
+    return values.length ? values.join(' ') : null;
+  }
+
+  tourImages(tour: any): string[] {
+    const values = Array.isArray(tour?.images) ? tour.images : [];
+    const urls = values.map((image: any) => typeof image === 'string' ? image : image?.imageUrl ?? image?.url ?? image?.path)
+      .filter((url: any): url is string => typeof url === 'string' && url.trim().length > 0);
+    const cover = tour?.coverImageUrl ?? tour?.imageUrl;
+    if (typeof cover === 'string' && cover.trim()) urls.unshift(cover);
+    return [...new Set(urls)].map(url => this.tourImageUrl(String(url)));
+  }
+
+  private tourImageUrl(url: string): string {
+    if (/^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '').replace(/^images\//i, '')}`;
   }
   hotelSelected(hotel: any): boolean { return this.rooms.controls.some(row => Number(row.value.hotelId) === Number(hotel.id)); }
   hotelNeedsRoom(hotel: any): boolean {

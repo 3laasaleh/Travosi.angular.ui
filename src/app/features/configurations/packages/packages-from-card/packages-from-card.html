@@ -373,9 +373,7 @@
         <div>
           <label class="mb-2 block text-sm font-medium">
             {{ 'englishDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-          </label><textarea formControlName="descriptionEng" rows="5" maxlength="4000"
-            class="w-full rounded-2xl border px-3 py-2"></textarea>
-          <p class="mt-1 text-xs text-slate-500">{{ 'descriptionLinkHint' | translate }}</p>
+          </label><app-rich-text-editor formControlName="descriptionEng" minHeight="11rem" />
           @if (
           packageForm.controls.descriptionEng.touched &&
           packageForm.controls.descriptionEng.hasError('required')
@@ -386,9 +384,7 @@
         <div>
           <label class="mb-2 block text-sm font-medium">
             {{ 'arabicDescription' | translate }} <span class="text-rose-600" aria-hidden="true">*</span>
-          </label><textarea formControlName="descriptionAr" rows="5" maxlength="4000" dir="rtl"
-            class="w-full rounded-2xl border px-3 py-2"></textarea>
-          <p class="mt-1 text-xs text-slate-500" dir="rtl">{{ 'descriptionLinkHint' | translate }}</p>
+          </label><app-rich-text-editor formControlName="descriptionAr" minHeight="11rem" />
           @if (
           packageForm.controls.descriptionAr.touched &&
           packageForm.controls.descriptionAr.hasError('required')
