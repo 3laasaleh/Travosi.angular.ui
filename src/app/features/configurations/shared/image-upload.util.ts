@@ -13,7 +13,7 @@ export class ImageUploadValidationError extends Error {
   }
 }
 
-const MAX_IMAGE_FILE_NAME_LENGTH = 30;
+export const MAX_IMAGE_FILE_NAME_LENGTH = 100;
 
 export function truncateImageFileName(file: File): File {
   const nameParts = Array.from(file.name);

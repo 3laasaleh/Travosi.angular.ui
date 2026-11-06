@@ -82,16 +82,12 @@
       <label class="text-sm font-medium">
         {{ 'englishSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
         <app-rich-text-editor formControlName="DescriptionEng" minHeight="6rem" />
-        @if (form.controls.DescriptionEng.touched && form.controls.DescriptionEng.hasError('maxlength')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
-        }
+   
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
         <app-rich-text-editor formControlName="DescriptionAr" minHeight="6rem" />
-        @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('maxlength')) {
-        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 500 } }}</span>
-        }
+    
         @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('arabicText')) { <span
           class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>
@@ -161,13 +157,11 @@
               <label class="text-sm font-medium">{{ 'englishDescription' | translate }} <span class="text-red-600" aria-hidden="true">*</span></label>
               <app-rich-text-editor formControlName="descriptionEng" minHeight="11rem" />
               @if (section.get('descriptionEng')?.touched && section.get('descriptionEng')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }
-              @else if (section.get('descriptionEng')?.touched && section.get('descriptionEng')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
             </div>
             <div>
               <label class="text-sm font-medium">{{ 'arabicDescription' | translate }} <span class="text-red-600" aria-hidden="true">*</span></label>
               <app-rich-text-editor formControlName="descriptionAr" minHeight="11rem" />
               @if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.hasError('required')) { <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p> }
-              @else if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.hasError('maxlength')) { <p class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
               @else if (section.get('descriptionAr')?.touched && section.get('descriptionAr')?.invalid) { <p class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
             </div>
           </div>

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/apiservice.service';
@@ -26,15 +27,26 @@ interface PaginationInfoDTO {
   totalPages: number;
 }
 
+interface TaskCommentDTO {
+  id: number;
+  agentTaskId: number;
+  authorUserId: number;
+  authorName?: string | null;
+  authorRole?: string | null;
+  comment: string;
+  createdDate: string;
+}
+
 @Component({
   selector: 'app-configurations-tasks-list',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, PaginationOne],
+  imports: [TranslatePipe, DatePipe, PaginationOne, FormsModule],
   templateUrl: './tasks-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksList implements OnInit, OnChanges {
   readonly pageSizeOptions = [10, 20, 50];
+  readonly maxTaskCommentLength = 4000;
   @Input() viewMode: 'table' | 'grid' = 'table';
   @Input() refreshToken = 0;
   @Output() editRequested = new EventEmitter<any>();
@@ -45,6 +57,12 @@ export class TasksList implements OnInit, OnChanges {
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
   readonly taskStatusEnum = TaskStatusEnum;
+  commentsTask: any | null = null;
+  taskComments: TaskCommentDTO[] = [];
+  commentsLoading = false;
+  commentsSaving = false;
+  commentsError = '';
+  commentDraft = '';
 
   constructor(
     private apiService: ApiService,
@@ -130,6 +148,91 @@ export class TasksList implements OnInit, OnChanges {
     return TASK_STATUS_OPTIONS.find((option) => option.value === Number(value))?.labelKey ?? '';
   }
 
+  openComments(task: any): void {
+    const taskId = Number(task?.id);
+    if (!Number.isInteger(taskId) || taskId <= 0) return;
+    this.commentsTask = task;
+    this.taskComments = [];
+    this.commentDraft = '';
+    this.commentsError = '';
+    this.commentsLoading = true;
+    this.apiService.get(`Tasks/${taskId}/Comments`).pipe(
+      catchError(() => {
+        this.commentsError = 'taskCommentsLoadError';
+        return of(null);
+      }),
+      finalize(() => {
+        this.commentsLoading = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.commentsError = 'taskCommentsLoadError';
+        this.cdr.markForCheck();
+        return;
+      }
+      const data = response?.data ?? response;
+      const rows = Array.isArray(data) ? data : data?.items ?? data?.comments ?? [];
+      this.taskComments = Array.isArray(rows) ? rows : [];
+      this.cdr.markForCheck();
+    });
+  }
+
+  closeComments(): void {
+    this.commentsTask = null;
+    this.taskComments = [];
+    this.commentDraft = '';
+    this.commentsError = '';
+  }
+
+  canComment(task: any | null): boolean {
+    return !!task;
+  }
+
+  commentAuthorRoleKey(role: string | null | undefined): string {
+    if (role?.toLowerCase() === 'admin') return 'taskCommentAdmin';
+    if (role?.toLowerCase() === 'agent') return 'taskCommentAgent';
+    return 'taskCommentUnknownAuthor';
+  }
+
+  addComment(): void {
+    const taskId = Number(this.commentsTask?.id);
+    const comment = this.commentDraft.trim();
+    if (!Number.isInteger(taskId) || taskId <= 0 || !comment || this.commentsSaving || !this.canComment(this.commentsTask)) {
+      if (!comment) this.commentsError = 'taskCommentRequired';
+      return;
+    }
+    if (comment.length > this.maxTaskCommentLength) {
+      this.commentsError = 'taskCommentTooLong';
+      return;
+    }
+
+    this.commentsSaving = true;
+    this.commentsError = '';
+    this.apiService.post(`Tasks/${taskId}/Comments`, { comment }).pipe(
+      catchError(() => {
+        this.commentsError = 'taskCommentSaveError';
+        return of(null);
+      }),
+      finalize(() => {
+        this.commentsSaving = false;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.commentsError = 'taskCommentSaveError';
+        this.cdr.markForCheck();
+        return;
+      }
+      const saved = response?.data;
+      if (saved) this.taskComments = [...this.taskComments, saved];
+      this.commentDraft = '';
+      this.cdr.markForCheck();
+    });
+  }
+
   canStart(task: any): boolean {
     const status = Number(task?.status);
     return !this.isAdmin && (status === TaskStatusEnum.Pending || status === TaskStatusEnum.Returned);
@@ -159,6 +262,7 @@ export class TasksList implements OnInit, OnChanges {
       inputLabel: this.translate.instant('agentCompletionNote'),
       inputPlaceholder: this.translate.instant('agentCompletionNotePlaceholder'),
       inputValue: task?.agentDescription ?? '',
+      inputAttributes: { maxlength: String(this.maxTaskCommentLength) },
       showCancelButton: true,
       confirmButtonText: this.translate.instant('finishTask'),
       cancelButtonText: this.translate.instant('cancel'),
@@ -184,6 +288,7 @@ export class TasksList implements OnInit, OnChanges {
       input: 'textarea',
       inputLabel: this.translate.instant('returnReason'),
       inputPlaceholder: this.translate.instant('returnReasonPlaceholder'),
+      inputAttributes: { maxlength: String(this.maxTaskCommentLength) },
       showCancelButton: true,
       confirmButtonText: this.translate.instant('returnTask'),
       cancelButtonText: this.translate.instant('cancel'),

@@ -405,7 +405,8 @@
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'englishDescription' | translate
-              }}</label><app-rich-text-editor formControlName="descriptionEng" />
+              }}</label>
+              <app-rich-text-editor formControlName="descriptionEng" />
             @if (
             tourForm.controls.descriptionEng.touched &&
             tourForm.controls.descriptionEng.hasError('required')

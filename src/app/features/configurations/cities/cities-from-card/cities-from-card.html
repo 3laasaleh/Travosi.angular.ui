@@ -97,8 +97,7 @@
         @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('required')) {
         <p class="mt-1 text-xs text-red-600">{{ 'descriptionRequired' | translate }}</p>
         }
-        @if (cityForm.controls.descriptionEng.touched && cityForm.controls.descriptionEng.hasError('maxlength')) { <p
-          class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium">{{ 'arabicDescription' | translate }} <span
@@ -109,8 +108,7 @@
         }
         @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('arabicText')) { <p
           class="mt-1 text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
-        @if (cityForm.controls.descriptionAr.touched && cityForm.controls.descriptionAr.hasError('maxlength')) { <p
-          class="mt-1 text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: 4000 } }}</p> }
+
       </div>
     </div>
     <div>
