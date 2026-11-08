@@ -47,6 +47,8 @@ export class RoomDetails implements OnInit {
   infants = 0;
   childrenAges: number[] = [];
   roomCount = 1;
+  selectedMealPlanId = 1;
+  quotedPrice: any = null;
 
   guestBookingForm = new FormGroup({
     firstName: new FormControl('', {
@@ -127,6 +129,11 @@ export class RoomDetails implements OnInit {
       const room = hotel?.rooms?.find((item: any) => this.roomRouteName(item) === roomRouteName.toLocaleLowerCase()) ?? null;
       this.hotel = hotel;
       this.room = room;
+      const requestedMealPlanId = Number(this.route.snapshot.queryParamMap.get('mealPlan'));
+      const availableIds = this.mealPlanOptions.map((plan) => Number(plan.mealPlanId));
+      this.selectedMealPlanId = availableIds.includes(requestedMealPlanId)
+        ? requestedMealPlanId
+        : (availableIds.includes(1) ? 1 : (availableIds[0] ?? 1));
  
       this.seo.updateFrom(
         {
@@ -154,7 +161,17 @@ export class RoomDetails implements OnInit {
     this.checkingAvailability = true;
     this.availabilityStatus = null;
     this.error = '';
-    this.api.postUnauthenticated('Bookings/CheckAvailability', payload)
+    this.api.postUnauthenticated('HotelAvailability/CalculatePrice', {
+      HotelRoomId: payload['HotelRoomId'],
+      MealPlanId: this.selectedMealPlanId,
+      CheckInDate: this.checkInDate,
+      CheckOutDate: this.checkOutDate,
+      RoomCount: this.roomCount,
+      Adults: this.adults,
+      Children: this.children,
+      ChildrenAges: this.childrenAges,
+      Infants: this.infants,
+    })
       .pipe(
         catchError((requestError) => {
           this.error = this.bookingErrorMessage(requestError?.error?.message);
@@ -173,11 +190,12 @@ export class RoomDetails implements OnInit {
         }
 
         const data = response?.data ?? response;
-        if (response?.isSuccess === false || data?.isAvailable !== true) {
+        if (response?.isSuccess === false || !data || Number(data?.grandTotal) < 0) {
           this.showAvailabilityError(response?.message || 'hotelRoomUnavailable');
           return;
         }
 
+        this.quotedPrice = data;
         this.availabilityStatus = 'available';
         this.cdr.markForCheck();
       });
@@ -233,7 +251,7 @@ export class RoomDetails implements OnInit {
   }
 
   private async confirmAndBook(payload: Record<string, unknown>): Promise<void> {
-    const price = this.currentPeriod()?.price;
+    const price = this.quotedPrice?.grandTotal ?? this.currentPeriod()?.price;
     const confirmation = await Swal.fire({
       title: this.translate.instant('hotelBookingRequest'),
       text: `${this.roomName}${price != null ? ` — ${price} USD` : ''}`,
@@ -298,6 +316,7 @@ export class RoomDetails implements OnInit {
     return {
       HotelId: hotelId,
       HotelRoomId: hotelRoomId,
+      MealPlanId: this.selectedMealPlanId,
       RoomCount: this.roomCount,
       Adults: this.adults,
       Children: this.children,
@@ -372,7 +391,41 @@ export class RoomDetails implements OnInit {
   policyText(policy: any): string { return typeof policy === 'string' ? policy : policy?.value || (this.isArabic ? policy?.valueAr || policy?.valueEng : policy?.valueEng || policy?.valueAr) || ''; }
   currentPeriod(): any | null {
     const today = this.today;
-    return (this.room?.roomPeriodPrices ?? []).find((period: any) => period?.isActive !== false && period.startDate <= today && period.endDate >= today) ?? null;
+    const mealPlanPeriod = (this.room?.mealPlanPrices ?? []).find((period: any) =>
+      period?.isActive !== false && Number(period.mealPlanId) === this.selectedMealPlanId
+      && period.startDate <= today && period.endDate >= today);
+    return mealPlanPeriod ?? (this.room?.roomPeriodPrices ?? []).find((period: any) =>
+      period?.isActive !== false && period.startDate <= today && period.endDate >= today) ?? null;
+  }
+
+  get mealPlanOptions(): any[] {
+    const plans = new Map<number, any>();
+    for (const price of this.room?.mealPlanPrices ?? []) {
+      if (price?.isActive === false || !Number(price?.mealPlanId)) continue;
+      if (!plans.has(Number(price.mealPlanId))) plans.set(Number(price.mealPlanId), price);
+    }
+    return [...plans.values()].sort((left, right) => {
+      const leftId = Number(left.mealPlanId);
+      const rightId = Number(right.mealPlanId);
+      return Number(rightId === 1) - Number(leftId === 1) || leftId - rightId;
+    });
+  }
+
+  mealPlanName(plan: any): string {
+    return this.isArabic
+      ? plan?.mealPlanNameAr || plan?.mealPlanNameEng || plan?.mealPlanName || ''
+      : plan?.mealPlanNameEng || plan?.mealPlanNameAr || plan?.mealPlanName || '';
+  }
+
+  selectMealPlan(value: unknown): void {
+    const mealPlanId = Number(value);
+    if (!this.mealPlanOptions.some((plan) => Number(plan.mealPlanId) === mealPlanId)) return;
+    this.selectedMealPlanId = mealPlanId;
+    this.quotedPrice = null;
+    this.availabilityStatus = null;
+    this.roomUnavailable = false;
+    this.error = '';
+    this.cdr.markForCheck();
   }
 
   private applyQuery(): void {
@@ -387,7 +440,9 @@ export class RoomDetails implements OnInit {
     this.adults = readCount(query.get('adults'), 1);
     this.children = readCount(query.get('children'), 0);
     this.infants = readCount(query.get('infants'), 0);
-    this.childrenAges = Array.from({ length: this.children }, () => 6);
+    const requestedAges = query.getAll('childrenAges').map(Number)
+      .filter((age) => Number.isInteger(age) && age >= 0 && age <= 17);
+    this.childrenAges = Array.from({ length: this.children }, (_, index) => requestedAges[index] ?? 6);
   }
 
   private roomRouteName(room: any): string {

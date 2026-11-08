@@ -10,6 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -28,7 +29,7 @@ interface PaginationInfoDTO {
 @Component({
   selector: 'app-configurations-bookings-list',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, TranslatePipe, PaginationOne],
+  imports: [DatePipe, DecimalPipe, TranslatePipe, PaginationOne, RouterLink],
   templateUrl: './bookings-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -154,8 +155,18 @@ export class BookingsList implements OnInit, OnChanges {
     return status === BookingStatusEnum.Pending || status === BookingStatusEnum.Confirmed;
   }
 
+  canAssign(booking: any): boolean {
+    const status = Number(booking?.status);
+    return this.isAdmin && (status === BookingStatusEnum.Pending || status === BookingStatusEnum.Cancelled);
+  }
+
   canComplete(booking: any): boolean {
     return Number(booking?.status) === BookingStatusEnum.Confirmed;
+  }
+
+  canSetPending(booking: any): boolean {
+    const status = Number(booking?.status);
+    return this.isAdmin && status === BookingStatusEnum.Cancelled;
   }
 
   async confirmBooking(booking: any): Promise<void> {
@@ -165,8 +176,9 @@ export class BookingsList implements OnInit, OnChanges {
       title: this.translate.instant('confirmBookingByPhone'),
       html: `<p class="text-sm text-slate-500">${this.translate.instant('customerPhone')}: <strong>${this.escapeHtml(phone)}</strong></p>`,
       input: 'textarea',
-      inputLabel: this.translate.instant('statusNoteOptional'),
-      inputPlaceholder: this.translate.instant('phoneConfirmationNotePlaceholder'),
+      inputLabel: this.translate.instant('bookingFeedbackOptional'),
+      inputPlaceholder: this.translate.instant('bookingFeedbackPlaceholder'),
+      inputAttributes: { maxlength: '1000' },
       showCancelButton: true,
       confirmButtonText: this.translate.instant('customerContactedConfirm'),
       cancelButtonText: this.translate.instant('cancel'),
@@ -174,7 +186,7 @@ export class BookingsList implements OnInit, OnChanges {
     if (!result.isConfirmed) return;
     this.changeStatus(booking, BookingStatusEnum.Confirmed, {
       customerContacted: true,
-      note: String(result.value ?? '').trim() || null,
+      feedback: String(result.value ?? '').trim() || null,
     });
   }
 
@@ -185,24 +197,85 @@ export class BookingsList implements OnInit, OnChanges {
 
   async cancelBooking(booking: any): Promise<void> {
     const freeCancellation = booking?.isFreeCancellation === true;
+    const isConfirmed = Number(booking?.status) === BookingStatusEnum.Confirmed;
+    const feeRequired = isConfirmed && !freeCancellation;
+    const existingFee = Number(booking?.cancellationFeeAmount ?? 0);
+    const totalPrice = Number(booking?.totalPrice ?? 0);
+    const defaultFee = feeRequired
+      ? (Number.isFinite(existingFee) && existingFee > 0 ? existingFee : Math.max(0, totalPrice))
+      : 0;
+    const feedbackLabel = this.escapeHtml(this.translate.instant('bookingFeedbackOptional'));
+    const feedbackPlaceholder = this.escapeHtml(this.translate.instant('bookingFeedbackPlaceholder'));
+    const feeLabel = this.escapeHtml(this.translate.instant('cancellationFee'));
+    const cancellationDescription = this.escapeHtml(this.translate.instant(
+      freeCancellation ? 'freeCancellationNoFee' : (feeRequired ? 'nonFreeCancellationNotice' : 'pendingCancellationNoFee'),
+    ));
+    const policy = this.cancellationPolicy(booking);
+    const policyMarkup = policy
+      ? `<div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"><p class="font-semibold">${this.escapeHtml(this.translate.instant('cancellationPolicyLabel'))}</p><p class="mt-1 whitespace-pre-wrap">${this.escapeHtml(policy)}</p></div>`
+      : '';
     const result = await Swal.fire({
       icon: 'warning',
       title: this.translate.instant('cancelBookingConfirm'),
-      text: freeCancellation
-        ? this.translate.instant('freeCancellationNoFee')
-        : this.translate.instant('enterCancellationFee'),
-      input: freeCancellation ? undefined : 'number',
-      inputValue: freeCancellation ? undefined : 0,
-      inputAttributes: freeCancellation ? undefined : { min: '0', step: '0.01' },
-      inputValidator: freeCancellation ? undefined : (value:any) =>
-        Number(value) < 0 ? this.translate.instant('cancellationFeeInvalid') : undefined,
+      html: `<div class="space-y-3 text-start">
+        <p class="text-sm text-slate-500">${cancellationDescription}</p>
+        ${policyMarkup}
+        ${feeRequired ? `<label for="booking-cancellation-fee" class="block text-sm font-semibold">${feeLabel}</label><input id="booking-cancellation-fee" type="number" min="0" step="0.01" value="${defaultFee}" class="swal2-input !m-0 !w-full"><p class="text-xs font-semibold text-rose-600">${this.escapeHtml(this.translate.instant('customerCancellationCharge', { amount: defaultFee.toFixed(2) }))}</p>` : ''}
+        <label for="booking-feedback" class="block text-sm font-semibold">${feedbackLabel}</label>
+        <textarea id="booking-feedback" maxlength="1000" rows="4" placeholder="${feedbackPlaceholder}" class="swal2-textarea !m-0 !w-full"></textarea>
+      </div>`,
+      focusConfirm: false,
+      preConfirm: () => {
+        const popup = Swal.getPopup();
+        const feedback = popup?.querySelector<HTMLTextAreaElement>('#booking-feedback')?.value.trim() ?? '';
+        const cancellationFeeAmount = freeCancellation
+          ? 0
+          : Number(popup?.querySelector<HTMLInputElement>('#booking-cancellation-fee')?.value ?? 0);
+        if (!Number.isFinite(cancellationFeeAmount) || cancellationFeeAmount < 0) {
+          Swal.showValidationMessage(this.translate.instant('cancellationFeeInvalid'));
+          return false;
+        }
+        if (feeRequired && cancellationFeeAmount <= 0) {
+          Swal.showValidationMessage(this.translate.instant('cancellationFeeRequired'));
+          return false;
+        }
+        return { feedback, cancellationFeeAmount };
+      },
       showCancelButton: true,
       confirmButtonText: this.translate.instant('cancelBooking'),
       cancelButtonText: this.translate.instant('cancel'),
     });
     if (!result.isConfirmed) return;
+    const values = result.value as { feedback: string; cancellationFeeAmount: number };
     this.changeStatus(booking, BookingStatusEnum.Cancelled, {
-      cancellationFeeAmount: freeCancellation ? 0 : Number(result.value ?? 0),
+      cancellationFeeAmount: values.cancellationFeeAmount,
+      feedback: values.feedback || null,
+    });
+  }
+
+  private cancellationPolicy(booking: any): string {
+    const isArabic = this.translate.currentLang()?.toLowerCase().startsWith('ar') ?? false;
+    return String(booking?.[isArabic ? 'cancellationPolicyAr' : 'cancellationPolicyEng'] ?? '').trim();
+  }
+
+  async setPendingBooking(booking: any): Promise<void> {
+    if (!this.canSetPending(booking)) return;
+    const result = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('setBookingPending'),
+      text: this.translate.instant('setBookingPendingDescription'),
+      input: 'textarea',
+      inputLabel: this.translate.instant('bookingFeedbackOptional'),
+      inputPlaceholder: this.translate.instant('bookingFeedbackPlaceholder'),
+      inputAttributes: { maxlength: '1000' },
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('setPending'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#f59e0b',
+    });
+    if (!result.isConfirmed) return;
+    this.changeStatus(booking, BookingStatusEnum.Pending, {
+      feedback: String(result.value ?? '').trim() || null,
     });
   }
 

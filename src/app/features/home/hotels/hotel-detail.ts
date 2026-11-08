@@ -276,6 +276,7 @@ export class HotelDetail implements OnInit {
       .post('Bookings', {
         hotelId: this.hotel.id,
         hotelRoomId: room.id,
+        mealPlanId: price.mealPlanId ?? price.ratePlanId,
         roomCount: this.roomCount,
         adults: this.adults,
         children: this.children,

@@ -28,8 +28,8 @@ describe('RoomDetails booking', () => {
   async function setup(query: Record<string, string | string[]> = {}) {
     api = {
       getUnauthntecated: vi.fn().mockReturnValue(of({ data: hotel })),
-      postUnauthenticated: vi.fn((url: string) => of(url === 'Bookings/CheckAvailability'
-        ? { isSuccess: true, data: { isAvailable: true } }
+      postUnauthenticated: vi.fn((url: string) => of(url === 'HotelAvailability/CalculatePrice'
+        ? { isSuccess: true, data: { mealPlanId: 1, grandTotal: 400 } }
         : { isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
       post: vi.fn().mockReturnValue(of({ isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
     };
@@ -68,11 +68,14 @@ describe('RoomDetails booking', () => {
 
     component.checkAvailability();
     const expectedStay = {
-      HotelId: 10, HotelRoomId: 20, RoomCount: 2,
+      HotelId: 10, HotelRoomId: 20, MealPlanId: 1, RoomCount: 2,
       Adults: 2, Children: 1, ChildrenAges: [8], Infants: 0,
       NumberOfTravelers: 3, DateFrom: '2030-05-10', DateTo: '2030-05-14',
     };
-    expect(api.postUnauthenticated).toHaveBeenCalledWith('Bookings/CheckAvailability', expectedStay);
+    expect(api.postUnauthenticated).toHaveBeenCalledWith('HotelAvailability/CalculatePrice', {
+      HotelRoomId: 20, MealPlanId: 1, CheckInDate: '2030-05-10', CheckOutDate: '2030-05-14',
+      RoomCount: 2, Adults: 2, Children: 1, ChildrenAges: [8], Infants: 0,
+    });
     expect(component.availabilityStatus).toBe('available');
     expect(component.guestBookingOpen).toBe(false);
 

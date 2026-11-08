@@ -44,10 +44,6 @@
           <label class="text-sm">{{ 'roomType' | translate }}<select formControlName="roomType"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (type of hotelRooms; track
               type.value) { <option [value]="type.value">{{ type.label }}</option> }</select></label>
-            <label class="text-sm">{{ 'mealPlans' | translate }}<select formControlName="mealPlan"
-              class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">@for (plan of mealPlans;
-              track plan.id) { <option [value]="plan.id">{{ mealPlanName(plan) }}</option> } @empty { <option
-              [value]="1">{{ 'noMealPlansFound' | translate }}</option> }</select></label>
           <label class="text-sm">{{ 'roomSize' | translate }}<input formControlName="roomSize" type="number" min="0"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.roomSize.touched && roomForm.controls.roomSize.hasError('min')) { <span class="mt-1 block text-xs text-red-600">{{ 'valueCannotBeNegative' | translate }}</span> }</label>
             <label class="text-sm">{{ 'bedTypeEnglish' | translate }}<input formControlName="bedTypeEng"
@@ -60,6 +56,8 @@
 
           <label class="text-sm">{{ 'availableRoomsCount' | translate }}<input formControlName="avilableRoomsCount"
               type="number" min="0" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.avilableRoomsCount.touched && roomForm.controls.avilableRoomsCount.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'valueCannotBeNegative' | translate }}</span> }</label>
+        </div>
+        <div class="mt-3 grid grid-cols-3 gap-3">
           <label class="text-sm">{{ 'adults' | translate }}<input formControlName="maxAdults" type="number" min="1"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxAdults.touched && roomForm.controls.maxAdults.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'atLeastOneAdult' | translate }}</span> }</label>
           <label class="text-sm">{{ 'children' | translate }}<input formControlName="maxChildren" type="number" min="0"
@@ -67,10 +65,12 @@
           <label class="text-sm">{{ 'infants' | translate }}<input formControlName="maxInfants" type="number" min="0"
               class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />@if (roomForm.controls.maxInfants.touched && roomForm.controls.maxInfants.invalid) { <span class="mt-1 block text-xs text-red-600">{{ 'infantsCannotBeNegative' | translate }}</span> }</label>
         </div>
-        <div class="mt-3"><label class="mb-1 block text-sm">{{ 'englishDescription' | translate }}</label>
-          <app-rich-text-editor formControlName="descriptionEng" minHeight="7rem" /></div>
-        <div class="mt-3"><label class="mb-1 block text-sm">{{ 'arabicDescription' | translate }}</label>
-          <app-rich-text-editor formControlName="descriptionAr" minHeight="7rem" /></div>
+        <div class="mt-3 grid gap-3 lg:grid-cols-2">
+          <div><label class="mb-1 block text-sm">{{ 'englishDescription' | translate }}</label>
+            <app-rich-text-editor formControlName="descriptionEng" minHeight="7rem" /></div>
+          <div><label class="mb-1 block text-sm">{{ 'arabicDescription' | translate }}</label>
+            <app-rich-text-editor formControlName="descriptionAr" minHeight="7rem" /></div>
+        </div>
         <div class="mt-3 flex flex-wrap gap-5 text-sm"><label class="flex items-center gap-2">
             <input formControlName="smokingAllowed" type="checkbox" />{{ 'smokingAllowed' | translate }}</label><label
             class="flex items-center gap-2"><input formControlName="hasBalcony" type="checkbox" />{{ 'hasBalcony' |
@@ -156,8 +156,18 @@
         @for (period of roomPeriodPrices.controls; track period) {
 
   <div
-    class="grid gap-3 rounded-xl border border-slate-200 p-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_.8fr_auto_auto] xl:items-start"
+    class="grid gap-3 rounded-xl border border-slate-200 p-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_.8fr_auto_auto] xl:items-start"
     [formGroup]="period">
+
+    <label class="text-sm">
+      {{ 'mealPlan' | translate }} <span class="text-red-600">*</span>
+      <select formControlName="mealPlanId" (change)="onMealPlanChange($index)" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">
+        @for (plan of mealPlans; track plan.id) { <option [value]="plan.id">{{ mealPlanName(plan) }}</option> }
+      </select>
+      @if (period.controls['mealPlanId'].hasError('duplicateMealPlan')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'mealPlanAlreadySelected' | translate }}</span>
+      }
+    </label>
 
     <!-- Start Date -->
     <label class="text-sm">

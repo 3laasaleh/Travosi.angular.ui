@@ -170,11 +170,27 @@
         } @else if (taskComments.length) {
           <ol class="space-y-4">
             @for (comment of taskComments; track comment.id) {
-              <li class="flex gap-3">
-                <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-violet-100 text-lg text-violet-700">
+              <li
+                class="flex gap-3"
+                [class.flex-row-reverse]="isAgentComment(comment)"
+                [class.justify-end]="isAgentComment(comment)"
+              >
+                <div
+                  class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
+                  [class.bg-sky-100]="isAgentComment(comment)"
+                  [class.text-sky-700]="isAgentComment(comment)"
+                  [class.bg-violet-100]="!isAgentComment(comment)"
+                  [class.text-violet-700]="!isAgentComment(comment)"
+                >
                   <i class="mdi" [class.mdi-shield-account-outline]="comment.authorRole?.toLowerCase() === 'admin'" [class.mdi-account-outline]="comment.authorRole?.toLowerCase() !== 'admin'"></i>
                 </div>
-                <article class="min-w-0 flex-1 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <article
+                  class="min-w-0 max-w-[85%] rounded-2xl border p-4"
+                  [class.border-sky-200]="isAgentComment(comment)"
+                  [class.bg-sky-50]="isAgentComment(comment)"
+                  [class.border-slate-200]="!isAgentComment(comment)"
+                  [class.bg-slate-50]="!isAgentComment(comment)"
+                >
                   <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex min-w-0 flex-wrap items-center gap-2">
                       <span class="font-semibold text-slate-900">{{ comment.authorName || ('taskCommentUnknownAuthor' | translate) }}</span>

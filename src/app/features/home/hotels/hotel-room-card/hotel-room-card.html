@@ -84,7 +84,20 @@
       <!-- <p class="text-xs text-slate-500">{{ 'availableRoomsCount' | translate }}: {{ room.avilableRoomsCount ??
         room.availableRoomsCount ?? 0 }}</p> -->
     </div>
+    @if (mealPlanOptions().length > 1) {
+    <label class="mb-3 block text-start text-xs font-semibold text-slate-600">
+      {{ 'mealPlan' | translate }}
+      <select [value]="displayedQuote(availability)?.mealPlanId || displayedQuote(availability)?.ratePlanId || selectedMealPlanId || mealPlanOptions()[0]?.mealPlanId"
+        (change)="selectMealPlan($any($event.target).value)"
+        class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm">
+        @for (plan of mealPlanOptions(); track plan.mealPlanId ?? plan.ratePlanId) {
+          <option [value]="plan.mealPlanId ?? plan.ratePlanId">{{ quoteMealPlanName(plan) }}</option>
+        }
+      </select>
+    </label>
+    }
     @if (displayedQuote(availability); as plan) {
+    <p class="text-xs font-semibold text-primary">{{ quoteMealPlanName(plan) }}</p>
     <p class="text-xs text-slate-500">{{ 'totalPrice' | translate }}</p>
     <p class="mt-1 text-xl font-bold text-primary">{{ formatPrice(plan.grandTotal, plan) }}</p>
     <p class="text-xs text-slate-500">{{ plan.numberOfNights }} {{ 'nights' | translate }}</p>

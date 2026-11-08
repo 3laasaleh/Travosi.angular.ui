@@ -308,12 +308,18 @@ export class HotelCatalog implements OnInit {
     const prices = (this.availability.get(Number(hotel.id)) ?? []).flatMap(
       (room) => room.ratePlans ?? [],
     );
-    return (
-      prices.sort((left, right) => Number(left.grandTotal) - Number(right.grandTotal))[0] ?? null
-    );
+    const roomOnlyPrices = prices.filter((price: any) => Number(price?.mealPlanId ?? price?.ratePlanId) === 1);
+    const defaults = roomOnlyPrices.length ? roomOnlyPrices : prices;
+    return defaults.sort((left, right) => Number(left.grandTotal) - Number(right.grandTotal))[0] ?? null;
   }
   startingNightlyPrice(hotel: any): { value: number; currencyCode: string } | null {
     const roomPrices = (hotel?.rooms ?? []).flatMap((room: any) => [
+      ...(room?.mealPlanPrices ?? [])
+        .filter((period: any) => Number(period?.mealPlanId) === 1)
+        .map((period: any) => ({
+          value: Number(period?.price),
+          currencyCode: period?.currencyCode ?? room?.currencyCode ?? 'USD',
+        })),
       ...(room?.roomPeriodPrices ?? []).map((period: any) => ({
         value: Number(period?.price),
         currencyCode: period?.currencyCode ?? room?.currencyCode ?? 'USD',
@@ -473,7 +479,8 @@ export class HotelCatalog implements OnInit {
       : null;
     return (hotel?.rooms ?? []).some((room: any) =>
       (!availableRoomIds || availableRoomIds.has(Number(room?.id)))
-      && Number(room?.mealPlan) === mealPlan,
+      && ((room?.mealPlanPrices ?? []).some((price: any) => Number(price?.mealPlanId) === mealPlan)
+        || Number(room?.mealPlan) === mealPlan),
     );
   }
   private searchable(hotel: any): string {

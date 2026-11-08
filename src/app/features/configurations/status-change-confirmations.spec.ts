@@ -42,6 +42,38 @@ describe('status change confirmations', () => {
     });
   });
 
+  it('sends admin feedback when confirming a booking', async () => {
+    const api = {
+      patch: vi.fn().mockReturnValue(of({ isSuccess: true })),
+      get: vi.fn().mockReturnValue(of({ data: [] })),
+    };
+    const component = new BookingsList(api as unknown as ApiService, auth, translate, cdr);
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true, value: 'Customer approved by phone.' } as any);
+
+    await component.confirmBooking({ id: 11, status: BookingStatusEnum.Pending, userMobile: '01000000000' });
+
+    expect(api.patch).toHaveBeenCalledWith('Bookings/11/ChangeStatus', {
+      status: BookingStatusEnum.Confirmed,
+      customerContacted: true,
+      feedback: 'Customer approved by phone.',
+    });
+  });
+
+  it('does not allow an admin to return a confirmed booking to pending', async () => {
+    const adminAuth = { getCurrentUserRole: () => 'Admin' } as unknown as AuthService;
+    const api = {
+      patch: vi.fn().mockReturnValue(of({ isSuccess: true })),
+      get: vi.fn().mockReturnValue(of({ data: [] })),
+    };
+    const component = new BookingsList(api as unknown as ApiService, adminAuth, translate, cdr);
+    const booking = { id: 12, status: BookingStatusEnum.Confirmed };
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true, value: 'Waiting for revised dates.' } as any);
+
+    expect(component.canSetPending(booking)).toBe(false);
+    await component.setPendingBooking(booking);
+    expect(api.patch).not.toHaveBeenCalled();
+  });
+
   it('does not start or close a task until the modal is confirmed', async () => {
     const api = {
       patch: vi.fn().mockReturnValue(of({ isSuccess: true })),

@@ -84,11 +84,26 @@
             
             <p class="text-sm font-bold text-slate-900">{{ roomName }}</p>
           </div>
-          @if (currentPeriod(); as period) { <div class="text-end">
+          @if (quotedPrice) { <div class="text-end">
+            <p class="text-xs text-slate-500">{{ 'totalPrice' | translate }}</p>
+            <p class="text-xl font-bold text-primary">{{ formatPrice(quotedPrice.grandTotal, quotedPrice) }}</p>
+          </div> } @else if (currentPeriod(); as period) { <div class="text-end">
             <p class="text-xl font-bold text-primary">{{ formatPrice(period.price, period) }}</p>
+            <p class="text-xs text-slate-500">{{ 'perNight' | translate }}</p>
           </div> }
         </div>
         <div class="mt-3">
+          @if (mealPlanOptions.length) {
+          <label class="mb-3 block text-sm font-semibold text-slate-700">
+            {{ 'mealPlan' | translate }}
+            <select [value]="selectedMealPlanId" (change)="selectMealPlan($any($event.target).value)"
+              class="mt-1 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-primary">
+              @for (plan of mealPlanOptions; track plan.mealPlanId) {
+                <option [value]="plan.mealPlanId">{{ mealPlanName(plan) }}</option>
+              }
+            </select>
+          </label>
+          }
           <div class="room-traveler-summary mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3"
             aria-label="{{ 'travelers' | translate }}">
             <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{{ 'capcity' | translate }}

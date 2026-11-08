@@ -40,7 +40,7 @@
         <tbody>
           @for (booking of bookings; track booking.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50">
-              <td class="px-4 py-3 font-semibold">{{ booking.bookingNo || ('#' + booking.id) }}</td>
+              <td class="px-4 py-3 font-semibold"><a [routerLink]="[booking.id]" class="text-primary underline-offset-4 hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" [attr.aria-label]="('viewBookingDetails' | translate) + ': ' + (booking.bookingNo || ('#' + booking.id))">{{ booking.bookingNo || ('#' + booking.id) }}</a></td>
               <td class="px-4 py-3 justify-center">{{ booking.userName || '-' }}</td>
               <td class="px-4 py-3 justify-center"><a class="font-medium text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></td>
               <td class="px-4 py-3 justify-center"><span class="me-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-500">{{ booking.hotelId ? ('hotel' | translate) : booking.tourId ? ('tour' | translate) : ('travelPackage' | translate) }}</span>{{ booking.tourTitle ?? booking.packageName ?? booking.hotelName ?? '-' }}@if (booking.hotelRoomName) { <span class="block text-xs text-slate-500">{{ booking.hotelRoomName }}</span> }</td>
@@ -56,9 +56,10 @@
                   [class.bg-slate-100]="+booking.status === bookingStatusEnum.Completed" [class.text-slate-600]="+booking.status === bookingStatusEnum.Completed">{{ bookingStatusKey(booking.status) | translate }}</span>
               </td>
               <td class="px-4 py-3 justify-center"><div class="flex flex-wrap justify-center gap-2">
-                @if (isAdmin) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition hover:bg-primary hover:text-white" [attr.title]="'assignBookingAgent' | translate" (click)="editRequested.emit(booking)"><i class="mdi mdi-account-arrow-right-outline"></i></button> }
+                @if (canAssign(booking)) { <button type="button" class="grid h-8 w-8 place-items-center rounded-full border border-primary/40 text-primary transition hover:bg-primary hover:text-white" [attr.title]="'assignBookingAgent' | translate" (click)="editRequested.emit(booking)"><i class="mdi mdi-account-arrow-right-outline"></i></button> }
                 @if (canConfirm(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-500 hover:text-white disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button> }
                 @if (canComplete(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 transition hover:bg-sky-500 hover:text-white disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button> }
+                @if (canSetPending(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 transition hover:bg-amber-500 hover:text-white disabled:opacity-60" (click)="setPendingBooking(booking)">{{ 'setPending' | translate }}</button> }
                 @if (canCancel(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-500 hover:text-white disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button> }
               </div></td>
             </tr>
@@ -70,14 +71,15 @@
     <div class="grid max-h-[70vh] gap-4 overflow-y-auto pe-1 md:grid-cols-2">
       @for (booking of bookings; track booking.id) {
         <article class="rounded-2xl border border-slate-200 p-4">
-          <div class="flex items-start justify-between gap-3"><h3 class="font-semibold">{{ booking.bookingNo || ('#' + booking.id) }} — {{ booking.tourTitle ?? booking.packageName ?? booking.hotelName ?? '-' }}</h3><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{{ bookingStatusKey(booking.status) | translate }}</span></div>
+          <div class="flex items-start justify-between gap-3"><h3 class="font-semibold"><a [routerLink]="[booking.id]" class="text-primary underline-offset-4 hover:underline">{{ booking.bookingNo || ('#' + booking.id) }}</a> — {{ booking.tourTitle ?? booking.packageName ?? booking.hotelName ?? '-' }}</h3><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{{ bookingStatusKey(booking.status) | translate }}</span></div>
           <p class="mt-2 text-sm text-slate-500">{{ booking.userName || '-' }} · <a class="text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></p>
           <p class="mt-1 text-sm text-slate-500">{{ booking.createdDate | date: 'mediumDate' }} — {{ booking.numberOfTravelers }} {{ 'guests' | translate }} — ${{ booking.totalPrice | number: '1.0-2' }}</p>
           @if (+booking.cancellationFeeAmount > 0) { <p class="mt-2 text-xs font-semibold text-rose-600">{{ 'cancellationFee' | translate }}: ${{ booking.cancellationFeeAmount | number: '1.0-2' }}</p> }
           <div class="mt-4 flex flex-wrap justify-center gap-2">
-            @if (isAdmin) { <button type="button" class="rounded-full border border-primary/40 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-white" (click)="editRequested.emit(booking)">{{ 'assignBookingAgent' | translate }}</button> }
+            @if (canAssign(booking)) { <button type="button" class="rounded-full border border-primary/40 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-white" (click)="editRequested.emit(booking)">{{ 'assignBookingAgent' | translate }}</button> }
             @if (canConfirm(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 hover:bg-emerald-500 hover:text-white disabled:opacity-60" (click)="confirmBooking(booking)">{{ 'confirmBooking' | translate }}</button> }
             @if (canComplete(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-sky-300 px-3 py-1 text-xs font-semibold text-sky-600 hover:bg-sky-500 hover:text-white disabled:opacity-60" (click)="completeBooking(booking)">{{ 'completeBooking' | translate }}</button> }
+            @if (canSetPending(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-600 hover:bg-amber-500 hover:text-white disabled:opacity-60" (click)="setPendingBooking(booking)">{{ 'setPending' | translate }}</button> }
             @if (canCancel(booking)) { <button type="button" [disabled]="updatingBookingId !== null" class="rounded-full border border-rose-300 px-3 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500 hover:text-white disabled:opacity-60" (click)="cancelBooking(booking)">{{ 'cancelBooking' | translate }}</button> }
           </div>
         </article>

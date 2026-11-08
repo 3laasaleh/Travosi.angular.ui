@@ -86,6 +86,7 @@ export class HotelRoomsManager implements OnChanges {
     { value: 6, label: 'Suite' },
     { value: 7, label: 'Junior suite' },
     { value: 8, label: 'Deluxe' },
+    { value: 9, label: 'Villa' },
   ];
   readonly childPricingTypes = [
     { value: 1, label: 'free' },
@@ -113,7 +114,6 @@ export class HotelRoomsManager implements OnChanges {
     descriptionEng: new FormControl('', { nonNullable: true }),
     descriptionAr: new FormControl('', { nonNullable: true }),
     roomType: new FormControl(1, { nonNullable: true }),
-    mealPlan: new FormControl(1, { nonNullable: true }),
     roomSize: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
     bedTypeEng: new FormControl('', { nonNullable: true }),
     bedTypeAr: new FormControl('', { nonNullable: true }),
@@ -239,7 +239,6 @@ get todayAfterMonth(): string {
       descriptionEng: room.descriptionEng ?? '',
       descriptionAr: room.descriptionAr ?? '',
       roomType: Number(room.roomType ?? 1),
-      mealPlan: Number(room.mealPlan ?? 1),
       roomSize: room.roomSize ?? null,
       bedTypeEng: room.bedTypeEng ?? room.bedType ?? '',
       bedTypeAr: room.bedTypeAr ?? '',
@@ -255,7 +254,10 @@ get todayAfterMonth(): string {
 
 
     this.roomPeriodPrices.clear();
-    ((room as any).roomPeriodPrices ?? [])
+    const mealPlanPrices = (room as any).mealPlanPrices?.length
+      ? (room as any).mealPlanPrices
+      : ((room as any).roomPeriodPrices ?? []).map((period: any) => ({ ...period, mealPlanId: Number(room.mealPlan ?? 1) }));
+    mealPlanPrices
       .sort((left: any, right: any) => String(left.startDate).localeCompare(String(right.startDate)))
       .forEach((period: any) => this.addPeriod(period));
     if (!this.roomPeriodPrices.length) this.addPeriod();
@@ -280,7 +282,6 @@ get todayAfterMonth(): string {
       descriptionEng: '',
       descriptionAr: '',
       roomType: 1,
-      mealPlan: 1,
       roomSize: null,
       bedTypeEng: '',
       bedTypeAr: '',
@@ -311,14 +312,16 @@ get todayAfterMonth(): string {
     group.facilities.forEach((facility) => this.toggleFacility(Number(facility.id), checked));
   }
   addPeriod(value: any = {}): void {
-    const previousEndDate = this.roomPeriodPrices.length
-      ? String(this.roomPeriodPrices.at(this.roomPeriodPrices.length - 1).controls['endDate'].value ?? '')
-      : '';
+    const mealPlanId = Number(value.mealPlanId ?? 1);
+    const previousForPlan = [...this.roomPeriodPrices.controls].reverse()
+      .find(control => Number(control.controls['mealPlanId']?.value) === mealPlanId);
+    const previousEndDate = String(previousForPlan?.controls['endDate']?.value ?? '');
     this.roomPeriodPrices.push(
       new FormGroup({
         id: new FormControl(Number(value.id ?? 0)),
+        mealPlanId: new FormControl(mealPlanId, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
         startDate: new FormControl(
-          value.startDate ?? (this.roomPeriodPrices.length && previousEndDate ? this.addDays(previousEndDate, 1) : this.today),
+          value.startDate ?? (previousEndDate ? this.addDays(previousEndDate, 1) : this.today),
           { nonNullable: true, validators: [Validators.required] },
         ),
         endDate: new FormControl(value.endDate ?? '', {
@@ -341,6 +344,14 @@ get todayAfterMonth(): string {
     if (this.roomPeriodPrices.length > 1) {
       this.roomPeriodPrices.removeAt(index);
       this.validateAllPeriods();
+    }
+  }
+
+  onMealPlanChange(index: number): void {
+    this.validateAllPeriods();
+    const period = this.roomPeriodPrices.at(index);
+    if (period?.controls['mealPlanId']?.hasError('duplicateMealPlan')) {
+      this.feedback.show('warning', 'mealPlanAlreadySelected');
     }
   }
 
@@ -443,7 +454,7 @@ get todayAfterMonth(): string {
     }
     const existingId = this.editingRoom?.id ?? this.persistedRoomId;
     const value = this.roomForm.getRawValue();
-    const { childrenPolicies, ...roomValue } = value;
+    const { childrenPolicies, roomPeriodPrices, ...roomValue } = value;
     const payload = {
       hotelId: this.hotelId,
       name: value.nameEng.trim(),
@@ -454,7 +465,6 @@ get todayAfterMonth(): string {
         valueAr: String(policy['valueAr']).trim(),
       })),
       roomType: Number(value.roomType),
-      mealPlan: Number(value.mealPlan),
       roomSize: value.roomSize === null ? null : Number(value.roomSize),
       avilableRoomsCount: Number(value.avilableRoomsCount),
       maxAdults: Number(value.maxAdults),
@@ -462,8 +472,9 @@ get todayAfterMonth(): string {
       maxInfants: Number(value.maxInfants),
       maxTotalOccupancy:
         Number(value.maxAdults) + Number(value.maxChildren) + Number(value.maxInfants),
-      roomPeriodPrices: value.roomPeriodPrices.map((period: any) => ({
+      mealPlanPrices: roomPeriodPrices.map((period: any) => ({
         id: Number(period.id ?? 0),
+        mealPlanId: Number(period.mealPlanId),
         startDate: period.startDate,
         endDate: period.endDate,
         price: Number(period.price),
@@ -555,7 +566,7 @@ get todayAfterMonth(): string {
       facilities: this.api
         .get('HotelAmenities?kind=2&isActive=true')
         .pipe(catchError(() => of(null))),
-      mealPlans: this.api.get('MealPlans').pipe(catchError(() => of(null))),
+      mealPlans: this.api.get('MealPlans/Active').pipe(catchError(() => of(null))),
     })
       .pipe(
         finalize(() => {
@@ -627,16 +638,12 @@ addDays(date: string, days: number): string {
   return `${result.getFullYear()}-${String(result.getMonth() + 1).padStart(2, '0')}-${String(result.getDate()).padStart(2, '0')}`;
 }
 getMinimumStartDate(index: number): string {
-
-  if (index === 0) {
-    return this.today;
-  }
-
-  const previousPeriod =
-    this.roomPeriodPrices.at(index - 1) as FormGroup;
-
-  const previousEndDate =
-    previousPeriod.get('endDate')?.value;
+  const currentMealPlanId = Number(this.roomPeriodPrices.at(index)?.get('mealPlanId')?.value ?? 0);
+  const previousPeriod = this.roomPeriodPrices.controls
+    .slice(0, index)
+    .reverse()
+    .find(control => Number(control.get('mealPlanId')?.value ?? 0) === currentMealPlanId);
+  const previousEndDate = previousPeriod?.get('endDate')?.value;
 
   return previousEndDate
     ? this.addDays(previousEndDate, 1)
@@ -646,6 +653,7 @@ getMinimumStartDate(index: number): string {
     this.roomPeriodPrices.controls.forEach((period) => {
       this.removeError(period.controls['startDate'], 'previousPeriod');
       this.removeError(period.controls['endDate'], 'dateOrder');
+      this.removeError(period.controls['mealPlanId'], 'duplicateMealPlan');
     });
 
     this.roomPeriodPrices.controls.forEach((period, index) => {
@@ -654,9 +662,41 @@ getMinimumStartDate(index: number): string {
       if (startDate && endDate && endDate <= startDate) this.addError(period.controls['endDate'], 'dateOrder');
 
       if (index > 0 && startDate) {
-        const previousEndDate = String(this.roomPeriodPrices.at(index - 1).controls['endDate'].value ?? '');
+        const mealPlanId = Number(period.controls['mealPlanId']?.value ?? 0);
+        const previousForPlan = this.roomPeriodPrices.controls.slice(0, index).reverse()
+          .find(control => Number(control.controls['mealPlanId']?.value ?? 0) === mealPlanId);
+        const previousEndDate = String(previousForPlan?.controls['endDate']?.value ?? '');
         if (previousEndDate && startDate <= previousEndDate) this.addError(period.controls['startDate'], 'previousPeriod');
       }
     });
+
+    for (let index = 0; index < this.roomPeriodPrices.length; index++) {
+      const current = this.roomPeriodPrices.at(index);
+      const currentMealPlanId = Number(current.controls['mealPlanId']?.value ?? 0);
+      const currentStart = String(current.controls['startDate']?.value ?? '');
+      const currentEnd = String(current.controls['endDate']?.value ?? '');
+      if (!currentMealPlanId || !currentStart) continue;
+
+      for (let previousIndex = 0; previousIndex < index; previousIndex++) {
+        const previous = this.roomPeriodPrices.at(previousIndex);
+        const previousMealPlanId = Number(previous.controls['mealPlanId']?.value ?? 0);
+        const previousStart = String(previous.controls['startDate']?.value ?? '');
+        const previousEnd = String(previous.controls['endDate']?.value ?? '');
+        if (
+          currentMealPlanId === previousMealPlanId &&
+          previousStart &&
+          this.periodsOverlap(currentStart, currentEnd, previousStart, previousEnd)
+        ) {
+          this.addError(current.controls['mealPlanId'], 'duplicateMealPlan');
+          this.addError(previous.controls['mealPlanId'], 'duplicateMealPlan');
+        }
+      }
+    }
+  }
+
+  private periodsOverlap(startA: string, endA: string, startB: string, endB: string): boolean {
+    const effectiveEndA = endA || '9999-12-31';
+    const effectiveEndB = endB || '9999-12-31';
+    return startA <= effectiveEndB && startB <= effectiveEndA;
   }
 }

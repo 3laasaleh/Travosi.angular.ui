@@ -196,6 +196,10 @@ export class TasksList implements OnInit, OnChanges {
     return 'taskCommentUnknownAuthor';
   }
 
+  isAgentComment(comment: TaskCommentDTO): boolean {
+    return comment.authorRole?.toLowerCase() === 'agent';
+  }
+
   addComment(): void {
     const taskId = Number(this.commentsTask?.id);
     const comment = this.commentDraft.trim();

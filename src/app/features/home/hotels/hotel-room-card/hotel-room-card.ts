@@ -32,6 +32,7 @@ export class HotelRoomCard {
   @Input() bookingRoomCount = 1;
   @Output() editRequested = new EventEmitter<any>();
   _currencyService=inject(CurrencyService);
+  selectedMealPlanId = 0;
 
   image(room: any): string | null {
     
@@ -74,13 +75,45 @@ export class HotelRoomCard {
   currentPeriod(room: any): any | null {
     const today = new Date();
     const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    return (room?.roomPeriodPrices ?? [])
+    const prices = room?.mealPlanPrices?.length ? room.mealPlanPrices : room?.roomPeriodPrices ?? [];
+    const defaultMealPlanId = this.selectedMealPlanId
+      || ((prices as any[]).some((price: any) => Number(price?.mealPlanId) === 1) ? 1 : Number(prices?.[0]?.mealPlanId ?? 0));
+    return (prices ?? [])
       .filter((period: any) => period?.isActive !== false && period?.startDate <= date && period?.endDate >= date)
+      .filter((period: any) => !period?.mealPlanId || Number(period.mealPlanId) === defaultMealPlanId)
       .sort((left: any, right: any) => String(right.startDate).localeCompare(String(left.startDate)))[0] ?? null;
   }
 
   displayedQuote(availability: any): any | null {
-    return availability?.ratePlans?.[0] ?? null;
+    const plans = availability?.ratePlans ?? [];
+    if (!plans.length) return null;
+    const selected = this.selectedMealPlanId || Number(plans[0]?.mealPlanId ?? plans[0]?.ratePlanId ?? 0);
+    return plans.find((plan: any) => Number(plan?.mealPlanId ?? plan?.ratePlanId) === selected) ?? plans[0];
+  }
+
+  selectMealPlan(value: unknown): void {
+    this.selectedMealPlanId = Number(value) || 0;
+  }
+
+  mealPlanOptions(): any[] {
+    const quotePlans = this.availability?.ratePlans ?? [];
+    if (quotePlans.length) return quotePlans;
+    const plans = new Map<number, any>();
+    for (const price of this.room?.mealPlanPrices ?? []) {
+      if (price?.isActive === false || !Number(price?.mealPlanId)) continue;
+      if (!plans.has(Number(price.mealPlanId))) plans.set(Number(price.mealPlanId), price);
+    }
+    return [...plans.values()].sort((left, right) => {
+      const leftId = Number(left.mealPlanId);
+      const rightId = Number(right.mealPlanId);
+      return Number(rightId === 1) - Number(leftId === 1) || leftId - rightId;
+    });
+  }
+
+  quoteMealPlanName(plan: any): string {
+    return this.isArabic
+      ? plan?.mealPlanNameAr || plan?.mealPlanNameEng || plan?.mealPlanName || ''
+      : plan?.mealPlanNameEng || plan?.mealPlanNameAr || plan?.mealPlanName || '';
   }
 
   formatPrice(value: unknown, source: any = { currencyCode: 'USD' }): string {
@@ -112,6 +145,10 @@ export class HotelRoomCard {
       children: Math.max(0, Number(this.bookingChildren) || 0),
       infants: Math.max(0, Number(this.bookingInfants) || 0),
       childrenAges: ages.map((age) => Number(age) || 0),
+      mealPlan: Number((this.availability ? this.displayedQuote(this.availability)?.mealPlanId : this.selectedMealPlanId)
+        || (this.availability ? this.displayedQuote(this.availability)?.ratePlanId : 0)
+        || this.mealPlanOptions()[0]?.mealPlanId
+        || 1),
     };
   }
 

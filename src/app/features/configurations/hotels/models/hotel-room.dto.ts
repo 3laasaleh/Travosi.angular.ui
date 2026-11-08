@@ -41,6 +41,7 @@ export interface HotelRoomDto {
   images: ImageDTO[];
 
   roomPeriodPrices: RoomPeriodPriceDto[];
+  mealPlanPrices?: Array<RoomPeriodPriceDto & { mealPlanId: number; mealPlanName?: string; mealPlanNameEng?: string; mealPlanNameAr?: string }>;
   amenities:number[];
 }
 export interface RoomPeriodPriceDto {

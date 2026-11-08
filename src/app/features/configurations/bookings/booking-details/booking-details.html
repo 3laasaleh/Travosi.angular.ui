@@ -1,0 +1,101 @@
+<section class="min-h-screen bg-slate-50 px-4 py-6 text-slate-800">
+  <div class="mx-auto max-w-6xl">
+    <a routerLink=".." class="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary">
+      <i class="mdi mdi-arrow-left rtl:rotate-180"></i>{{ 'backToBookings' | translate }}
+    </a>
+
+    @if (isLoading) {
+      <div class="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="h-8 w-1/3 animate-pulse rounded-full bg-slate-200"></div>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          @for (card of [1, 2, 3, 4, 5, 6]; track card) {
+            <div class="h-36 animate-pulse rounded-2xl bg-slate-100"></div>
+          }
+        </div>
+      </div>
+    } @else if (errorMessage || !booking) {
+      <div class="rounded-3xl border border-red-200 bg-white p-8 text-center shadow-sm">
+        <i class="mdi mdi-alert-circle-outline text-4xl text-red-500"></i>
+        <p class="mt-3 text-red-600">{{ (errorMessage || 'bookingDetailsLoadError') | translate }}</p>
+      </div>
+    } @else {
+      <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{{ 'bookingDetails' | translate }}</p>
+            <h1 class="mt-2 text-3xl font-bold text-slate-900">{{ booking.bookingNo || ('#' + booking.id) }}</h1>
+            <p class="mt-2 text-sm text-slate-500">{{ 'bookingDetailsSubtitle' | translate }}</p>
+          </div>
+          <span class="w-fit rounded-full px-3 py-1.5 text-sm font-semibold"
+            [class.bg-amber-50]="+booking.status === bookingStatusEnum.Pending" [class.text-amber-700]="+booking.status === bookingStatusEnum.Pending"
+            [class.bg-emerald-50]="+booking.status === bookingStatusEnum.Confirmed" [class.text-emerald-700]="+booking.status === bookingStatusEnum.Confirmed"
+            [class.bg-rose-50]="+booking.status === bookingStatusEnum.Cancelled" [class.text-rose-700]="+booking.status === bookingStatusEnum.Cancelled"
+            [class.bg-slate-100]="+booking.status === bookingStatusEnum.Completed" [class.text-slate-700]="+booking.status === bookingStatusEnum.Completed">
+            {{ bookingStatusKey(booking.status) | translate }}
+          </span>
+        </div>
+      </header>
+
+      <div class="mt-5 grid gap-5 lg:grid-cols-2">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-slate-900"><i class="mdi mdi-account-outline text-primary"></i>{{ 'bookingCustomerDetails' | translate }}</h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'customer' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.userName || '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'customerType' | translate }}</dt><dd class="mt-1 font-medium">{{ (booking.isGuest ? 'guestCustomer' : 'registeredCustomer') | translate }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'email' | translate }}</dt><dd class="mt-1 break-all"><a class="text-primary hover:underline" [href]="booking.userEmail ? 'mailto:' + booking.userEmail : null">{{ booking.userEmail || '-' }}</a></dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'customerPhone' | translate }}</dt><dd class="mt-1"><a class="text-primary hover:underline" [href]="booking.userMobile ? 'tel:' + booking.userMobile : null">{{ booking.userMobile || '-' }}</a></dd></div>
+            <div class="sm:col-span-2"><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'assignedAgent' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.agentName || '-' }}</dd></div>
+          </dl>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-slate-900"><i class="mdi mdi-map-marker-path text-primary"></i>{{ 'bookingTravelDetails' | translate }}</h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'serviceType' | translate }}</dt><dd class="mt-1 font-medium">{{ bookingTypeKey() | translate }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'bookingProduct' | translate }}</dt><dd class="mt-1 font-medium">{{ productName() }}</dd></div>
+            @if (booking.hotelRoomName) { <div class="sm:col-span-2"><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'room' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.hotelRoomName }}</dd></div> }
+            @if (booking.hotelMealPlanName) { <div class="sm:col-span-2"><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'mealPlan' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.hotelMealPlanName }}</dd></div> }
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ (booking.hotelId ? 'checkIn' : 'dateFrom') | translate }}</dt><dd class="mt-1">{{ booking.dateFrom ? (booking.dateFrom | date: 'mediumDate') : '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ (booking.hotelId ? 'checkOut' : 'dateTo') | translate }}</dt><dd class="mt-1">{{ booking.dateTo ? (booking.dateTo | date: 'mediumDate') : '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'guests' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.numberOfTravelers }}</dd></div>
+            @if (booking.hotelId) {
+              <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'roomCount' | translate }}</dt><dd class="mt-1 font-medium">{{ booking.roomCount }}</dd></div>
+              <div class="sm:col-span-2"><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'occupancy' | translate }}</dt><dd class="mt-1">{{ 'adults' | translate }}: {{ booking.adults }} · {{ 'children' | translate }}: {{ booking.children }} · {{ 'infants' | translate }}: {{ booking.infants }}</dd></div>
+            }
+          </dl>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-slate-900"><i class="mdi mdi-cash-multiple text-primary"></i>{{ 'bookingFinancialDetails' | translate }}</h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'totalAmount' | translate }}</dt><dd class="mt-1 text-xl font-bold text-slate-900">${{ booking.totalPrice | number: '1.0-2' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'cancellationFee' | translate }}</dt><dd class="mt-1 text-xl font-bold" [class.text-rose-600]="+booking.cancellationFeeAmount > 0">${{ booking.cancellationFeeAmount | number: '1.0-2' }}</dd></div>
+            <div class="sm:col-span-2"><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'freeCancellation' | translate }}</dt><dd class="mt-1 font-medium">{{ (booking.isFreeCancellation ? 'yes' : 'no') | translate }}</dd></div>
+          </dl>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-slate-900"><i class="mdi mdi-timeline-clock-outline text-primary"></i>{{ 'bookingTimeline' | translate }}</h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'bookingCreatedAt' | translate }}</dt><dd class="mt-1">{{ booking.createdDate | date: 'medium' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'bookingUpdatedAt' | translate }}</dt><dd class="mt-1">{{ booking.updatedDate ? (booking.updatedDate | date: 'medium') : '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'customerContactedAt' | translate }}</dt><dd class="mt-1">{{ booking.customerContactedAt ? (booking.customerContactedAt | date: 'medium') : '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'bookingConfirmedAt' | translate }}</dt><dd class="mt-1">{{ booking.confirmedDate ? (booking.confirmedDate | date: 'medium') : '-' }}</dd></div>
+            <div><dt class="text-xs font-semibold uppercase text-slate-400">{{ 'bookingCancelledAt' | translate }}</dt><dd class="mt-1">{{ booking.cancelledDate ? (booking.cancelledDate | date: 'medium') : '-' }}</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="mt-5 grid gap-5 lg:grid-cols-2">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-slate-900"><i class="mdi mdi-text-box-outline text-primary"></i>{{ 'specialRequests' | translate }}</h2>
+          <p class="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">{{ booking.specialRequests || ('notAvailable' | translate) }}</p>
+        </article>
+        <article class="rounded-3xl border border-violet-200 bg-violet-50 p-6 shadow-sm">
+          <h2 class="flex items-center gap-2 text-lg font-bold text-violet-900"><i class="mdi mdi-message-text-outline"></i>{{ 'bookingFeedback' | translate }}</h2>
+          <p class="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-violet-800">{{ booking.feedback || booking.statusNote || ('noBookingFeedback' | translate) }}</p>
+        </article>
+      </div>
+    }
+  </div>
+</section>

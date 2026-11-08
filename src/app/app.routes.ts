@@ -181,6 +181,12 @@ const localizedApplicationRoutes: Routes = [
         loadComponent: () => import('./features/configurations/vouchers/vouchers-page').then((m) => m.Vouchers),
       },
       {
+        path: 'bookings/:id',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/configurations/bookings/booking-details/booking-details').then((m) => m.BookingDetails),
+      },
+      {
         path: 'bookings',
         canActivate: [adminGuard],
         loadComponent: () =>
