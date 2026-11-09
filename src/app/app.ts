@@ -11,6 +11,7 @@ import { SeoService } from './core/services/seo.service';
   templateUrl: './app.html',
   changeDetection:ChangeDetectionStrategy.OnPush,
   styleUrl: './app.scss',
+ host: { ngSkipHydration: 'true' }
 })
 export class App {
   protected readonly title = signal('Sea World');

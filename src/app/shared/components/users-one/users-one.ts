@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, ChangeDetectionStrategy, Input, PLATFORM_ID, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AboutUsText } from '../../../core/data/about-us-content';
 
@@ -9,8 +8,7 @@ import { AboutUsText } from '../../../core/data/about-us-content';
   changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './users-one.html',
 })
-export class UsersOne implements AfterViewInit {
-  private readonly platformId = inject(PLATFORM_ID);
+export class UsersOne {
   @Input() aboutContent: AboutUsText | null = null;
   text(key: string, fallback: string): string { return this.aboutContent?.[key] || fallback; }
   readonly travelPromises = [
@@ -18,26 +16,4 @@ export class UsersOne implements AfterViewInit {
     { icon: 'mdi-headset', title: 'supportThroughoutJourney', description: 'supportThroughoutJourneyDescription' },
     { icon: 'mdi-shield-check-outline', title: 'trustedTravelArrangements', description: 'trustedTravelArrangementsDescription' },
   ];
-
-  ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    void import('tiny-slider').then(({ tns }) => tns({
-      container: '.tiny-three-item',
-      controls: false,
-      mouseDrag: true,
-      loop: true,
-      rewind: true,
-      autoplay: true,
-      autoplayButtonOutput: false,
-      autoplayTimeout: 3000,
-      navPosition: 'bottom',
-      speed: 400,
-      gutter: 12,
-      responsive: {
-        992: { items: 3 },
-        768: { items: 2 },
-        320: { items: 1 },
-      },
-    }));
-  }
 }

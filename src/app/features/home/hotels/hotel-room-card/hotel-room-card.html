@@ -63,7 +63,7 @@
     }
 
     @if (roomDescription(room); as description) {
-    <p class="mt-3 text-sm leading-6 text-slate-600"><app-description-preview [text]="description" /></p>
+    <div class="mt-3 text-sm leading-6 text-slate-600"><app-description-preview [text]="description" /></div>
     }
 
     <div class="mt-4 grid grid-cols-3 gap-2 border rounded-3xl border-slate-300 p-3 max-w-[20rem]" [attr.aria-label]="'guests' | translate">
