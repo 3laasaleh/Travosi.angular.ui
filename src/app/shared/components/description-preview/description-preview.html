@@ -1,4 +1,6 @@
-@if (expanded || !hasMore) {
+@if (plainText) {
+  <span class="whitespace-pre-line">{{ expanded || !hasMore ? normalizedText : previewText }}</span>
+} @else if (expanded || !hasMore) {
   <app-description-links [text]="text" />
 } @else {
   {{ previewText }}

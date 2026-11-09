@@ -155,9 +155,9 @@
 
       @if (destinationDescription(); as description) {
         <section class="mx-auto mb-16 max-w-4xl">
-          <div class="whitespace-pre-line text-base leading-8 text-slate-600 ">
-            <app-description-preview [text]="description" />
-          </div>
+          <p class="whitespace-pre-line text-base leading-8 text-slate-600 ">
+            <app-description-preview [text]="description" [plainText]="true" />
+          </p>
         </section>
       }
 

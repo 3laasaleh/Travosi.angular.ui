@@ -19,6 +19,7 @@ import { PaginationOne } from '../../../shared/components/listing/tour-grid/pagi
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DestinationHomeDTO } from '../home-sections/destinations-section/destination.model';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
+import { richTextPlainText } from '../../../shared/components/rich-text-content/rich-text-content';
 
 interface PaginationInfo {
   page: number;
@@ -116,7 +117,7 @@ export class HomeDestinationsList implements OnInit {
   }
 
   destinationDescription(destination: DestinationHomeDTO): string {
-    return destination?.description ?? "";
+    return richTextPlainText(destination?.description);
   }
 
   imageItems(destination: any): any[] {

@@ -16,6 +16,7 @@ import { ApiService } from '../../../../core/services/apiservice.service';
 import { PaginationModel } from '../../../../shared/models/pagination.model';
 import { DestinationHomeDTO } from './destination.model';
 import { DescriptionPreview } from '../../../../shared/components/description-preview/description-preview';
+import { richTextPlainText } from '../../../../shared/components/rich-text-content/rich-text-content';
 
 @Component({
   selector: 'app-destinations-section',
@@ -68,7 +69,7 @@ export class DestinationsSection implements OnInit {
   }
 
   destinationDescription(destination: DestinationHomeDTO): string {
-    return destination.subDescription ?? destination.description ?? '';
+    return richTextPlainText(destination.subDescription ?? destination.description);
   }
 
   imageUrl(destination: DestinationHomeDTO): string {

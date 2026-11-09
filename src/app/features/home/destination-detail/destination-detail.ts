@@ -24,6 +24,7 @@ import { ImageViewerModal } from '../../../shared/components/image-viewer-modal/
 import { DestinationCitiesCarousel } from '../../../shared/components/destination-cities-carousel/destination-cities-carousel';
 import { SeoService } from '../../../core/services/seo.service';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
+import { richTextPlainText } from '../../../shared/components/rich-text-content/rich-text-content';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 
@@ -96,7 +97,7 @@ export class HomeDestinationDetail implements OnInit, AfterViewInit, OnDestroy {
   }
 
   destinationDescription(): string {
-    return this.destination?.description ?? this.destination?.fullDescription ?? this.destination?.subDescription ?? '';
+    return richTextPlainText(this.destination?.description ?? this.destination?.fullDescription ?? this.destination?.subDescription);
   }
 
   ngOnInit(): void {

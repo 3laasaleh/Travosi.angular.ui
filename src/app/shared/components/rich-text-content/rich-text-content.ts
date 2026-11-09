@@ -36,7 +36,7 @@ export function richTextPlainText(value: string | null | undefined): string {
   return decodeHtml(String(value ?? '')
     .replace(/<br\s*\/?\s*>/gi, '\n')
     .replace(/<\/\s*(p|div|li|h[1-6]|blockquote)\s*>/gi, '\n')
-    .replace(/<[^>]+>/g, ' '))
+    .replace(/<\/?[a-z][^>]*>/gi, ' '))
     .replace(/[ \t]+/g, ' ')
     .replace(/\s*\n\s*/g, '\n')
     .trim();

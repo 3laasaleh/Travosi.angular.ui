@@ -406,7 +406,8 @@
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'englishDescription' | translate
               }}</label>
-              <app-rich-text-editor formControlName="descriptionEng" />
+              <textarea formControlName="descriptionEng" rows="4"
+                class="w-full min-h-[7rem] max-h-[13rem] resize-y overflow-y-auto rounded-2xl border border-slate-300 bg-white px-3 py-2 leading-6"></textarea>
             @if (
             tourForm.controls.descriptionEng.touched &&
             tourForm.controls.descriptionEng.hasError('required')
@@ -417,7 +418,8 @@
           <div>
             <label class="required-field-label mb-2 block text-sm font-medium">{{
               'arabicDescription' | translate
-              }}</label><app-rich-text-editor formControlName="descriptionAr" />
+              }}</label><textarea formControlName="descriptionAr" rows="4" dir="rtl"
+                class="w-full min-h-[7rem] max-h-[13rem] resize-y overflow-y-auto rounded-2xl border border-slate-300 bg-white px-3 py-2 leading-6"></textarea>
             @if (
             tourForm.controls.descriptionAr.touched &&
             tourForm.controls.descriptionAr.hasError('required')

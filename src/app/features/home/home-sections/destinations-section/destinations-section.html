@@ -50,9 +50,9 @@
                   {{ destinationName(destination) }}
                 </h3>
                 @if (destinationDescription(destination); as description) {
-                  <div class="mt-2 text-sm leading-6 text-white/75">
-                    <app-description-preview [text]="description" />
-                  </div>
+                  <p class="mt-2 text-sm leading-6 text-white/75">
+                    <app-description-preview [text]="description" [plainText]="true" />
+                  </p>
                 }
               </div>
               <span class="grid size-11 shrink-0 place-items-center rounded-full border border-white/40 bg-white/15 text-xl backdrop-blur-sm transition group-hover:border-primary group-hover:bg-primary">
