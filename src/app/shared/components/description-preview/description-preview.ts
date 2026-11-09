@@ -15,6 +15,7 @@ export class DescriptionPreview implements OnChanges {
   @Input() text: string | null | undefined = '';
   @Input() limit = 200;
   @Input() hideShowMoreBtn = false;
+  @Input() plainText = false;
 
   expanded = false;
   normalizedText = '';
@@ -25,7 +26,7 @@ export class DescriptionPreview implements OnChanges {
     this.expanded = false;
     const plainText = richTextPlainText(this.text);
     const parts = parseDescriptionLinks(plainText);
-    this.normalizedText = parts.map((part) => part.text).join('');
+    this.normalizedText = this.plainText ? plainText : parts.map((part) => part.text).join('');
     const limit = Math.max(1, Number(this.limit) || 300);
     this.hasMore = this.normalizedText.length > limit;
     this.previewText = this.hasMore

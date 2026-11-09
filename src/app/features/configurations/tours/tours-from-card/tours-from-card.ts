@@ -29,6 +29,7 @@ import { NumbersOnlyDirective } from '../../../../core/directives/numbers-only.d
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { TimePicker } from '../../../../shared/components/time-picker/time-picker';
 import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
+import { richTextPlainText } from '../../../../shared/components/rich-text-content/rich-text-content';
 import { orderItineraryItems } from '../../../../shared/utils/itinerary-order.util';
 
 import { createEmptyTourItinerary, readTourItinerary } from '../../shared/tour-itinerary.model';
@@ -978,8 +979,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
       routeName: tour.routeName ?? tour.nameEng ?? '',
       destinationId: tour.destinationId ?? '',
       cityId: tour.cityId ?? '',
-      descriptionEng: tour.descriptionEng ?? '',
-      descriptionAr: tour.descriptionAr ?? '',
+      descriptionEng: richTextPlainText(tour.descriptionEng),
+      descriptionAr: richTextPlainText(tour.descriptionAr),
       fullDescriptionEng: tour.fullDescriptionEng ?? '',
       fullDescriptionAr: tour.fullDescriptionAr ?? '',
       pricePerPerson: Number(tour.pricePerPerson ?? 0),

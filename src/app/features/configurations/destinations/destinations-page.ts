@@ -4,12 +4,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { DestinationsFromCard } from './destinations-from-card/destinations-from-card';
 import { DestinationsList } from './destinations-list/destinations-list';
-import { RichTextContent } from '../../../shared/components/rich-text-content/rich-text-content';
+import { RichTextPlainTextPipe } from '../../../shared/pipes/rich-text-plain-text.pipe';
 
 @Component({
   selector: 'app-destinations',
   standalone: true,
-  imports: [TranslatePipe, DestinationsFromCard, DestinationsList, RichTextContent],
+  imports: [TranslatePipe, DestinationsFromCard, DestinationsList, RichTextPlainTextPipe],
   templateUrl: './destinations-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './destinations-page.scss',

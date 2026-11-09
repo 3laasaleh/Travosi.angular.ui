@@ -18,7 +18,7 @@ import { environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/apiservice.service';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
-import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
+import { richTextPlainText } from '../../../../shared/components/rich-text-content/rich-text-content';
 
 interface CityImageUpload {
   id?: number;
@@ -60,7 +60,7 @@ export interface CityDTO {
 @Component({
   selector: 'app-cities-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RichTextEditor, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
   templateUrl: './cities-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -281,7 +281,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '', nameAr: city.nameAr ?? '',
       metaTitleEng: city.metaTitleEng ?? '', metaTitleAr: city.metaTitleAr ?? '', routeName: city.routeName ?? '',
-      descriptionEng: city.descriptionEng ?? '', descriptionAr: city.descriptionAr ?? '', destinationId: city.destinationId ?? null,
+      descriptionEng: richTextPlainText(city.descriptionEng), descriptionAr: richTextPlainText(city.descriptionAr), destinationId: city.destinationId ?? null,
       images: this.imageUploads.map((image) => image.url),
     });
   }

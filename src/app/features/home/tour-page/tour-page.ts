@@ -24,6 +24,7 @@ import { ProductRatingSummary, ProductReviews } from '../../../shared/components
 import { SeoService } from '../../../core/services/seo.service';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
+import { richTextPlainText } from '../../../shared/components/rich-text-content/rich-text-content';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { IGenericResponse } from '../../../core/models/genericReponse.model';
 import { TourHomeDTO } from '../home-sections/tours-section/tours-section';
@@ -90,7 +91,7 @@ export class HomeTourPage implements OnInit {
     const description = this.utilityService.isArabic(this.translate)
       ? this.tour?.descriptionAr ?? this.tour?.description ?? this.tour?.descriptionEng
       : this.tour?.descriptionEng ?? this.tour?.description ?? this.tour?.descriptionAr;
-    return String(description ?? '').trim();
+    return richTextPlainText(description);
   }
 
   get destinationName(): string {

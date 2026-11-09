@@ -22,7 +22,7 @@ import {
 } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
 import { arabicTextValidator, startsWithArabic } from '../../../../core/validators/arabic-text.validator';
-import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
+import { richTextPlainText } from '../../../../shared/components/rich-text-content/rich-text-content';
 
 interface DestinationImageUpload {
   id?: number;
@@ -57,7 +57,7 @@ export interface DestinationDTO {
 @Component({
   selector: 'app-destinations-from-card',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RichTextEditor, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, TranslatePipe],
   templateUrl: './destinations-from-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -285,8 +285,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       routeName: destination.routeName ?? '',
       subDescriptionEng: destination.subDescriptionEng ?? destination.subDescription ?? '',
       subDescriptionAr: destination.subDescriptionAr ?? '',
-      descriptionEng: destination.descriptionEng ?? destination.description ?? '',
-      descriptionAr: destination.descriptionAr ?? '',
+      descriptionEng: richTextPlainText(destination.descriptionEng ?? destination.description),
+      descriptionAr: richTextPlainText(destination.descriptionAr),
    
       images: this.imageUploads.map((image) => image.url),
       isActive: destination.isActive !== false,

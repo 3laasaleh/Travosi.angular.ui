@@ -18,6 +18,7 @@ import { UtilityService } from '../../../core/services/utilityservice';
 import { FooterOne } from '../../../layout/footer-one/footer-one';
 import { HomeNavbar } from '../../../layout/home-navbar/home-navbar';
 import { DescriptionPreview } from '../../../shared/components/description-preview/description-preview';
+import { richTextPlainText } from '../../../shared/components/rich-text-content/rich-text-content';
 import { Breadcrumbs } from '../../../shared/components/breadcrumbs/breadcrumbs';
 import { TourCard } from '../../../shared/components/tour-card/tour-card';
 import { cityAreaIds, selectCityTours } from './city-tours';
@@ -72,7 +73,7 @@ export class CityPage implements OnInit {
   }
 
   cityDescription(): string {
-    return localizedEntityText(this.city, this.isArabic ? 'ar' : 'en', 'description');
+    return richTextPlainText(localizedEntityText(this.city, this.isArabic ? 'ar' : 'en', 'description'));
   }
 
   destinationName(): string {
