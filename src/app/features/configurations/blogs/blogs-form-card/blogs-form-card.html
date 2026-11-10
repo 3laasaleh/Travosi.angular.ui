@@ -15,6 +15,7 @@
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         {{ 'englishTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
+        <span class="mt-1 block text-xs font-normal text-slate-500">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         <input formControlName="nameEng" maxlength="200" class="mt-1 w-full rounded-xl border p-2"
           [class.border-red-500]="form.controls.nameEng.touched && form.controls.nameEng.invalid" />
         @if (form.controls.nameEng.touched && form.controls.nameEng.hasError('required')) {
@@ -27,6 +28,7 @@
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicTitle' | translate }} <span class="text-red-600" aria-hidden="true">*</span>
+        <span class="mt-1 block text-xs font-normal text-slate-500">{{ 'maximumCharacters' | translate:{ count: 200 } }}</span>
         <input formControlName="nameAr" maxlength="200" dir="rtl" class="mt-1 w-full rounded-xl border p-2"
           [class.border-red-500]="form.controls.nameAr.touched && form.controls.nameAr.invalid" />
         @if (form.controls.nameAr.touched && form.controls.nameAr.hasError('required')) {
@@ -81,13 +83,23 @@
     <div class="grid gap-4 md:grid-cols-2">
       <label class="text-sm font-medium">
         {{ 'englishSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <app-rich-text-editor formControlName="DescriptionEng" minHeight="6rem" />
-   
+        <span class="mt-1 block text-xs font-normal text-slate-500">{{ 'maximumCharacters' | translate:{ count: maxSummaryCharacters } }}</span>
+        <textarea formControlName="DescriptionEng" rows="4" [maxlength]="maxSummaryCharacters"
+          class="mt-1 min-h-[7rem] max-h-[13rem] w-full resize-y overflow-y-auto rounded-xl border border-slate-300 bg-white p-2 leading-6"
+          [class.border-red-500]="form.controls.DescriptionEng.touched && form.controls.DescriptionEng.invalid"></textarea>
+        @if (form.controls.DescriptionEng.touched && form.controls.DescriptionEng.hasError('maxlength')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: maxSummaryCharacters } }}</span>
+        }
       </label>
       <label class="text-sm font-medium">
         {{ 'arabicSummary' | translate }} <span class="font-normal text-slate-400">({{ 'optional' | translate }})</span>
-        <app-rich-text-editor formControlName="DescriptionAr" minHeight="6rem" />
-    
+        <span class="mt-1 block text-xs font-normal text-slate-500">{{ 'maximumCharacters' | translate:{ count: maxSummaryCharacters } }}</span>
+        <textarea formControlName="DescriptionAr" rows="4" dir="rtl" [maxlength]="maxSummaryCharacters"
+          class="mt-1 min-h-[7rem] max-h-[13rem] w-full resize-y overflow-y-auto rounded-xl border border-slate-300 bg-white p-2 leading-6"
+          [class.border-red-500]="form.controls.DescriptionAr.touched && form.controls.DescriptionAr.invalid"></textarea>
+        @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('maxlength')) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'maximumCharacters' | translate:{ count: maxSummaryCharacters } }}</span>
+        }
         @if (form.controls.DescriptionAr.touched && form.controls.DescriptionAr.hasError('arabicText')) { <span
           class="mt-1 block text-xs text-red-600">{{ 'arabicNameInvalid' | translate }}</span> }
       </label>

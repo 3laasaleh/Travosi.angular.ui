@@ -25,6 +25,7 @@ import Swal from 'sweetalert2';
 import { environment } from '../../../../../environments/environment';
 import { DatePicker } from '../../../../shared/components/date-picker/date-picker';
 import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
+import { richTextPlainText } from '../../../../shared/components/rich-text-content/rich-text-content';
 import { ImageUploadValidationError, normalizeImageUpload } from '../../shared/image-upload.util';
 import { AdminService } from '../../admin.service';
 import {
@@ -69,6 +70,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   readonly maxImageWidth = 2400;
   readonly maxImageHeight = 1600;
   readonly maxHeaderData = 5;
+  readonly maxSummaryCharacters = 500;
   readonly headerTypes = [1, 2, 3, 4, 5];
   readonly today = this.localDate(new Date());
   readonly maximumPublishDate = this.localDate(this.addYears(new Date(), 1));
@@ -110,11 +112,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     }),
     DescriptionEng: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(1000)],
+      validators: [Validators.maxLength(500)],
     }),
     DescriptionAr: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.maxLength(1000), arabicTextValidator()],
+      validators: [Validators.maxLength(500), arabicTextValidator()],
     }),
     headerData: new FormArray<FormGroup>([]),
     publishedAt: new FormControl(this.today, {
@@ -199,8 +201,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       metaTitleEng: blog?.metaTitleEng ?? blog?.MetaTitleEng ?? '',
       metaTitleAr: blog?.metaTitleAr ?? blog?.MetaTitleAr ?? '',
       routeName: blog?.routeName ?? blog?.RouteName,
-      DescriptionEng: blog?.descriptionEng ?? blog?.DescriptionEng ?? blog?.summaryEng ?? blog?.SummaryEng,
-      DescriptionAr: blog?.descriptionAr ?? blog?.DescriptionAr ?? blog?.summaryAr ?? blog?.SummaryAr,
+      DescriptionEng: richTextPlainText(blog?.descriptionEng ?? blog?.DescriptionEng ?? blog?.summaryEng ?? blog?.SummaryEng),
+      DescriptionAr: richTextPlainText(blog?.descriptionAr ?? blog?.DescriptionAr ?? blog?.summaryAr ?? blog?.SummaryAr),
       publishedAt: originalDate || (blog ? '' : this.today),
     });
     this.setHeaderData(
@@ -272,6 +274,12 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
   async removeImage(index: number): Promise<void> {
     if (this.deletingImageIndex !== null || this.isSaving || this.isProcessingImages) return;
+
+    if (this.images.length <= 1) {
+      this.imageValidationMessage = 'blogImagesRequired';
+      this.cdr.markForCheck();
+      return;
+    }
 
     const image = this.images[index];
     if (!image) return;
@@ -352,6 +360,11 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       this.cdr.markForCheck();
       return;
     }
+    if (this.images.length === 0) {
+      this.imageValidationMessage = 'blogImagesRequired';
+      this.cdr.markForCheck();
+      return;
+    }
     const data = new FormData();
     const blogId = this.selectedBlog?.id ?? this.selectedBlog?.Id;
     if (blogId) data.append('Id', String(blogId));
@@ -384,8 +397,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
     this.errorMessage = '';
     (this.selectedBlog ? this.adminService.updateBlog(data) : this.adminService.createBlog(data))
       .pipe(
-        catchError(() => {
-          this.errorMessage = 'Unable to save this blog.';
+        catchError((error) => {
+          this.errorMessage = this.apiErrorMessage(error, 'Unable to save this blog.');
           return of(null);
         }),
         finalize(() => {
@@ -396,10 +409,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
       .subscribe((response: any) => {
         if (response?.isSuccess === false || response?.IsSuccess === false) {
           this.form.markAllAsTouched();
-          const errors = response?.errors ?? response?.Errors;
-          this.errorMessage = Array.isArray(errors) && errors.length
-            ? errors.join(' ')
-            : response?.message ?? response?.Message ?? 'Unable to save this blog.';
+          this.errorMessage = this.apiErrorMessage(response, 'Unable to save this blog.');
           return;
         }
         if (response) this.saved.emit();
@@ -423,6 +433,17 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
     const path = url.replace(/^\/+/, '').replace(/^images\//i, '');
     return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
+  }
+
+  private apiErrorMessage(response: any, fallback: string): string {
+    const errors = response?.errors ?? response?.Errors;
+    if (Array.isArray(errors) && errors.length) {
+      return errors
+        .map((item) => typeof item === 'string' ? item : item?.message ?? item?.Message)
+        .filter(Boolean)
+        .join(' ');
+    }
+    return response?.message ?? response?.Message ?? response?.error?.message ?? response?.error?.Message ?? fallback;
   }
 
   hasInvalidImageAlt(image: BlogImageUpload): boolean {

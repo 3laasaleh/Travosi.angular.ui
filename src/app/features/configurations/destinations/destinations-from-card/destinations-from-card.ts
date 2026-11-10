@@ -143,8 +143,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       : this.adminService.createDestination(payload);
     request$
       .pipe(
-        catchError(() => {
-          this.errorMessage = 'destinationSaveError';
+        catchError((error) => {
+          this.errorMessage = this.apiErrorMessage(error, 'destinationSaveError');
           return of(null);
         }),
         finalize(() => {
@@ -155,7 +155,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
       .subscribe((res: IGenericResponse<DestinationDTO> | null) => {
         if (res === null) return;
         if (res.isSuccess === false) {
-          this.errorMessage = res.message;
+          this.errorMessage = this.apiErrorMessage(res, 'destinationSaveError');
           return;
         }
         this.successMessage = res.message ;
@@ -170,6 +170,17 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   hasInvalidImageAlt(image: DestinationImageUpload): boolean {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
+  }
+
+  private apiErrorMessage(response: any, fallback: string): string {
+    const errors = response?.errors ?? response?.Errors;
+    if (Array.isArray(errors) && errors.length) {
+      return errors
+        .map((item) => typeof item === 'string' ? item : item?.message ?? item?.Message)
+        .filter(Boolean)
+        .join(' ');
+    }
+    return response?.message ?? response?.Message ?? response?.error?.message ?? response?.error?.Message ?? this.translate.instant(fallback);
   }
 
   async onImagesSelected(event: Event): Promise<void> {
@@ -213,6 +224,12 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   async removeImage(index: number): Promise<void> {
     if (this.deletingImageIndex !== null) return;
+    if (this.imageUploads.length <= 1) {
+      this.imageValidationMessage = 'imagesRequired';
+      this.destinationForm.controls.images.markAsTouched();
+      this.cdr.markForCheck();
+      return;
+    }
     const image = this.imageUploads[index];
     if (!image) return;
 

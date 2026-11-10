@@ -137,6 +137,7 @@
   "blogImages": "Blog images",
   "blogImageRules": "JPG, PNG or WebP, maximum 5 MB",
   "blogImageLimit": "A blog can have a maximum of 5 images.",
+  "blogImagesRequired": "At least one blog image is required.",
   "blogImageNumber": "Blog image {{number}}",
   "processingImages": "Processing images...",
   "delete": "Delete",
