@@ -40,7 +40,7 @@ export const COMPANY_PROFILE: CompanyProfile = {
     'https://www.instagram.com/seaworldholidays1/',
     'https://wa.me/201155011300',
   ],
-  paymentAccepted: ['Mastercard', 'Visa', 'PayPal', 'InstaPay', 'Cash'],
+  paymentAccepted: ['Mastercard', 'Visa', 'PayPal', 'InstaPay', 'Tabby', 'Tamara', 'valU installments', 'Cash'],
   currenciesAccepted: ['EGP', 'USD', 'EUR'],
   logoPath: '/assets/images/main-logo.png',
 };

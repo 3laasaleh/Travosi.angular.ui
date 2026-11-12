@@ -21,6 +21,9 @@ describe('FooterOne newsletter subscription', () => {
       'Visa',
       'PayPal',
       'InstaPay',
+      'Tabby',
+      'Tamara',
+      'valU installments',
     ]);
   });
 

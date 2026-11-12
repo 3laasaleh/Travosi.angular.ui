@@ -32,6 +32,9 @@ export class FooterOne implements AfterViewInit {
     { name: 'Visa', logo: 'assets/images/payments/visa.jpg' },
     { name: 'PayPal', logo: 'assets/images/payments/paypal.jpg' },
     { name: 'InstaPay', logo: 'assets/images/payments/instapay.png' },
+    { name: 'Tabby', logo: 'assets/images/payments/tabby.png', transparent: true },
+    { name: 'Tamara', logo: 'assets/images/payments/tamara.png', transparent: true },
+    { name: 'valU installments', logo: 'assets/images/payments/valu.png' },
   ];
   isSubmitting = false;
   newsletterMessage: NewsletterMessage = null;
