@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
@@ -13,10 +18,7 @@ interface NewsletterSubscriptionResult {
 }
 
 type NewsletterMessage =
-  | 'newsletterSubscribedSuccess'
-  | 'newsletterAlreadySubscribed'
-  | 'newsletterSubscribeError'
-  | null;
+  'newsletterSubscribedSuccess' | 'newsletterAlreadySubscribed' | 'newsletterSubscribeError' | null;
 
 @Component({
   selector: 'app-footer-one',
@@ -32,9 +34,9 @@ export class FooterOne implements AfterViewInit {
     { name: 'Visa', logo: 'assets/images/payments/visa.jpg' },
     { name: 'PayPal', logo: 'assets/images/payments/paypal.jpg' },
     { name: 'InstaPay', logo: 'assets/images/payments/instapay.png' },
+    { name: 'Valu installments', logo: 'assets/images/payments/valu.png' },
     { name: 'Tabby', logo: 'assets/images/payments/tabby.png', transparent: true },
     { name: 'Tamara', logo: 'assets/images/payments/tamara.png', transparent: true },
-    { name: 'valU installments', logo: 'assets/images/payments/valu.png' },
   ];
   isSubmitting = false;
   newsletterMessage: NewsletterMessage = null;

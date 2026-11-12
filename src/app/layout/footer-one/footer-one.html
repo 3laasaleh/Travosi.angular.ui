@@ -48,7 +48,7 @@
           <div class="mt-3 flex flex-wrap items-center gap-2.5">
             @for (payment of paymentMethods; track payment.name) {
             <span role="img"
-              class="flex h-8 w-16 items-center justify-center overflow-hidden rounded-md border p-0"
+              class="flex h-6 w-12 items-center justify-center overflow-hidden rounded-md border p-0"
               [class.border-slate-100]="!payment.transparent"
               [class.border-transparent]="payment.transparent"
               [class.bg-white]="!payment.transparent"
