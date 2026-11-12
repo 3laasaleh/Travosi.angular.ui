@@ -14,8 +14,8 @@ import { filter } from 'rxjs';
 export class CustomerContactOverlay {
   private readonly router = inject(Router);
 
-  readonly phoneDisplay = '+20 115 501 1300';
-  readonly phoneUrl = 'tel:+201155011300';
+  readonly phoneDisplay = '+971505065924 - +201070044338';
+  readonly phoneUrl = 'tel:+201070044338';
   readonly whatsappUrl = 'https://wa.me/201155011300';
   readonly instagramUrl = 'https://www.instagram.com/seaworldholidays1/';
   readonly facebookUrl = 'https://www.facebook.com/seaworldholidays1/';

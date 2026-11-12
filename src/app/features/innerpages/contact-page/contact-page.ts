@@ -71,7 +71,7 @@ export class ContactPage implements AfterViewInit {
       icon: 'phone',
       name: 'Phone',
       desc: 'The phrasal sequence of the is now so that many campaign and benefit',
-      status: '+201155011300',
+      status: '+971505065924 - +201070044338',
     },
     {
       icon: 'mail',

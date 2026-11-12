@@ -1,5 +1,4 @@
-<footer
-  class="footer relative border-t border-slate-800 bg-[#004fa0] text-white">
+<footer class="footer relative border-t border-slate-800 bg-[#004fa0] text-white">
   <div class="container relative">
     <div class="grid grid-cols-1 gap-8 px-0 py-4 md:grid-cols-2 lg:grid-cols-4">
       <section>
@@ -11,9 +10,17 @@
             <i class="mdi mdi-email text-xl" aria-hidden="true"></i>
           </a>
 
-          <a href="tel:+201155011300"
+          <!-- UAE Number -->
+          <a href="tel:+971505065924"
             class="inline-flex size-10 items-center justify-center rounded-xl bg-primary text-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-            [attr.aria-label]="'callseaworldHolidays' | translate">
+            aria-label="Call UAE number">
+            <i class="mdi mdi-phone text-xl" aria-hidden="true"></i>
+          </a>
+
+          <!-- Egypt Number -->
+          <a href="tel:+201070044338"
+            class="inline-flex size-10 items-center justify-center rounded-xl bg-primary text-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+            aria-label="Call Egypt number">
             <i class="mdi mdi-phone text-xl" aria-hidden="true"></i>
           </a>
 
@@ -41,16 +48,12 @@
             {{ 'waysYouCanPay' | translate }}</h5>
           <div class="mt-3 flex flex-wrap items-center gap-2.5">
             @for (payment of paymentMethods; track payment.name) {
-              <span
-                role="img"
-                class="flex h-6 w-10 items-center justify-center overflow-hidden rounded-md border border-slate-100 bg-white px-1"
-                [attr.aria-label]="payment.name"
-                [attr.title]="payment.name">
-                <img
-                  [src]="payment.logo"
-                  alt=""
-                  class="max-h-6 max-w-10 object-contain transition duration-200 hover:opacity-80" />
-              </span>
+            <span role="img"
+              class="flex h-6 w-10 items-center justify-center overflow-hidden rounded-md border border-slate-100 bg-white px-1"
+              [attr.aria-label]="payment.name" [attr.title]="payment.name">
+              <img [src]="payment.logo" alt=""
+                class="max-h-6 max-w-10 object-contain transition duration-200 hover:opacity-80" />
+            </span>
             }
           </div>
         </div>
@@ -65,24 +68,35 @@
         </div>
         <div class="mt-4 flex items-center"><i data-feather="mail" class="me-2 size-4 shrink-0 text-primary"
             aria-hidden="true"></i><a href="mailto:Info@seaworldholidays.com"
-            class="inline-flex rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white">Info&#64;seaworldholidays.com</a></div>
+            class="inline-flex rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white">Info&#64;seaworldholidays.com</a>
+        </div>
         <div class="mt-4 flex items-center"><i data-feather="phone" class="me-2 size-4 shrink-0 text-primary"
-            aria-hidden="true"></i><a href="tel:+201155011300" class="inline-flex rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white" dir="ltr">+20 115
-            501 1300</a></div>
+            aria-hidden="true"></i>
+            <a href="tel:+971505065924" class="inline-flex  transition hover:bg-white/10 hover:text-white" dir="ltr">+971 50 506 5924</a>
+          </div>
+             <div class="mt-4 flex items-center"><i data-feather="phone" class="me-2 size-4 shrink-0 text-primary"
+            aria-hidden="true"></i>
+            <a href="tel:+201070044338" class="inline-flex transition hover:bg-white/10 hover:text-white" dir="ltr">+201 07 004 4338</a>
+          </div>
       </section>
 
       <nav [attr.aria-label]="'footerCompanyLinks' | translate">
         <h5 class="font-semibold tracking-[1px] text-white">{{ 'company' | translate }}</h5>
         <ul class="footer-list mt-6 space-y-3">
-                    <li><a routerLink="/aboutus" class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
+          <li><a routerLink="/aboutus"
+              class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
                 class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'aboutUs' | translate }}</a></li>
-          <li><a routerLink="/blogs" class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
+          <li><a routerLink="/blogs"
+              class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
                 class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'blogs' | translate }}</a></li>
-          <li><a routerLink="/destinations" class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
+          <li><a routerLink="/destinations"
+              class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
                 class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'destinations' | translate }}</a></li>
-          <li><a routerLink="/packages" class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
+          <li><a routerLink="/packages"
+              class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
                 class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'packages' | translate }}</a></li>
-          <li><a routerLink="/contact" class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
+          <li><a routerLink="/contact"
+              class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition hover:bg-white/10 hover:text-white"><i
                 class="mdi mdi-chevron-right text-primary rtl:rotate-180"></i> {{ 'contactUs' | translate }}</a></li>
         </ul>
       </nav>
@@ -97,34 +111,35 @@
               aria-hidden="true"></i><input id="footerNewsletterEmail" type="email"
               class="h-10 w-full rounded border border-slate-300 bg-slate-50 px-3 pe-3 ps-12 text-slate-900 outline-none placeholder:text-slate-500 focus:border-primary-700 focus:ring-2 focus:ring-primary-700/20"
               [class.border-red-500]="emailControl.invalid && emailControl.touched"
-              [placeholder]="'writeYourEmail' | translate" formControlName="email" maxlength="254"
-              autocomplete="email" inputmode="email" required
-              [attr.aria-invalid]="emailControl.invalid && emailControl.touched"
-              [attr.aria-describedby]="emailControl.invalid && emailControl.touched ? 'footerNewsletterEmailError' : null"></div>
+              [placeholder]="'writeYourEmail' | translate" formControlName="email" maxlength="254" autocomplete="email"
+              inputmode="email" required [attr.aria-invalid]="emailControl.invalid && emailControl.touched"
+              [attr.aria-describedby]="emailControl.invalid && emailControl.touched ? 'footerNewsletterEmailError' : null">
+          </div>
 
           @if (emailControl.invalid && emailControl.touched) {
-            <p id="footerNewsletterEmailError" class="mt-2 text-sm text-red-600" role="alert">
-              @if (emailControl.hasError('required')) {
-                {{ 'newsletterEmailRequired' | translate }}
-              } @else if (emailControl.hasError('email')) {
-                {{ 'newsletterEmailInvalid' | translate }}
-              } @else if (emailControl.hasError('maxlength')) {
-                {{ 'newsletterEmailTooLong' | translate }}
-              }
-            </p>
+          <p id="footerNewsletterEmailError" class="mt-2 text-sm text-red-600" role="alert">
+            @if (emailControl.hasError('required')) {
+            {{ 'newsletterEmailRequired' | translate }}
+            } @else if (emailControl.hasError('email')) {
+            {{ 'newsletterEmailInvalid' | translate }}
+            } @else if (emailControl.hasError('maxlength')) {
+            {{ 'newsletterEmailTooLong' | translate }}
+            }
+          </p>
           }
 
-          <button type="submit" class="mt-3 w-full rounded-md bg-primary-700 px-5 py-2 font-semibold text-white transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+          <button type="submit"
+            class="mt-3 w-full rounded-md bg-primary-700 px-5 py-2 font-semibold text-white transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
             [disabled]="isSubmitting" [attr.aria-busy]="isSubmitting">
             {{ (isSubmitting ? 'subscribing' : 'subscribe') | translate }}
           </button>
 
           @if (newsletterMessage) {
-            <p class="mt-3 text-sm" [class.text-green-700]="newsletterMessageKind === 'success'"
-              [class.text-red-600]="newsletterMessageKind === 'error'"
-              [attr.role]="newsletterMessageKind === 'error' ? 'alert' : 'status'" aria-live="polite">
-              {{ newsletterMessage | translate }}
-            </p>
+          <p class="mt-3 text-sm" [class.text-green-700]="newsletterMessageKind === 'success'"
+            [class.text-red-600]="newsletterMessageKind === 'error'"
+            [attr.role]="newsletterMessageKind === 'error' ? 'alert' : 'status'" aria-live="polite">
+            {{ newsletterMessage | translate }}
+          </p>
           }
         </form>
       </section>
@@ -137,7 +152,9 @@
       <p>&copy; {{ year }} Sea World Holidays. {{ 'allRightsReserved' | translate }}</p>
       <p class="mt-2 text-sm">
         Powered by ABS:
-        <a href="tel:+201010660737" class="inline-flex rounded-md px-2 py-1 font-medium transition hover:bg-white/10 hover:text-white" dir="ltr">+20 101 066 0737</a>
+        <a href="tel:+201010660737"
+          class="inline-flex rounded-md px-2 py-1 font-medium transition hover:bg-white/10 hover:text-white"
+          dir="ltr">+20 101 066 0737</a>
       </p>
     </div>
   </div>

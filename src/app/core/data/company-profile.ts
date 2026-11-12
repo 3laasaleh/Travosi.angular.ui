@@ -20,11 +20,13 @@ export const COMPANY_PROFILE: CompanyProfile = {
   legalName: 'Sea World Holidays',
   name: 'Sea World Holidays',
   email: 'Info@seaworldholidays.com',
-  phone: '+201155011300',
+  phone: '+971505065924 - +201070044338',
   whatsApp: 'https://wa.me/201155011300',
   address: {
-    en: 'Haram, Al Rehab Tower, 7 Mariouteya Road, Al Saad Towers, above Banque Misr, first floor.',
-    ar: 'الهرم، برج الرحاب، 7 شارع المريوطية، أبراج السعد، أعلى بنك مصر، الدور الأول.',
+    en: `Egypt : 7 Elrehab Builiding -Mariotia Haram - Giza 6 Mohamed Meqlaad Nasr City - Cairo Emirates : Office 1208, Donna Tower / Donna Towers, Dubai Silicon Oasis, Dubai, UAE`,
+    ar: `مصر: مبنى 7 الرحاب - المريوطية، الهرم - الجيزة
+        6 شارع محمد مقلاد - مدينة نصر، القاهرة
+الإمارات: مكتب 1208، برج "دونا" (Donna Tower) - واحة دبي للسيليكون، دبي، الإمارات العربية المتحدة`,
     locality: 'Giza',
     region: 'Giza Governorate',
     country: 'EG',
