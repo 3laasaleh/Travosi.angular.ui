@@ -23,7 +23,8 @@ export const COMPANY_PROFILE: CompanyProfile = {
   phone: '+971505065924 - +201070044338',
   whatsApp: 'https://wa.me/201155011300',
   address: {
-    en: `Egypt : 7 Elrehab Builiding -Mariotia Haram - Giza 6 Mohamed Meqlaad Nasr City - Cairo Emirates : Office 1208, Donna Tower / Donna Towers, Dubai Silicon Oasis, Dubai, UAE`,
+    en: `Egypt : 7 Elrehab Builiding -Mariotia Haram - Giza 6 Mohamed Meqlaad Nasr City - Cairo
+Emirates : Office 1208, Donna Tower / Donna Towers, Dubai Silicon Oasis, Dubai, UAE`,
     ar: `مصر: مبنى 7 الرحاب - المريوطية، الهرم - الجيزة
         6 شارع محمد مقلاد - مدينة نصر، القاهرة
 الإمارات: مكتب 1208، برج "دونا" (Donna Tower) - واحة دبي للسيليكون، دبي، الإمارات العربية المتحدة`,
