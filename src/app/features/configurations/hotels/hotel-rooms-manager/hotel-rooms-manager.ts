@@ -66,9 +66,12 @@ export class HotelRoomsManager implements OnChanges {
     url: string;
     altEng: string;
     altAr: string;
+    savedAltEng?: string;
+    savedAltAr?: string;
     existing: boolean;
   }> = [];
   imageMessage = '';
+  savingAltImageIndex: number | null = null;
   readonly maxImages = 5;
   readonly processingImages = signal(false);
   readonly validationSubmitted = signal(false);
@@ -153,6 +156,9 @@ export class HotelRoomsManager implements OnChanges {
   mealPlanName(plan: any): string {
     return this.isArabic ? plan?.nameAr || plan?.nameEng || '' : plan?.nameEng || plan?.nameAr || '';
   }
+  get defaultMealPlanId(): number {
+    return Number(this.mealPlans.find((plan: any) => Number(plan?.id) > 0)?.id ?? 1);
+  }
   get today(): string {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -224,6 +230,8 @@ get todayAfterMonth(): string {
         url: image.imageUrl ?? image.url ?? '',
         altEng: image.altTextEng ?? image.altEng ?? '',
         altAr: image.altTextAr ?? image.altAr ?? '',
+        savedAltEng: image.altTextEng ?? image.altEng ?? '',
+        savedAltAr: image.altTextAr ?? image.altAr ?? '',
         existing: true,
       }))
       .filter((image: any) => !!image.url);
@@ -256,7 +264,10 @@ get todayAfterMonth(): string {
     this.roomPeriodPrices.clear();
     const mealPlanPrices = (room as any).mealPlanPrices?.length
       ? (room as any).mealPlanPrices
-      : ((room as any).roomPeriodPrices ?? []).map((period: any) => ({ ...period, mealPlanId: Number(room.mealPlan ?? 1) }));
+      : ((room as any).roomPeriodPrices ?? []).map((period: any) => ({
+        ...period,
+        mealPlanId: Number(room.mealPlan?.id ?? room.mealPlan ?? this.defaultMealPlanId),
+      }));
     mealPlanPrices
       .sort((left: any, right: any) => String(left.startDate).localeCompare(String(right.startDate)))
       .forEach((period: any) => this.addPeriod(period));
@@ -312,7 +323,7 @@ get todayAfterMonth(): string {
     group.facilities.forEach((facility) => this.toggleFacility(Number(facility.id), checked));
   }
   addPeriod(value: any = {}): void {
-    const mealPlanId = Number(value.mealPlanId ?? 1);
+    const mealPlanId = Number(value.mealPlanId ?? this.defaultMealPlanId);
     const previousForPlan = [...this.roomPeriodPrices.controls].reverse()
       .find(control => Number(control.controls['mealPlanId']?.value) === mealPlanId);
     const previousEndDate = String(previousForPlan?.controls['endDate']?.value ?? '');
@@ -398,6 +409,8 @@ get todayAfterMonth(): string {
           url: URL.createObjectURL(normalized),
           altEng: '',
           altAr: '',
+          savedAltEng: '',
+          savedAltAr: '',
           existing: false,
         });
       } catch (error) {
@@ -431,10 +444,54 @@ get todayAfterMonth(): string {
     this.removeRoomImageLocally(index);
   }
 
+  saveRoomImageAlt(index: number): void {
+    if (this.saving || this.processingImages() || this.savingAltImageIndex !== null) return;
+    const image = this.roomImages[index];
+    const imageId = Number(image?.id);
+    const roomId = Number(this.editingRoom?.id ?? this.persistedRoomId);
+    if (!image || !image.existing || !Number.isInteger(roomId) || roomId <= 0 || !Number.isInteger(imageId) || imageId <= 0) return;
+    if (!image.altEng.trim() || !image.altAr.trim() || image.altEng.trim().length > 500 || image.altAr.trim().length > 500) {
+      this.imageMessage = !image.altEng.trim() || !image.altAr.trim() ? 'imageAltRequired' : 'hotelImageAltTooLong';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.savingAltImageIndex = index;
+    this.imageMessage = '';
+    this.api.patch('HotelRooms/ImageAlt', {
+      HotelRoomId: roomId,
+      ImageId: imageId,
+      AltEng: image.altEng.trim(),
+      AltAr: image.altAr.trim(),
+    }).pipe(
+      catchError((error) => {
+        this.imageMessage = this.feedback.errorMessage(error, 'imageAltSaveError');
+        this.feedback.show('error', this.imageMessage);
+        return of(null);
+      }),
+      finalize(() => { this.savingAltImageIndex = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.imageMessage = response?.message || 'imageAltSaveError';
+        this.feedback.show('error', this.imageMessage);
+        return;
+      }
+      image.savedAltEng = image.altEng.trim();
+      image.savedAltAr = image.altAr.trim();
+      this.feedback.show('success', response?.message || 'imageAltSaved');
+    });
+  }
+
   roomImageUrl(url: string): string {
     return !url || /^(blob:|data:|https?:\/\/)/i.test(url)
       ? url
       : `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/?(?:images\/)?/i, '')}`;
+  }
+
+  imageAltChanged(image: (typeof this.roomImages)[number]): boolean {
+    return image.altEng.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr.trim() !== (image.savedAltAr ?? '').trim();
   }
 
   save(): void {
@@ -579,8 +636,11 @@ get todayAfterMonth(): string {
         this.facilities = this.rows(result.facilities)
           .filter((facility) => Number(facility?.kind) === 2);
         this.mealPlans = this.rows(result.mealPlans);
-        if (!this.roomFormOpen()) 
+        if (!this.roomFormOpen()) {
           this.reset();
+        } else {
+          this.assignDefaultMealPlanToEmptyRows();
+        }
       });
   }
   private rows(response: any): any[] {
@@ -597,6 +657,18 @@ get todayAfterMonth(): string {
     const [removed] = this.roomImages.splice(index, 1);
     if (removed?.file) URL.revokeObjectURL(removed.url);
     this.cdr.markForCheck();
+  }
+  private assignDefaultMealPlanToEmptyRows(): void {
+    const mealPlanId = this.defaultMealPlanId;
+    if (!mealPlanId) return;
+    const availableMealPlanIds = new Set(this.mealPlans.map((plan: any) => Number(plan?.id)).filter(Boolean));
+    this.roomPeriodPrices.controls.forEach((period) => {
+      const control = period.controls['mealPlanId'];
+      if (!this.editingRoom && (!Number(control.value) || (availableMealPlanIds.size > 0 && !availableMealPlanIds.has(Number(control.value))))) {
+        control.setValue(mealPlanId, { emitEvent: false });
+      }
+    });
+    this.validateAllPeriods();
   }
   private revokeNewImageUrls(): void {
     this.roomImages

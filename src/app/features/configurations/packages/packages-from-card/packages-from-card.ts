@@ -42,6 +42,8 @@ interface PackageImageUpload {
   uploaded: boolean;
   altEng?: string;
   altAr?: string;
+  savedAltEng?: string;
+  savedAltAr?: string;
   altEngTouched?: boolean;
   altArTouched?: boolean;
 }
@@ -86,6 +88,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   isSaving = false;
   apiLoadingMessage = '';
   deletingImageIndex: number | null = null;
+  savingAltImageIndex: number | null = null;
   errorMessage = '';
   validationSubmitted = false;
   imageValidationMessage = '';
@@ -467,7 +470,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       }
       try {
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
-        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false, altEng: '', altAr: '' });
+        this.imageUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, uploaded: false, altEng: '', altAr: '', savedAltEng: '', savedAltAr: '' });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
@@ -503,6 +506,35 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
     }
     this.removeImageLocally(index);
     this.showImageDeletedToast();
+  }
+
+  saveImageAlt(index: number): void {
+    if (this.isSaving || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    const imageId = Number(image?.id);
+    const packageId = Number(this.currentPackageId);
+    if (!image || !image.existing || !Number.isInteger(packageId) || packageId <= 0 || !Number.isInteger(imageId) || imageId <= 0) return;
+    this.imageAltErrorsVisible = true;
+    if (this.hasInvalidImageAlt(image)) { this.errorMessage = 'imageAltRequired'; this.cdr.markForCheck(); return; }
+
+    this.savingAltImageIndex = index;
+    this.errorMessage = '';
+    this.beginRequest('savingImageAlt');
+    this.adminService.updatePackageImageAlt({
+      PackageId: packageId,
+      ImageId: imageId,
+      AltEng: image.altEng!.trim(),
+      AltAr: image.altAr!.trim(),
+    }).pipe(
+      catchError((error) => { this.handleRequestError(error, 'imageAltSaveError'); return of(null); }),
+      finalize(() => { this.savingAltImageIndex = null; this.endRequest(); }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) { this.acceptResponse(response, 'imageAltSaveError'); return; }
+      image.savedAltEng = image.altEng!.trim();
+      image.savedAltAr = image.altAr!.trim();
+      this.showToast('success', response?.message || 'imageAltSaved');
+    });
   }
 
   openItineraryStepEditor(): void {
@@ -794,6 +826,8 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
       existing: true, uploaded: true,
       altEng: image?.altEng ?? image?.AltEng ?? '',
       altAr: image?.altAr ?? image?.AltAr ?? '',
+      savedAltEng: image?.altEng ?? image?.AltEng ?? '',
+      savedAltAr: image?.altAr ?? image?.AltAr ?? '',
       altEngTouched: false,
       altArTouched: false,
     })).filter((image: PackageImageUpload) => !!image.url);
@@ -1008,6 +1042,10 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
   private syncImagesControl(): void { this.packageForm.controls.images.setValue(this.imageUploads.map((image) => image.url)); this.packageForm.controls.images.markAsDirty(); this.packageForm.controls.images.updateValueAndValidity(); }
   private removeImageLocally(index: number): void { const [image] = this.imageUploads.splice(index, 1); if (image?.file) URL.revokeObjectURL(image.url); this.syncImagesControl(); this.cdr.markForCheck(); }
   private showImageDeletedToast(): void { this.showToast('success', 'imageDeleted'); }
+  imageAltChanged(image: PackageImageUpload): boolean {
+    return image.altEng?.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr?.trim() !== (image.savedAltAr ?? '').trim();
+  }
   private beginRequest(message: string): void { this.isSaving = true; this.apiLoadingMessage = message; this.errorMessage = ''; this.successMessage = ''; }
   private endRequest(): void { this.isSaving = false; this.apiLoadingMessage = ''; this.cdr.markForCheck(); }
   private handleRequestError(error: any, fallback: string): void { this.errorMessage = error?.error?.message || fallback; this.showToast('error', this.errorMessage); }

@@ -9,11 +9,12 @@
   @if (isLoading) {
     @if (viewMode === 'table') {
       <div class="overflow-hidden rounded-2xl border border-slate-200">
-        <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
-          @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
+        <div class="grid grid-cols-[80px_1fr_1fr_1fr_100px_120px] gap-4 bg-slate-50 px-4 py-3">
+          @for (column of [1,2,3,4,5,6]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
         </div>
         @for (row of [1,2,3,4,5]; track row) {
-          <div class="grid grid-cols-[1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
+          <div class="grid grid-cols-[80px_1fr_1fr_1fr_100px_120px] items-center gap-4 border-t border-slate-200 px-4 py-3">
+            <div class="h-12 w-20 animate-pulse rounded-lg bg-slate-200"></div>
             @for (column of [1,2,3,4,5]; track column) { <div class="h-4 animate-pulse rounded-full bg-slate-200"></div> }
           </div>
         }
@@ -34,6 +35,7 @@
       <table class="min-w-full text-start text-sm">
         <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600">
           <tr>
+            <th class="px-4 py-3">{{ 'image' | translate }}</th>
             <th class="px-4 py-3">{{ 'englishName' | translate }}</th>
             <th class="px-4 py-3">{{ 'arabicName' | translate }}</th>
             <th class="px-4 py-3">{{ 'destination' | translate }}</th>
@@ -44,6 +46,13 @@
         <tbody>
           @for (city of cities; track city.id) {
             <tr class="border-t border-slate-200 hover:bg-slate-50">
+              <td class="px-4 py-3 justify-center">
+                @if (getImages(city)[0]; as image) {
+                  <img [src]="imageUrl(image)" [alt]="city.nameEng" class="h-12 w-20 rounded-lg object-cover" />
+                } @else {
+                  <div class="grid h-12 w-20 place-items-center rounded-lg bg-slate-100"><i class="mdi mdi-image-off-outline"></i></div>
+                }
+              </td>
               <td class="px-4 py-3 font-semibold">{{ city.nameEng }}</td>
               <td class="px-4 py-3" dir="rtl">{{ city.nameAr }}</td>
               <td class="px-4 py-3 justify-center">
@@ -64,7 +73,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
+            <tr><td colspan="6" class="p-8 text-center text-slate-500">{{ 'noCitiesFound' | translate }}</td></tr>
           }
         </tbody>
       </table>

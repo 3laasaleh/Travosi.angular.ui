@@ -308,14 +308,12 @@ export class HotelCatalog implements OnInit {
     const prices = (this.availability.get(Number(hotel.id)) ?? []).flatMap(
       (room) => room.ratePlans ?? [],
     );
-    const roomOnlyPrices = prices.filter((price: any) => Number(price?.mealPlanId ?? price?.ratePlanId) === 1);
-    const defaults = roomOnlyPrices.length ? roomOnlyPrices : prices;
-    return defaults.sort((left, right) => Number(left.grandTotal) - Number(right.grandTotal))[0] ?? null;
+    return prices[0] ?? null;
   }
   startingNightlyPrice(hotel: any): { value: number; currencyCode: string } | null {
     const roomPrices = (hotel?.rooms ?? []).flatMap((room: any) => [
       ...(room?.mealPlanPrices ?? [])
-        .filter((period: any) => Number(period?.mealPlanId) === 1)
+        .filter((period: any) => period?.isActive !== false)
         .map((period: any) => ({
           value: Number(period?.price),
           currencyCode: period?.currencyCode ?? room?.currencyCode ?? 'USD',
@@ -329,7 +327,7 @@ export class HotelCatalog implements OnInit {
         currencyCode: plan?.currencyCode ?? 'USD',
       })),
     ]).filter((price: any) => Number.isFinite(price.value) && price.value >= 0);
-    return roomPrices.sort((left: any, right: any) => left.value - right.value)[0] ?? null;
+    return roomPrices[0] ?? null;
   }
   formatPrice(value: unknown, source: any): string {
     return formatHomePrice(this.currency, value, source);

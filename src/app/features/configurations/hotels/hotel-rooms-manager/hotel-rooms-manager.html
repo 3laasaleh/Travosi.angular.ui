@@ -138,6 +138,13 @@
                 @if (image.altEng.trim().length > 500 || image.altAr.trim().length > 500) {
                   <p class="text-xs text-red-600">{{ 'hotelImageAltTooLong' | translate }}</p>
                 }
+                <button type="button"
+                  class="mt-1 inline-flex items-center justify-center gap-1 rounded-md border border-primary px-2 py-1 text-[10px] font-semibold text-primary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+                  [disabled]="saving || processingImages() || savingAltImageIndex !== null || !image.existing || !image.id || !imageAltChanged(image)"
+                  (click)="saveRoomImageAlt(index)">
+                  @if (savingAltImageIndex === index) { <i class="mdi mdi-loading mdi-spin"></i> }
+                  {{ 'saveImageAlt' | translate }}
+                </button>
               </div>
             </div> }</div> }
         </section>
@@ -164,6 +171,9 @@
       <select formControlName="mealPlanId" (change)="onMealPlanChange($index)" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2">
         @for (plan of mealPlans; track plan.id) { <option [value]="plan.id">{{ mealPlanName(plan) }}</option> }
       </select>
+      @if (period.controls['mealPlanId'].touched && (period.controls['mealPlanId'].hasError('required') || period.controls['mealPlanId'].hasError('min'))) {
+        <span class="mt-1 block text-xs text-red-600">{{ 'mealPlanRequired' | translate }}</span>
+      }
       @if (period.controls['mealPlanId'].hasError('duplicateMealPlan')) {
         <span class="mt-1 block text-xs text-red-600">{{ 'mealPlanAlreadySelected' | translate }}</span>
       }

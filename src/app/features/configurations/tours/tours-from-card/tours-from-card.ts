@@ -56,6 +56,8 @@ interface TourImageUpload {
   isCover: boolean;
   altEng?: string;
   altAr?: string;
+  savedAltEng?: string;
+  savedAltAr?: string;
 }
 
 type TourFormStep = 1 | 2 | 3;
@@ -99,6 +101,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   isSaving = false;
   apiLoadingMessage = '';
   deletingImageIndex: number | null = null;
+  savingAltImageIndex: number | null = null;
   errorMessage = '';
   validationSubmitted = false;
   imageValidationMessage = '';
@@ -207,7 +210,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   get screenLoaderVisible(): boolean {
-    return this.isSaving || this.deletingImageIndex !== null;
+    return this.isSaving || this.deletingImageIndex !== null || this.savingAltImageIndex !== null;
   }
 
   get screenLoaderMessage(): string {
@@ -503,6 +506,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
               isCover: this.imageMatchesCover(image, savedCoverUrl),
               altEng: image?.altEng ?? image?.AltEng ?? '',
               altAr: image?.altAr ?? image?.AltAr ?? '',
+              savedAltEng: image?.altEng ?? image?.AltEng ?? '',
+              savedAltAr: image?.altAr ?? image?.AltAr ?? '',
             }))
             .filter((image: TourImageUpload) => !!image.url);
           if (this.imageUploads.length && !this.imageUploads.some((image) => image.isCover)) {
@@ -789,6 +794,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
           isCover: this.imageUploads.length === 0,
           altEng: '',
           altAr: '',
+          savedAltEng: '',
+          savedAltAr: '',
         });
       } catch (error) {
         this.imageValidationMessage =
@@ -800,7 +807,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   async removeImage(index: number): Promise<void> {
-    if (this.deletingImageIndex !== null || this.isSaving) return;
+    if (this.deletingImageIndex !== null || this.isSaving || this.savingAltImageIndex !== null) return;
     const image = this.imageUploads[index];
     if (!image) return;
 
@@ -854,7 +861,7 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
   }
 
   setCoverImage(index: number): void {
-    if (this.isSaving || this.deletingImageIndex !== null) return;
+    if (this.isSaving || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
     const image = this.imageUploads[index];
     if (!image || image.isCover) return;
 
@@ -890,6 +897,55 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
     }
 
     this.markCoverImage(index);
+  }
+
+  saveImageAlt(index: number): void {
+    if (this.isSaving || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    const imageId = Number(image?.id);
+    if (!image || !image.existing || !this.currentTourId || !Number.isInteger(imageId) || imageId <= 0) return;
+
+    this.imageAltErrorsVisible = true;
+    if (this.hasInvalidImageAlt(image)) {
+      this.errorMessage = 'imageAltRequired';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.savingAltImageIndex = index;
+    this.errorMessage = '';
+    this.apiLoadingMessage = 'savingTourImageAlt';
+    this.adminService
+      .updateTourImageAlt({
+        TourId: this.currentTourId,
+        ImageId: imageId,
+        AltEng: image.altEng!.trim(),
+        AltAr: image.altAr!.trim(),
+      })
+      .pipe(
+        catchError((error) => {
+          this.errorMessage = error?.error?.message || 'tourImageAltSaveError';
+          this.showApiToast('error', this.errorMessage);
+          return of(null);
+        }),
+        finalize(() => {
+          this.savingAltImageIndex = null;
+          this.apiLoadingMessage = '';
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe((response: any) => {
+        if (response === null) return;
+        if (response?.isSuccess === false) {
+          this.errorMessage = response?.message || 'tourImageAltSaveError';
+          this.showApiToast('error', this.errorMessage);
+          return;
+        }
+        this.successMessage = response?.message || 'tourImageAltSaved';
+        image.savedAltEng = image.altEng!.trim();
+        image.savedAltAr = image.altAr!.trim();
+        this.showApiToast('success', this.successMessage);
+      });
   }
 
   destinationLabel(destination: any): string {
@@ -965,6 +1021,8 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
         isCover: this.imageMatchesCover(image, coverImageUrl),
         altEng: image?.altEng ?? image?.AltEng ?? '',
         altAr: image?.altAr ?? image?.AltAr ?? '',
+        savedAltEng: image?.altEng ?? image?.AltEng ?? '',
+        savedAltAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: TourImageUpload) => !!image.url);
     this.imageUploads = imageUploads;
@@ -1422,6 +1480,11 @@ export class ToursFromCard implements OnInit, OnChanges, OnDestroy {
 
   hasInvalidImageAlt(image: TourImageUpload): boolean {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
+  }
+
+  imageAltChanged(image: TourImageUpload): boolean {
+    return image.altEng?.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr?.trim() !== (image.savedAltAr ?? '').trim();
   }
 
   private syncImagesControl(): void {

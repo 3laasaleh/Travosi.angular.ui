@@ -718,6 +718,13 @@
                 class="text-[10px] text-red-600">{{ 'blogArabicAltTextRequired' | translate }}</p> } @else if
               ((imageAltErrorsVisible || image.altArTouched) && !startsWithArabicText(image.altAr)) { <p
                 class="text-[10px] text-red-600">{{ 'arabicNameInvalid' | translate }}</p> }
+              <button type="button"
+                class="mt-1 inline-flex items-center justify-center gap-1 rounded-md border border-primary px-2 py-1 text-[10px] font-semibold text-primary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+                [disabled]="isSaving || deletingImageIndex !== null || savingAltImageIndex !== null || !image.existing || !image.id || !imageAltChanged(image)"
+                (click)="saveImageAlt(index)">
+                @if (savingAltImageIndex === index) { <i class="mdi mdi-loading mdi-spin"></i> }
+                {{ 'saveImageAlt' | translate }}
+              </button>
             </div>
           </div>
           }

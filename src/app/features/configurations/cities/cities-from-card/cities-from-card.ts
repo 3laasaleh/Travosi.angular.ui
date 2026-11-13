@@ -28,6 +28,8 @@ interface CityImageUpload {
   existing: boolean;
   altEng: string;
   altAr: string;
+  savedAltEng?: string;
+  savedAltAr?: string;
 }
 
 interface CityImageDto {
@@ -81,6 +83,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
   isLoading = false;
   destinationsLoading = false;
   deletingImageIndex: number | null = null;
+  savingAltImageIndex: number | null = null;
   errorMessage = '';
   validationSubmitted = false;
   successMessage = '';
@@ -184,7 +187,7 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
       }
       try {
         const normalized = await normalizeImageUpload(file, this.imageConstraints);
-        replacementUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, altEng: '', altAr: '' });
+        replacementUploads.push({ file: normalized, url: URL.createObjectURL(normalized), name: normalized.name, existing: false, altEng: '', altAr: '', savedAltEng: '', savedAltAr: '' });
       } catch (error) {
         this.imageValidationMessage = error instanceof ImageUploadValidationError ? error.translationKey : 'imageReadError';
       }
@@ -239,6 +242,47 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
     return !image.altEng.trim() || !image.altAr.trim() || !startsWithArabic(image.altAr);
   }
 
+  private apiErrorMessage(response: any, fallback: string): string {
+    const errors = response?.errors ?? response?.Errors;
+    if (Array.isArray(errors) && errors.length) {
+      return errors.map((item) => typeof item === 'string' ? item : item?.message ?? item?.Message).filter(Boolean).join(' ');
+    }
+    return response?.message ?? response?.Message ?? response?.error?.message ?? response?.error?.Message ?? this.translate.instant(fallback);
+  }
+
+  imageAltChanged(image: CityImageUpload): boolean {
+    return image.altEng.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr.trim() !== (image.savedAltAr ?? '').trim();
+  }
+
+  saveImageAlt(index: number): void {
+    if (this.isLoading || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    const imageId = Number(image?.id);
+    if (!image || !image.existing || !this.selectedCity?.id || !Number.isInteger(imageId) || imageId <= 0) return;
+    this.imageAltErrorsVisible = true;
+    if (this.hasInvalidImageAlt(image)) { this.errorMessage = 'imageAltRequired'; this.cdr.markForCheck(); return; }
+
+    this.savingAltImageIndex = index;
+    this.errorMessage = '';
+    this.apiService.patch('Cities/ImageAlt', {
+      CityId: this.selectedCity.id,
+      ImageId: imageId,
+      AltEng: image.altEng.trim(),
+      AltAr: image.altAr.trim(),
+    }).pipe(
+      catchError((error) => { this.errorMessage = this.apiErrorMessage(error, 'imageAltSaveError'); return of(null); }),
+      finalize(() => { this.savingAltImageIndex = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) { this.errorMessage = this.apiErrorMessage(response, 'imageAltSaveError'); return; }
+      image.savedAltEng = image.altEng.trim();
+      image.savedAltAr = image.altAr.trim();
+      this.successMessage = response?.message || 'imageAltSaved';
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', iconColor: '#00d492', title: this.translate.instant(this.successMessage), showConfirmButton: false, timer: 2500 });
+    });
+  }
+
   getImageUrl(url: string): string {
     if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
     return `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
@@ -277,6 +321,8 @@ export class CitiesFromCard implements OnInit, OnChanges, OnDestroy {
       existing: true,
       altEng: image.altEng ?? '',
       altAr: image.altAr ?? '',
+      savedAltEng: image.altEng ?? '',
+      savedAltAr: image.altAr ?? '',
     })).filter((image) => !!image.url);
     this.cityForm.setValue({
       nameEng: city.nameEng ?? '', nameAr: city.nameAr ?? '',

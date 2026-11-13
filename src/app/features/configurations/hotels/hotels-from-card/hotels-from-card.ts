@@ -25,7 +25,7 @@ import { SaveFeedbackService } from '../../shared/save-feedback.service';
 import { hotelImageFileError, hotelImagesError } from '../hotel-image-validation.util';
 import { RichTextEditor } from '../../../../shared/components/rich-text-editor/rich-text-editor';
 
-interface HotelImageUpload { id?: number; file?: File; url: string; altEng: string; altAr: string; existing: boolean; }
+interface HotelImageUpload { id?: number; file?: File; url: string; altEng: string; altAr: string; existing: boolean; savedAltEng?: string; savedAltAr?: string; }
 
 export interface HotelDTO {
   id: number;
@@ -86,6 +86,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
   private originalHotelFacilityIds = new Set<number>();
   imageUploads: HotelImageUpload[] = [];
   imageValidationMessage = '';
+  savingAltImageIndex: number | null = null;
   readonly processingImages = signal(false);
   private citiesRequestSequence = 0;
 
@@ -282,7 +283,52 @@ export class HotelsFromCard implements OnInit, OnChanges {
     this.removeImageLocally(index);
   }
 
+  saveImageAlt(index: number): void {
+    if (this.isLoading || this.processingImages() || this.savingAltImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    const imageId = Number(image?.id);
+    const hotelId = Number(this.selectedHotel?.id ?? this.persistedHotelId);
+    if (!image || !image.existing || !Number.isInteger(hotelId) || hotelId <= 0 || !Number.isInteger(imageId) || imageId <= 0) return;
+    if (!image.altEng.trim() || !image.altAr.trim() || image.altEng.trim().length > 500 || image.altAr.trim().length > 500) {
+      this.imageValidationMessage = !image.altEng.trim() || !image.altAr.trim() ? 'imageAltRequired' : 'hotelImageAltTooLong';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.savingAltImageIndex = index;
+    this.imageValidationMessage = '';
+    this.apiService.patch('Hotels/ImageAlt', {
+      HotelId: hotelId,
+      ImageId: imageId,
+      AltEng: image.altEng.trim(),
+      AltAr: image.altAr.trim(),
+    }).pipe(
+      catchError((error) => {
+        const message = this.feedback.errorMessage(error, 'imageAltSaveError');
+        this.imageValidationMessage = message;
+        this.feedback.show('error', message);
+        return of(null);
+      }),
+      finalize(() => { this.savingAltImageIndex = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) {
+        this.imageValidationMessage = response?.message || 'imageAltSaveError';
+        this.feedback.show('error', this.imageValidationMessage);
+        return;
+      }
+      image.savedAltEng = image.altEng.trim();
+      image.savedAltAr = image.altAr.trim();
+      this.feedback.show('success', response?.message || 'imageAltSaved');
+    });
+  }
+
   imageUrl(url: string): string { if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url; return `${environment.imageUrl.replace(/\/+$/, '')}/${url.replace(/^\/?(?:images\/)?/i, '')}`; }
+
+  imageAltChanged(image: HotelImageUpload): boolean {
+    return image.altEng.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr.trim() !== (image.savedAltAr ?? '').trim();
+  }
 
   private populateForm(hotel: HotelDTO): void {
     this.persistedHotelId = hotel.id;
@@ -313,7 +359,7 @@ export class HotelsFromCard implements OnInit, OnChanges {
       this.addCancellationPolicy({ valueEng: policiesEng[index] ?? '', valueAr: policiesAr[index] ?? '' });
     }
     this.revokeNewImageUrls();
-    this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
+    this.imageUploads = ((hotel as any).images ?? []).slice(0, this.maxImages).map((image: any) => ({ id: image.id, url: image.imageUrl ?? image.url, altEng: image.altTextEng ?? image.altEng ?? '', altAr: image.altTextAr ?? image.altAr ?? '', savedAltEng: image.altTextEng ?? image.altEng ?? '', savedAltAr: image.altTextAr ?? image.altAr ?? '', existing: true })).filter((image: HotelImageUpload) => !!image.url);
     const amenityIds = ((hotel as any).amenities ?? [])
       .map((facility: any) => Number(facility.id))
       .filter(Boolean);

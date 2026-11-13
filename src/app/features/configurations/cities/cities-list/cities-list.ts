@@ -9,6 +9,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { environment } from '../../../../../environments/environment';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -174,5 +175,17 @@ export class CitiesList implements OnInit, OnChanges {
       Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: this.translate.instant('cityDeleted'), showConfirmButton: false, timer: 2200 });
       this.loadCities();
     });
+  }
+
+  getImages(city: any): any[] {
+    if (Array.isArray(city?.images)) return city.images;
+    return city?.imageUrl ? [{ url: city.imageUrl }] : [];
+  }
+
+  imageUrl(image: any): string {
+    const url = typeof image === 'string' ? image : (image?.imageUrl ?? image?.url ?? image?.path ?? '');
+    if (!url || /^(blob:|data:|https?:\/\/)/i.test(url)) return url;
+    const path = String(url).replace(/^\/+/, '').replace(/^images\//i, '');
+    return `${environment.imageUrl.replace(/\/+$/, '')}/${path}`;
   }
 }

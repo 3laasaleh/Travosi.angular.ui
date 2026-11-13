@@ -41,6 +41,8 @@ interface BlogImageUpload {
   existing: boolean;
   altEng?: string;
   altAr?: string;
+  savedAltEng?: string;
+  savedAltAr?: string;
   altEngTouched?: boolean;
   altArTouched?: boolean;
 }
@@ -140,6 +142,7 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
   isSaving = false;
   isProcessingImages = false;
   deletingImageIndex: number | null = null;
+  savingAltImageIndex: number | null = null;
   errorMessage = '';
   imageValidationMessage = '';
   imageAltErrorsVisible = false;
@@ -191,6 +194,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
         name: image?.imageName ?? image?.ImageName ?? '',
         altEng: image?.altEng ?? image?.AltEng ?? '',
         altAr: image?.altAr ?? image?.AltAr ?? '',
+        savedAltEng: image?.altEng ?? image?.AltEng ?? '',
+        savedAltAr: image?.altAr ?? image?.AltAr ?? '',
         altEngTouched: false,
         altArTouched: false,
       }))
@@ -258,6 +263,8 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
             existing: false,
             altEng: '',
             altAr: '',
+            savedAltEng: '',
+            savedAltAr: '',
             altEngTouched: false,
             altArTouched: false,
           });
@@ -337,6 +344,58 @@ export class BlogsFormCard implements OnChanges, OnDestroy {
 
     this.removeLocal(index);
     this.showImageDeletedToast();
+  }
+
+  imageAltChanged(image: BlogImageUpload): boolean {
+    return image.altEng?.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr?.trim() !== (image.savedAltAr ?? '').trim();
+  }
+
+  saveImageAlt(index: number): void {
+    if (this.isSaving || this.isProcessingImages || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
+    const image = this.images[index];
+    const imageId = Number(image?.id);
+    const blogId = Number(this.selectedBlog?.id ?? this.selectedBlog?.Id);
+    if (!image || !image.existing || !Number.isInteger(blogId) || blogId <= 0 || !Number.isInteger(imageId) || imageId <= 0) return;
+    this.imageAltErrorsVisible = true;
+    if (this.hasInvalidImageAlt(image)) {
+      image.altEngTouched = true;
+      image.altArTouched = true;
+      this.errorMessage = 'imageAltRequired';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.savingAltImageIndex = index;
+    this.isSaving = true;
+    this.errorMessage = '';
+    this.adminService.updateBlogImageAlt({
+      BlogId: blogId,
+      ImageId: imageId,
+      AltEng: image.altEng!.trim(),
+      AltAr: image.altAr!.trim(),
+    }).pipe(
+      catchError((error) => {
+        this.errorMessage = this.apiErrorMessage(error, 'imageAltSaveError');
+        Swal.fire({ icon: 'error', title: this.translate.instant(this.errorMessage) });
+        return of(null);
+      }),
+      finalize(() => {
+        this.isSaving = false;
+        this.savingAltImageIndex = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false || response?.IsSuccess === false) {
+        this.errorMessage = this.apiErrorMessage(response, 'imageAltSaveError');
+        Swal.fire({ icon: 'error', title: this.translate.instant(this.errorMessage) });
+        return;
+      }
+      image.savedAltEng = image.altEng!.trim();
+      image.savedAltAr = image.altAr!.trim();
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', iconColor: '#00d492', title: this.translate.instant(response?.message || 'imageAltSaved'), showConfirmButton: false, timer: 2500 });
+    });
   }
 
   save(): void {

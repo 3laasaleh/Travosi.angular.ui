@@ -32,6 +32,8 @@ interface DestinationImageUpload {
   existing: boolean;
   altEng?: string;
   altAr?: string;
+  savedAltEng?: string;
+  savedAltAr?: string;
 }
 interface DestinationImageDto {
   id: number;
@@ -78,6 +80,7 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
   imageUploads: DestinationImageUpload[] = [];
   isLoading = false;
   deletingImageIndex: number | null = null;
+  savingAltImageIndex: number | null = null;
   errorMessage = '';
   validationSubmitted = false;
   imageValidationMessage = '';
@@ -170,6 +173,39 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
 
   hasInvalidImageAlt(image: DestinationImageUpload): boolean {
     return !image.altEng?.trim() || !image.altAr?.trim() || !startsWithArabic(image.altAr);
+  }
+
+  imageAltChanged(image: DestinationImageUpload): boolean {
+    return image.altEng?.trim() !== (image.savedAltEng ?? '').trim()
+      || image.altAr?.trim() !== (image.savedAltAr ?? '').trim();
+  }
+
+  saveImageAlt(index: number): void {
+    if (this.isLoading || this.deletingImageIndex !== null || this.savingAltImageIndex !== null) return;
+    const image = this.imageUploads[index];
+    const imageId = Number(image?.id);
+    if (!image || !image.existing || !this.selectedDestination?.id || !Number.isInteger(imageId) || imageId <= 0) return;
+    this.imageAltErrorsVisible = true;
+    if (this.hasInvalidImageAlt(image)) { this.errorMessage = 'imageAltRequired'; this.cdr.markForCheck(); return; }
+
+    this.savingAltImageIndex = index;
+    this.errorMessage = '';
+    this.adminService.updateDestinationImageAlt({
+      DestinationId: this.selectedDestination.id,
+      ImageId: imageId,
+      AltEng: image.altEng!.trim(),
+      AltAr: image.altAr!.trim(),
+    }).pipe(
+      catchError((error) => { this.errorMessage = this.apiErrorMessage(error, 'imageAltSaveError'); return of(null); }),
+      finalize(() => { this.savingAltImageIndex = null; this.cdr.markForCheck(); }),
+    ).subscribe((response: any) => {
+      if (response === null) return;
+      if (response?.isSuccess === false) { this.errorMessage = this.apiErrorMessage(response, 'imageAltSaveError'); return; }
+      image.savedAltEng = image.altEng!.trim();
+      image.savedAltAr = image.altAr!.trim();
+      this.successMessage = response?.message || 'imageAltSaved';
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', iconColor: '#00d492', title: this.translate.instant(this.successMessage), showConfirmButton: false, timer: 2500 });
+    });
   }
 
   private apiErrorMessage(response: any, fallback: string): string {
@@ -292,6 +328,8 @@ export class DestinationsFromCard implements OnChanges, OnDestroy {
         existing: true,
         altEng: image?.altEng ?? image?.AltEng ?? '',
         altAr: image?.altAr ?? image?.AltAr ?? '',
+      savedAltEng: image?.altEng ?? image?.AltEng ?? '',
+      savedAltAr: image?.altAr ?? image?.AltAr ?? '',
       }))
       .filter((image: DestinationImageUpload) => !!image.url);
     this.destinationForm.setValue({

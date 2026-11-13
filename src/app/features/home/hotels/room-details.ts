@@ -47,7 +47,7 @@ export class RoomDetails implements OnInit {
   infants = 0;
   childrenAges: number[] = [];
   roomCount = 1;
-  selectedMealPlanId = 1;
+  selectedMealPlanId = 0;
   quotedPrice: any = null;
 
   guestBookingForm = new FormGroup({
@@ -133,7 +133,7 @@ export class RoomDetails implements OnInit {
       const availableIds = this.mealPlanOptions.map((plan) => Number(plan.mealPlanId));
       this.selectedMealPlanId = availableIds.includes(requestedMealPlanId)
         ? requestedMealPlanId
-        : (availableIds.includes(1) ? 1 : (availableIds[0] ?? 1));
+        : (availableIds[0] ?? 1);
  
       this.seo.updateFrom(
         {
@@ -404,11 +404,7 @@ export class RoomDetails implements OnInit {
       if (price?.isActive === false || !Number(price?.mealPlanId)) continue;
       if (!plans.has(Number(price.mealPlanId))) plans.set(Number(price.mealPlanId), price);
     }
-    return [...plans.values()].sort((left, right) => {
-      const leftId = Number(left.mealPlanId);
-      const rightId = Number(right.mealPlanId);
-      return Number(rightId === 1) - Number(leftId === 1) || leftId - rightId;
-    });
+    return [...plans.values()];
   }
 
   mealPlanName(plan: any): string {

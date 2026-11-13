@@ -79,6 +79,36 @@ export class AdminService {
     });
   }
 
+  updateTourImageAlt(payload: { TourId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Tours/ImageAlt`, payload, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  updateCityImageAlt(payload: { CityId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Cities/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
+  updateDestinationImageAlt(payload: { DestinationId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Destinations/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
+  updateHotelImageAlt(payload: { HotelId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Hotels/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
+  updateHotelRoomImageAlt(payload: { HotelRoomId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}HotelRooms/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
+  updatePackageImageAlt(payload: { PackageId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Packages/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
+  updateBlogImageAlt(payload: { BlogId: number; ImageId: number; AltEng: string; AltAr: string }): Observable<any> {
+    return this.http.patch(`${environment.baseUrl}Blogs/ImageAlt`, payload, { headers: this.getHeaders() });
+  }
+
   getBlogs(page = 1, pageSize = 20): Observable<any> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);
     return this.http.get(`${environment.baseUrl}Blogs/GetAll`, { headers: this.getHeaders(), params });

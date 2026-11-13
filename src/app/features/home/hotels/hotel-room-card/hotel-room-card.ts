@@ -76,12 +76,18 @@ export class HotelRoomCard {
     const today = new Date();
     const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     const prices = room?.mealPlanPrices?.length ? room.mealPlanPrices : room?.roomPeriodPrices ?? [];
-    const defaultMealPlanId = this.selectedMealPlanId
-      || ((prices as any[]).some((price: any) => Number(price?.mealPlanId) === 1) ? 1 : Number(prices?.[0]?.mealPlanId ?? 0));
-    return (prices ?? [])
+    const currentPrices = (prices ?? [])
       .filter((period: any) => period?.isActive !== false && period?.startDate <= date && period?.endDate >= date)
-      .filter((period: any) => !period?.mealPlanId || Number(period.mealPlanId) === defaultMealPlanId)
-      .sort((left: any, right: any) => String(right.startDate).localeCompare(String(left.startDate)))[0] ?? null;
+    if (!currentPrices.length) return null;
+    const availablePlanIds = currentPrices
+      .map((period: any) => Number(period?.mealPlanId))
+      .filter((id: number) => id > 0);
+    const selectedPlanId = availablePlanIds.includes(this.selectedMealPlanId)
+      ? this.selectedMealPlanId
+      : Number(currentPrices[0]?.mealPlanId ?? 0);
+    return currentPrices
+      .filter((period: any) => !period?.mealPlanId || Number(period.mealPlanId) === selectedPlanId)
+      [0] ?? currentPrices[0];
   }
 
   displayedQuote(availability: any): any | null {
@@ -103,11 +109,7 @@ export class HotelRoomCard {
       if (price?.isActive === false || !Number(price?.mealPlanId)) continue;
       if (!plans.has(Number(price.mealPlanId))) plans.set(Number(price.mealPlanId), price);
     }
-    return [...plans.values()].sort((left, right) => {
-      const leftId = Number(left.mealPlanId);
-      const rightId = Number(right.mealPlanId);
-      return Number(rightId === 1) - Number(leftId === 1) || leftId - rightId;
-    });
+    return [...plans.values()];
   }
 
   quoteMealPlanName(plan: any): string {
