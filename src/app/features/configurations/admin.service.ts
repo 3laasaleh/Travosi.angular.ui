@@ -39,8 +39,9 @@ export class AdminService {
     });
   }
 
-  getTours(page = 1, pageSize = 100): Observable<any> {
-    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+  getTours(page = 1, pageSize = 100, search = ''): Observable<any> {
+    let params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    if (search.trim()) params = params.set('search', search.trim());
     return this.http.get(`${environment.baseUrl}Tours/GetAll`, {
       headers: this.getHeaders(),
       params,

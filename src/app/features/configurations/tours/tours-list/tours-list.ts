@@ -49,6 +49,7 @@ export class ToursList implements OnInit, OnChanges {
   deletingId: number | null = null;
   errorMessage = '';
   successMessage = '';
+  searchTerm = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
   constructor(
@@ -71,7 +72,7 @@ export class ToursList implements OnInit, OnChanges {
   loadTours(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.adminService.getTours(this.paginationInfo.page, this.paginationInfo.pageSize).pipe(
+    this.adminService.getTours(this.paginationInfo.page, this.paginationInfo.pageSize, this.searchTerm).pipe(
       catchError(() => {
         this.errorMessage = 'toursLoadError';
         return of(null);
@@ -92,6 +93,16 @@ export class ToursList implements OnInit, OnChanges {
         totalPages: Math.max(1, Number(pageData?.totalPages ?? 1)),
       };
     });
+  }
+
+  submitSearch(): void {
+    this.paginationInfo.page = 1;
+    this.loadTours();
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    if (!this.searchTerm.trim()) this.submitSearch();
   }
 
   onPageChange(page: number): void {

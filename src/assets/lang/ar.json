@@ -943,6 +943,8 @@
   "tourImageAltSaveError": "تعذر حفظ النص البديل للصورة.",
   "savingTourImageAlt": "جارٍ حفظ النص البديل للصورة...",
   "saveImageAlt": "حفظ النص البديل",
+  "identifierCode": "رمز التعريف",
+  "searchByIdentifier": "البحث بالرمز أو الاسم",
   "savingImageAlt": "جارٍ حفظ النص البديل للصورة...",
   "imageAltSaved": "تم حفظ النص البديل للصورة بنجاح.",
   "imageAltSaveError": "تعذر حفظ النص البديل للصورة.",

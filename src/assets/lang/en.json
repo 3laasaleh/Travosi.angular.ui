@@ -925,6 +925,8 @@
   "tourImageAltSaveError": "The image alt text could not be saved.",
   "savingTourImageAlt": "Saving image alt text...",
   "saveImageAlt": "Save alt text",
+  "identifierCode": "Identifier code",
+  "searchByIdentifier": "Search by code or name",
   "savingImageAlt": "Saving image alt text...",
   "imageAltSaved": "Image alt text saved successfully.",
   "imageAltSaveError": "The image alt text could not be saved.",

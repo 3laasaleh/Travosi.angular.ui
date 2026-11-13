@@ -43,6 +43,7 @@ export class PackagesList implements OnInit, OnChanges {
   statusUpdatingId: number | null = null;
   deletingId: number | null = null;
   errorMessage = '';
+  searchTerm = '';
   paginationInfo: PaginationInfo = { page: 1, pageSize: 10, totalCount: 0, totalPages: 1 };
 
   constructor(
@@ -65,7 +66,12 @@ export class PackagesList implements OnInit, OnChanges {
   loadPackages(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    const query = `page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}`;
+    const queryParams = new URLSearchParams({
+      page: String(this.paginationInfo.page),
+      pageSize: String(this.paginationInfo.pageSize),
+    });
+    if (this.searchTerm.trim()) queryParams.set('search', this.searchTerm.trim());
+    const query = queryParams.toString();
     this.apiService.get(`Packages/GetAll?${query}`).pipe(
       catchError(() => this.apiService.get(`Packages?${query}`).pipe(
         catchError(() => {
@@ -91,6 +97,16 @@ export class PackagesList implements OnInit, OnChanges {
         totalPages: Math.max(1, Number(pageData?.totalPages ?? Math.ceil(totalCount / Math.max(1, pageSize)))),
       };
     });
+  }
+
+  submitSearch(): void {
+    this.paginationInfo.page = 1;
+    this.loadPackages();
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    if (!this.searchTerm.trim()) this.submitSearch();
   }
 
   onPageChange(page: number): void {
