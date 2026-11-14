@@ -5,15 +5,21 @@
 
   <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h2 class="text-xl font-semibold">{{ 'bookingRecords' | translate }}</h2>
-    <label class="flex items-center gap-2 text-sm font-medium text-slate-600">
-      <span>{{ 'filterByStatus' | translate }}</span>
-      <select class="min-w-[135px] rounded-full border border-slate-200 bg-white px-4 py-2 outline-none focus:border-primary" [value]="selectedStatus" (change)="onStatusFilterChange($event)">
-        <option value="">{{ 'allStatuses' | translate }}</option>
-        @for (option of [bookingStatusEnum.Pending, bookingStatusEnum.Confirmed, bookingStatusEnum.Cancelled, bookingStatusEnum.Completed]; track option) {
-          <option [value]="option">{{ bookingStatusKey(option) | translate }}</option>
-        }
-      </select>
-    </label>
+    <div class="flex flex-wrap items-center justify-end gap-3">
+      <form class="flex items-center gap-2" (submit)="submitSearch(); $event.preventDefault()">
+        <input type="search" class="w-64 rounded-full border border-slate-300 px-4 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" [value]="searchTerm" (input)="onSearchInput($event)" [placeholder]="'searchBookingsPlaceholder' | translate" />
+        <button type="submit" [disabled]="searchTerm == null || !searchTerm.trim()" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">{{ 'search' | translate }}</button>
+      </form>
+      <label class="flex items-center gap-2 text-sm font-medium text-slate-600">
+        <span>{{ 'filterByStatus' | translate }}</span>
+        <select class="min-w-[135px] rounded-full border border-slate-200 bg-white px-4 py-2 outline-none focus:border-primary" [value]="selectedStatus" (change)="onStatusFilterChange($event)">
+          <option value="">{{ 'allStatuses' | translate }}</option>
+          @for (option of [bookingStatusEnum.Pending, bookingStatusEnum.Confirmed, bookingStatusEnum.Cancelled, bookingStatusEnum.Completed]; track option) {
+            <option [value]="option">{{ bookingStatusKey(option) | translate }}</option>
+          }
+        </select>
+      </label>
+    </div>
   </div>
 
   @if (isLoading) {

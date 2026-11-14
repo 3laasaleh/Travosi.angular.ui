@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import feather from 'feather-icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+import { COMPANY_PROFILE, CompanyOffice } from '../../core/data/company-profile';
 import { IGenericResponse } from '../../core/models/genericReponse.model';
 import { ApiService } from '../../core/services/apiservice.service';
 
@@ -29,6 +30,12 @@ type NewsletterMessage =
 export class FooterOne implements AfterViewInit {
   logo = 'assets/images/main-logo.png';
   year = new Date().getFullYear();
+  readonly officeAddresses: CompanyOffice[] = COMPANY_PROFILE.offices;
+  readonly socialLinks = [
+    { name: 'Facebook', href: 'https://www.facebook.com/seaworldholidays1/', icon: 'mdi-facebook', className: 'bg-[#1877f2] hover:bg-[#0f6adf]' },
+    { name: 'Instagram', href: 'https://www.instagram.com/seaworldholidays1/', icon: 'mdi-instagram', className: 'bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045]' },
+    { name: 'WhatsApp', href: COMPANY_PROFILE.whatsApp, icon: 'mdi-whatsapp', className: 'bg-[#25d366] hover:bg-[#1ebe5d]' },
+  ];
   readonly paymentMethods = [
     { name: 'Mastercard', logo: 'assets/images/payments/mastercard.jpg' },
     { name: 'Visa', logo: 'assets/images/payments/visa.jpg' },
@@ -53,6 +60,19 @@ export class FooterOne implements AfterViewInit {
     private readonly apiService: ApiService,
     private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
+
+  officeName(office: CompanyOffice): string {
+    return this.isArabic ? office.name.ar : office.name.en;
+  }
+
+  officeAddress(office: CompanyOffice): string {
+    return this.isArabic ? office.address.ar : office.address.en;
+  }
+
+  private get isArabic(): boolean {
+    if (typeof document === 'undefined') return false;
+    return document.documentElement.lang.toLowerCase().startsWith('ar') || document.documentElement.dir === 'rtl';
+  }
 
   get emailControl(): FormControl<string> {
     return this.newsletterForm.controls.email;

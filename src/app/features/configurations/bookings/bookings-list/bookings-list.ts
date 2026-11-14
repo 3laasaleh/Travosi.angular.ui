@@ -44,6 +44,7 @@ export class BookingsList implements OnInit, OnChanges {
   isLoading = false;
   updatingBookingId: number | null = null;
   selectedStatus: '' | BookingStatusEnum = '';
+  searchTerm = '';
   errorMessage = '';
   paginationInfo: PaginationInfoDTO = { page: 1, pageSize: 10, totalCount: 0, totalPages: 0 };
 
@@ -72,8 +73,14 @@ export class BookingsList implements OnInit, OnChanges {
   loadBookings(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    const queryParams = new URLSearchParams({
+      page: String(this.paginationInfo.page),
+      pageSize: String(this.paginationInfo.pageSize),
+    });
+    if (this.selectedStatus !== '') queryParams.set('status', String(this.selectedStatus));
+    if (this.searchTerm.trim()) queryParams.set('search', this.searchTerm.trim());
     this.apiService
-      .get(`Bookings?page=${this.paginationInfo.page}&pageSize=${this.paginationInfo.pageSize}${this.selectedStatus === '' ? '' : `&status=${this.selectedStatus}`}`)
+      .get(`Bookings?${queryParams.toString()}`)
       .pipe(
         catchError(() => {
           this.errorMessage = 'bookingsLoadError';
@@ -96,6 +103,16 @@ export class BookingsList implements OnInit, OnChanges {
           totalPages: Math.max(1, Number(pageData?.totalPages ?? 1)),
         };
       });
+  }
+
+  submitSearch(): void {
+    this.paginationInfo.page = 1;
+    this.loadBookings();
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    if (!this.searchTerm.trim()) this.submitSearch();
   }
 
   previousPage(): void {
