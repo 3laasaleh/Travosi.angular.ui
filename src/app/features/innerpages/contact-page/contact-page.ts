@@ -34,10 +34,10 @@ export interface ContactMessageDTO {
 })
 export class ContactPage implements AfterViewInit {
   bg = 'assets/images/travel-train-station.svg';
-  isActive = false;
   isSubmitting = false;
   submitMessage: string | null = null;
   submitMessageKind: 'success' | 'error' | null = null;
+  readonly googleMapsUrl = 'https://www.google.com/search?sca_esv=01a6f8e16ed99706&cs=0&output=search&kgmid=/g/11w4dz46mf&q=Sea+World+Holidays&shem=dlvs1,epsd1,esd2e,ltae,rimspwouoe,sdpie&shndl=30&source=sh/x/loc/uni/m1/1&kgs=d7a3cc3ea75d3615&utm_source=dlvs1,epsd1,esd2e,ltae,rimspwouoe,sdpie,sh/x/loc/uni/m1/1#lpg=cid:CgIgAQ%3D%3D,ik:CAoSFkNJSE0wb2dLRUlDQWdJQ3I1ZnFjSXc';
 
   readonly contactForm = new FormGroup({
     firstName: new FormControl('', {
@@ -72,18 +72,21 @@ export class ContactPage implements AfterViewInit {
       name: 'Phone',
       desc: 'The phrasal sequence of the is now so that many campaign and benefit',
       status: '+971505065924 - +201070044338',
+      href: '',
     },
     {
       icon: 'mail',
       name: 'Email',
       desc: 'The phrasal sequence of the is now so that many campaign and benefit',
       status: 'Info@seaworldholidays.com',
+      href: 'mailto:Info@seaworldholidays.com',
     },
     {
       icon: 'map-pin',
       name: 'Location',
       desc: 'C/54 Northwest Freeway, Suite 558, 7 Mariouteya, Haram, Al Rehab Tower,',
       status: 'View on Google map',
+      href: this.googleMapsUrl,
     },
   ];
 
@@ -94,10 +97,6 @@ export class ContactPage implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (typeof document !== 'undefined') feather.replace();
-  }
-
-  toggle(): void {
-    this.isActive = !this.isActive;
   }
 
   submitQuestion(): void {

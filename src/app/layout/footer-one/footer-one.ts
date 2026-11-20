@@ -32,9 +32,12 @@ export class FooterOne implements AfterViewInit {
   year = new Date().getFullYear();
   readonly officeAddresses: CompanyOffice[] = COMPANY_PROFILE.offices;
   readonly socialLinks = [
-    { name: 'Facebook', href: 'https://www.facebook.com/seaworldholidays1/', icon: 'mdi-facebook', className: 'bg-[#1877f2] hover:bg-[#0f6adf]' },
-    { name: 'Instagram', href: 'https://www.instagram.com/seaworldholidays1/', icon: 'mdi-instagram', className: 'bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045]' },
+    { name: 'Facebook', href: 'https://www.facebook.com/seaworldholidays1', icon: 'mdi-facebook', className: 'bg-[#1877f2] hover:bg-[#0f6adf]' },
+    { name: 'Instagram', href: 'https://www.instagram.com/seaworldholidays1', icon: 'mdi-instagram', className: 'bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045]' },
     { name: 'WhatsApp', href: COMPANY_PROFILE.whatsApp, icon: 'mdi-whatsapp', className: 'bg-[#25d366] hover:bg-[#1ebe5d]' },
+    { name: 'TikTok', href: 'https://www.tiktok.com/@sea.world.holidays', icon: 'mdi-music-note', className: 'bg-black hover:bg-slate-800' },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/sea-world-holidays', icon: 'mdi-linkedin', className: 'bg-[#0a66c2] hover:bg-[#084f96]' },
+    { name: 'X', href: 'https://x.com/seaworldholiday', icon: 'mdi-alpha-x-box-outline', className: 'bg-black hover:bg-slate-800' },
   ];
   readonly paymentMethods = [
     { name: 'Mastercard', logo: 'assets/images/payments/mastercard.jpg' },

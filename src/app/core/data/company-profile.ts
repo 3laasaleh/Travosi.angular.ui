@@ -62,6 +62,9 @@ export const COMPANY_PROFILE: CompanyProfile = {
   socialProfiles: [
     'https://www.facebook.com/seaworldholidays1/',
     'https://www.instagram.com/seaworldholidays1/',
+    'https://www.tiktok.com/@seaworldholidays1',
+    'https://www.linkedin.com/company/sea-world-holidays/',
+    'https://x.com/seaworldholidays1',
     'https://wa.me/201155011300',
   ],
   paymentAccepted: ['Mastercard', 'Visa', 'PayPal', 'InstaPay', 'Tabby', 'Tamara', 'valU installments', 'Cash'],
