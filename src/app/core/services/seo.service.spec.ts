@@ -87,6 +87,22 @@ describe('shared entity SEO', () => {
     expect(graph.find((item: any) => item['@type'] === 'Blog').name).toBe(entity.nameEng);
   });
 
+  it('reads package SEO titles from MetaTitleEng and MetaTitlear', () => {
+    const { seo, doc } = setup('ar', 'packages/egypt-week');
+    seo.updateFrom({
+      nameEng: 'Egypt Week',
+      nameAr: 'أسبوع مصر',
+      MetaTitleEng: 'Egypt Week package | Sea World Holidays',
+      MetaTitlear: 'باقة أسبوع مصر | سي وورلد هوليدايز',
+      descriptionEng: 'English package description',
+      descriptionAr: 'وصف الباقة بالعربية',
+    }, { schemaType: 'Package' });
+
+    expect(doc.title).toBe('باقة أسبوع مصر | سي وورلد هوليدايز');
+    expect(doc.querySelector('meta[property="og:title"]')?.getAttribute('content'))
+      .toBe('باقة أسبوع مصر | سي وورلد هوليدايز');
+  });
+
   it('keeps entity metadata and parent labels published before NavigationEnd', () => {
     const { seo, doc, router, events, crumbs } = setup();
     events.next(new NavigationStart(1, router.url));

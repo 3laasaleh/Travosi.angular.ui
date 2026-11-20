@@ -39,9 +39,153 @@ interface LocalizedSeoPage {
 }
 
 const SITE_NAME = COMPANY_PROFILE.name;
-const DEFAULT_DESCRIPTION: Record<'en' | 'ar', string> = {
-  en: 'Discover curated tours, hotels, travel packages, cities and destinations with Sea World Holidays.',
-  ar: 'اكتشف الجولات والفنادق وباقات السفر والمدن والوجهات المختارة مع سي وورلد هوليدايز.',
+type LocalizedText = Record<'en' | 'ar', string>;
+interface StaticSeoPage {
+  name: LocalizedText;
+  title: LocalizedText;
+  description: LocalizedText;
+}
+
+const STATIC_SEO: Record<string, StaticSeoPage> = {
+  home: {
+    name: { en: 'Home', ar: 'الرئيسية' },
+    title: {
+      en: 'Sea World Holidays | Tours, Packages & Destinations',
+      ar: 'سي وورلد هوليدايز | جولات وباقات ووجهات',
+    },
+    description: {
+      en: 'Discover curated tours, travel packages, cities and destinations with Sea World Holidays. Plan your next journey with local travel experts.',
+      ar: 'اكتشف الجولات والباقات السياحية والمدن والوجهات المختارة مع سي وورلد هوليدايز وخطط رحلتك القادمة مع خبراء السفر.',
+    },
+  },
+  destinations: {
+    name: { en: 'Destinations', ar: 'الوجهات' },
+    title: { en: 'Travel Destinations | Sea World Holidays', ar: 'وجهات السفر | سي وورلد هوليدايز' },
+    description: {
+      en: 'Explore inspiring travel destinations and discover the places where your next Sea World Holidays journey can begin.',
+      ar: 'استكشف وجهات سفر ملهمة واكتشف الأماكن التي تبدأ منها رحلتك القادمة مع سي وورلد هوليدايز.',
+    },
+  },
+  cities: {
+    name: { en: 'Cities', ar: 'المدن' },
+    title: { en: 'Travel Cities | Sea World Holidays', ar: 'المدن السياحية | سي وورلد هوليدايز' },
+    description: {
+      en: 'Browse travel cities, local highlights and memorable experiences with Sea World Holidays.',
+      ar: 'تصفح المدن السياحية ومعالمها وتجاربها المميزة مع سي وورلد هوليدايز.',
+    },
+  },
+  tours: {
+    name: { en: 'Tours', ar: 'الجولات' },
+    title: { en: 'Tours & Excursions | Sea World Holidays', ar: 'الجولات والرحلات | سي وورلد هوليدايز' },
+    description: {
+      en: 'Find memorable tours and excursions, from cultural discoveries to relaxing adventures with Sea World Holidays.',
+      ar: 'اعثر على جولات ورحلات مميزة، من الاكتشافات الثقافية إلى المغامرات الممتعة مع سي وورلد هوليدايز.',
+    },
+  },
+  'nile-cruises': {
+    name: { en: 'Nile Cruises', ar: 'الرحلات النيلية' },
+    title: { en: 'Nile Cruises | Sea World Holidays', ar: 'رحلات النيل | سي وورلد هوليدايز' },
+    description: {
+      en: 'Experience the Nile with carefully planned cruises, sightseeing and comfortable travel arrangements.',
+      ar: 'استمتع برحلة نيلية تجمع بين المعالم السياحية والترتيبات المريحة والتخطيط المتقن.',
+    },
+  },
+  packages: {
+    name: { en: 'Packages', ar: 'الباقات' },
+    title: { en: 'Travel Packages | Sea World Holidays', ar: 'باقات السفر | سي وورلد هوليدايز' },
+    description: {
+      en: 'Discover thoughtfully planned travel packages with destinations, stays and experiences arranged around you.',
+      ar: 'اكتشف باقات سفر مخططة بعناية تجمع بين الوجهات والإقامة والتجارب المصممة حول احتياجاتك.',
+    },
+  },
+  hotels: {
+    name: { en: 'Hotels', ar: 'الفنادق' },
+    title: { en: 'Hotels & Rooms | Sea World Holidays', ar: 'الفنادق والغرف | سي وورلد هوليدايز' },
+    description: {
+      en: 'Search trusted hotels and comfortable rooms, compare stays and check availability for your trip.',
+      ar: 'ابحث عن فنادق موثوقة وغرف مريحة وقارن أماكن الإقامة وتحقق من التوفر لرحلتك.',
+    },
+  },
+  blogs: {
+    name: { en: 'Travel Blog', ar: 'مدونة السفر' },
+    title: { en: 'Travel Blog | Sea World Holidays', ar: 'مدونة السفر | سي وورلد هوليدايز' },
+    description: {
+      en: 'Read travel guides, destination ideas and useful stories from Sea World Holidays.',
+      ar: 'اقرأ أدلة السفر وأفكار الوجهات والقصص المفيدة من سي وورلد هوليدايز.',
+    },
+  },
+  aboutus: {
+    name: { en: 'About Us', ar: 'من نحن' },
+    title: { en: 'About Us | Sea World Holidays', ar: 'من نحن | سي وورلد هوليدايز' },
+    description: {
+      en: 'Learn about Sea World Holidays, our travel expertise and the care we put into every journey.',
+      ar: 'تعرّف على سي وورلد هوليدايز وخبرتنا في السفر والاهتمام الذي نقدمه في كل رحلة.',
+    },
+  },
+  helpcenter: {
+    name: { en: 'Help Center', ar: 'مركز المساعدة' },
+    title: { en: 'Help Center | Sea World Holidays', ar: 'مركز المساعدة | سي وورلد هوليدايز' },
+    description: {
+      en: 'Find answers and helpful information for planning and managing your Sea World Holidays trip.',
+      ar: 'اعثر على إجابات ومعلومات مفيدة لتخطيط رحلتك وإدارتها مع سي وورلد هوليدايز.',
+    },
+  },
+  'helpcenter-faqs': {
+    name: { en: 'Frequently Asked Questions', ar: 'الأسئلة الشائعة' },
+    title: { en: 'Frequently Asked Questions | Sea World Holidays', ar: 'الأسئلة الشائعة | سي وورلد هوليدايز' },
+    description: {
+      en: 'Get quick answers to common questions about Sea World Holidays services and bookings.',
+      ar: 'احصل على إجابات سريعة عن الأسئلة الشائعة حول خدمات وحجوزات سي وورلد هوليدايز.',
+    },
+  },
+  'helpcenter-guides': {
+    name: { en: 'Travel Guides', ar: 'أدلة السفر' },
+    title: { en: 'Travel Guides | Sea World Holidays', ar: 'أدلة السفر | سي وورلد هوليدايز' },
+    description: {
+      en: 'Use practical travel guides and tips to prepare for a smoother Sea World Holidays experience.',
+      ar: 'استخدم أدلة ونصائح السفر العملية للاستعداد لتجربة أسهل مع سي وورلد هوليدايز.',
+    },
+  },
+  'helpcenter-support': {
+    name: { en: 'Travel Support', ar: 'دعم السفر' },
+    title: { en: 'Travel Support | Sea World Holidays', ar: 'دعم السفر | سي وورلد هوليدايز' },
+    description: {
+      en: 'Get travel support from the Sea World Holidays team before, during and after your journey.',
+      ar: 'احصل على دعم السفر من فريق سي وورلد هوليدايز قبل رحلتك وأثناءها وبعدها.',
+    },
+  },
+  terms: {
+    name: { en: 'Terms and Conditions', ar: 'الشروط والأحكام' },
+    title: { en: 'Terms and Conditions | Sea World Holidays', ar: 'الشروط والأحكام | سي وورلد هوليدايز' },
+    description: {
+      en: 'Review the terms and conditions that apply to Sea World Holidays services and bookings.',
+      ar: 'راجع الشروط والأحكام المطبقة على خدمات وحجوزات سي وورلد هوليدايز.',
+    },
+  },
+  privacy: {
+    name: { en: 'Privacy Policy', ar: 'سياسة الخصوصية' },
+    title: { en: 'Privacy Policy | Sea World Holidays', ar: 'سياسة الخصوصية | سي وورلد هوليدايز' },
+    description: {
+      en: 'Learn how Sea World Holidays handles personal information and protects your privacy.',
+      ar: 'تعرّف على كيفية تعامل سي وورلد هوليدايز مع معلوماتك الشخصية وحماية خصوصيتك.',
+    },
+  },
+  contact: {
+    name: { en: 'Contact Us', ar: 'اتصل بنا' },
+    title: { en: 'Contact Us | Sea World Holidays', ar: 'اتصل بنا | سي وورلد هوليدايز' },
+    description: {
+      en: 'Contact Sea World Holidays for travel advice, booking help and personalized trip planning.',
+      ar: 'تواصل مع سي وورلد هوليدايز للحصول على نصائح السفر ومساعدة الحجز وتخطيط رحلة مخصصة.',
+    },
+  },
+  'not-found': {
+    name: { en: 'Page Not Found', ar: 'الصفحة غير موجودة' },
+    title: { en: 'Page Not Found | Sea World Holidays', ar: 'الصفحة غير موجودة | سي وورلد هوليدايز' },
+    description: {
+      en: 'The page you requested could not be found. Continue exploring Sea World Holidays.',
+      ar: 'تعذر العثور على الصفحة المطلوبة. تابع استكشاف سي وورلد هوليدايز.',
+    },
+  },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -63,11 +207,21 @@ export class SeoService {
   private siteStructuredDataLanguage: 'en' | 'ar' | null = null;
 
   constructor() {
- 
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.pendingPath = this.normalizePath(event.url);
+        this.applyRouteDefaults(event.url);
+      } else if (event instanceof NavigationEnd) {
+        const path = this.normalizePath(event.urlAfterRedirects);
+        this.pendingPath = path;
+        if (this.lastPagePath !== path && this.failurePath !== path) this.applyRouteDefaults(path);
+        this.pendingPath = null;
+      }
+    });
 
     effect(() => {
       this.language.currentLanguage();
-      if (this.lastPage) 
+      if (this.lastPage)
         this.applyLocalizedPageSeo(this.lastPage, this.languageFromUrl());
     });
   }
@@ -95,6 +249,7 @@ export class SeoService {
     };
 
     this.lastPage = page;
+    this.failurePath = null;
     this.lastPagePath = this.currentPath();
     this.applyLocalizedPageSeo(page, this.languageFromUrl());
   }
@@ -227,11 +382,11 @@ export class SeoService {
   }
 
   private applyRouteDefaults(url: string): void {
-    this.lastPage = null;
     const path = this.normalizePath(url);
     const segments = path.split('/').filter(Boolean);
     const language = segments[0] === 'ar' ? 'ar' : 'en';
     const section = segments[0] === 'ar' || segments[0] === 'en' ? segments[1] : segments[0];
+    this.failurePath = null;
     const privateSections = new Set([
       'configurations', 'account', 'login', 'signup', 'signup-success', 'forgot-password',
       'reset-password', 'user-setting', 'user-profile', 'user-booking', 'user-payment',
@@ -240,6 +395,8 @@ export class SeoService {
 
     this.applyDocumentLanguage(language);
     if (privateSections.has(section ?? '')) {
+      this.lastPage = null;
+      this.lastPagePath = path;
       this.titleService.setTitle(SITE_NAME);
       this.updateName('robots', 'noindex, nofollow');
       this.updateName('googlebot', 'noindex, nofollow');
@@ -247,24 +404,16 @@ export class SeoService {
       return;
     }
 
-    const titles: Record<string, [string, string]> = {
-      home: ['Sea World Holidays | Tours, Packages & Destinations', 'سي وورلد هوليدايز | جولات وباقات ووجهات'],
-      destinations: ['Travel Destinations | Sea World Holidays', 'وجهات السفر | سي وورلد هوليدايز'],
-      cities: ['Travel Cities | Sea World Holidays', 'مدن سياحية | سي وورلد هوليدايز'],
-      tours: ['Tours & Excursions | Sea World Holidays', 'الجولات والرحلات | سي وورلد هوليدايز'],
-      'nile-cruises': ['Nile Cruises | Sea World Holidays', 'رحلات النيل | سي وورلد هوليدايز'],
-      packages: ['Travel Packages | Sea World Holidays', 'باقات السفر | سي وورلد هوليدايز'],
-      hotels: ['Hotels & Rooms | Sea World Holidays', 'الفنادق والغرف | سي وورلد هوليدايز'],
-      blogs: ['Travel Blog | Sea World Holidays', 'مدونة السفر | سي وورلد هوليدايز'],
+    const page = STATIC_SEO[section ?? ''] ?? STATIC_SEO['not-found'];
+    this.lastPage = {
+      name: page.name,
+      title: page.title,
+      hasMetaTitle: { en: true, ar: true },
+      description: page.description,
+      schemaType: 'WebPage',
     };
-    const pageTitle = titles[section ?? 'home'] ?? titles['home'];
-    this.setPage(
-      language === 'ar' ? pageTitle[1] : pageTitle[0],
-      DEFAULT_DESCRIPTION[language],
-      undefined,
-      undefined,
-      'WebPage',
-    );
+    this.lastPagePath = path;
+    this.applyLocalizedPageSeo(this.lastPage, language);
   }
 
   private setPageStructuredData(

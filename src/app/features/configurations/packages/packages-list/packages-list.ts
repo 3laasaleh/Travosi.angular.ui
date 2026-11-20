@@ -35,6 +35,7 @@ export class PackagesList implements OnInit, OnChanges {
   @Input() refreshToken = 0;
   @Output() previewRequested = new EventEmitter<any>();
   @Output() editRequested = new EventEmitter<any>();
+  @Output() duplicateRequested = new EventEmitter<any>();
   @Output() discountRequested = new EventEmitter<any>();
 
   readonly pageSizeOptions = [10, 20, 50];
@@ -42,6 +43,7 @@ export class PackagesList implements OnInit, OnChanges {
   isLoading = false;
   statusUpdatingId: number | null = null;
   deletingId: number | null = null;
+  duplicatingId: number | null = null;
   errorMessage = '';
   searchTerm = '';
   paginationInfo: PaginationInfo = { page: 1, pageSize: 10, totalCount: 0, totalPages: 1 };
@@ -210,6 +212,43 @@ export class PackagesList implements OnInit, OnChanges {
     });
   }
 
+  async duplicatePackage(travelPackage: any): Promise<void> {
+    const packageId = Number(travelPackage?.id ?? travelPackage?.packageId);
+    if (!Number.isInteger(packageId) || packageId <= 0 || this.duplicatingId !== null) return;
+
+    const confirmation = await Swal.fire({
+      icon: 'question',
+      title: this.translate.instant('duplicatePackage'),
+      text: this.translate.instant('duplicatePackagePrompt'),
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('duplicate'),
+      cancelButtonText: this.translate.instant('cancel'),
+      confirmButtonColor: '#00d492',
+      reverseButtons: true,
+    });
+    if (!confirmation.isConfirmed) return;
+
+    this.duplicatingId = packageId;
+    this.apiService.post(`Packages/${packageId}/Duplicate`, {}).pipe(
+      catchError((error) => {
+        this.showToast('error', this.apiMessage(error, 'packageDuplicateError'));
+        return of(null);
+      }),
+      finalize(() => {
+        this.duplicatingId = null;
+        this.cdr.markForCheck();
+      }),
+    ).subscribe((response: any) => {
+      if (response === null || response?.isSuccess === false) {
+        if (response?.isSuccess === false) this.showToast('error', this.apiMessage(response, 'packageDuplicateError'));
+        return;
+      }
+      const copy = response?.data ?? response;
+      this.showToast('success', response?.message || 'packageDuplicated');
+      this.duplicateRequested.emit(copy);
+    });
+  }
+
   packageTitle(item: any): string {
     return item?.nameEng ?? item?.title ?? item?.nameEng ?? item?.name ?? '';
   }
@@ -236,5 +275,26 @@ export class PackagesList implements OnInit, OnChanges {
   packagePrice(item: any): string {
     const price = Number(item?.pricePerPerson ?? item?.price ?? 0);
     return `$${Number.isFinite(price) ? price : 0}`;
+  }
+
+  private apiMessage(source: any, fallback: string): string {
+    const payload = source?.error ?? source;
+    const values = Array.isArray(payload?.errors) ? payload.errors
+      : payload?.errors && typeof payload.errors === 'object' ? Object.values(payload.errors).flat() : [];
+    const errors = values.filter((error: unknown) => typeof error === 'string' && error.trim());
+    return errors.length ? errors.join(' ') : payload?.message || fallback;
+  }
+
+  private showToast(icon: 'success' | 'error', message: string): void {
+    void Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon,
+      iconColor: icon === 'success' ? '#00d492' : undefined,
+      title: this.translate.instant(message),
+      showConfirmButton: false,
+      timer: icon === 'success' ? 2500 : 4500,
+      timerProgressBar: true,
+    });
   }
 }

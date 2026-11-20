@@ -48,6 +48,12 @@ export class Packages {
     this.showForm = true;
   }
 
+  selectPackageForDuplicate(travelPackage: any): void {
+    if (!travelPackage) return;
+    this.selectedPackage = { ...travelPackage, isActive: false };
+    this.showForm = true;
+  }
+
   clearSelectedPackage(): void {
     this.selectedPackage = null;
     this.showForm = false;

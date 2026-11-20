@@ -1,7 +1,7 @@
 export type SeoLanguage = 'en' | 'ar';
 
 export function localizedEntityText(entity: any, language: SeoLanguage, ...fields: string[]): string {
-  const suffixes = language === 'ar' ? ['Ar'] : ['Eng', 'En'];
+  const suffixes = language === 'ar' ? ['Ar', 'ar'] : ['Eng', 'En'];
   for (const field of fields) {
     for (const key of [...suffixes.map(suffix => field + suffix), field]) {
       const value = entity?.[key] ?? entity?.[key[0].toUpperCase() + key.slice(1)];
