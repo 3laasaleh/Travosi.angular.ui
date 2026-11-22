@@ -2,11 +2,11 @@ import { mayIndexRequest, robotsContent } from './indexing-policy';
 import { normalizeSitemap } from './sitemap';
 
 describe('indexing policy', () => {
-  const origin = 'https://seaworld-prod.premiumasp.net';
+  const origin = 'https://api.seaworldholidays.com';
   it('indexes only the canonical production origin with indexing enabled', () => {
     expect(mayIndexRequest(true, origin, `${origin}/ar/tours`)).toBe(true);
     expect(mayIndexRequest(false, origin, `${origin}/ar/tours`)).toBe(false);
-    expect(mayIndexRequest(true, origin, 'https://seaworld-stage.premiumasp.net/ar/tours')).toBe(false);
+    expect(mayIndexRequest(true, origin, 'https://stage.seaworldholidays.com/ar/tours')).toBe(false);
     expect(mayIndexRequest(true, origin, 'http://localhost:4000/ar/tours')).toBe(false);
   });
   it('blocks staging and publishes the production sitemap only for indexable requests', () => {

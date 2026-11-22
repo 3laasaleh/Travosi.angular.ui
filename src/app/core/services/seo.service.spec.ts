@@ -31,7 +31,7 @@ function setup(language: 'ar' | 'en' = 'ar', path = cases[1][0], staging = false
     { provide: LanguageService, useValue: { currentLanguage: signal(language) } },
     { provide: PUBLIC_BASE_URL, useValue: origin },
     { provide: INDEXING_ENABLED, useValue: !staging },
-    { provide: REQUEST, useValue: new Request(`${staging ? 'https://seaworld-stage.premiumasp.net' : origin}${router.url}`) },
+    { provide: REQUEST, useValue: new Request(`${staging ? 'https://stage.seaworldholidays.com' : origin}${router.url}`) },
     { provide: RESPONSE_INIT, useValue: response },
   ] });
   return { doc, router, events, response, seo: TestBed.inject(SeoService), crumbs: TestBed.inject(BreadcrumbService) };

@@ -1,4 +1,4 @@
-const publicHost = 'seaworld-stage.premiumasp.net';
+const publicHost = 'stage.seaworldholidays.com';
 
 
 export const environment = {
@@ -6,6 +6,6 @@ export const environment = {
   partion: true,
   baseUrl: 'https://seeworld.premiumasp.net/api/',
   imageUrl: 'https://seeworld.premiumasp.net/images/',
-  publicBaseUrl: 'https://seaworld-stage.premiumasp.net',
-  ssrAllowedHosts: `www.seaworld-stage.premiumasp.net,${publicHost}`,
+  publicBaseUrl: `https://${publicHost}`,
+  ssrAllowedHosts: `www.stage.seaworldholidays.com,${publicHost}`,
 };
