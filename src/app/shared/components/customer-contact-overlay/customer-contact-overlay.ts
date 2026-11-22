@@ -17,8 +17,8 @@ export class CustomerContactOverlay {
   readonly phoneDisplay = '+971505065924 - +201070044338';
   readonly phoneUrl = 'tel:+201070044338';
   readonly whatsappUrl = 'https://wa.me/201155011300';
-  readonly instagramUrl = 'https://www.instagram.com/seaworldholidays1/';
-  readonly facebookUrl = 'https://www.facebook.com/seaworldholidays1/';
+  readonly instagramUrl = 'https://www.instagram.com/seaworldholidays9/';
+  readonly facebookUrl = 'https://www.facebook.com/seaworldholidayseg';
 
   readonly isCustomerPage = signal(true);
   readonly modalOpen = signal(false);

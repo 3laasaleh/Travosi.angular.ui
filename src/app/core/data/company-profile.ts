@@ -60,8 +60,8 @@ export const COMPANY_PROFILE: CompanyProfile = {
     ar: 'من باقات العطلات المخصصة إلى الرحلات الجوية والفنادق والجولات والتنقلات ومساعدة التأشيرات، نهتم بالتفاصيل لتسافر بثقة.',
   },
   socialProfiles: [
-    'https://www.facebook.com/seaworldholidays1/',
-    'https://www.instagram.com/seaworldholidays1/',
+    'https://www.facebook.com/seaworldholidayseg',
+    'https://www.instagram.com/seaworldholidays9/',
     'https://www.tiktok.com/@seaworldholidays1',
     'https://www.linkedin.com/company/sea-world-holidays/',
     'https://x.com/seaworldholidays1',
