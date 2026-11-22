@@ -11,10 +11,12 @@ export function localizedEntityText(entity: any, language: SeoLanguage, ...field
   return '';
 }
 
-export function resolveEntitySeo(entity: any, language: SeoLanguage, _schemaType: string,
+export function resolveEntitySeo(entity: any, language: SeoLanguage, schemaType: string,
   fallbackTitle = '', fallbackDescription = '') {
   const name = localizedEntityText(entity, language, 'name', 'title') || fallbackTitle;
   const metaTitle = localizedEntityText(entity, language, 'metaTitle');
-  const description = localizedEntityText(entity, language, 'description', 'summary') || fallbackDescription;
+  const description = (schemaType === 'Package'
+    ? localizedEntityText(entity, language, 'desc', 'description', 'summary')
+    : localizedEntityText(entity, language, 'description', 'summary')) || fallbackDescription;
   return { name, title: metaTitle || name, description, hasMetaTitle: !!metaTitle };
 }

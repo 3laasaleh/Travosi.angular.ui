@@ -103,6 +103,25 @@ describe('shared entity SEO', () => {
       .toBe('باقة أسبوع مصر | سي وورلد هوليدايز');
   });
 
+  for (const language of ['en', 'ar'] as const) {
+    it(`uses ${language} package Desc text and limits its meta description to 150 characters`, () => {
+      const desc = (language === 'en' ? 'E' : 'ع').repeat(175);
+      const { seo, doc } = setup(language, 'packages/egypt-week');
+      seo.updateFrom({
+        nameEng: 'Egypt Week',
+        nameAr: 'أسبوع مصر',
+        DescEng: language === 'en' ? `<p>${desc}</p>` : 'English package description',
+        DescAr: language === 'ar' ? `<p>${desc}</p>` : 'وصف الباقة بالعربية',
+        descriptionEng: 'English fallback must not be used',
+        descriptionAr: 'الوصف الاحتياطي لا يجب استخدامه',
+      }, { schemaType: 'Package' });
+
+      const metaDescription = doc.querySelector('meta[name="description"]')?.getAttribute('content');
+      expect(metaDescription).toBe(desc.slice(0, 150));
+      expect(metaDescription).toHaveLength(150);
+    });
+  }
+
   it('keeps entity metadata and parent labels published before NavigationEnd', () => {
     const { seo, doc, router, events, crumbs } = setup();
     events.next(new NavigationStart(1, router.url));

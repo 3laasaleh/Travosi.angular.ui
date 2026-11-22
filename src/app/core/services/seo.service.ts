@@ -348,10 +348,13 @@ export class SeoService {
   ): void {
     const resolvedTitle = this.plainText(title);
     const resolvedDescription = this.cleanDescription(description);
+    const metaDescription = schemaType === 'Package'
+      ? resolvedDescription.slice(0, 150)
+      : resolvedDescription;
     const canonicalUrl = this.canonicalUrl();
     const language = this.languageFromUrl();
     this.titleService.setTitle(useExactTitle ? resolvedTitle : this.brandedTitle(resolvedTitle));
-    this.updateOrRemoveName('description', resolvedDescription);
+    this.updateOrRemoveName('description', metaDescription);
     const requestUrl = this.request?.url ?? this.document.defaultView?.location.href;
     const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)
       ? 'index, follow' : 'noindex, nofollow';
