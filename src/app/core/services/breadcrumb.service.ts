@@ -62,6 +62,10 @@ const SEGMENTS: Record<string, SegmentDefinition> = {
   'contact-messages': { en: 'Contact Messages', ar: 'رسائل التواصل' },
 };
 
+export function breadcrumbSegmentLabel(segment: string, language: 'en' | 'ar'): string | undefined {
+  return SEGMENTS[segment]?.[language];
+}
+
 /**
  * Builds the breadcrumb trail for the active route once, so the visible navigation and the
  * BreadcrumbList structured data can never drift apart.

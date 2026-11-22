@@ -1,4 +1,4 @@
-import { mayIndexRequest, blockedRobotsContent } from './indexing-policy';
+import { mayIndexRequest, blockedRobotsContent, withNoindexRobotsMeta } from './indexing-policy';
 import { normalizeSitemap } from './sitemap';
 
 describe('indexing policy', () => {
@@ -11,6 +11,13 @@ describe('indexing policy', () => {
   });
   it('blocks crawlers on non-indexable deployments', () => {
     expect(blockedRobotsContent()).toBe('User-agent: *\nDisallow: /\n');
+  });
+  it('replaces the shell robots tag without duplicates on noindex routes', () => {
+    const html = '<head><meta name="robots" content="index, follow"><meta name="robots" content="index, follow"></head>';
+    const result = withNoindexRobotsMeta(html);
+    expect(result.match(/name="robots"/g)).toHaveLength(1);
+    expect(result).toContain('<meta name="robots" content="noindex, nofollow">');
+    expect(withNoindexRobotsMeta('<head></head>')).toContain('noindex, nofollow');
   });
   it('normalizes sitemap URL origins without changing canonical route paths or XML namespaces', () => {
     const xml = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://old.example/ar/destinations/egypt/cities/cairo/</loc><xhtml:link href="https://old.example/en/destinations/egypt/cities/cairo"/></url></urlset>';

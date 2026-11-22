@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { COMPANY_PROFILE } from '../data/company-profile';
 import { INDEXING_ENABLED, PUBLIC_BASE_URL } from '../tokens/app-urls';
-import { BreadcrumbService } from './breadcrumb.service';
+import { BreadcrumbService, breadcrumbSegmentLabel } from './breadcrumb.service';
 import { LanguageService } from './language.service';
 import { resolveEntitySeo } from './entity-seo';
 import { mayIndexRequest } from './indexing-policy';
@@ -188,6 +188,11 @@ const STATIC_SEO: Record<string, StaticSeoPage> = {
   },
 };
 
+const ACCOUNT_SECTIONS = new Set([
+  'user-setting', 'user-profile', 'user-booking', 'user-payment', 'user-invoice',
+  'user-social', 'user-notification',
+]);
+
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly titleService = inject(Title);
@@ -349,7 +354,7 @@ export class SeoService {
     this.updateOrRemoveName('description', resolvedDescription);
     const requestUrl = this.request?.url ?? this.document.defaultView?.location.href;
     const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)
-      ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
+      ? 'index, follow' : 'noindex, nofollow';
     this.updateName('robots', robots);
     this.updateProperty('og:site_name', SITE_NAME);
     this.updateOrRemoveProperty('og:title', resolvedTitle);
@@ -385,14 +390,13 @@ export class SeoService {
     const language = segments[0] === 'ar' ? 'ar' : 'en';
     const section = segments[0] === 'ar' || segments[0] === 'en' ? segments[1] : segments[0];
     this.failurePath = null;
-    const privateSections = new Set([
+    const excludedSections = new Set([
       'configurations', 'account', 'login', 'signup', 'signup-success', 'forgot-password',
-      'reset-password', 'user-setting', 'user-profile', 'user-booking', 'user-payment',
-      'user-invoice', 'user-social', 'user-notification',
+      'reset-password',
     ]);
 
     this.applyDocumentLanguage(language);
-    if (privateSections.has(section ?? '')) {
+    if (excludedSections.has(section ?? '')) {
       this.lastPage = null;
       this.lastPagePath = path;
       this.titleService.setTitle(SITE_NAME);
@@ -401,7 +405,15 @@ export class SeoService {
       return;
     }
 
-    const page = STATIC_SEO[section ?? ''] ?? STATIC_SEO['not-found'];
+    const accountName = ACCOUNT_SECTIONS.has(section ?? '') ? {
+      en: breadcrumbSegmentLabel(section!, 'en') ?? SITE_NAME,
+      ar: breadcrumbSegmentLabel(section!, 'ar') ?? SITE_NAME,
+    } : null;
+    const page = STATIC_SEO[section ?? ''] ?? (accountName ? {
+      name: accountName,
+      title: { en: `${accountName.en} | ${SITE_NAME}`, ar: `${accountName.ar} | ${SITE_NAME}` },
+      description: { en: '', ar: '' },
+    } : STATIC_SEO['not-found']);
     this.lastPage = {
       name: page.name,
       title: page.title,

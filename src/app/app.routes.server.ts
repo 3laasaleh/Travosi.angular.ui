@@ -6,14 +6,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
     headers: { 'X-Robots-Tag': 'noindex, nofollow' },
   },
-  ...[
-    'user-setting', 'user-profile', 'user-booking', 'user-payment', 'user-invoice',
-    'user-social', 'user-notification', 'signup-success',
-  ].map((path): ServerRoute => ({
-    path: `:lang/${path}`,
+  {
+    path: ':lang/signup-success',
     renderMode: RenderMode.Client,
     headers: { 'X-Robots-Tag': 'noindex, nofollow' },
-  })),
+  },
   {
     path: ':lang/account/**',
     renderMode: RenderMode.Client,
@@ -39,6 +36,13 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
     headers: { 'X-Robots-Tag': 'noindex, nofollow' },
   },
+  ...[
+    'user-setting', 'user-profile', 'user-booking', 'user-payment', 'user-invoice',
+    'user-social', 'user-notification',
+  ].map((path): ServerRoute => ({
+    path: `:lang/${path}`,
+    renderMode: RenderMode.Client,
+  })),
   {
     path: '**',
     renderMode: RenderMode.Server,

@@ -64,6 +64,16 @@ async function checkNoindex(path, base, requireMeta) {
   console.log(`PASS noindex ${url}`);
 }
 
+async function checkIndexableShell(path) {
+  const { response, body, url } = await get(path);
+  const document = htmlDocument(body);
+  checkMetaConflicts(document, url);
+  assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${url}: noindex response header`);
+  assert.equal(meta(document, 'robots').length, 1, `${url}: missing robots tag`);
+  assert.equal(meta(document, 'robots')[0].content, 'index, follow', `${url}: wrong robots tag`);
+  console.log(`PASS indexable shell ${url}`);
+}
+
 async function main() {
   const robots = await get('/robots.txt');
   assert.match(robots.response.headers.get('content-type') || '', /^text\/plain\b/i);
@@ -88,7 +98,15 @@ async function main() {
   await checkPublicPage('ar');
   await checkNoindex('/en', staging, true);
   await checkNoindex('/en/login', production, false);
+  await checkNoindex('/en/signup', production, false);
   await checkNoindex('/en/configurations', production, false);
+  await checkIndexableShell('/en/user-profile');
+  await checkIndexableShell('/en/user-booking');
+  await checkIndexableShell('/en/user-payment');
+  await checkIndexableShell('/en/user-invoice');
+  await checkIndexableShell('/en/user-setting');
+  await checkIndexableShell('/en/user-social');
+  await checkIndexableShell('/en/user-notification');
 }
 
 main().catch((error) => {

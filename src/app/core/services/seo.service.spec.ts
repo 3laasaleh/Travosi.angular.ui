@@ -136,6 +136,13 @@ describe('shared entity SEO', () => {
     expect(doc.querySelector('link[rel="canonical"]')?.getAttribute('href')).toContain(origin);
   });
 
+  it('indexes account routes on production without a not-found title', () => {
+    const { doc, router, events } = setup('en', 'user-profile');
+    events.next(new NavigationStart(1, router.url));
+    expect(doc.title).toBe('My Account | Sea World Holidays');
+    expect(doc.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('index, follow');
+  });
+
   it('keeps an SSR 404 through NavigationEnd and distinguishes upstream failure as 503', () => {
     const { seo, doc, events, router, response } = setup();
     events.next(new NavigationStart(1, router.url));

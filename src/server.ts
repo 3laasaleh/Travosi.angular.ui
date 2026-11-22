@@ -7,7 +7,7 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import { environment } from './environments/environment';
-import { mayIndexRequest, blockedRobotsContent } from './app/core/services/indexing-policy';
+import { mayIndexRequest, blockedRobotsContent, withNoindexRobotsMeta } from './app/core/services/indexing-policy';
 import { normalizeSitemap } from './app/core/services/sitemap';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -115,7 +115,21 @@ app.use(
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .then(async (response) => {
+      if (!response) return next();
+      const robotsHeaders = `${response.headers.get('X-Robots-Tag') ?? ''},${res.getHeader('X-Robots-Tag') ?? ''}`;
+      if (!/\bnoindex\b/i.test(robotsHeaders) || !response.headers.get('content-type')?.includes('text/html')) {
+        return writeResponseToNodeResponse(response, res);
+      }
+      const headers = new Headers(response.headers);
+      headers.delete('content-length');
+      const html = withNoindexRobotsMeta(await response.text());
+      return writeResponseToNodeResponse(new Response(html, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      }), res);
+    })
     .catch(next);
 });
 

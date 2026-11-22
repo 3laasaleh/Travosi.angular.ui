@@ -12,3 +12,15 @@ export function mayIndexRequest(enabled: boolean, publicBaseUrl: string, request
 export function blockedRobotsContent(): string {
   return 'User-agent: *\nDisallow: /\n';
 }
+
+/** The client-rendered shell must agree with the noindex response header. */
+export function withNoindexRobotsMeta(html: string): string {
+  const tag = '<meta name="robots" content="noindex, nofollow">';
+  let found = false;
+  const updated = html.replace(/<meta\b(?=[^>]*\bname\s*=\s*["']robots["'])[^>]*>/gi, () => {
+    if (found) return '';
+    found = true;
+    return tag;
+  });
+  return found ? updated : updated.replace(/<\/head>/i, `${tag}\n</head>`);
+}
