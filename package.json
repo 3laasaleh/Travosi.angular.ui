@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:seo:deployed": "node scripts/check-deployed-seo.mjs",
     "test:e2e": "playwright test",
     "build:ssr": "ng build --configuration development",
     "serve:ssr:app-dev": "npm run build:ssr  && node dist/seeworld/server/server.mjs",

@@ -132,7 +132,7 @@ describe('shared entity SEO', () => {
     const { seo, doc } = setup('ar', cases[1][0], true);
     seo.updateFrom(entity, { schemaType: 'City' });
     expect(doc.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex, nofollow');
-    expect(doc.querySelector('meta[name="googlebot"]')?.getAttribute('content')).toBe('noindex, nofollow');
+    expect(doc.querySelector('meta[name="googlebot"]')).toBeNull();
     expect(doc.querySelector('link[rel="canonical"]')?.getAttribute('href')).toContain(origin);
   });
 

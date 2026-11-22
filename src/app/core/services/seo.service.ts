@@ -282,7 +282,6 @@ export class SeoService {
     this.applyDocumentLanguage(this.languageFromUrl());
     this.titleService.setTitle(`${message} | ${SITE_NAME}`);
     this.updateName('robots', 'noindex, nofollow');
-    this.updateName('googlebot', 'noindex, nofollow');
     this.updateOrRemoveName('description', '');
     this.updateOrRemoveProperty('og:title', '');
     this.updateOrRemoveProperty('og:description', '');
@@ -352,7 +351,6 @@ export class SeoService {
     const robots = mayIndexRequest(this.indexingEnabled, this.publicBaseUrl, requestUrl)
       ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
     this.updateName('robots', robots);
-    this.updateName('googlebot', robots);
     this.updateProperty('og:site_name', SITE_NAME);
     this.updateOrRemoveProperty('og:title', resolvedTitle);
     this.updateOrRemoveProperty('og:description', resolvedDescription);
@@ -399,7 +397,6 @@ export class SeoService {
       this.lastPagePath = path;
       this.titleService.setTitle(SITE_NAME);
       this.updateName('robots', 'noindex, nofollow');
-      this.updateName('googlebot', 'noindex, nofollow');
       this.removePageStructuredData();
       return;
     }

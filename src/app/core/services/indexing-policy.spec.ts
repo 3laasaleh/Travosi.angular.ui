@@ -1,4 +1,4 @@
-import { mayIndexRequest, robotsContent } from './indexing-policy';
+import { mayIndexRequest, blockedRobotsContent } from './indexing-policy';
 import { normalizeSitemap } from './sitemap';
 
 describe('indexing policy', () => {
@@ -9,9 +9,8 @@ describe('indexing policy', () => {
     expect(mayIndexRequest(true, origin, 'https://stage.seaworldholidays.com/ar/tours')).toBe(false);
     expect(mayIndexRequest(true, origin, 'http://localhost:4000/ar/tours')).toBe(false);
   });
-  it('blocks staging and publishes the production sitemap only for indexable requests', () => {
-    expect(robotsContent(false, origin)).toBe('User-agent: *\nDisallow: /\n');
-    expect(robotsContent(true, origin)).toContain(`Sitemap: ${origin}/sitemap.xml`);
+  it('blocks crawlers on non-indexable deployments', () => {
+    expect(blockedRobotsContent()).toBe('User-agent: *\nDisallow: /\n');
   });
   it('normalizes sitemap URL origins without changing canonical route paths or XML namespaces', () => {
     const xml = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://old.example/ar/destinations/egypt/cities/cairo/</loc><xhtml:link href="https://old.example/en/destinations/egypt/cities/cairo"/></url></urlset>';

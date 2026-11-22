@@ -1,3 +1,4 @@
 User-agent: *
-# Safe fallback for static hosting. The SSR server serves environment-specific rules.
-Disallow: /
+Allow: /
+
+Sitemap: https://seaworldholidays.com/sitemap.xml

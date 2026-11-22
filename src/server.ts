@@ -7,7 +7,7 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import { environment } from './environments/environment';
-import { mayIndexRequest, robotsContent } from './app/core/services/indexing-policy';
+import { mayIndexRequest, blockedRobotsContent } from './app/core/services/indexing-policy';
 import { normalizeSitemap } from './app/core/services/sitemap';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -18,11 +18,11 @@ const allowedHosts = (process.env['NG_ALLOWED_HOSTS']
   .split(',')
   .map((host) => host.trim())
   .filter(Boolean);
-const angularApp = new AngularNodeAppEngine({ allowedHosts });
-const publicBaseUrl = (process.env['PUBLIC_BASE_URL'] || environment.publicBaseUrl).replace(/\/+$/, '');
+const angularApp = new AngularNodeAppEngine({ allowedHosts, trustProxyHeaders: ['x-forwarded-proto'] });
+const publicBaseUrl = environment.publicBaseUrl.replace(/\/+$/, '');
 const apiBaseUrl = process.env['API_BASE_URL'] || environment.baseUrl;
 const apiOrigin = new URL(apiBaseUrl).origin;
-const indexingEnabled = environment.indexingEnabled && process.env['SEO_INDEXING_ENABLED'] !== 'false';
+const indexingEnabled = environment.indexingEnabled;
 const emptySitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>';
 
 app.disable('x-powered-by');
@@ -35,7 +35,11 @@ app.use((req, res, next) => {
 });
 
 app.get('/robots.txt', (_req, res) => {
-  res.type('text/plain').send(robotsContent(res.locals['indexable'], publicBaseUrl));
+  if (res.locals['indexable']) {
+    res.type('text/plain').sendFile(join(browserDistFolder, 'robots.txt'));
+    return;
+  }
+  res.type('text/plain').send(blockedRobotsContent());
 });
 
 app.get('/sitemap.xml', async (_req, res) => {

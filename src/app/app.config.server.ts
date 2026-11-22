@@ -10,7 +10,7 @@ const serverConfig: ApplicationConfig = {
     provideServerRendering(withRoutes(serverRoutes)),
     {
       provide: INDEXING_ENABLED,
-      useFactory: () => environment.indexingEnabled && process.env['SEO_INDEXING_ENABLED'] !== 'false',
+      useValue: environment.indexingEnabled,
     },
     {
       provide: API_BASE_URL,
@@ -18,7 +18,7 @@ const serverConfig: ApplicationConfig = {
     },
     {
       provide: PUBLIC_BASE_URL,
-      useFactory: () => normalizeBaseUrl(process.env['PUBLIC_BASE_URL'] || environment.publicBaseUrl),
+      useValue: normalizeBaseUrl(environment.publicBaseUrl),
     },
   ],
 };

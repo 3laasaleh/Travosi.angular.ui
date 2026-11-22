@@ -1,4 +1,4 @@
-const publicHost = 'seaworldholidays.com';
+const publicHost = 'www.seaworldholidays.com';
 
 export const environment = {
   indexingEnabled: true,
@@ -6,5 +6,5 @@ export const environment = {
   baseUrl: 'https://api.seaworldholidays.com/api/',
   imageUrl: 'https://api.seaworldholidays.com/images/',
   publicBaseUrl: `https://${publicHost}`,
-  ssrAllowedHosts: `www.seaworldholidays.com,${publicHost}`,
+  ssrAllowedHosts: `seaworldholidays.com,${publicHost}`,
 };

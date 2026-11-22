@@ -9,11 +9,6 @@ export function mayIndexRequest(enabled: boolean, publicBaseUrl: string, request
   }
 }
 
-export function robotsContent(indexable: boolean, publicBaseUrl: string): string {
-  if (!indexable) return 'User-agent: *\nDisallow: /\n';
-  return [
-    'User-agent: *', 'Allow: /', 'Disallow: /*/configurations/',
-    'Disallow: /*/account/', 'Disallow: /*/user-', 'Disallow: /*/login',
-    'Disallow: /*/signup', '', `Sitemap: ${publicBaseUrl}/sitemap.xml`, '',
-  ].join('\n');
+export function blockedRobotsContent(): string {
+  return 'User-agent: *\nDisallow: /\n';
 }
