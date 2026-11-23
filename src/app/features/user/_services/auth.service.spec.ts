@@ -15,8 +15,10 @@ import { AuthService } from './auth.service';
 describe('AuthService refresh sessions', () => {
   let service: AuthService;
   let http: HttpTestingController;
+  let isTokenExpired: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    isTokenExpired = vi.fn().mockReturnValue(false);
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
@@ -40,7 +42,7 @@ describe('AuthService refresh sessions', () => {
         },
         {
           provide: JwtHelperService,
-          useValue: { isTokenExpired: vi.fn().mockReturnValue(false) },
+          useValue: { isTokenExpired },
         },
       ],
     });
@@ -94,6 +96,26 @@ describe('AuthService refresh sessions', () => {
     });
 
     await restored;
+    expect(service.isLoggedIn()).toBe(true);
+  });
+
+  it('keeps the session logged in while an expired access token awaits refresh', async () => {
+    const restored = firstValueFrom(service.restoreSession());
+    http.expectOne(environment.baseUrl + 'auth/refresh').flush({
+      accessToken: 'soon-expired-token',
+      expiresIn: 900,
+      user: {
+        userId: '3',
+        userName: 'Booking User',
+        email: 'booking@example.com',
+        mobile: '300',
+        role: RoleEnum.Customer,
+      },
+    });
+    await restored;
+    isTokenExpired.mockReturnValue(true);
+
+    expect(service.isTokenExpired()).toBe(true);
     expect(service.isLoggedIn()).toBe(true);
   });
 });

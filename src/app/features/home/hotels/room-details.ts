@@ -83,7 +83,7 @@ export class RoomDetails implements OnInit {
 
   get isArabic(): boolean { return this.language.currentLanguage() === 'ar'; }
   get isLoggedIn(): boolean {
-    return this.auth.getCurentUser() !== null && !this.auth.isTokenExpired();
+    return this.auth.isLoggedIn();
   }
   get today(): string {
     const date = new Date();

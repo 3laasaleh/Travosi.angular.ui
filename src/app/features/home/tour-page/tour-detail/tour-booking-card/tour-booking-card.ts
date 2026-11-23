@@ -179,7 +179,7 @@ export class TourBookingCard implements OnInit {
   });
 
   get isLoggedIn(): boolean {
-    return this.authService.getCurentUser() !== null && !this.authService.isTokenExpired();
+    return this.authService.isLoggedIn();
   }
 
   get pricePerPerson(): number {

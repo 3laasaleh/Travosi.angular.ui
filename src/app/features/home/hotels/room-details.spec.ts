@@ -23,7 +23,7 @@ describe('RoomDetails booking', () => {
     postUnauthenticated: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
   };
-  let auth: { getCurentUser: ReturnType<typeof vi.fn>; isTokenExpired: ReturnType<typeof vi.fn> };
+  let auth: { isLoggedIn: ReturnType<typeof vi.fn> };
 
   async function setup(query: Record<string, string | string[]> = {}) {
     api = {
@@ -33,7 +33,7 @@ describe('RoomDetails booking', () => {
         : { isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
       post: vi.fn().mockReturnValue(of({ isSuccess: true, data: { id: 7, bookingNo: 'B-0000007' } })),
     };
-    auth = { getCurentUser: vi.fn().mockReturnValue(null), isTokenExpired: vi.fn().mockReturnValue(true) };
+    auth = { isLoggedIn: vi.fn().mockReturnValue(false) };
     await TestBed.configureTestingModule({
       imports: [RoomDetails],
       providers: [
@@ -97,8 +97,7 @@ describe('RoomDetails booking', () => {
   it('submits a signed-in booking after availability is confirmed', async () => {
     vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
     const component = await setup({ checkIn: '2030-05-10', checkOut: '2030-05-14' });
-    auth.getCurentUser.mockReturnValue({ userId: '1' });
-    auth.isTokenExpired.mockReturnValue(false);
+    auth.isLoggedIn.mockReturnValue(true);
 
     component.checkAvailability();
     component.bookNow();
@@ -109,6 +108,17 @@ describe('RoomDetails booking', () => {
     expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
       icon: 'success', text: expect.stringContaining('B-0000007'),
     }));
+  });
+
+  it('allows booking when an authenticated session has an expired access token', async () => {
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
+    const component = await setup({ checkIn: '2030-05-10', checkOut: '2030-05-14' });
+    auth.isLoggedIn.mockReturnValue(true);
+
+    component.checkAvailability();
+    component.bookNow();
+
+    expect(api.post).toHaveBeenCalledWith('Bookings', expect.any(Object));
   });
 
   it('asks for a hotel stay when a room is opened directly', async () => {

@@ -255,8 +255,7 @@ export class HotelDetail implements OnInit {
     const price = availability?.ratePlans?.[0];
     if (!this.hotel || !availability || !price || availability.availableQuantity < this.roomCount)
       return;
-    const user = this.auth.getCurentUser();
-    if (!user || this.auth.isTokenExpired()) {
+    if (!this.auth.isLoggedIn()) {
       await this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
