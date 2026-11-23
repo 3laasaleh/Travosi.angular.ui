@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { formatHomePrice } from '../../features/home/home-price.util';
@@ -16,7 +14,6 @@ export class UtilityService {
   loader = '/assets/loaders/loader.gif';
 
   constructor(
-    private _coockiesService: CookieService,
     private readonly seo: SeoService,
   ) { }
 
@@ -91,13 +88,4 @@ export class UtilityService {
     return (translate.currentLang?.() ?? '').toLowerCase().startsWith('ar');
   }
 
-  getHeaders() {
-    const bearer = 'Bearer ' + this._coockiesService.get('token');
-    return {
-      headers: new HttpHeaders({
-        Authorization: bearer,
-        'Content-Type': 'application/json',
-      }),
-    };
-  }
 }

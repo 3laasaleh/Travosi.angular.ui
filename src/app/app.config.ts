@@ -1,5 +1,5 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -12,6 +12,7 @@ import { languageInterceptor } from './core/interceptors/language.Interceptor';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { API_BASE_URL, PUBLIC_BASE_URL, INDEXING_ENABLED, normalizeApiBaseUrl, normalizeBaseUrl } from './core/tokens/app-urls';
+import { AuthService } from './features/user/_services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,6 +35,7 @@ export const appConfig: ApplicationConfig = {
     { provide: API_BASE_URL, useValue: normalizeApiBaseUrl(environment.baseUrl) },
     { provide: PUBLIC_BASE_URL, useValue: normalizeBaseUrl(environment.publicBaseUrl) },
     { provide: INDEXING_ENABLED, useValue: environment.indexingEnabled },
+    provideAppInitializer(() => inject(AuthService).restoreSession()),
     provideClientHydration(
       withHttpTransferCacheOptions({
         filter: (request) => request.method === 'GET' && !request.headers.has('Authorization'),
