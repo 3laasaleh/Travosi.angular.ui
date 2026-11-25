@@ -12,9 +12,10 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import feather from 'feather-icons';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, of, timer } from 'rxjs';
 
 import { ApiService } from '../../core/services/apiservice.service';
 import { TaskNotificationsService } from '../../core/services/task-notifications.service';
@@ -40,7 +41,7 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   constructor() {
     effect(() => {
       this.taskNotifications.changed();
-      if (this.isAgent) this.loadAgentTasks();
+      if (this.isStaff) this.loadAgentTasks();
     });
   }
 
@@ -56,6 +57,11 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
     return this.authService.getCurrentUserRole() === 'Agent';
   }
 
+  get isStaff(): boolean {
+    const role = this.authService.getCurrentUserRole();
+    return role === 'Admin' || role === 'Agent';
+  }
+
   get pendingTasksCount(): number {
     return this.agentTasks.filter((notification) => notification?.isRead !== true).length;
   }
@@ -65,9 +71,11 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // if (this.isAgent) {
-    //   timer(0, 30000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAgentTasks());
-    // }
+    if (this.isStaff) {
+      timer(30000, 30000)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.loadAgentTasks());
+    }
   }
 
   loadAgentTasks(): void {
@@ -108,12 +116,14 @@ export class ConfigurationsNavbar implements OnInit, AfterViewInit {
     this.refreshIcons();
   }
 
-  notificationLink(notification: any): string {
-    // General notifications are created for new hotel-room booking requests;
-    // task notifications still open the agent task board.
-    return Number(notification?.type) === 4
-      ? '/configurations/bookings'
-      : '/configurations/tasks';
+  notificationLink(notification: any): string[] {
+    const relatedEntityId = Number(notification?.relatedEntityId);
+    const isBookingNotification = Number(notification?.type) === 5
+      || (Number(notification?.type) === 4 && Number.isInteger(relatedEntityId) && relatedEntityId > 0);
+
+    return isBookingNotification && Number.isInteger(relatedEntityId) && relatedEntityId > 0
+      ? this.localizedPath(`/configurations/bookings/${relatedEntityId}`)
+      : this.localizedPath('/configurations/tasks');
   }
 
   get currentLanguage(): string {

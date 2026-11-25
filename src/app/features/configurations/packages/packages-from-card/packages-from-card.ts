@@ -147,12 +147,7 @@ export class PackagesFromCard implements OnInit, OnChanges, OnDestroy {
 
   get screenLoaderVisible(): boolean { return this.isSaving || this.deletingImageIndex !== null; }
   get minimumPackageStartDate(): string {
-    return this.toDateInput(
-      this.selectedPackage?.dateFrom
-      ?? this.selectedPackage?.DateFrom
-      ?? this.selectedPackage?.dateFromUtc
-      ?? this.selectedPackage?.DateFromUtc,
-    ) || this.tomorrow;
+    return  this.tomorrow;
   }
   get minimumPackageEndDate(): string {
     return this.addDays(this.packageForm.controls.dateFrom.value || this.tomorrow, 1);
